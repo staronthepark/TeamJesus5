@@ -1,0 +1,14 @@
+{
+	"Targets": [
+		{
+			"Name": "SERVAME",
+			"Path": "C:\\Users\\OWNER\\Desktop\\TeamJesus5\\SERVAME\\Source\\SERVAME.Target.cs",
+			"Type": "Game"
+		},
+		{
+			"Name": "SERVAMEEditor",
+			"Path": "C:\\Users\\OWNER\\Desktop\\TeamJesus5\\SERVAME\\Source\\SERVAMEEditor.Target.cs",
+			"Type": "Editor"
+		}
+	]
+}

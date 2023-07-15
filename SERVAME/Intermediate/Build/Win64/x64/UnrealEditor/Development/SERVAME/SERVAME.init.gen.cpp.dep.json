@@ -1,0 +1,13 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\owner\\desktop\\teamjesus5\\servame\\intermediate\\build\\win64\\unrealeditor\\inc\\servame\\uht\\servame.init.gen.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\users\\owner\\desktop\\teamjesus5\\servame\\intermediate\\build\\win64\\x64\\servameeditor\\development\\engine\\sharedpch.engine.shadowerrors.inclorderunreal5_1.h.pch",
+        "Includes": [
+            "c:\\users\\owner\\desktop\\teamjesus5\\servame\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\servame\\definitions.servame.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}
