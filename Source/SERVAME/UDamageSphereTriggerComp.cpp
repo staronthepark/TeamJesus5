@@ -44,7 +44,7 @@ void UUDamageSphereTriggerComp::ActiveHit()
 {
 	Count++;
 	
-	//if (Character->TakeDamage(Damage, DamageEvent, nullptr, GetOwner()))
+	if (Character->TakeDamage(Damage, DamageEvent, nullptr, GetOwner()))
 	{
 		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, Character->GetActorLocation(), FRotator(90, 180, 180));
 		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, Character->GetActorLocation(), FRotator(90, 180, 180));

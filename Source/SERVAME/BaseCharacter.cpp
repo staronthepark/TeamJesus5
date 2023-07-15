@@ -70,15 +70,15 @@ void ABaseCharacter::VibrateGamePad(float Intensity, float time)
 	GetWorld()->GetFirstPlayerController()->PlayDynamicForceFeedback(Intensity, time, true, true, true, true, EDynamicForceFeedbackAction::Start);
 }
 
-//float ABaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-//{
-//	int value = FMath::RandRange(16, 17);
-//	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[value].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-//	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[18].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-//	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[19].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-//	//HitStop();
-//	return 0.0f;
-//}
+float ABaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	int value = FMath::RandRange(16, 17);
+	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[value].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[18].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[19].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	HitStop();
+	return 0.0f;
+}
 
 void ABaseCharacter::OnDustCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {	

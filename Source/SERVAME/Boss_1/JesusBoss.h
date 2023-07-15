@@ -453,7 +453,7 @@ public:
 	/*======================
 	*		Override
 	======================*/
-	//virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	virtual void HitStop() override;
 	virtual void ResumeMontage() override;
 	virtual void RespawnCharacter() override;

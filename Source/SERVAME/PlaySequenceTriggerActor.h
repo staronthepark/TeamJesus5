@@ -6,7 +6,7 @@
 #include "TriggerActor.h"
 #include "./Boss_1/JesusBoss.h"
 #include "./Player/PlayerCharacter.h"
-//#include "CineCameraActor.h"
+#include "CineCameraActor.h"
 #include "PlaySequenceTriggerActor.generated.h"
 
 /**
@@ -35,7 +35,7 @@ public:
 
 	AJesusBoss* Boss;
 
-//	ACineCameraActor* CineCameraActor;
+	ACineCameraActor* CineCameraActor;
 
 	UPROPERTY()
 		ULevelSequencePlayer* SequncePlayer;

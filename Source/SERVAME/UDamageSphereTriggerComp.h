@@ -6,6 +6,7 @@
 #include ".\Manager\JesusGameInstance.h"
 #include ".\Boss_1\JesusBoss.h"
 #include ".\Player\PlayerCharacter.h"
+#include "Engine/DamageEvents.h"
 #include "Components/SphereComponent.h"
 #include "UDamageSphereTriggerComp.generated.h"
 
@@ -37,7 +38,7 @@ public:
 	AJesusBoss* Boss;
 	APlayerCharacter* Character;
 
-//	FDamageEvent DamageEvent;
+	FDamageEvent DamageEvent;
 	FTimerHandle Timer;
 
 	virtual void BeginPlay();

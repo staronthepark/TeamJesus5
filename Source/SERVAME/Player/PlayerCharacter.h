@@ -12,8 +12,6 @@
 #include "..\UI\PlayerHUD.h"
 #include "..\UI\UserSettingUI.h"
 #include "..\JesusSaveGame.h"
-//#include "Components/ActorSequenceComponent.h"
-//#include "Components/ActorSequencePlayer.h"
 #include "PlayerCharacter.generated.h"
 
 UENUM(BlueprintType)
@@ -162,21 +160,6 @@ public:
 
 	UPROPERTY()
 		TSubclassOf<UPlayerHUD> PlayerUIClass;
-
-	//UPROPERTY()
-	//	UActorSequenceComponent* BossExecutionSequence;
-	//
-	//UPROPERTY()
-	//	UActorSequenceComponent* GameStartSequence;
-	//
-	//UPROPERTY()
-	//	UActorSequencePlayer* BossExecutionSequncePlayer;
-	//
-	//UPROPERTY()
-	//	UActorSequencePlayer* GameStartSequncePlayer;
-	//
-	//UPROPERTY()
-	//	UActorSequencePlayer* BossParryingSequncePlayer;
 
 	UPROPERTY()
 		UPlayerHUD* PlayerHUD;
@@ -407,7 +390,7 @@ public:
 
 	void PlayerDead(bool IsFly);
 
-	//virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)override;
 
 	virtual void ActivateRightWeapon() override;
 	virtual void DeactivateRightWeapon() override;

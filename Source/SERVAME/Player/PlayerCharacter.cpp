@@ -1312,15 +1312,15 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEventFuncMap[AnimationType::EXECUTIONBOSS].Add(true, [](APlayerCharacter* character)
 		{
 			character->ComboAttackEnd();
-			//character->ExecutionCharacter->TakeDamage(character->PlayerDataStruct.PlayerExecutionFirstDamage, character->//CharacterDamageEvent, nullptr, character);
-			//character->VibrateGamePad(0.4f, 0.4f);
+			character->ExecutionCharacter->TakeDamage(character->PlayerDataStruct.PlayerExecutionFirstDamage, character->CharacterDamageEvent, nullptr, character);
+			character->VibrateGamePad(0.4f, 0.4f);
 			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, character->ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 		});
 	PlayerEventFuncMap[AnimationType::EXECUTIONBOSS].Add(false, [](APlayerCharacter* character)
 		{
 			UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(character->ExecutionCharacter);
-			//character->ExecutionCharacter->TakeDamage(character->PlayerDataStruct.PlayerExecutionSecondDamage, character->//CharacterDamageEvent, nullptr, character);
-			//character->VibrateGamePad(0.4f, 0.4f);
+			character->ExecutionCharacter->TakeDamage(character->PlayerDataStruct.PlayerExecutionSecondDamage, character->CharacterDamageEvent, nullptr, character);
+			character->VibrateGamePad(0.4f, 0.4f);
 			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, character->ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 		});}
 
@@ -1983,8 +1983,8 @@ void APlayerCharacter::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedCompo
 
 	if (PlayerDataStruct.DamageList.Contains(AnimInstance->PlayerAnimationType))
 	{
-		//OtherActor->TakeDamage(PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].Damage, //CharacterDamageEvent, nullptr, this);
-		//VibrateGamePad(PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].VibrateIntensity, PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].VibrateDuration);
+		OtherActor->TakeDamage(PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].Damage, CharacterDamageEvent, nullptr, this);
+		VibrateGamePad(PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].VibrateIntensity, PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].VibrateDuration);
 	}	
 	UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(Cast<ABaseCharacter>(OtherActor));
 
@@ -2191,95 +2191,6 @@ void APlayerCharacter::PlayStartAnimation()
 	LocketSKMesh->GetAnimInstance()->Montage_Play(MontageMap[AnimationType::NONE]);
 }
 
-//float APlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
-//{
-//	if (Imotal || DebugMode)
-//	{
-//		return 0;
-//	}
-//
-//	Imotal = false;
-//	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-//
-//
-//	PlayerDataStruct.CharacterHp -= DamageAmount;
-//	PlayerHUD->DecreaseHPGradual(this, PlayerDataStruct.CharacterHp / PlayerDataStruct.CharacterMaxHp);
-//	GameInstance->DebugLogWidget->T_PlayerHP->SetText(FText::AsNumber(PlayerDataStruct.CharacterHp));
-//	VibrateGamePad(0.2f, 0.2f);
-//	CameraShake(PlayerCameraShake);
-//	AnimInstance->BodyBlendAlpha = 1.0f;
-//
-//	FVector HitDir = DamageCauser->GetActorLocation() - GetActorLocation();
-//	if (DamageAmount > 50)
-//	{
-//		YawRotation = HitDir.Rotation();
-//		ChangeMontageAnimation(AnimationType::SUPERHIT);
-//		Imotal = true;
-//		DeactivateRightWeapon();
-//		DeactivateSMOverlap();
-//		ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-//		ComboAttackEnd();
-//		//SwordTrailComp->Deactivate();
-//		if(PlayerDataStruct.CharacterHp <= 0)
-//			ASoundManager::GetInstance().PlaySoundWithCymbalSound(3);
-//
-//		return DamageAmount;
-//	}
-//
-//	if (DamageAmount > 10)
-//	{		
-//		UCombatManager::GetInstance().ActivateCollider();
-//
-//		AnimInstance->StopMontage(MontageMap[AnimInstance->PlayerAnimationType]);
-//		if (MontageEndEventMap.Contains(AnimInstance->PlayerAnimationType))
-//			MontageEndEventMap[AnimInstance->PlayerAnimationType](this);
-//
-//		DeactivateRightWeapon();
-//		DeactivateSMOverlap();
-//		ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-//		ComboAttackEnd();
-//		//SwordTrailComp->Deactivate();		
-//
-//		ChangeActionType(ActionType::HIT);
-//		float DotProduct = FVector::DotProduct(GetActorRotation().Vector(), HitDir);
-//		FVector CrossProduct = FVector::CrossProduct(GetActorRotation().Vector(), HitDir);
-//
-//		float AngleInRadians = FMath::Acos(DotProduct / (GetActorRotation().Vector().Size() * HitDir.Size()));
-//		float AngleInDegrees = FMath::RadiansToDegrees(AngleInRadians);
-//
-//		if (CrossProduct.Z > 0.0f)
-//		{
-//			if (AngleInDegrees >= 90)
-//			{
-//				ChangeMontageAnimation(AnimationType::HITBACKRIGHT);
-//			}
-//			else
-//			{
-//				ChangeMontageAnimation(AnimationType::HITFRONTRIGHT);
-//			}
-//		}
-//		else if (CrossProduct.Z < 0.0f)
-//		{
-//			if (AngleInDegrees >= 90)
-//			{
-//				ChangeMontageAnimation(AnimationType::HITBACKLEFT);
-//			}
-//			else
-//			{
-//				ChangeMontageAnimation(AnimationType::HITFRONTLEFT);
-//			}
-//		}
-//	}	
-//
-//	if (PlayerDataStruct.CharacterHp <= 0)
-//	{
-//		ASoundManager::GetInstance().PlaySoundWithCymbalSound(3);
-//		PlayerDead(false);
-//	}
-//	return DamageAmount;
-//}
-//
-
 void APlayerCharacter::PlayerDead(bool IsFly)
 {
 	if (IsLockOn)
@@ -2296,4 +2207,92 @@ void APlayerCharacter::PlayerDead(bool IsFly)
 	ChangeActionType(ActionType::DEAD);
 	MontageBlendInTime = 0.0f;
 	IsFly ? ChangeMontageAnimation(AnimationType::DEADLOOP2) : ChangeMontageAnimation(AnimationType::DEAD);
+}
+
+float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	if (Imotal || DebugMode)
+	{
+		return 0;
+	}
+
+	Imotal = false;
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+
+	PlayerDataStruct.CharacterHp -= DamageAmount;
+	PlayerHUD->DecreaseHPGradual(this, PlayerDataStruct.CharacterHp / PlayerDataStruct.CharacterMaxHp);
+	GameInstance->DebugLogWidget->T_PlayerHP->SetText(FText::AsNumber(PlayerDataStruct.CharacterHp));
+	VibrateGamePad(0.2f, 0.2f);
+	CameraShake(PlayerCameraShake);
+	AnimInstance->BodyBlendAlpha = 1.0f;
+
+	FVector HitDir = DamageCauser->GetActorLocation() - GetActorLocation();
+	if (DamageAmount > 50)
+	{
+		YawRotation = HitDir.Rotation();
+		ChangeMontageAnimation(AnimationType::SUPERHIT);
+		Imotal = true;
+		DeactivateRightWeapon();
+		DeactivateSMOverlap();
+		ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		ComboAttackEnd();
+		//SwordTrailComp->Deactivate();
+		if (PlayerDataStruct.CharacterHp <= 0)
+			ASoundManager::GetInstance().PlaySoundWithCymbalSound(3);
+
+		return DamageAmount;
+	}
+
+	if (DamageAmount > 10)
+	{
+		UCombatManager::GetInstance().ActivateCollider();
+
+		AnimInstance->StopMontage(MontageMap[AnimInstance->PlayerAnimationType]);
+		if (MontageEndEventMap.Contains(AnimInstance->PlayerAnimationType))
+			MontageEndEventMap[AnimInstance->PlayerAnimationType](this);
+
+		DeactivateRightWeapon();
+		DeactivateSMOverlap();
+		ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		ComboAttackEnd();
+		//SwordTrailComp->Deactivate();		
+
+		ChangeActionType(ActionType::HIT);
+		float DotProduct = FVector::DotProduct(GetActorRotation().Vector(), HitDir);
+		FVector CrossProduct = FVector::CrossProduct(GetActorRotation().Vector(), HitDir);
+
+		float AngleInRadians = FMath::Acos(DotProduct / (GetActorRotation().Vector().Size() * HitDir.Size()));
+		float AngleInDegrees = FMath::RadiansToDegrees(AngleInRadians);
+
+		if (CrossProduct.Z > 0.0f)
+		{
+			if (AngleInDegrees >= 90)
+			{
+				ChangeMontageAnimation(AnimationType::HITBACKRIGHT);
+			}
+			else
+			{
+				ChangeMontageAnimation(AnimationType::HITFRONTRIGHT);
+			}
+		}
+		else if (CrossProduct.Z < 0.0f)
+		{
+			if (AngleInDegrees >= 90)
+			{
+				ChangeMontageAnimation(AnimationType::HITBACKLEFT);
+			}
+			else
+			{
+				ChangeMontageAnimation(AnimationType::HITFRONTLEFT);
+			}
+		}
+	}
+
+	if (PlayerDataStruct.CharacterHp <= 0)
+	{
+		ASoundManager::GetInstance().PlaySoundWithCymbalSound(3);
+		PlayerDead(false);
+	}
+	return DamageAmount;
 }

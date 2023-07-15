@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "BaseObjectInPool.h"
 #include "Components/BoxComponent.h"
+#include "Engine/DamageEvents.h"
 #include "..\BaseCharacter.h"
 #include "ProjectileObjectInPool.generated.h"
 /**
@@ -33,8 +34,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* Collision1;
 
-	//UPROPERTY()
-//	FDamageEvent DamageEvent;
+	UPROPERTY()
+	FDamageEvent DamageEvent;
 
 	UPROPERTY()
 	UJesusGameInstance* GameInstance;

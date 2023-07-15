@@ -46,7 +46,7 @@ void AProjectileObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* Overl
 
 	FVector HitDir = OtherActor->GetActorLocation() - GetActorLocation();
 	FRotator Rotation = HitDir.Rotation();
-	//if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
+	if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
 	{		
 		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[20].ObjClass, OtherActor->GetActorLocation(), Rotation);
 		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[21].ObjClass, OtherActor->GetActorLocation(), Rotation);

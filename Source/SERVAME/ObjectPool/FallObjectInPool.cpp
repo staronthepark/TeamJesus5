@@ -61,7 +61,7 @@ void AFallObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* OverlappedC
 {
 	ABaseCharacter* character = Cast<ABaseCharacter>(OtherActor);
 
-//	if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
+	if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
 	{
 		HitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}

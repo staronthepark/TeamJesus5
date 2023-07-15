@@ -21,10 +21,10 @@ void APlaySequenceTriggerActor::BeginPlay()
 	SequncePlayer->OnFinished.AddDynamic(this, &APlaySequenceTriggerActor::EndSequence);
 	Character = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 
-	//TArray<AActor*>asdarray;
-	//UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ACineCameraActor::StaticClass(), FName("OpenDoor"), asdarray);
-	//if (asdarray.Num() > 0)
-	//	CineCameraActor = Cast<ACineCameraActor>(asdarray[0]);
+	TArray<AActor*>asdarray;
+	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ACineCameraActor::StaticClass(), FName("OpenDoor"), asdarray);
+	if (asdarray.Num() > 0)
+		CineCameraActor = Cast<ACineCameraActor>(asdarray[0]);
 }
 
 void APlaySequenceTriggerActor::BeginTriggerEvent()

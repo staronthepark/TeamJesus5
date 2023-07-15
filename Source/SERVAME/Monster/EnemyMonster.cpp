@@ -497,7 +497,7 @@ void AEnemyMonster::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedComponen
 {
 	ParryingCollision1->Deactivate();
 	DeactivateRightWeapon();
-	//if (OtherActor->TakeDamage(SkillInfoMap[AttackAnimationType].Damage, //CharacterDamageEvent, nullptr, this))
+	if (OtherActor->TakeDamage(SkillInfoMap[AttackAnimationType].Damage, CharacterDamageEvent, nullptr, this))
 	{
 		HitStop();
 		CameraShake(PlayerCameraShake);
@@ -580,64 +580,64 @@ void AEnemyMonster::Rotate()
 	SetActorRotation(FMath::Lerp(GetActorRotation(), YawRotation, MonsterDataStruct.RotateSpeed * fDeltaTime));
 }
 
-//float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-//{
-//
-//	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-//	if (Imotal)return 0;
-//
-//	
-//	//MonsterHpWidget->Hp->SetVisibility(ESlateVisibility::Visible);
-//	//MonsterHpWidget->HpBG->SetVisibility(ESlateVisibility::Visible);
-//	GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
-//
-//	DeactivateHitCollision();
-//
-//	MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
-//	MonsterDataStruct.CharacterHp -= DamageAmount;
-//	MonsterHPWidget->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
-//
-//
-//	if (MonsterDataStruct.CharacterHp <= 0)
-//	{
-//		Imotal = true;
-//		MonsterController->StopMovement();
-//		DeactivateSMOverlap();
-//		ParryingCollision1->Deactivate();
-//		DeactivateRightWeapon();
-//		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
-//		PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
-//		ChangeMontageAnimation(MonsterAnimationType::DEAD);
-//		return DamageAmount;
-//	}
-//
-//	if (ArmorType == EArmorType::HIGH)
-//	{
-//		return DamageAmount;
-//	}
-//
-//	if (DamageAmount >= 30)
-//	{
-//		MonsterController->StopMovement();
-//		AnimInstance->StopMontage(MontageMap[AnimationType]);
-//		if (MontageEndEventMap.Contains(AnimationType))
-//			MontageEndEventMap[AnimationType](this);
-//
-//		ChangeActionType(MonsterActionType::NONE);
-//		ChangeMontageAnimation(MonsterAnimationType::HIT);
-//	}
-//	else if(ArmorType == EArmorType::LOW)
-//	{
-//		MonsterController->StopMovement();
-//		AnimInstance->StopMontage(MontageMap[AnimationType]);
-//		if (MontageEndEventMap.Contains(AnimationType))
-//			MontageEndEventMap[AnimationType](this);
-//
-//		ChangeActionType(MonsterActionType::NONE);
-//		ChangeMontageAnimation(MonsterAnimationType::HIT);
-//	}
-//	return DamageAmount;
-//}
+float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	if (Imotal)return 0;
+
+	
+	//MonsterHpWidget->Hp->SetVisibility(ESlateVisibility::Visible);
+	//MonsterHpWidget->HpBG->SetVisibility(ESlateVisibility::Visible);
+	GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
+
+	DeactivateHitCollision();
+
+	MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
+	MonsterDataStruct.CharacterHp -= DamageAmount;
+	MonsterHPWidget->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
+
+
+	if (MonsterDataStruct.CharacterHp <= 0)
+	{
+		Imotal = true;
+		MonsterController->StopMovement();
+		DeactivateSMOverlap();
+		ParryingCollision1->Deactivate();
+		DeactivateRightWeapon();
+		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
+		PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
+		ChangeMontageAnimation(MonsterAnimationType::DEAD);
+		return DamageAmount;
+	}
+
+	if (ArmorType == EArmorType::HIGH)
+	{
+		return DamageAmount;
+	}
+
+	if (DamageAmount >= 30)
+	{
+		MonsterController->StopMovement();
+		AnimInstance->StopMontage(MontageMap[AnimationType]);
+		if (MontageEndEventMap.Contains(AnimationType))
+			MontageEndEventMap[AnimationType](this);
+
+		ChangeActionType(MonsterActionType::NONE);
+		ChangeMontageAnimation(MonsterAnimationType::HIT);
+	}
+	else if(ArmorType == EArmorType::LOW)
+	{
+		MonsterController->StopMovement();
+		AnimInstance->StopMontage(MontageMap[AnimationType]);
+		if (MontageEndEventMap.Contains(AnimationType))
+			MontageEndEventMap[AnimationType](this);
+
+		ChangeActionType(MonsterActionType::NONE);
+		ChangeMontageAnimation(MonsterAnimationType::HIT);
+	}
+	return DamageAmount;
+}
 
 void AEnemyMonster::CheckMontageEndNotify()
 {

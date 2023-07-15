@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include ".\Manager\JesusGameInstance.h"
 #include ".\Player\PlayerCharacter.h"
+#include "Engine/DamageEvents.h"
 #include "BoxTriggerComp.h"
 #include "DamageBoxTriggerComp.generated.h"
 
@@ -41,7 +42,7 @@ public:
 
 	APlayerCharacter* Character;
 
-//	FDamageEvent DamageEvent;
+	FDamageEvent DamageEvent;
 	FTimerHandle Timer;
 
 	UFUNCTION()

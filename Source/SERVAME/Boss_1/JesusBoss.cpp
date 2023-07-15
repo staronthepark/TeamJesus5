@@ -1337,46 +1337,46 @@ void AJesusBoss::RotateToPlayerInterp()
 	SetActorRotation(LookAtRotation);
 }
 
-//float AJesusBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-//{
-//	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-//
-//	AccumulateDamage += DamageAmount;
-//	
-//	BossDataStruct.CharacterHp -= DamageAmount;
-//	
-//	AIController->BossUI->DecreaseHPGradual(this, BossDataStruct.CharacterHp / BossDataStruct.CharacterMaxHp);
-//	AIController->BossUI->SetDamageText(DamageAmount);
-//	DeactivateHitCollision();
-//
-//	bool IsAnimTest = AIController->GetBlackboardComponent()->GetValueAsBool("IsAnimTest");
-//	if (IsAnimTest)
-//		return DamageAmount;
-//
-//	//기존 피격 모션(본 회전시키는 코드)
-//	IsStartBoneRot = true;
-//	GetWorldTimerManager().SetTimer(TimerHandle, this, &AJesusBoss::ReSetBoneRot, Time, false);
-//	
-//	if (BossDataStruct.CharacterHp <= 2000 && IsExecution == false && IsHitStun == false)
-//	{
-//		if (GetTypeFromMetaData(StartMontage) == BossAnimationType::DARKEXPLOSION ||
-//			GetTypeFromMetaData(StartMontage) == BossAnimationType::GROUNDEXPLOSION)
-//			return DamageAmount;
-//
-//		IsStun = true;
-//		IsLockOn = false;
-//		AttackLockOn = false;
-//		IsParriged = true;
-//		IsFirstExecution = true;
-//		IsHitStun = true;
-//		BossDataStruct.CurrentGrrogyGauge = 0;
-//		BossAnimInstance->PlayGroggyMontage(BossAnimationType::STUN);
-//	}
-//	else if (!StartEnd.Get<0>() && CurrentActionTemp.HitCancel)
-//		HitMap[PlayerCharacter->PlayerAttackType]();
-//
-//	return DamageAmount;
-//}
+float AJesusBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	AccumulateDamage += DamageAmount;
+	
+	BossDataStruct.CharacterHp -= DamageAmount;
+	
+	AIController->BossUI->DecreaseHPGradual(this, BossDataStruct.CharacterHp / BossDataStruct.CharacterMaxHp);
+	AIController->BossUI->SetDamageText(DamageAmount);
+	DeactivateHitCollision();
+
+	bool IsAnimTest = AIController->GetBlackboardComponent()->GetValueAsBool("IsAnimTest");
+	if (IsAnimTest)
+		return DamageAmount;
+
+	//기존 피격 모션(본 회전시키는 코드)
+	IsStartBoneRot = true;
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AJesusBoss::ReSetBoneRot, Time, false);
+	
+	if (BossDataStruct.CharacterHp <= 2000 && IsExecution == false && IsHitStun == false)
+	{
+		if (GetTypeFromMetaData(StartMontage) == BossAnimationType::DARKEXPLOSION ||
+			GetTypeFromMetaData(StartMontage) == BossAnimationType::GROUNDEXPLOSION)
+			return DamageAmount;
+
+		IsStun = true;
+		IsLockOn = false;
+		AttackLockOn = false;
+		IsParriged = true;
+		IsFirstExecution = true;
+		IsHitStun = true;
+		BossDataStruct.CurrentGrrogyGauge = 0;
+		BossAnimInstance->PlayGroggyMontage(BossAnimationType::STUN);
+	}
+	else if (!StartEnd.Get<0>() && CurrentActionTemp.HitCancel)
+		HitMap[PlayerCharacter->PlayerAttackType]();
+
+	return DamageAmount;
+}
 
 void AJesusBoss::StartBoneRot()
 {
@@ -1511,14 +1511,14 @@ void AJesusBoss::GroundExplosionCheck()
 	CameraShake(PlayerCameraShake);
 	VibrateGamePad(1.0f, 0.5f);
 
-	//if (bResult && HitResult.Actor.IsValid())
-	//{
-	//	//UE_LOG(LogTemp, Log, TEXT("Hit Actor : %s"), *HitResult.Actor->GetName());
-	//	FDamageEvent DamageEvent;
-	//	auto Player = Cast<APlayerCharacter>(HitResult.Actor);
-	//
-	//	Player->TakeDamage(BossDataStruct.DamageList[BossAnimationType::DOWNATTACK], DamageEvent, GetController(), this);
-	//}
+	if (bResult && HitResult.GetActor())
+	{
+		//UE_LOG(LogTemp, Log, TEXT("Hit Actor : %s"), *HitResult.Actor->GetName());
+		FDamageEvent DamageEvent;
+		auto Player = Cast<APlayerCharacter>(HitResult.GetActor());
+	
+		Player->TakeDamage(BossDataStruct.DamageList[BossAnimationType::DOWNATTACK], DamageEvent, GetController(), this);
+	}
 }
 
 void AJesusBoss::DoAttack(float MinRange, float MaxRange, float Dist, bool LockOn, BossAnimationType Type, AJesusBoss* Boss)
@@ -1706,47 +1706,47 @@ void AJesusBoss::GetEndedMontage(UAnimMontage* Montage, bool bInterrupted)
 
 void AJesusBoss::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//FDamageEvent DamageEvent;
-	//
-	//auto Player = Cast<APlayerCharacter>(OtherActor);
-	//if (Player == nullptr)
-	//	return;
-	//
-	////UE_LOG(LogTemp, Warning, TEXT("PlayerTakeDamage"));
-	//WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	//
-	//auto Type = GetTypeFromMetaData(StartMontage);
-	//
-	//if (!Player->Imotal)
-	//{
-	//	if (BossDataStruct.DamageList.Contains(Type))
-	//		Damage += BossDataStruct.DamageList[Type];
-	//	else
-	//		return;
-	//
-	//	//UE_LOG(LogTemp, Warning, TEXT("DAMAGE : %d"), Damage);
-	//	OtherActor->TakeDamage(Damage, DamageEvent, GetController(), this);
-	//	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-	//	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-	//	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
-	//
-	//	if (HitEffectRotatorList.Contains(Type))
-	//	{		
-	//		if (Type == BossAnimationType::ATTACK && !CheckAttack2.Exchange(true))
-	//		{
-	//			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[5].ObjClass,
-	//				OtherComp->GetComponentLocation(), HitEffectRotatorList[GetTypeFromMetaData(StartMontage)]);
-	//		}
-	//		else if(Type == BossAnimationType::ATTACK && CheckAttack2.Exchange(false))
-	//		{
-	//			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[5].ObjClass,
-	//				OtherComp->GetComponentLocation(), FRotator(-180, 90.0f, 0));
-	//		}
-	//		else
-	//			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[5].ObjClass,
-	//				OtherComp->GetComponentLocation(), HitEffectRotatorList[GetTypeFromMetaData(StartMontage)]);
-	//	}
-	//}
+	FDamageEvent DamageEvent;
+	
+	auto Player = Cast<APlayerCharacter>(OtherActor);
+	if (Player == nullptr)
+		return;
+	
+	//UE_LOG(LogTemp, Warning, TEXT("PlayerTakeDamage"));
+	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
+	auto Type = GetTypeFromMetaData(StartMontage);
+	
+	if (!Player->Imotal)
+	{
+		if (BossDataStruct.DamageList.Contains(Type))
+			Damage += BossDataStruct.DamageList[Type];
+		else
+			return;
+	
+		//UE_LOG(LogTemp, Warning, TEXT("DAMAGE : %d"), Damage);
+		OtherActor->TakeDamage(Damage, DamageEvent, GetController(), this);
+		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
+	
+		if (HitEffectRotatorList.Contains(Type))
+		{		
+			if (Type == BossAnimationType::ATTACK && !CheckAttack2.Exchange(true))
+			{
+				AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[5].ObjClass,
+					OtherComp->GetComponentLocation(), HitEffectRotatorList[GetTypeFromMetaData(StartMontage)]);
+			}
+			else if(Type == BossAnimationType::ATTACK && CheckAttack2.Exchange(false))
+			{
+				AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[5].ObjClass,
+					OtherComp->GetComponentLocation(), FRotator(-180, 90.0f, 0));
+			}
+			else
+				AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[5].ObjClass,
+					OtherComp->GetComponentLocation(), HitEffectRotatorList[GetTypeFromMetaData(StartMontage)]);
+		}
+	}
 }
 
 void AJesusBoss::OnSMOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -1780,28 +1780,28 @@ void AJesusBoss::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 void AJesusBoss::DarkExplosionHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//FDamageEvent DamageEvent;
-	////auto ExplosionDamage = BossDataStruct.DamageList[GetTypeFromMetaData(GetCurrentMontage())];
-	//auto ExplosionDamage = BossDataStruct.DamageList[BossAnimationType::DARKEXPLOSION];
-	//
-	//auto Player = Cast<APlayerCharacter>(OtherActor);
-	//if (Player == nullptr)
-	//	return;
-	//
-	//Player->TakeDamage(ExplosionDamage, DamageEvent, GetController(), this);
+	FDamageEvent DamageEvent;
+	//auto ExplosionDamage = BossDataStruct.DamageList[GetTypeFromMetaData(GetCurrentMontage())];
+	auto ExplosionDamage = BossDataStruct.DamageList[BossAnimationType::DARKEXPLOSION];
+	
+	auto Player = Cast<APlayerCharacter>(OtherActor);
+	if (Player == nullptr)
+		return;
+	
+	Player->TakeDamage(ExplosionDamage, DamageEvent, GetController(), this);
 }
 
 void AJesusBoss::GroundExplosionHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//FDamageEvent DamageEvent;
-	////auto ExplosionDamage = BossDataStruct.DamageList[GetTypeFromMetaData(GetCurrentMontage())];
-	//auto ExplosionDamage = BossDataStruct.DamageList[BossAnimationType::DOWNATTACK];
-	//
-	//auto Player = Cast<APlayerCharacter>(OtherActor);
-	//if (Player == nullptr)
-	//	return;
-	//
-	//Player->TakeDamage(ExplosionDamage, DamageEvent, GetController(), this);
+	FDamageEvent DamageEvent;
+	//auto ExplosionDamage = BossDataStruct.DamageList[GetTypeFromMetaData(GetCurrentMontage())];
+	auto ExplosionDamage = BossDataStruct.DamageList[BossAnimationType::DOWNATTACK];
+	
+	auto Player = Cast<APlayerCharacter>(OtherActor);
+	if (Player == nullptr)
+		return;
+	
+	Player->TakeDamage(ExplosionDamage, DamageEvent, GetController(), this);
 }
 
 /*=====================
@@ -1891,15 +1891,15 @@ void AJesusBoss::AttackCheck()
 
 	CameraShake(PlayerCameraShake);
 	VibrateGamePad(1.0f, 0.5f);
-
-	//if (bResult && HitResult.Actor.IsValid())
-	//{
-	//	//UE_LOG(LogTemp, Log, TEXT("Hit Actor : %s"), *HitResult.Actor->GetName());
-	//	FDamageEvent DamageEvent;
-	//	auto Player = Cast<APlayerCharacter>(HitResult.Actor);
-	//
-	//	Player->TakeDamage(BossDataStruct.DamageList[GetTypeFromMetaData(GetCurrentMontage())], DamageEvent, GetController(), this);
-	//}
+		
+	if (bResult && HitResult.GetActor())
+	{
+		//UE_LOG(LogTemp, Log, TEXT("Hit Actor : %s"), *HitResult.Actor->GetName());
+		FDamageEvent DamageEvent;
+		auto Player = Cast<APlayerCharacter>(HitResult.GetActor());
+	
+		Player->TakeDamage(BossDataStruct.DamageList[GetTypeFromMetaData(GetCurrentMontage())], DamageEvent, GetController(), this);
+	}
 }
 
 void AJesusBoss::CollisionEnableNotify()

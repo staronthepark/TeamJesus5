@@ -2,9 +2,10 @@
 
 
 #include "AttackCheckNotifyState.h"
+#include "Engine/DamageEvents.h"
 #include "DrawDebugHelpers.h"
 
-void UAttackCheckNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
+void UAttackCheckNotifyState::NotifyBegin(USkeletalMeshComponent * MeshComp, UAnimSequenceBase * Animation, float TotalDuration)
 {
 	if (MeshComp && MeshComp->GetOwner())
 	{
@@ -39,16 +40,17 @@ void UAttackCheckNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAni
 			Boss->CameraShake(Boss->PlayerCameraShake);
 			Boss->VibrateGamePad(1.0f, 0.5f);
 
-//			if (bResult && HitResult.Actor.IsValid())
-//			{
-//				UE_LOG(LogTemp, Log, TEXT("Hit Actor : %s"), *HitResult.Actor->GetName());
-//				FDamageEvent DamageEvent;
-//				auto Player = Cast<APlayerCharacter>(HitResult.Actor);
-//
-//				Boss->Damage += Boss->BossDataStruct.DamageList[Type];
-//
-//				Player->TakeDamage(Boss->Damage, DamageEvent, Boss->GetController(), Boss);
-//			}
+			if (bResult && HitResult.GetActor())
+			{
+				UE_LOG(LogTemp, Log, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
+				FDamageEvent DamageEvent;
+				auto Player = Cast<APlayerCharacter>(HitResult.GetActor());
+
+				Boss->Damage += Boss->BossDataStruct.DamageList[Type];
+
+				Player->TakeDamage(Boss->Damage, DamageEvent, Boss->GetController(), Boss);
+				//			}
+			}
 		}
 	}
 }

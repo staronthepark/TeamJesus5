@@ -46,7 +46,7 @@ void UDamageBoxTriggerComp::ActiveHit()
 	{
 		UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(OverlapActorArray[i]);
 		OverlapActorArray[i]->ActivateHitCollision();
-//		OverlapActorArray[i]->TakeDamage(Damage, DamageEvent, nullptr, GetOwner());
+		OverlapActorArray[i]->TakeDamage(Damage, DamageEvent, nullptr, GetOwner());
 
 		
 

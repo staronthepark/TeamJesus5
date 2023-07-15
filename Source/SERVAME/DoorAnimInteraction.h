@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "AnimationInteraction.h"
 #include "DoorAnimInstance.h"
-//#include "CineCameraActor.h"
+#include "CineCameraActor.h"
 #include "DoorAnimInteraction.generated.h"
 
 /**
@@ -31,7 +31,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UBoxComponent* OpenDoorComp;
 
-	//ACineCameraActor* CineCameraActor;
+	ACineCameraActor* CineCameraActor;
 
 	ALevelSequenceActor* LevelSequenceActor;
 	UPROPERTY(EditAnywhere)

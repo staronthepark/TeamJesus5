@@ -8,6 +8,7 @@
 //#include "NiagaraFunctionLibrary.h"
 #include "UObject/Class.h"
 #include "Engine/EngineTypes.h"
+#include "Engine/DamageEvents.h"
 #include ".\ObjectPool\ObjectPool.h"
 #include ".\Manager\JesusGameInstance.h"
 #include "Engine/World.h"
@@ -54,7 +55,7 @@ public:
 
 	FTimerHandle TimerHandler;
 	FTimerHandle SMOverlapTimerHandler;
-//	FDamageEvent //CharacterDamageEvent;
+	FDamageEvent CharacterDamageEvent;
 
 	FVector SpawnLocation;
 	FRotator SpawnRotation;
@@ -139,7 +140,7 @@ public:
 
 	void VibrateGamePad(float Intensity, float time);
 
-	//virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser);
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
 
 	UFUNCTION()
 	void OnDustCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

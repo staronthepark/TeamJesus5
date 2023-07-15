@@ -23,10 +23,10 @@ void ADoorAnimInteraction::BeginPlay()
 	BossRoomDoorOpenSequncePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), BossRoomDoorOpenSequence
 		, PlaybackSettings, LevelSequenceActor);
 
-	//TArray<AActor*>asdarray;
-	//UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ACineCameraActor::StaticClass(), FName("OpenDoor"), asdarray);
-	//if(asdarray.Num() > 0)
-	//CineCameraActor = Cast<ACineCameraActor>(asdarray[0]);
+	TArray<AActor*>asdarray;
+	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ACineCameraActor::StaticClass(), FName("OpenDoor"), asdarray);
+	if(asdarray.Num() > 0)
+	CineCameraActor = Cast<ACineCameraActor>(asdarray[0]);
 
 	BossRoomDoorOpenSequncePlayer->OnFinished.AddDynamic(this, &ADoorAnimInteraction::EndSequence);
 	CloseDoorComp->OnComponentBeginOverlap.AddDynamic(this, &ADoorAnimInteraction::OnCloseDoorOverlapBegin);
@@ -56,7 +56,7 @@ void ADoorAnimInteraction::OnCloseDoorOverlapBegin(UPrimitiveComponent* Overlapp
 
 void ADoorAnimInteraction::EndSequence()
 {
-	//GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(Character, 100.0f);
+	GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(Character, 100.0f);
 }
 
 void ADoorAnimInteraction::OnOpenDoorOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -85,7 +85,7 @@ void ADoorAnimInteraction::EnableEvent()
 	TriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	OpenDoorComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	BossRoomDoorOpenSequncePlayer->Play();
-	//GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(CineCameraActor, 6.0f);
+	GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(CineCameraActor, 6.0f);
 
 	
 	//for (int i = 0; i < ParticleArray.Num(); i++)
