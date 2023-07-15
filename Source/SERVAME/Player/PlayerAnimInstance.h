@@ -43,7 +43,6 @@ enum class AnimationType : uint8
 	RUNPOWERATTACK,
 	ENDOFRUN,
 	ENDOFSPRINT,
-	ENTERTHEFOG,
 	SPRINTTURN,
 	ENDOFHEAL,
 	
@@ -57,13 +56,11 @@ enum class AnimationType : uint8
 
 
 	DOOROPEN,
-	LOOT,
 
 	DEAD,
 	DEADLOOP,
 	DEADLOOP2,
 
-	ZEROTWO,
 	
 	HEAL,
 

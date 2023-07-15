@@ -12,6 +12,8 @@
 #include "..\UI\PlayerHUD.h"
 #include "..\UI\UserSettingUI.h"
 #include "..\JesusSaveGame.h"
+#include "ActorSequenceComponent.h"
+#include "ActorSequencePlayer.h"
 #include "PlayerCharacter.generated.h"
 
 UENUM(BlueprintType)
@@ -40,7 +42,6 @@ enum class ActionType : uint8
 	HEAL,
 	HIT,
 	INTERACTION,
-	IMOTION,
 	DEAD,
 };
 
@@ -163,6 +164,21 @@ public:
 
 	UPROPERTY()
 		UPlayerHUD* PlayerHUD;
+
+	UPROPERTY()
+		UActorSequenceComponent* BossExecutionSequence;
+	
+	UPROPERTY()
+		UActorSequenceComponent* GameStartSequence;
+	
+	UPROPERTY()
+		UActorSequencePlayer* BossExecutionSequncePlayer;
+	
+	UPROPERTY()
+		UActorSequencePlayer* GameStartSequncePlayer;
+	
+	UPROPERTY()
+		UActorSequencePlayer* BossParryingSequncePlayer;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UBoxComponent* ExecutionTrigger;
@@ -314,8 +330,6 @@ public:
 	void RestoreStat();
 
 	void LockOn();
-
-	void ZeroTwo();
 
 	void Sprint();
 	void Run();

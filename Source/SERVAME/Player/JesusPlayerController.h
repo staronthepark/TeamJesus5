@@ -81,9 +81,6 @@ public:
 	void PressInteraction();
 	void UnPressInteraction();
 
-	void PressZeroTwo();
-	void UnPressZeroTwo();
-
 	void ViewLog();
 
 	void OpenMenu();

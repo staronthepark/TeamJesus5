@@ -200,16 +200,6 @@ void AJesusPlayerController::UnPressUseItem()
 	character->InputEventMap[character->PlayerCurAction][ActionType::HEAL][false](character);
 }
 
-void AJesusPlayerController::PressZeroTwo()
-{
-	character->InputEventMap[character->PlayerCurAction][ActionType::IMOTION][true](character);
-}
-
-void AJesusPlayerController::UnPressZeroTwo()
-{
-	character->InputEventMap[character->PlayerCurAction][ActionType::IMOTION][false](character);
-}
-
 void AJesusPlayerController::ViewLog()
 {
 	if (GameInstance->DebugLogWidget->IsInViewport())
@@ -452,9 +442,6 @@ void AJesusPlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("Interaction", IE_Pressed, this, &AJesusPlayerController::PressInteraction);
 	InputComponent->BindAction("Interaction", IE_Released, this, &AJesusPlayerController::UnPressInteraction);
-
-	InputComponent->BindAction("ZeroTwo", IE_Pressed, this, &AJesusPlayerController::PressZeroTwo);
-	InputComponent->BindAction("ZeroTwo", IE_Released, this, &AJesusPlayerController::UnPressZeroTwo);
 
 	InputComponent->BindAction("OpenMenu", IE_Pressed, this, &AJesusPlayerController::OpenMenu).bExecuteWhenPaused = true;
 	InputComponent->BindAction("CloseMenu", IE_Pressed, this, &AJesusPlayerController::CloseMenu).bExecuteWhenPaused = true;

@@ -181,11 +181,9 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEnumToAnimTypeMap.Add(AnimationType::DEADLOOP, PlayerAction::CANTACT);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::HEAL, PlayerAction::CANWALK);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::DOOROPEN, PlayerAction::CANTACT);
-	PlayerEnumToAnimTypeMap.Add(AnimationType::ZEROTWO, PlayerAction::CANTACT);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::ENDOFSPRINT, PlayerAction::CANTACT);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SPRINTTURN, PlayerAction::CANTACT);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::EXECUTIONBOSS, PlayerAction::CANTACT);
-	PlayerEnumToAnimTypeMap.Add(AnimationType::ENTERTHEFOG, PlayerAction::CANTACT);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::GAMESTARTLOOP, PlayerAction::CANTACT);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::GAMESTART, PlayerAction::CANTACT);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::DEADLOOP2, PlayerAction::CANTACT);
@@ -733,12 +731,6 @@ APlayerCharacter::APlayerCharacter()
 			character->MontageEndEventMap[AnimationType::ATTACK1](character);
 		});
 
-	MontageEndEventMap.Add(AnimationType::ZEROTWO, [](APlayerCharacter* character)
-		{
-			character->ComboAttackEnd();
-			character->CheckInputKey();
-			character->WeaponMesh->SetVisibility(true);
-		});
 
 	MontageEndEventMap.Add(AnimationType::DOOROPEN, [](APlayerCharacter* character)
 		{
@@ -750,12 +742,6 @@ APlayerCharacter::APlayerCharacter()
 			character->GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(character, 1.0f);
 			character->WeaponMesh->SetVisibility(true);
 			character->Imotal = false;
-		});
-
-	MontageEndEventMap.Add(AnimationType::ENTERTHEFOG, [](APlayerCharacter* character)
-		{
-			character->ComboAttackEnd();
-			character->CheckInputKey();
 		});
 
 
@@ -921,7 +907,6 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::NONE].Add(ActionType::ROTATE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 	InputEventMap[PlayerAction::NONE].Add(ActionType::HEAL, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 	InputEventMap[PlayerAction::NONE].Add(ActionType::INTERACTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::NONE].Add(ActionType::IMOTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 
 	InputEventMap[PlayerAction::NONE][ActionType::DODGE].Add(true, [](APlayerCharacter* character)
 		{
@@ -1000,16 +985,6 @@ APlayerCharacter::APlayerCharacter()
 
 		});
 
-	InputEventMap[PlayerAction::NONE][ActionType::IMOTION].Add(true, [](APlayerCharacter* character)
-		{
-			character->ZeroTwo();
-		});
-	InputEventMap[PlayerAction::NONE][ActionType::IMOTION].Add(false, [](APlayerCharacter* character)
-		{
-
-		});
-
-
 	InputEventMap.Add(PlayerAction::BEFOREATTACK, TMap<ActionType, TMap<bool, TFunction<void(APlayerCharacter* character)>>>());
 	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::DODGE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::ATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
@@ -1019,7 +994,6 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::ROTATE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::HEAL, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::IMOTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 
 	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::DODGE].Add(true,   [](APlayerCharacter* character) {});
 	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::DODGE].Add(false,  [](APlayerCharacter* character) {});
@@ -1037,8 +1011,6 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::HEAL].Add(false, [](APlayerCharacter* character) {});
 	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::INTERACTION].Add(true, [](APlayerCharacter* character) {});
 	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::INTERACTION].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::IMOTION].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::IMOTION].Add(false, [](APlayerCharacter* character) {});
 
 	InputEventMap.Add(PlayerAction::RUN, TMap<ActionType, TMap<bool, TFunction<void(APlayerCharacter* character)>>>());
 	InputEventMap[PlayerAction::RUN].Add(ActionType::DODGE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
@@ -1049,7 +1021,6 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::RUN].Add(ActionType::ROTATE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 	InputEventMap[PlayerAction::RUN].Add(ActionType::HEAL, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 	InputEventMap[PlayerAction::RUN].Add(ActionType::INTERACTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::RUN].Add(ActionType::IMOTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 
 	InputEventMap[PlayerAction::RUN][ActionType::DODGE].Add(true, [](APlayerCharacter* character)
 		{
@@ -1087,8 +1058,6 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::RUN][ActionType::HEAL].Add(false, InputEventMap[PlayerAction::NONE][ActionType::HEAL][false]);
 	InputEventMap[PlayerAction::RUN][ActionType::INTERACTION].Add(true, InputEventMap[PlayerAction::NONE][ActionType::INTERACTION][true]);
 	InputEventMap[PlayerAction::RUN][ActionType::INTERACTION].Add(false, InputEventMap[PlayerAction::NONE][ActionType::INTERACTION][false]);
-	InputEventMap[PlayerAction::RUN][ActionType::IMOTION].Add(true, InputEventMap[PlayerAction::NONE][ActionType::IMOTION][true]);
-	InputEventMap[PlayerAction::RUN][ActionType::IMOTION].Add(false, InputEventMap[PlayerAction::NONE][ActionType::IMOTION][false]);
 
 	InputEventMap.Add(PlayerAction::AFTERATTACK, TMap<ActionType, TMap<bool, TFunction<void(APlayerCharacter* character)>>>());
 	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::DODGE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
@@ -1099,7 +1068,6 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::ROTATE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::HEAL, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::IMOTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::DODGE].Add(true, [](APlayerCharacter* character) {});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::DODGE].Add(false, InputEventMap[PlayerAction::RUN][ActionType::DODGE][false]);
@@ -1117,8 +1085,6 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::HEAL].Add(false, [](APlayerCharacter* character) {});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::INTERACTION].Add(true, [](APlayerCharacter* character) {});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::INTERACTION].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::AFTERATTACK][ActionType::IMOTION].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::AFTERATTACK][ActionType::IMOTION].Add(false, [](APlayerCharacter* character) {});
 
 	InputEventMap.Add(PlayerAction::CANWALK, TMap<ActionType, TMap<bool, TFunction<void(APlayerCharacter* character)>>>());
 	InputEventMap[PlayerAction::CANWALK].Add(ActionType::DODGE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
@@ -1129,7 +1095,6 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANWALK].Add(ActionType::ROTATE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 	InputEventMap[PlayerAction::CANWALK].Add(ActionType::HEAL, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 	InputEventMap[PlayerAction::CANWALK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANWALK].Add(ActionType::IMOTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 
 	InputEventMap[PlayerAction::CANWALK][ActionType::DODGE].Add(true, [](APlayerCharacter* character) {});
 	InputEventMap[PlayerAction::CANWALK][ActionType::DODGE].Add(false, [](APlayerCharacter* character) {});
@@ -1156,8 +1121,6 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANWALK][ActionType::HEAL].Add(false, [](APlayerCharacter* character) {});
 	InputEventMap[PlayerAction::CANWALK][ActionType::INTERACTION].Add(true, [](APlayerCharacter* character) {});
 	InputEventMap[PlayerAction::CANWALK][ActionType::INTERACTION].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANWALK][ActionType::IMOTION].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANWALK][ActionType::IMOTION].Add(false, [](APlayerCharacter* character) {});
 
 	InputEventMap.Add(PlayerAction::CANTACT, TMap<ActionType, TMap<bool, TFunction<void(APlayerCharacter* character)>>>());
 	InputEventMap[PlayerAction::CANTACT].Add(ActionType::DODGE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
@@ -1168,7 +1131,6 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANTACT].Add(ActionType::ROTATE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 	InputEventMap[PlayerAction::CANTACT].Add(ActionType::HEAL, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 	InputEventMap[PlayerAction::CANTACT].Add(ActionType::INTERACTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANTACT].Add(ActionType::IMOTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 
 	InputEventMap[PlayerAction::CANTACT][ActionType::DODGE].Add(true, [](APlayerCharacter* character) {});
 	InputEventMap[PlayerAction::CANTACT][ActionType::DODGE].Add(false, [](APlayerCharacter* character) {});
@@ -1186,8 +1148,6 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANTACT][ActionType::HEAL].Add(false, [](APlayerCharacter* character) {});
 	InputEventMap[PlayerAction::CANTACT][ActionType::INTERACTION].Add(true, [](APlayerCharacter* character) {});
 	InputEventMap[PlayerAction::CANTACT][ActionType::INTERACTION].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::IMOTION].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::IMOTION].Add(false, [](APlayerCharacter* character) {});
 
 	InputEventMap.Add(PlayerAction::CANATTACK, TMap<ActionType, TMap<bool, TFunction<void(APlayerCharacter* character)>>>());
 	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::DODGE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
@@ -1198,7 +1158,6 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::ROTATE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::HEAL, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::IMOTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 
 	InputEventMap[PlayerAction::CANATTACK][ActionType::DODGE].Add(true, [](APlayerCharacter* character) {});
 	InputEventMap[PlayerAction::CANATTACK][ActionType::DODGE].Add(false, [](APlayerCharacter* character) {});
@@ -1226,8 +1185,6 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANATTACK][ActionType::HEAL].Add(false, [](APlayerCharacter* character) {});
 	InputEventMap[PlayerAction::CANATTACK][ActionType::INTERACTION].Add(true, [](APlayerCharacter* character) {});
 	InputEventMap[PlayerAction::CANATTACK][ActionType::INTERACTION].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANATTACK][ActionType::IMOTION].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANATTACK][ActionType::IMOTION].Add(false, [](APlayerCharacter* character) {});
 
 	InputEventMap.Add(PlayerAction::SPRINT, TMap<ActionType, TMap<bool, TFunction<void(APlayerCharacter* character)>>>());
 	InputEventMap[PlayerAction::SPRINT].Add(ActionType::DODGE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
@@ -1238,7 +1195,6 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::SPRINT].Add(ActionType::ROTATE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 	InputEventMap[PlayerAction::SPRINT].Add(ActionType::HEAL, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 	InputEventMap[PlayerAction::SPRINT].Add(ActionType::INTERACTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::SPRINT].Add(ActionType::IMOTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 
 	InputEventMap[PlayerAction::SPRINT][ActionType::DODGE].Add(true, [](APlayerCharacter* character) {});
 	InputEventMap[PlayerAction::SPRINT][ActionType::DODGE].Add(false, [](APlayerCharacter* character)
@@ -1292,8 +1248,6 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::SPRINT][ActionType::HEAL].Add(false,InputEventMap[PlayerAction::NONE][ActionType::HEAL][false]);
 	InputEventMap[PlayerAction::SPRINT][ActionType::INTERACTION].Add(true,  InputEventMap[PlayerAction::NONE][ActionType::INTERACTION][true]);
 	InputEventMap[PlayerAction::SPRINT][ActionType::INTERACTION].Add(false, InputEventMap[PlayerAction::NONE][ActionType::INTERACTION][false]);
-	InputEventMap[PlayerAction::SPRINT][ActionType::IMOTION].Add(true,  InputEventMap[PlayerAction::NONE][ActionType::IMOTION][true]);
-	InputEventMap[PlayerAction::SPRINT][ActionType::IMOTION].Add(false, InputEventMap[PlayerAction::NONE][ActionType::IMOTION][false]);
 
 	PlayerEventFuncMap.Add(AnimationType::SUPERHIT, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
 	PlayerEventFuncMap[AnimationType::SUPERHIT].Add(true, [](APlayerCharacter* character)
@@ -1336,17 +1290,17 @@ void APlayerCharacter::BeginPlay()
 	DebugMode = false;
 	LocketSKMesh->SetVisibility(true);
 
-	//TArray<UActorComponent*> asd = GetComponentsByTag(UActorSequenceComponent::StaticClass(), FName("BossExecution"));
-	//
-	//BossExecutionSequence = Cast<UActorSequenceComponent>(asd[0]);
-	//BossExecutionSequncePlayer = BossExecutionSequence->GetSequencePlayer();
-	//
-	//asd = GetComponentsByTag(UActorSequenceComponent::StaticClass(), FName("Start"));
-	//GameStartSequence = Cast<UActorSequenceComponent>(asd[0]);
-	//GameStartSequncePlayer = GameStartSequence->GetSequencePlayer();
-	//
-	//asd = GetComponentsByTag(UActorSequenceComponent::StaticClass(), FName("BossParrying"));
-	//BossParryingSequncePlayer = Cast<UActorSequenceComponent>(asd[0])->GetSequencePlayer();
+	TArray<UActorComponent*> asd = GetComponentsByTag(UActorSequenceComponent::StaticClass(), FName("BossExecution"));
+	
+	BossExecutionSequence = Cast<UActorSequenceComponent>(asd[0]);
+	BossExecutionSequncePlayer = BossExecutionSequence->GetSequencePlayer();
+	
+	asd = GetComponentsByTag(UActorSequenceComponent::StaticClass(), FName("Start"));
+	GameStartSequence = Cast<UActorSequenceComponent>(asd[0]);
+	GameStartSequncePlayer = GameStartSequence->GetSequencePlayer();
+	
+	asd = GetComponentsByTag(UActorSequenceComponent::StaticClass(), FName("BossParrying"));
+	BossParryingSequncePlayer = Cast<UActorSequenceComponent>(asd[0])->GetSequencePlayer();
 
 	if (IsValid(PlayerUIClass))
 	{
@@ -1408,8 +1362,8 @@ void APlayerCharacter::BeginPlay()
 
 	AnimInstance->BodyBlendAlpha = 1.0f;
 
-//	GameStartSequncePlayer->Play();
-//	GameStartSequncePlayer->Pause();
+	GameStartSequncePlayer->Play();
+	GameStartSequncePlayer->Pause();
 
 	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnWeaponOverlapBegin);
 	ExecutionTrigger->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnExecutionOverlapBegin);
@@ -1701,13 +1655,6 @@ void APlayerCharacter::SetInputType(bool IsPad)
 	PlayerHUD->SetGamepad(IsPad);
 }
 
-void APlayerCharacter::ZeroTwo()
-{
-	ChangeActionType(ActionType::NONE);
-	ChangeMontageAnimation(AnimationType::ZEROTWO);
-	WeaponMesh->SetVisibility(false);
-}
-
 void APlayerCharacter::Sprint()
 {
 	SetSpeed(SpeedMap[IsLockOn][true]);
@@ -1941,7 +1888,7 @@ void APlayerCharacter::PlayExecutionAnimation()
 	ComboAttackEnd();
 	ChangeMontageAnimation(AnimationType::EXECUTIONBOSS);
 	ExecutionCharacter->PlayExecutionAnimation();
-//	BossExecutionSequncePlayer->Play();
+	BossExecutionSequncePlayer->Play();
 
 	Imotal = true;
 }
@@ -2033,7 +1980,7 @@ void APlayerCharacter::OnParryingOverlapBegin(UPrimitiveComponent* OverlappedCom
 
 	UGameplayStatics::SetGlobalTimeDilation(this, .5f);
 	Imotal = true;
-	//BossParryingSequncePlayer->Play();
+	BossParryingSequncePlayer->Play();
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[15].ObjClass, GetActorLocation(), FRotator(90, 180, 0));
 	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
@@ -2183,7 +2130,7 @@ void APlayerCharacter::FadeOut()
 
 void APlayerCharacter::PlayStartAnimation()
 {
-//	GameStartSequncePlayer->Play();
+	GameStartSequncePlayer->Play();
 	MontageBlendInTime = 0.0f;
 	ChangeMontageAnimation(AnimationType::GAMESTART);
 	AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
