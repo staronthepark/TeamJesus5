@@ -1,0 +1,73 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Blueprint/UserWidget.h"
+#include "UserSettingSelectUI.h"
+#include "UserSettingGameUI.h"
+#include "SubUserSettingUI.h"
+#include "UserSettingAudioUI.h"
+#include "GameExitUI.h"
+
+#include "UserSettingUI.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class SERVAME_API UUserSettingUI : public UUserWidget
+{
+	GENERATED_BODY()
+
+	UPROPERTY(meta = (BindWidget))
+		UUserSettingSelectUI* WBP_UserSetting_SelectUI;
+
+	UPROPERTY(meta = (BindWidget))
+		UUserSettingGameUI* WBP_UserSetting_GameUI;
+
+	UPROPERTY(meta = (BindWidget))
+		UUserSettingAudioUI* WBP_UserSetting_AudioUI;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		UWidgetAnimation* OpenAnimation;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		UWidgetAnimation* OpenGameSettingAnimation;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		UWidgetAnimation* OpenAudioSettingAnimation;
+
+	TArray<USelectTextUI*> SelectSettingArray;
+	TArray<USubUserSettingUI*> SubUserSettingArray;
+
+
+	UPROPERTY(meta = (BindWidget))
+		UUserSettingLightUI* WBP_UserSetting_LightUI;
+
+	UPROPERTY(meta = (BindWidget))
+		UGameExitUI* UMG_GameExit;
+	//UPROPERTY(EditAnywhere)
+	//TSubclassOf<UGameExitUI> GameExitUIClass;
+	//UGameExitUI* GameExitUI;
+
+public:
+	virtual void NativeOnInitialized() override;
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
+
+
+	UFUNCTION()
+	void ClickGameSettingButton();
+
+	UFUNCTION()
+	void ClickAudioSettingButton();
+
+	UFUNCTION()
+	void ClickQuitSettingButton();
+
+	UFUNCTION()
+	void ClickLightSettingButton();
+
+	void UnselectAllButton();
+};

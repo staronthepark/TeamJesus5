@@ -1,7 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "SERVAMEGameMode.h"
-#include "SERVAMECharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 ASERVAMEGameMode::ASERVAMEGameMode()
