@@ -1299,7 +1299,7 @@ void APlayerCharacter::BeginPlay()
 	GameStartSequence = Cast<UActorSequenceComponent>(asd[0]);
 	GameStartSequncePlayer = GameStartSequence->GetSequencePlayer();
 	
-	asd = GetComponentsByTag(UActorSequenceComponent::StaticClass(), FName("BossParrying"));
+	asd = GetComponentsByTag(UActorSequenceComponent::StaticClass(), FName("Parrying"));
 	BossParryingSequncePlayer = Cast<UActorSequenceComponent>(asd[0])->GetSequencePlayer();
 
 	if (IsValid(PlayerUIClass))

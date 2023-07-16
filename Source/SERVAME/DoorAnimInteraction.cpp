@@ -23,10 +23,7 @@ void ADoorAnimInteraction::BeginPlay()
 	BossRoomDoorOpenSequncePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), BossRoomDoorOpenSequence
 		, PlaybackSettings, LevelSequenceActor);
 
-	TArray<AActor*>asdarray;
-	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ACineCameraActor::StaticClass(), FName("OpenDoor"), asdarray);
-	if(asdarray.Num() > 0)
-	CineCameraActor = Cast<ACineCameraActor>(asdarray[0]);
+	CineCameraActor = Cast<ACineCameraActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ACineCameraActor::StaticClass()));
 
 	BossRoomDoorOpenSequncePlayer->OnFinished.AddDynamic(this, &ADoorAnimInteraction::EndSequence);
 	CloseDoorComp->OnComponentBeginOverlap.AddDynamic(this, &ADoorAnimInteraction::OnCloseDoorOverlapBegin);
