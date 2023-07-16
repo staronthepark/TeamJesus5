@@ -75,15 +75,17 @@ void ABoss2AIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	//if (UseBlackboard(BlackboardData, Blackboard))
-	//{
-	//	UE_LOG(LogTemp, Log, TEXT("UseBlackboard"));
-	//
-	//	if (RunBehaviorTree(BehaviorTree))
-	//	{
-	//		UE_LOG(LogTemp, Log, TEXT("RunBehaviorTree"));
-	//	}
-	//}
+	UBlackboardComponent* BlackBoardComp = Blackboard.Get();
+
+	if (UseBlackboard(BlackboardData, BlackBoardComp))
+	{
+		UE_LOG(LogTemp, Log, TEXT("UseBlackboard"));
+	
+		if (RunBehaviorTree(BehaviorTree))
+		{
+			UE_LOG(LogTemp, Log, TEXT("RunBehaviorTree"));
+		}
+	}
 
 	AIPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ABoss2AIController::OnPerception);
 }
