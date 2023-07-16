@@ -20,8 +20,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Particle)
 	float LifeTime;
 
-	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Particle)
-	//UParticleSystemComponent* ParticleSystem;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Particle)
+	UParticleSystemComponent* ParticleSystem;
 
 	virtual void SetActive(bool active) override;
 };

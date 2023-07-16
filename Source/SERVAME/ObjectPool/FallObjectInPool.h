@@ -26,8 +26,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Particle)
 	float FallSpeed;
 
-	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Particle)
-	//UParticleSystemComponent* ParticleSystem;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Particle)
+	UParticleSystemComponent* ParticleSystem;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Particle)
 	USceneComponent* RootComp;

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "BoxTriggerComp.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "BaseTriggerActor.generated.h"
 
 UCLASS()
@@ -22,7 +23,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UBoxTriggerComp* TriggerComp;
 
-	//TArray<UParticleSystemComponent*>ParticleArray;
+	TArray<UParticleSystemComponent*>ParticleArray;
 
 public:	
 

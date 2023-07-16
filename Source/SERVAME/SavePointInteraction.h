@@ -6,6 +6,7 @@
 #include "InteractionActor.h"
 #include ".\Manager\JesusGameInstance.h"
 #include "Components/PointLightComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "SavePointInteraction.generated.h"
 
 /**
@@ -25,7 +26,7 @@ public:
 	float DissolveValue;
 
 	TArray<UStaticMeshComponent*>MeshCompArray;
-	//TArray<UParticleSystemComponent*>ParticleCompArray;
+	TArray<UParticleSystemComponent*>ParticleCompArray;
 
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime);

@@ -14,10 +14,10 @@ AProjectileObjectInPool::AProjectileObjectInPool()
 
 	Collision1 = CreateDefaultSubobject<UBoxComponent>("Collision");
 	SceneComp = CreateDefaultSubobject<USceneComponent>("SceneComp");
-	//ParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>("Particle");	
+	ParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>("Particle");	
 	RootComponent = SceneComp;
 
-//	ParticleSystem->SetupAttachment(RootComponent);
+	ParticleSystem->SetupAttachment(RootComponent);
 	Collision1->SetupAttachment(RootComponent);
 }
 

@@ -10,13 +10,13 @@ void ADoorAnimInteraction::BeginPlay()
 
 	TArray<UActorComponent*> ActorCompArray;
 
-	//ActorCompArray = GetComponentsByClass(UParticleSystemComponent::StaticClass());
-	//
-	//for (int i = 0; i < ActorCompArray.Num(); i++)
-	//{
-	//	ParticleArray.Add(Cast<UParticleSystemComponent>(ActorCompArray[i]));
-	//	ParticleArray[i]->SetActive(false, false);
-	//}
+	ActorCompArray = GetComponentsByClass(UParticleSystemComponent::StaticClass());
+	
+	for (int i = 0; i < ActorCompArray.Num(); i++)
+	{
+		ParticleArray.Add(Cast<UParticleSystemComponent>(ActorCompArray[i]));
+		ParticleArray[i]->SetActive(false, false);
+	}
 	AnimInstance = Cast<UDoorAnimInstance>(MeshComp->GetAnimInstance());
 
 	FMovieSceneSequencePlaybackSettings PlaybackSettings;

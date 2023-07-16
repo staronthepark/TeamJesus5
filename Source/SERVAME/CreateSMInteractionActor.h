@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "InteractionActor.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "CreateSMInteractionActor.generated.h"
 
 /**
@@ -18,7 +19,7 @@ public:
 	ACreateSMInteractionActor();
 
 	TArray<UStaticMeshComponent*> MeshCompArray;
-	//TArray<UParticleSystemComponent*> ParticleCompArray;
+	TArray<UParticleSystemComponent*> ParticleCompArray;
 
 public:
 

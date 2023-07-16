@@ -6,6 +6,7 @@
 #include "BaseObjectInPool.h"
 #include "Components/BoxComponent.h"
 #include "Engine/DamageEvents.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "..\BaseCharacter.h"
 #include "ProjectileObjectInPool.generated.h"
 /**
@@ -25,8 +26,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Particle)
 	float Speed;
 
-	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Particle)
-	//UParticleSystemComponent* ParticleSystem;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Particle)
+	UParticleSystemComponent* ParticleSystem;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Particle)
 	USceneComponent* SceneComp;

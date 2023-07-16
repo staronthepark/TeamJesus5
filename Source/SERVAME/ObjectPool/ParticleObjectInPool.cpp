@@ -5,9 +5,9 @@
 
 AParticleObjectInPool::AParticleObjectInPool()
 {
-	//ParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
-	//ParticleSystem->SetupAttachment(RootComponent);
-	//ParticleSystem->SetCollisionProfileName("Particle");
+	ParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
+	ParticleSystem->SetupAttachment(RootComponent);
+	ParticleSystem->SetCollisionProfileName("Particle");
 
 	PrimaryActorTick.bCanEverTick = false;
 }
@@ -15,7 +15,7 @@ AParticleObjectInPool::AParticleObjectInPool()
 void AParticleObjectInPool::SetActive(bool active)
 {
 	Super::SetActive(active);
-	//ParticleSystem->SetActive(active, false);
+	ParticleSystem->SetActive(active, false);
 	if (active)
 	{
 		GetWorldTimerManager().SetTimer(LifeTimer, this, &AParticleObjectInPool::ReturnObject, LifeTime);

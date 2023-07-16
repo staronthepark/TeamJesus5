@@ -17,8 +17,8 @@ AFallObjectInPool::AFallObjectInPool()
 	GroundHitCollision = CreateDefaultSubobject<UBoxComponent>("GroundHitCollision");
 	GroundHitCollision->SetupAttachment(RootComponent);
 
-//	ParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>("Particle");
-//	ParticleSystem->SetupAttachment(RootComponent);
+	ParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>("Particle");
+	ParticleSystem->SetupAttachment(RootComponent);
 }
 
 void AFallObjectInPool::BeginPlay()
