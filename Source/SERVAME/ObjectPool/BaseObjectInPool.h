@@ -25,7 +25,6 @@ class SERVAME_API ABaseObjectInPool : public AActor
 public:	
 	ABaseObjectInPool();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SubClass)
 	TSubclassOf<class ABaseObjectInPool> SubClass;
 
 

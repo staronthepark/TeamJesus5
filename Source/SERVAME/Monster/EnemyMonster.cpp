@@ -26,10 +26,10 @@ AEnemyMonster::AEnemyMonster()
 
 	LockOnWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget"));
 	LockOnWidget->SetupAttachment(GetMesh(), FName("Bip001-Spine"));
-
-	//SwordTrailComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Sword Trail"));
-	//SwordTrailComp->SetupAttachment(GetMesh(), FName("Weapon_Bone"));
-	//SwordTrailComp->SetCollisionProfileName("Sword Trail");
+	
+	SwordTrailComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Sword Trail"));
+	SwordTrailComp->SetupAttachment(GetMesh(), FName("Weapon_Bone"));
+	SwordTrailComp->SetCollisionProfileName("Sword Trail");
 
 	WeaponCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Weapon2 Box"));
 	WeaponCollision->SetupAttachment(GetMesh(), FName("Weapon_Bone"));
@@ -286,8 +286,8 @@ AEnemyMonster::AEnemyMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::ATTACK1, TMap<bool, TFunction<void(AEnemyMonster* monster)>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1].Add(true, [](AEnemyMonster* monster)
 		{
-			//monster->//SwordTrailComp->Activate();
-			//monster->ParryingCollision1->Activate();
+			monster->SwordTrailComp->Activate();
+			monster->ParryingCollision1->Activate();
 			monster->ActivateSMOverlap();
 			monster->ActivateRightWeapon();
 			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[24].ObjClass, monster->GetActorLocation(), FRotator::ZeroRotator);
@@ -297,8 +297,8 @@ AEnemyMonster::AEnemyMonster()
 		{
 			monster->DeactivateRightWeapon();
 			monster->ParryingCollision1->Deactivate();
-			//monster->//SwordTrailComp->Deactivate();
-//			monster->DeactivateSMOverlap();
+			monster->SwordTrailComp->Deactivate();
+			monster->DeactivateSMOverlap();
 		});	
 
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::POWERATTACK1, TMap<bool, TFunction<void(AEnemyMonster* monster)>>());
@@ -431,7 +431,7 @@ void AEnemyMonster::BeginPlay()
 	SwordMeshComp = Cast<UStaticMeshComponent>(GetComponentByClass(UStaticMeshComponent::StaticClass()));
 
 	DeactivateSMOverlap();
-	//SwordTrailComp->Deactivate();
+	SwordTrailComp->Deactivate();
 	ParryingCollision1->Deactivate();
 	DeactivateRightWeapon();
 

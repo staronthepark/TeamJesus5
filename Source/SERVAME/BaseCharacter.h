@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/Actor.h"
-//#include "NiagaraFunctionLibrary.h"
+#include "NiagaraFunctionLibrary.h"
 #include "UObject/Class.h"
 #include "Engine/EngineTypes.h"
 #include "Engine/DamageEvents.h"
@@ -13,7 +13,7 @@
 #include ".\Manager\JesusGameInstance.h"
 #include "Engine/World.h"
 #include "BaseTriggerActor.h"
-//#include "NiagaraComponent.h"
+#include "NiagaraComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -93,8 +93,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* WeaponMesh;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//UNiagaraComponent* //SwordTrailComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UNiagaraComponent* SwordTrailComp;
 
 	UPROPERTY()
 	UJesusGameInstance* GameInstance;

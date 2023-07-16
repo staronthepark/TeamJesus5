@@ -12,6 +12,7 @@
 #include "..\UI\PlayerHUD.h"
 #include "..\UI\UserSettingUI.h"
 #include "..\JesusSaveGame.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "ActorSequenceComponent.h"
 #include "ActorSequencePlayer.h"
 #include "PlayerCharacter.generated.h"
