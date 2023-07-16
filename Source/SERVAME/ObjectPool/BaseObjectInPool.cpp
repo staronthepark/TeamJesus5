@@ -6,7 +6,6 @@
 
 ABaseObjectInPool::ABaseObjectInPool()
 {
-	SubClass = this->StaticClass();
 	PrimaryActorTick.bCanEverTick = false;
 	SetActive(false);
 }

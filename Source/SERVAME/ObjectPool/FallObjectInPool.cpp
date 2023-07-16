@@ -25,6 +25,7 @@ void AFallObjectInPool::BeginPlay()
 {
 	Super::BeginPlay();
 
+
 	SetActorTickEnabled(false);
 
 	HitCollision->OnComponentBeginOverlap.AddDynamic(this, &AFallObjectInPool::OnCollisionBeginOverlap);

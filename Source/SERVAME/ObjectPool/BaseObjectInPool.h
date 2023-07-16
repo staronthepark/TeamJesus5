@@ -25,7 +25,8 @@ class SERVAME_API ABaseObjectInPool : public AActor
 public:	
 	ABaseObjectInPool();
 
-	TSubclassOf<class ABaseObjectInPool> SubClass;
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class ABaseObjectInPool> SubClass;
 
 
 public:	

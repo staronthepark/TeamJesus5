@@ -1345,6 +1345,7 @@ void APlayerCharacter::BeginPlay()
 	GameInstance->DebugLogWidget->T_PlayerHP->SetText(FText::AsNumber(PlayerDataStruct.CharacterHp));
 	AnimInstance = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 
+	AnimInstance->PlayerAnimationType = AnimationType::IDLE;
 	ChangeMontageAnimation(AnimationType::GAMESTARTLOOP);
 
 	CurBulletCount = PlayerDataStruct.MaxBulletCount;
