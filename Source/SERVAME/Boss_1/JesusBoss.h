@@ -239,8 +239,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USphereComponent* DamageSphereTriggerComp;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//UNiagaraComponent* //ParringTrailComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UNiagaraComponent* ParringTrailComp;
 
 	//UPROPERTY()
 	//TSubclassOf<UBossUI> BossUIClass;

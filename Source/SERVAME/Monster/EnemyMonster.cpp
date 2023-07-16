@@ -27,9 +27,9 @@ AEnemyMonster::AEnemyMonster()
 	LockOnWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget"));
 	LockOnWidget->SetupAttachment(GetMesh(), FName("Bip001-Spine"));
 	
-	//SwordTrailComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Sword Trail"));
-	//SwordTrailComp->SetupAttachment(GetMesh(), FName("Weapon_Bone"));
-	//SwordTrailComp->SetCollisionProfileName("Sword Trail");
+	SwordTrailComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Sword Trail"));
+	SwordTrailComp->SetupAttachment(GetMesh(), FName("Weapon_Bone"));
+	SwordTrailComp->SetCollisionProfileName("Sword Trail");
 
 	WeaponCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Weapon2 Box"));
 	WeaponCollision->SetupAttachment(GetMesh(), FName("Weapon_Bone"));

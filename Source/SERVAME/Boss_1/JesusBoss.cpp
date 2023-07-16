@@ -35,11 +35,11 @@ AJesusBoss::AJesusBoss()
 	DarkExplosionCollider = CreateDefaultSubobject<USphereComponent>(TEXT("DarkExplosionSphere"));
 	DarkExplosionCollider->SetupAttachment(GetMesh());
 
-	//SwordTrailComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Sword Trail"));
-	//SwordTrailComp->SetupAttachment(GetMesh(), FName("Weapon_bone"));
+	SwordTrailComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Sword Trail"));
+	SwordTrailComp->SetupAttachment(GetMesh(), FName("Weapon_bone"));
 
-	//ParringTrailComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Parring Trail"));
-	//ParringTrailComp->SetupAttachment(GetMesh(), FName("Weapon_bone"));
+	ParringTrailComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Parring Trail"));
+	ParringTrailComp->SetupAttachment(GetMesh(), FName("Weapon_bone"));
 
 	WeaponOverlapStaticMeshCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Boss Overlap Box"));
 	WeaponOverlapStaticMeshCollision->SetupAttachment(BossWeaponMesh);
@@ -86,8 +86,8 @@ AJesusBoss::AJesusBoss()
 
 	MontageStartMap.Add(BossAnimationType::IDLE, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
-			//Boss->//SwordTrailComp->Deactivate();
-			//Boss->//ParringTrailComp->Deactivate();
+			Boss->SwordTrailComp->Deactivate();
+			Boss->ParringTrailComp->Deactivate();
 		}));
 	MontageEndMap.Add(BossAnimationType::IDLE, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
@@ -96,8 +96,8 @@ AJesusBoss::AJesusBoss()
 
 	MontageStartMap.Add(BossAnimationType::CRY, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
-			//Boss->//SwordTrailComp->Deactivate();
-			//Boss->//ParringTrailComp->Deactivate();
+			Boss->SwordTrailComp->Deactivate();
+			Boss->ParringTrailComp->Deactivate();
 		}));
 	MontageEndMap.Add(BossAnimationType::CRY, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
@@ -106,8 +106,8 @@ AJesusBoss::AJesusBoss()
 
 	MontageStartMap.Add(BossAnimationType::HIT, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
-			//Boss->//SwordTrailComp->Deactivate();
-			//Boss->//ParringTrailComp->Deactivate();
+			Boss->SwordTrailComp->Deactivate();
+			Boss->ParringTrailComp->Deactivate();
 			Boss->GetWorldTimerManager().SetTimer(Boss->HitTimerHandle, Boss, &AJesusBoss::InitHitCount, 8.f);
 		}));
 	MontageEndMap.Add(BossAnimationType::HIT, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
@@ -117,8 +117,8 @@ AJesusBoss::AJesusBoss()
 
 	MontageStartMap.Add(BossAnimationType::POWERHIT, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
-			//Boss->//SwordTrailComp->Deactivate();
-			//Boss->//ParringTrailComp->Deactivate();
+			Boss->SwordTrailComp->Deactivate();
+			Boss->ParringTrailComp->Deactivate();
 			Boss->GetWorldTimerManager().SetTimer(Boss->HitTimerHandle, Boss, &AJesusBoss::InitHitCount, 8.f);
 		}));
 	MontageEndMap.Add(BossAnimationType::POWERHIT, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
@@ -130,8 +130,8 @@ AJesusBoss::AJesusBoss()
 		{
 			Boss->MinWalkTime = Boss->GetRandomNum(2, 4);
 			Boss->IsMoveStart = true;
-			//Boss->//SwordTrailComp->Deactivate();
-			//Boss->//ParringTrailComp->Deactivate();
+			Boss->SwordTrailComp->Deactivate();
+			Boss->ParringTrailComp->Deactivate();
 		}));
 	MontageEndMap.Add(BossAnimationType::RUN, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
@@ -144,8 +144,8 @@ AJesusBoss::AJesusBoss()
 			Boss->MinWalkTime = Boss->GetRandomNum(2, 4);
 			Boss->IsMoveStart = true;
 
-			//Boss->//SwordTrailComp->Deactivate();
-			//Boss->//ParringTrailComp->Deactivate();
+			Boss->SwordTrailComp->Deactivate();
+			Boss->ParringTrailComp->Deactivate();
 		}));
 	MontageEndMap.Add(BossAnimationType::RUN_L, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
@@ -158,8 +158,8 @@ AJesusBoss::AJesusBoss()
 			Boss->MinWalkTime = Boss->GetRandomNum(2, 4);
 			Boss->IsMoveStart = true;
 
-			//Boss->//SwordTrailComp->Deactivate();
-			//Boss->//ParringTrailComp->Deactivate();
+			Boss->SwordTrailComp->Deactivate();
+			Boss->ParringTrailComp->Deactivate();
 		}));
 	MontageEndMap.Add(BossAnimationType::RUN_R, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
@@ -370,9 +370,9 @@ AJesusBoss::AJesusBoss()
 			Boss->IsLockOn = false;
 			Boss->CanMove = false;
 			Boss->IsAttacking = false;
-			//Boss->//SwordTrailComp->Deactivate();
-			//Boss->//ParringTrailComp->Deactivate();
-			//Boss->IsActionEnd = false;
+			Boss->SwordTrailComp->Deactivate();
+			Boss->ParringTrailComp->Deactivate();
+			Boss->IsActionEnd = false;
 		}));
 	MontageEndMap.Add(BossAnimationType::GROGGY, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
@@ -392,9 +392,9 @@ AJesusBoss::AJesusBoss()
 			Boss->IsLockOn = false;
 			Boss->CanMove = false;
 			Boss->IsAttacking = false;
-			//Boss->//SwordTrailComp->Deactivate();
-			//Boss->//ParringTrailComp->Deactivate();
-			//Boss->IsActionEnd = false;
+			Boss->SwordTrailComp->Deactivate();
+			Boss->ParringTrailComp->Deactivate();
+			Boss->IsActionEnd = false;
 		}));
 	MontageEndMap.Add(BossAnimationType::STUN, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
@@ -415,9 +415,9 @@ AJesusBoss::AJesusBoss()
 			Boss->IsLockOn = false;
 			Boss->CanMove = false;
 			Boss->IsAttacking = false;
-			//Boss->//SwordTrailComp->Deactivate();
-			//Boss->//ParringTrailComp->Deactivate();
-			//Boss->IsActionEnd = false;
+			Boss->SwordTrailComp->Deactivate();
+			Boss->ParringTrailComp->Deactivate();
+			Boss->IsActionEnd = false;
 			Boss->IsStun = true;
 		}));
 	MontageEndMap.Add(BossAnimationType::GROGGYIDLE, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
@@ -435,9 +435,9 @@ AJesusBoss::AJesusBoss()
 			Boss->IsLockOn = false;
 			Boss->CanMove = false;
 			Boss->IsAttacking = false;
-			//Boss->//SwordTrailComp->Deactivate();
-			//Boss->//ParringTrailComp->Deactivate();
-			//Boss->IsActionEnd = false;
+			Boss->SwordTrailComp->Deactivate();
+			Boss->ParringTrailComp->Deactivate();
+			Boss->IsActionEnd = false;
 			Boss->IsExecution = true;
 			Boss->IsFirstExecution = false;
 		}));
@@ -464,8 +464,8 @@ AJesusBoss::AJesusBoss()
 			Boss->IsStun = false;
 			Boss->IsLockOn = false;
 			Boss->CanMove = false;
-			//Boss->//SwordTrailComp->Deactivate();
-			//Boss->//ParringTrailComp->Deactivate();
+			Boss->SwordTrailComp->Deactivate();
+			Boss->ParringTrailComp->Deactivate();
 		}));
 	MontageEndMap.Add(BossAnimationType::DIE, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
@@ -1068,8 +1068,8 @@ void AJesusBoss::BeginPlay()
 	BossDataStruct.CurrentGrrogyGauge = BossDataStruct.MaxGrrogyGauge;
 
 	SetMetaData();
-	//SwordTrailComp->Deactivate();
-	//ParringTrailComp->Deactivate();
+	SwordTrailComp->Deactivate();
+	ParringTrailComp->Deactivate();
 	CurrentAnimType = BossAnimationType::NONE;
 
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
@@ -1905,27 +1905,29 @@ void AJesusBoss::AttackCheck()
 void AJesusBoss::CollisionEnableNotify()
 {
 	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	//ParringTrailComp->Activate();
+	ParringTrailComp->Activate();
 }
 
 void AJesusBoss::CollisionDisableNotify()
 {
 	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	//ParringTrailComp->Deactivate();
+	ParringTrailComp->Deactivate();
 	Damage = 0;
 }
 
 void AJesusBoss::TrailOn()
 {
-	//if (CurrentActionTemp.CanParring)
-	//{ }
-	//else
-	//	//SwordTrailComp->Activate();
+	if (CurrentActionTemp.CanParring)
+	{ 
+		ParringTrailComp->Activate();
+	}
+	else
+		SwordTrailComp->Activate();
 }
 
 void AJesusBoss::TrailOff()
 {
-	//SwordTrailComp->Deactivate();
+	SwordTrailComp->Deactivate();
 }
 
 void AJesusBoss::SetLockOn()
@@ -1977,7 +1979,7 @@ void AJesusBoss::OnEnd()
 	GetCapsuleComponent()->SetCollisionProfileName("AIPhysics");
 	IsAttacking = false;
 	AttackLockOn = false;
-	//SwordTrailComp->Deactivate();
+	SwordTrailComp->Deactivate();
 	//ParringTrailComp->Deactivate();
 	FRotator NewRotation(0.f, GetActorRotation().Yaw, 0.f);
 	SetActorRotation(NewRotation);

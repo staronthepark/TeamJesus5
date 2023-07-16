@@ -76,9 +76,9 @@ APlayerCharacter::APlayerCharacter()
 	WeaponOverlapStaticMeshCollision->SetupAttachment(WeaponMesh);
 	WeaponOverlapStaticMeshCollision->SetCollisionProfileName("Weapon");
 
-	//SwordTrailComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Sword Trail"));
-	//SwordTrailComp->SetupAttachment(GetMesh(), FName("Weapon_bone"));
-	//SwordTrailComp->SetCollisionProfileName("Sword Trail");
+	SwordTrailComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Sword Trail"));
+	SwordTrailComp->SetupAttachment(GetMesh(), FName("Weapon_bone"));
+	SwordTrailComp->SetCollisionProfileName("Sword Trail");
 
 	PlayerMaxAttackIndex.Add(ActionType::ATTACK, 4);
 	PlayerMaxAttackIndex.Add(ActionType::POWERATTACK, 3);
@@ -272,7 +272,7 @@ APlayerCharacter::APlayerCharacter()
 			UCombatManager::GetInstance().ActivateCollider();
 			character->ActivateSMOverlap();
 			character->ActivateRightWeapon();
-			//character->//SwordTrailComp->Activate();
+			character->SwordTrailComp->Activate();
 			character->CameraShake(character->PlayerDoorCameraShake);
 		});
 
@@ -280,7 +280,7 @@ APlayerCharacter::APlayerCharacter()
 		{
 			character->DeactivateRightWeapon();
 			character->DeactivateSMOverlap();
-			//character->//SwordTrailComp->Deactivate();
+			character->SwordTrailComp->Deactivate();
 		});
 
 	NotifyBeginEndEventMap.Add(AnimationType::POWERATTACK1, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
@@ -289,7 +289,7 @@ APlayerCharacter::APlayerCharacter()
 		{
 			character->DeactivateRightWeapon();
 			character->DeactivateSMOverlap();			
-			//character->//SwordTrailComp->Deactivate();
+			character->SwordTrailComp->Deactivate();
 		});
 
 	NotifyBeginEndEventMap.Add(AnimationType::ATTACK2, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
@@ -1356,7 +1356,7 @@ void APlayerCharacter::BeginPlay()
 	FollowCamera = Cast<UCameraComponent>(GetComponentByClass(UCameraComponent::StaticClass()));
 
 	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	//SwordTrailComp->Deactivate();
+	SwordTrailComp->Deactivate();
 	DeactivateSMOverlap();
 	DeactivateRightWeapon();
 
@@ -1476,7 +1476,7 @@ void APlayerCharacter::Dodge()
 		DeactivateSMOverlap();
 		ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		ComboAttackEnd();
-		//SwordTrailComp->Deactivate();
+		SwordTrailComp->Deactivate();
 		CanNextAttack = false;
 		LockOnCameraSettingMap[false](this);
 		UCombatManager::GetInstance().ActivateCollider();
@@ -1884,7 +1884,7 @@ void APlayerCharacter::PlayExecutionAnimation()
 
 	DeactivateRightWeapon();
 	DeactivateSMOverlap();
-	//SwordTrailComp->Deactivate();
+	SwordTrailComp->Deactivate();
 	ComboAttackEnd();
 	ChangeMontageAnimation(AnimationType::EXECUTIONBOSS);
 	ExecutionCharacter->PlayExecutionAnimation();
@@ -2184,7 +2184,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		DeactivateSMOverlap();
 		ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		ComboAttackEnd();
-		//SwordTrailComp->Deactivate();
+		SwordTrailComp->Deactivate();
 		if (PlayerDataStruct.CharacterHp <= 0)
 			ASoundManager::GetInstance().PlaySoundWithCymbalSound(3);
 
@@ -2203,7 +2203,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		DeactivateSMOverlap();
 		ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		ComboAttackEnd();
-		//SwordTrailComp->Deactivate();		
+		SwordTrailComp->Deactivate();		
 
 		ChangeActionType(ActionType::HIT);
 		float DotProduct = FVector::DotProduct(GetActorRotation().Vector(), HitDir);
