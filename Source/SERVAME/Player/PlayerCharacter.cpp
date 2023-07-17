@@ -434,6 +434,7 @@ APlayerCharacter::APlayerCharacter()
 		});
 	NotifyBeginEndEventMap[AnimationType::SAVESTART].Add(true, [](APlayerCharacter* character)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("!@#!@#"));
 			character->PlayerHUD->FadeInAnimation(true);
 		});
 
@@ -1512,7 +1513,8 @@ void APlayerCharacter::RestoreStat()
 
 void APlayerCharacter::LockOn()
 {
-	if (AnimInstance->PlayerAnimationType == AnimationType::EXECUTIONBOSS)return;
+	if (AnimInstance->PlayerAnimationType == AnimationType::EXECUTIONBOSS || 
+		AnimInstance->PlayerAnimationType == AnimationType::SAVEEND)return;
 	IsLockOn = !IsLockOn;
 
 	if (IsLockOn)
