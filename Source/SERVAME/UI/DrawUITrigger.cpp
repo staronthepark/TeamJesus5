@@ -26,7 +26,7 @@ void ADrawUITrigger::PauseGame()
 void ADrawUITrigger::EndTriggerEvent()
 {
 	Super::EndTriggerEvent();
-	if (DrawImageType == EGuides::keyguide && DrawImageType != EGuides::map)
+	if (DrawImageType == EGuides::keyguide)
 		PlayerCharacter->PlayerHUD->PlayAnimations(DrawImageType, false);
 }
 
@@ -36,7 +36,7 @@ void ADrawUITrigger::EnableEvent()
 
 	PlayerCharacter->PlayerHUD->PlayAnimations(DrawImageType, true);
 
-	if(DrawImageType != EGuides::keyguide && DrawImageType != EGuides::map)
+	if(DrawImageType != EGuides::keyguide)
 	GetWorldTimerManager().SetTimer(UITimerHandle, this, &ADrawUITrigger::PauseGame, 0.1f);
 
 }
