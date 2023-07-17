@@ -45,8 +45,8 @@ class SERVAME_API UMainMenuUI : public UUserWidget
 	UPROPERTY(EditAnywhere)
 		ULevelSequence* LevelSequence;
 
-	UPROPERTY(meta = (BindWidget))
-		UUserSettingUI* WBP_UserSettingUI;
+	//UPROPERTY(meta = (BindWidget))
+	//	UUserSettingUI* WBP_UserSettingUI;
 
 	UPROPERTY(meta = (BindWidget))
 		UGameExitUI* UMG_GameExit;
