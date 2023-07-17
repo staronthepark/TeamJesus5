@@ -8,6 +8,7 @@
 #include "Boss2AnimInstance.h"
 #include "Boss2AnimMetaData.h"
 #include "Components/PoseableMeshComponent.h"
+#include "..\Player\PlayerCharacter.h"
 #include "NavigationSystem.h"
 #include <vector>
 #include "JesusBoss2.generated.h"
@@ -186,6 +187,8 @@ public:
 
 	Boss2ActionTemp CurrentActionTemp{};
 
+	int DecreasePercentageVal = 20;
+
 	bool CanAttack = false;
 	bool ChangeSuperAction = false;
 	bool CanMove;
@@ -225,6 +228,7 @@ public:
 	TMap<Boss2AttackType, TFunction<void(Boss2ActionTemp* Temp)>> AddArrMap;
 	TMap<Boss2AttackType, TFunction<void(Boss2ActionTemp* Temp)>> ChangePercentageMap;
 	TMap<Boss2AttackType, TFunction<void()>> InitPercentageMap;
+	TMap<ActionType, TFunction<void()>> HitMap;
 
 	TArray<Boss2ActionTemp> MeleeActionArr;
 	TArray<Boss2ActionTemp> MeleeTempArr;
