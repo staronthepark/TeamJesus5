@@ -39,6 +39,9 @@ class SERVAME_API UMainMenuUI : public UUserWidget
 		UImage* QuitBackgroundImage;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		UWidgetAnimation* FadeOutAnimation;
+	
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* MainMenuCloseAnimation;
 
 	ALevelSequenceActor* LevelSequenceActor;
@@ -62,6 +65,7 @@ public:
 		UButton* StartButton;
 
 	virtual void NativeOnInitialized() override;
+	virtual void NativeConstruct() override;
 
 	UFUNCTION()
 		void HoverStartButton();
