@@ -3,11 +3,6 @@
 
 #include "MapUI.h"
 
-void UMapUI::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
-	this->SetRenderOpacity(0.f);
-}
 
 void UMapUI::PlayMapInfoAnimation(FString MapName, bool isOpen)
 {
