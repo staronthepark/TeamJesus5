@@ -434,7 +434,6 @@ APlayerCharacter::APlayerCharacter()
 		});
 	NotifyBeginEndEventMap[AnimationType::SAVESTART].Add(true, [](APlayerCharacter* character)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("!@#!@#"));
 			character->PlayerHUD->FadeInAnimation(true);
 		});
 
