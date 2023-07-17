@@ -101,7 +101,7 @@ void UBTTask_CircleWalk::DrawCircleAroundLocation(UBehaviorTreeComponent& OwnerC
         //    DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 1.0f, 0, 5.0f);
     }
 
-    Boss->ChangeAnimType(BossAnimationType::RUN_L);
+    Boss->ChangeMontageAnimation(BossAnimationType::RUN_L);
 
     if (count == NumSegments)
         count = 0;

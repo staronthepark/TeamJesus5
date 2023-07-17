@@ -33,14 +33,14 @@ AJesusBoss2::AJesusBoss2()
 			Boss2->IsLockOn = true;
 		}));
 
-	//===========================================================================================================
-	
+	//===========================================공격 실행=========================================================
+
 	BossAttackMap.Add(Boss2ActionType::B2_FALLTHECROSS, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 			Boss2->DoAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, true, Boss2AnimationType::CROSSFALL, Boss2);
 		}));
 
-	//===========================================================================================================
+	//====================================공격타입에 맞는 공격이 끝났을 때 실행되는 맵====================================
 
 	ActionEndMap.Add(Boss2AttackType::B2_MELEE, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
 		{		
@@ -143,8 +143,8 @@ AJesusBoss2::AJesusBoss2()
 			IsAttackMontageEnd = true;
 		}));
 
-	//===========================================================================================================
-	
+	//======================================확률에 의한 랜덤 패턴 가져오기========================================
+
 	GetRandomPatternMap.Add(Boss2AttackType::B2_MELEE, TFunction<Boss2ActionTemp()>([=]()
 		{
 			if (MeleeActionArr.Num() <= 0)
@@ -211,7 +211,7 @@ AJesusBoss2::AJesusBoss2()
 		}));
 
 
-	//===========================================================================================================
+	//===================================배열에 패턴 추가==============================================
 
 	AddArrMap.Add(B2_MELEE, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
 		{
@@ -249,20 +249,45 @@ AJesusBoss2::AJesusBoss2()
 			BackPercentageVec.push_back(Temp->Percentage);
 		}));
 
-	//===========================================================================================================
+	//====================================확률 변경============================================
 
 	ChangePercentageMap.Add(B2_MELEE, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
 		{
+			//MeleePercentageVec.clear();
+
+			//for (int i = 0; i < MeleeActionArr.Num(); i++)
+			//{
+			//	if (MeleeActionArr[i].ActionType == Temp->ActionType)
+			//	{
+			//		MeleeActionArr[i].Percentage -= DecreasePercentageVal;
+			//		MeleePercentageVec.push_back(MeleeActionArr[i].Percentage);
+			//		continue;
+			//	}
+
+			//	MeleeActionArr[i].IsAddPercentage = true;
+			//	MeleeActionArr[i].Percentage += DecreasePercentageVal / MeleeActionArr.Num() - 1;
+			//	MeleePercentageVec.push_back(MeleeActionArr[i].Percentage);
 		}));
 
 
-	//===========================================================================================================
+	//===============================확률 초기화========================================
 
 	InitPercentageMap.Add(B2_MELEE, TFunction<void()>([=]()
 		{
+			//MeleePercentageVec.clear();
+
+			//for (int i = 0; i < MeleeActionArr.Num(); i++)
+			//{
+			//	auto BossActionName = Boss2ActionEnum->GetNameStringByValue(MeleeActionArr[i].ActionType);
+			//	MeleeActionArr[i].Percentage = GetActionData(*BossActionName)->Percentage;
+			//	MeleeActionArr[i].IsAddPercentage = false;
+			//	MeleePercentageVec.push_back(MeleeActionArr[i].Percentage);
+			//}
 		}));
 
-	//===========================================================================================================
+	//=======================================플레이어 공격타입에 따른 피격 모션=========================================
+
+
 
 }
 
