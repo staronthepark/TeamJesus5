@@ -73,6 +73,7 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 {
 	GENERATED_BODY()
 
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TMap<AnimationType, FPlayerDamageInfo>DamageList;
 
@@ -101,6 +102,8 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 		float PlayerExecutionFirstDamage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PlayerExecutionSecondDamage;
+
+
 };
 
 UCLASS()
