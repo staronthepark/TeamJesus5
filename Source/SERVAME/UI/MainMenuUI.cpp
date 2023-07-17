@@ -25,6 +25,12 @@ void UMainMenuUI::NativeOnInitialized()
 	QuitButton->OnClicked.AddDynamic(this, &UMainMenuUI::ClickQuitButton);
 }
 
+void UMainMenuUI::NativeConstruct()
+{
+	Super::NativeConstruct();
+	PlayAnimation(FadeOutAnimation);
+}
+
 void UMainMenuUI::HoverStartButton()
 {
 	StartBackgroundImage->SetRenderOpacity(1.0f);
