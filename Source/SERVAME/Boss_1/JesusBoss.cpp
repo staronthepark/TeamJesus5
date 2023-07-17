@@ -1111,7 +1111,7 @@ void AJesusBoss::Tick(float DeltaTime)
 
 	if (IsExplosion)
 	{
-		if (ExplosionRange >= 30)
+		if (ExplosionRange >= 40)
 			return;
 		ExplosionRange += 2.f;
 		DarkExplosionCollider->SetRelativeScale3D(FVector(ExplosionRange, ExplosionRange, ExplosionRange));
