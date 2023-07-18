@@ -18,6 +18,11 @@ AJesusBoss2::AJesusBoss2()
 
 	LockOnWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget"));
 	LockOnWidget->SetupAttachment(GetMesh(), FName("Bip001-Head"));
+	
+	LeftAtkCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Boss Weapon Box"));
+	LeftAtkCollision->SetupAttachment(GetMesh());
+	RightAtkCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Boss Weapon Box"));
+	RightAtkCollision->SetupAttachment(GetMesh());
 
 	MontageStartMap.Add(Boss2AnimationType::NONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
@@ -482,6 +487,8 @@ void AJesusBoss2::PostInitializeComponents()
 		Boss2AnimInstance->OnCrossFall.AddUObject(this, &AJesusBoss2::OnCrossFall);
 		Boss2AnimInstance->OnStart.AddUObject(this, &AJesusBoss2::OnStart);
 		Boss2AnimInstance->OnEnd.AddUObject(this, &AJesusBoss2::OnEnd);
+		Boss2AnimInstance->OnEnable.AddUObject(this, &AJesusBoss2::CollisionEnableNotify);
+		Boss2AnimInstance->OnDisable.AddUObject(this, &AJesusBoss2::CollisionDisableNotify);
 	}
 }
 
@@ -496,6 +503,9 @@ void AJesusBoss2::BeginPlay()
 	MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
 	
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::AttackHit);
+	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	//임시로 변수 설정
 	CanMove = true;
@@ -663,6 +673,12 @@ void AJesusBoss2::PlayAttackAnim(Boss2AnimationType Type)
 	ChangeMontageAnimation(Type);
 }
 
+void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+}
+
 /*=====================
 		Notify
 =====================*/
@@ -751,6 +767,18 @@ void AJesusBoss2::OnEnd()
 	IsAttackMontageEnd = true;
 	IsMontagePlay = false;
 }
+
+void AJesusBoss2::CollisionEnableNotify()
+{
+	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
+
+void AJesusBoss2::CollisionDisableNotify()
+{
+	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Damage = 0;
+}
+
 
 float AJesusBoss2::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {

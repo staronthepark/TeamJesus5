@@ -181,6 +181,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UCapsuleComponent* Boss2HitCollision;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USphereComponent> LeftAtkCollision;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USphereComponent> RightAtkCollision;
 
 	Boss2BaseAction Boss2SuperAction;
 	Boss2DirectionType PlayerDirection;
@@ -191,6 +196,7 @@ public:
 
 	int DecreasePercentageVal = 20;
 	int HitCount;
+	float Damage;
 
 	bool CanAttack = false;
 	bool ChangeSuperAction = false;
@@ -289,12 +295,22 @@ public:
 	void SetBTAction(Boss2ActionTemp Temp);
 	void PlayAttackAnim(Boss2AnimationType Type);
 
+	/*======================
+	*		UFUNCTION
+	======================*/
+
+	UFUNCTION()
+	void AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+
 	/*=====================
 			Notify
 	=====================*/
 	void OnCrossFall();
 	void OnStart();
 	void OnEnd();
+	void CollisionEnableNotify();
+	void CollisionDisableNotify();
 
 protected:
 	// Called when the game starts or when spawned

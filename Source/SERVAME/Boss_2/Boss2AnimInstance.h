@@ -18,6 +18,8 @@ enum class Boss2AnimationType : uint8
 DECLARE_MULTICAST_DELEGATE(FOnCrossFall);
 DECLARE_MULTICAST_DELEGATE(FOnStart);
 DECLARE_MULTICAST_DELEGATE(FOnEnd);
+DECLARE_MULTICAST_DELEGATE(FOnEnable);
+DECLARE_MULTICAST_DELEGATE(FOnDisable);
 
 UCLASS()
 class SERVAME_API UBoss2AnimInstance : public UBaseAnimInstance
@@ -42,9 +44,15 @@ private:
 	void AnimNotify_OnStart();
 	UFUNCTION()
 	void AnimNotify_OnEnd();
+	UFUNCTION()
+	void AnimNotify_OnEnable();
+	UFUNCTION()
+	void AnimNotify_OnDisable();
 
 public:
 	FOnCrossFall OnCrossFall;
 	FOnStart OnStart;
 	FOnEnd OnEnd;
+	FOnEnable OnEnable;
+	FOnDisable OnDisable;
 };
