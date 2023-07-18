@@ -253,36 +253,196 @@ AJesusBoss2::AJesusBoss2()
 
 	ChangePercentageMap.Add(B2_MELEE, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
 		{
-			//MeleePercentageVec.clear();
+			MeleePercentageVec.clear();
 
-			//for (int i = 0; i < MeleeActionArr.Num(); i++)
-			//{
-			//	if (MeleeActionArr[i].ActionType == Temp->ActionType)
-			//	{
-			//		MeleeActionArr[i].Percentage -= DecreasePercentageVal;
-			//		MeleePercentageVec.push_back(MeleeActionArr[i].Percentage);
-			//		continue;
-			//	}
+			for (int i = 0; i < MeleeActionArr.Num(); i++)
+			{
+				if (MeleeActionArr[i].ActionType == Temp->ActionType)
+				{
+					MeleeActionArr[i].Percentage -= DecreasePercentageVal;
+					MeleePercentageVec.push_back(MeleeActionArr[i].Percentage);
+					continue;
+				}
 
-			//	MeleeActionArr[i].IsAddPercentage = true;
-			//	MeleeActionArr[i].Percentage += DecreasePercentageVal / MeleeActionArr.Num() - 1;
-			//	MeleePercentageVec.push_back(MeleeActionArr[i].Percentage);
+				MeleeActionArr[i].IsAddPercentage = true;
+				MeleeActionArr[i].Percentage += DecreasePercentageVal / MeleeActionArr.Num() - 1;
+				MeleePercentageVec.push_back(MeleeActionArr[i].Percentage);
+			}
 		}));
 
+	ChangePercentageMap.Add(B2_RANGE, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
+		{
+			RangePercentageVec.clear();
+
+			for (int i = 0; i < RangeActionArr.Num(); i++)
+			{
+				if (RangeActionArr[i].ActionType == Temp->ActionType)
+				{
+					RangeActionArr[i].Percentage -= DecreasePercentageVal;
+					RangePercentageVec.push_back(RangeActionArr[i].Percentage);
+					continue;
+				}
+
+				RangeActionArr[i].IsAddPercentage = true;
+				RangeActionArr[i].Percentage += DecreasePercentageVal / RangeActionArr.Num() - 1;
+				RangePercentageVec.push_back(RangeActionArr[i].Percentage);
+			}
+		}));
+
+	ChangePercentageMap.Add(B2_FOLLOWUP, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
+		{
+			FollowUpPercentageVec.clear();
+
+			for (int i = 0; i < FollowUpActionArr.Num(); i++)
+			{
+				if (FollowUpActionArr[i].ActionType == Temp->ActionType)
+				{
+					FollowUpActionArr[i].Percentage -= DecreasePercentageVal;
+					FollowUpPercentageVec.push_back(FollowUpActionArr[i].Percentage);
+					continue;
+				}
+
+				FollowUpActionArr[i].IsAddPercentage = true;
+				FollowUpActionArr[i].Percentage += DecreasePercentageVal / FollowUpActionArr.Num() - 2;
+				FollowUpPercentageVec.push_back(FollowUpActionArr[i].Percentage);
+			}
+		}));
+
+	ChangePercentageMap.Add(B2_LEFTATK, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
+		{
+			LeftPercentageVec.clear();
+
+			for (int i = 0; i < LeftActionArr.Num(); i++)
+			{
+				if (LeftActionArr[i].ActionType == Temp->ActionType)
+				{
+					LeftActionArr[i].Percentage -= DecreasePercentageVal;
+					LeftPercentageVec.push_back(LeftActionArr[i].Percentage);
+					continue;
+				}
+
+				LeftActionArr[i].IsAddPercentage = true;
+				LeftActionArr[i].Percentage += DecreasePercentageVal / LeftActionArr.Num() - 2;
+				LeftPercentageVec.push_back(LeftActionArr[i].Percentage);
+			}
+		}));
+
+	ChangePercentageMap.Add(B2_RIGHTATK, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
+		{
+			RightPercentageVec.clear();
+
+			for (int i = 0; i < RightActionArr.Num(); i++)
+			{
+				if (RightActionArr[i].ActionType == Temp->ActionType)
+				{
+					RightActionArr[i].Percentage -= DecreasePercentageVal;
+					RightPercentageVec.push_back(RightActionArr[i].Percentage);
+					continue;
+				}
+
+				RightActionArr[i].IsAddPercentage = true;
+				RightActionArr[i].Percentage += DecreasePercentageVal / RightActionArr.Num() - 1;
+				RightPercentageVec.push_back(RightActionArr[i].Percentage);
+			}
+		}));
+
+	ChangePercentageMap.Add(B2_BACKATK, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
+		{
+			BackPercentageVec.clear();
+
+			for (int i = 0; i < BackActionArr.Num(); i++)
+			{
+				if (BackActionArr[i].ActionType == Temp->ActionType)
+				{
+					BackActionArr[i].Percentage -= DecreasePercentageVal;
+					BackPercentageVec.push_back(BackActionArr[i].Percentage);
+					continue;
+				}
+
+				BackActionArr[i].IsAddPercentage = true;
+				BackActionArr[i].Percentage += DecreasePercentageVal / BackActionArr.Num() - 1;
+				BackPercentageVec.push_back(BackActionArr[i].Percentage);
+			}
+		}));
 
 	//===============================확률 초기화========================================
 
 	InitPercentageMap.Add(B2_MELEE, TFunction<void()>([=]()
 		{
-			//MeleePercentageVec.clear();
+			MeleePercentageVec.clear();
 
-			//for (int i = 0; i < MeleeActionArr.Num(); i++)
-			//{
-			//	auto BossActionName = Boss2ActionEnum->GetNameStringByValue(MeleeActionArr[i].ActionType);
-			//	MeleeActionArr[i].Percentage = GetActionData(*BossActionName)->Percentage;
-			//	MeleeActionArr[i].IsAddPercentage = false;
-			//	MeleePercentageVec.push_back(MeleeActionArr[i].Percentage);
-			//}
+			for (int i = 0; i < MeleeActionArr.Num(); i++)
+			{
+				auto BossActionName = Boss2ActionEnum->GetNameStringByValue(MeleeActionArr[i].ActionType);
+				MeleeActionArr[i].Percentage = GetActionData(*BossActionName)->Percentage;
+				MeleeActionArr[i].IsAddPercentage = false;
+				MeleePercentageVec.push_back(MeleeActionArr[i].Percentage);
+			}
+		}));
+
+	InitPercentageMap.Add(B2_RANGE, TFunction<void()>([=]()
+		{
+			RangePercentageVec.clear();
+
+			for (int i = 0; i < RangeActionArr.Num(); i++)
+			{
+				auto BossActionName = Boss2ActionEnum->GetNameStringByValue(RangeActionArr[i].ActionType);
+				RangeActionArr[i].Percentage = GetActionData(*BossActionName)->Percentage;
+				RangeActionArr[i].IsAddPercentage = false;
+				RangePercentageVec.push_back(RangeActionArr[i].Percentage);
+			}
+		}));
+
+	InitPercentageMap.Add(B2_FOLLOWUP, TFunction<void()>([=]()
+		{
+			FollowUpPercentageVec.clear();
+
+			for (int i = 0; i < FollowUpActionArr.Num(); i++)
+			{
+				auto BossActionName = Boss2ActionEnum->GetNameStringByValue(FollowUpActionArr[i].ActionType);
+				FollowUpActionArr[i].Percentage = GetActionData(*BossActionName)->Percentage;
+				FollowUpActionArr[i].IsAddPercentage = false;
+				FollowUpPercentageVec.push_back(FollowUpActionArr[i].Percentage);
+			}
+		}));
+
+	InitPercentageMap.Add(B2_LEFTATK, TFunction<void()>([=]()
+		{
+			LeftPercentageVec.clear();
+
+			for (int i = 0; i < LeftActionArr.Num(); i++)
+			{
+				auto BossActionName = Boss2ActionEnum->GetNameStringByValue(LeftActionArr[i].ActionType);
+				LeftActionArr[i].Percentage = GetActionData(*BossActionName)->Percentage;
+				LeftActionArr[i].IsAddPercentage = false;
+				LeftPercentageVec.push_back(LeftActionArr[i].Percentage);
+			}
+		}));
+
+	InitPercentageMap.Add(B2_RIGHTATK, TFunction<void()>([=]()
+		{
+			RightPercentageVec.clear();
+
+			for (int i = 0; i < RightActionArr.Num(); i++)
+			{
+				auto BossActionName = Boss2ActionEnum->GetNameStringByValue(RightActionArr[i].ActionType);
+				RightActionArr[i].Percentage = GetActionData(*BossActionName)->Percentage;
+				RightActionArr[i].IsAddPercentage = false;
+				RightPercentageVec.push_back(RightActionArr[i].Percentage);
+			}
+		}));
+
+	InitPercentageMap.Add(B2_BACKATK, TFunction<void()>([=]()
+		{
+			BackPercentageVec.clear();
+
+			for (int i = 0; i < RightActionArr.Num(); i++)
+			{
+				auto BossActionName = Boss2ActionEnum->GetNameStringByValue(BackActionArr[i].ActionType);
+				BackActionArr[i].Percentage = GetActionData(*BossActionName)->Percentage;
+				BackActionArr[i].IsAddPercentage = false;
+				BackPercentageVec.push_back(BackActionArr[i].Percentage);
+			}
 		}));
 
 	//=======================================플레이어 공격타입에 따른 피격 모션=========================================
