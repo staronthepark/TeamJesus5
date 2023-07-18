@@ -19,10 +19,13 @@ AJesusBoss2::AJesusBoss2()
 	LockOnWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget"));
 	LockOnWidget->SetupAttachment(GetMesh(), FName("Bip001-Head"));
 	
-	LeftAtkCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Boss Weapon Box"));
-	LeftAtkCollision->SetupAttachment(GetMesh());
-	RightAtkCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Boss Weapon Box"));
-	RightAtkCollision->SetupAttachment(GetMesh());
+	LeftAtkCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Boss Left Hand"));
+	LeftAtkCollision->SetupAttachment(GetMesh(),FName("LHand"));
+	LeftAtkCollision->SetCollisionProfileName("AIWeapon");
+
+	RightAtkCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Boss Right Hand"));
+	RightAtkCollision->SetupAttachment(GetMesh(),FName("RHand"));
+	RightAtkCollision->SetCollisionProfileName("AIWeapon");
 
 	MontageStartMap.Add(Boss2AnimationType::NONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
@@ -504,8 +507,10 @@ void AJesusBoss2::BeginPlay()
 	
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
-	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::AttackHit);
-	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	LeftAtkCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::AttackHit);
+	LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	RightAtkCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::AttackHit);
+	RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	//임시로 변수 설정
 	CanMove = true;
@@ -675,8 +680,8 @@ void AJesusBoss2::PlayAttackAnim(Boss2AnimationType Type)
 
 void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
+	LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 /*=====================
@@ -770,12 +775,14 @@ void AJesusBoss2::OnEnd()
 
 void AJesusBoss2::CollisionEnableNotify()
 {
-	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 void AJesusBoss2::CollisionDisableNotify()
 {
-	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	Damage = 0;
 }
 
