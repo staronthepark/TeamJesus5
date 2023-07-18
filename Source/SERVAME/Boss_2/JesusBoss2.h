@@ -10,6 +10,8 @@
 #include "Components/PoseableMeshComponent.h"
 #include "..\Player\PlayerCharacter.h"
 #include "NavigationSystem.h"
+#include "Components/WidgetComponent.h"
+#include "..\UI\MonsterWidget.h"
 #include <vector>
 #include "JesusBoss2.generated.h"
 
@@ -188,6 +190,7 @@ public:
 	Boss2ActionTemp CurrentActionTemp{};
 
 	int DecreasePercentageVal = 20;
+	int HitCount;
 
 	bool CanAttack = false;
 	bool ChangeSuperAction = false;
@@ -213,6 +216,14 @@ public:
 
 	UPROPERTY()
 	const UEnum* Boss2ActionEnum;
+
+	UPROPERTY()
+	UMonsterWidget* MonsterLockOnWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UWidgetComponent* LockOnWidget;
+
+	TObjectPtr<APlayerCharacter> PlayerCharacter;
 
 	/*=====================
 	*		Map
@@ -253,6 +264,16 @@ public:
 	TArray<Boss2ActionTemp> BackActionArr;
 	TArray<Boss2ActionTemp> BackTempArr;
 	std::vector<int>BackPercentageVec;
+	
+	/*======================
+	*		Override
+	======================*/ 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual void HitStop() override;
+	virtual void RespawnCharacter() override;
+	virtual void IsNotifyActive(bool value) override;
+	virtual void PlayExecutionAnimation() override;
+	virtual void ActivateLockOnImage(bool value)override;
 
 	/*=====================
 	*		Function

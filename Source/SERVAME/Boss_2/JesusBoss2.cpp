@@ -16,6 +16,9 @@ AJesusBoss2::AJesusBoss2()
 	Boss2HitCollision->SetupAttachment(GetMesh(), FName("LockOn_Bone"));
 	Boss2HitCollision->SetCollisionProfileName("AIHit");
 
+	LockOnWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget"));
+	LockOnWidget->SetupAttachment(GetMesh(), FName("Bip001-Head"));
+
 	MontageStartMap.Add(Boss2AnimationType::NONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 		}));
@@ -447,8 +450,25 @@ AJesusBoss2::AJesusBoss2()
 
 	//=======================================플레이어 공격타입에 따른 피격 모션=========================================
 
+	HitMap.Add(ActionType::ATTACK, TFunction<void()>([=]()
+		{
+			if (HitCount >= 2)
+				return;
 
+			HitCount++;
 
+			//ChangeMontageAnimation(BossAnimationType::HIT);
+		}));
+
+	HitMap.Add(ActionType::POWERATTACK, TFunction<void()>([=]()
+		{
+			if (HitCount >= 2)
+				return;
+
+			HitCount++;
+
+			//ChangeMontageAnimation(BossAnimationType::HIT);
+		}));
 }
 
 void AJesusBoss2::PostInitializeComponents()
@@ -470,17 +490,34 @@ void AJesusBoss2::BeginPlay()
 	Super::BeginPlay();
 	SetMetaData();
 	AIController = Cast<ABoss2AIController>(GetController());
-
 	Boss2ActionEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("Boss2ActionType"), true);
+	GetCharacterMovement()->MaxWalkSpeed = Boss2DataStruct.CharacterOriginSpeed;
+	MonsterLockOnWidget = Cast<UMonsterWidget>(LockOnWidget->GetWidget());
+	MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
+	
+	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
-	//테스트 용
+	//임시로 변수 설정
 	CanMove = true;
+	IsLockOn = true;
 	Boss2AnimInstance->IsStart = true;
 }
 
 void AJesusBoss2::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (PlayerCharacter->TargetComp != nullptr)
+	{
+		if (PlayerCharacter->TargetComp->GetOwner() == this)
+		{
+			MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Visible);
+		}
+		else
+		{
+			MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
 
 }
 
@@ -713,4 +750,30 @@ void AJesusBoss2::OnEnd()
 	IsStart.Exchange(false);
 	IsAttackMontageEnd = true;
 	IsMontagePlay = false;
+}
+
+float AJesusBoss2::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	return 0.0f;
+}
+
+void AJesusBoss2::HitStop()
+{
+}
+
+void AJesusBoss2::RespawnCharacter()
+{
+}
+
+void AJesusBoss2::IsNotifyActive(bool value)
+{
+}
+
+void AJesusBoss2::PlayExecutionAnimation()
+{
+}
+
+void AJesusBoss2::ActivateLockOnImage(bool value)
+{
+	value ? MonsterLockOnWidget->SetVisibility(ESlateVisibility::HitTestInvisible) : MonsterLockOnWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
