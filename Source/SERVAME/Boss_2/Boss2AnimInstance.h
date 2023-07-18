@@ -13,8 +13,12 @@ enum class Boss2AnimationType : uint8
 	NONE,
 	IDLE,
 	CROSSFALL,
-	FowardWalk,
-	LeftWalk,
+	FOWARDWALK,
+	LEFTWALK,
+	DOWNSMASH,
+	SLASH,
+	DOUBLESMASH,
+	DIE,
 };
 
 DECLARE_MULTICAST_DELEGATE(FOnCrossFall);

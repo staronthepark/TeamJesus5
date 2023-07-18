@@ -33,6 +33,14 @@ AJesusBoss2::AJesusBoss2()
 	MontageEndMap.Add(Boss2AnimationType::NONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 		}));
+
+	MontageStartMap.Add(Boss2AnimationType::IDLE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+		}));
+	MontageEndMap.Add(Boss2AnimationType::IDLE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+		}));
+
 	MontageStartMap.Add(Boss2AnimationType::CROSSFALL, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 			Boss2->IsAttackMontageEnd = false;
@@ -44,6 +52,52 @@ AJesusBoss2::AJesusBoss2()
 			Boss2->IsLockOn = true;
 		}));
 
+	MontageStartMap.Add(Boss2AnimationType::FOWARDWALK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+		}));
+	MontageEndMap.Add(Boss2AnimationType::FOWARDWALK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+		}));
+
+	MontageStartMap.Add(Boss2AnimationType::LEFTWALK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+		}));
+	MontageEndMap.Add(Boss2AnimationType::LEFTWALK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+		}));
+
+	MontageStartMap.Add(Boss2AnimationType::SLASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->IsAttackMontageEnd = false;
+			Boss2->CanMove = false;
+		}));
+	MontageEndMap.Add(Boss2AnimationType::SLASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->CanMove = true;
+			Boss2->IsLockOn = true;
+		}));
+
+	MontageStartMap.Add(Boss2AnimationType::DOWNSMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->IsAttackMontageEnd = false;
+			Boss2->CanMove = false;
+		}));
+	MontageEndMap.Add(Boss2AnimationType::DOWNSMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->CanMove = true;
+			Boss2->IsLockOn = true;
+		}));
+
+	MontageStartMap.Add(Boss2AnimationType::DOUBLESMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->IsAttackMontageEnd = false;
+			Boss2->CanMove = false;
+		}));
+	MontageEndMap.Add(Boss2AnimationType::DOUBLESMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->CanMove = true;
+			Boss2->IsLockOn = true;
+		}));
 	//===========================================공격 실행=========================================================
 
 	BossAttackMap.Add(Boss2ActionType::B2_FALLTHECROSS, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -534,6 +588,7 @@ void AJesusBoss2::Tick(float DeltaTime)
 		}
 	}
 
+	PlayMoveMontage();
 }
 
 /*=====================
@@ -678,10 +733,59 @@ void AJesusBoss2::PlayAttackAnim(Boss2AnimationType Type)
 	ChangeMontageAnimation(Type);
 }
 
+void AJesusBoss2::PlayMoveMontage()
+{
+	if (Boss2AnimInstance->Speed > 10 && !IsAttacking && IsPlayerAlive
+		&& AIController->GetBlackboardComponent()->GetValueAsBool("CanMove"))
+	{
+		if (CurrentAnimType == Boss2AnimationType::DIE)
+			return;
+
+		if (CurrentAnimType == Boss2AnimationType::IDLE)
+			ChangeAnimType(Boss2AnimationType::FOWARDWALK);
+
+		if (!IsMontagePlay)
+		{
+			ChangeMontageAnimation(CurrentAnimType);
+			IsMontagePlay = true;
+		}
+	}
+	else
+	{
+		if (!Boss2AnimInstance->IsAnyMontagePlaying())
+		{
+			ChangeMontageAnimation(Boss2AnimationType::IDLE);
+			IsMontagePlay = false;
+		}
+	}
+}
+
 void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+float AJesusBoss2::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	return 0.0f;
+}
+
+void AJesusBoss2::HitStop()
+{
+}
+
+void AJesusBoss2::RespawnCharacter()
+{
+}
+
+void AJesusBoss2::PlayExecutionAnimation()
+{
+}
+
+void AJesusBoss2::ActivateLockOnImage(bool value)
+{
+	value ? MonsterLockOnWidget->SetVisibility(ESlateVisibility::HitTestInvisible) : MonsterLockOnWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 /*=====================
@@ -786,29 +890,7 @@ void AJesusBoss2::CollisionDisableNotify()
 	Damage = 0;
 }
 
-
-float AJesusBoss2::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-	return 0.0f;
-}
-
-void AJesusBoss2::HitStop()
-{
-}
-
-void AJesusBoss2::RespawnCharacter()
-{
-}
-
 void AJesusBoss2::IsNotifyActive(bool value)
 {
 }
 
-void AJesusBoss2::PlayExecutionAnimation()
-{
-}
-
-void AJesusBoss2::ActivateLockOnImage(bool value)
-{
-	value ? MonsterLockOnWidget->SetVisibility(ESlateVisibility::HitTestInvisible) : MonsterLockOnWidget->SetVisibility(ESlateVisibility::Collapsed);
-}

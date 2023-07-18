@@ -293,6 +293,7 @@ public:
 	void InitIsExcute();
 	void SetBTAction(Boss2ActionTemp Temp);
 	void PlayAttackAnim(Boss2AnimationType Type);
+	void PlayMoveMontage();
 
 	/*======================
 	*		UFUNCTION
