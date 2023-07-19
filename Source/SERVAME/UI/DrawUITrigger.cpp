@@ -11,6 +11,7 @@ void ADrawUITrigger::BeginPlay()
 void ADrawUITrigger::BeginTriggerEvent()
 {
 	Super::BeginTriggerEvent();
+	UE_LOG(LogTemp, Warning, TEXT("#@!#!@#!@#"));
 }
 
 void ADrawUITrigger::DrawTimeEnd()
