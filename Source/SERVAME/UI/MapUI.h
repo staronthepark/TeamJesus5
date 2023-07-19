@@ -19,6 +19,5 @@ class SERVAME_API UMapUI : public UUserWidget
 		UWidgetAnimation* MapInfoOpenAnimation;
 
 public:
-	virtual void NativeOnInitialized() override;
 	void PlayMapInfoAnimation(FString MapName, bool isOpen = true);
 };

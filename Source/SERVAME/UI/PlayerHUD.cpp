@@ -178,6 +178,7 @@ void UPlayerHUD::PlayMapUIAnimation(FString MapName)
 
 void UPlayerHUD::FadeInAnimation(bool isFadeIn)
 {
+	UE_LOG(LogTemp, Warning, TEXT("!@#!@#"));
 	if (WBP_FadeInOutUI)
 		WBP_FadeInOutUI->PlayFadeInOutAnimation(isFadeIn);
 }
