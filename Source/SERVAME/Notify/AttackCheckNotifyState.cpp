@@ -11,13 +11,9 @@ void UAttackCheckNotifyState::NotifyBegin(USkeletalMeshComponent * MeshComp, UAn
 	{
 		Boss = Cast<AJesusBoss>(MeshComp->GetOwner());
 		
-		//int num = -1;
-		//
-		//auto temp = visit_at(Test(MeshComp), BossEnumType.GetIntValue());
-
 		//auto Boss = std::get<0>(Test(MeshComp));
-		
 
+		visit_at(Test(MeshComp), BossEnumType.GetIntValue(), &asdf);
 
 		if (Boss)
 		{
@@ -57,7 +53,6 @@ void UAttackCheckNotifyState::NotifyBegin(USkeletalMeshComponent * MeshComp, UAn
 				Boss->Damage += Boss->BossDataStruct.DamageList[Type];
 
 				Player->TakeDamage(Boss->Damage, DamageEvent, Boss->GetController(), Boss);
-				//			}
 			}
 		}
 	}

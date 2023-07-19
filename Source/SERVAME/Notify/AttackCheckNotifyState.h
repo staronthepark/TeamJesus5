@@ -8,7 +8,7 @@
 #include "..\Boss_2\JesusBoss2.h"
 #include "..\Player\PlayerCharacter.h"
 #include <tuple>
-#include <assert>
+#include <assert.h>
 #include "AttackCheckNotifyState.generated.h"
 
 /**
@@ -31,34 +31,41 @@ public:
 	TEnumAsByte<BossType> BossEnumType;
 
 
-	void asdf(AJesusBoss* a) {}
+	AJesusBoss* asdf(AJesusBoss* a) { return a; }
+
+
 };
+
+template<typename T>
+T GetBoss(T boss) { return boss; }
 
 //런타임에 초기화 되는 변수는 Tuple 값을 가져올 때 사용불가.
 template <size_t I>
 struct visit_impl
 {
-    template <typename T>
-    static T visit(T& tup, size_t idx)
-    {
+	template <typename T, typename F>
+	static void visit(T& tup, size_t idx, F fun)
+	{
 		if (idx == I - 1)
-			return std::get<I - 1>(tup);
-			//fun(std::get<I - 1>(tup));
-        else 
-			visit_impl<I - 1>::visit(tup, idx);
-    }
+		{
+			fun(std::get<I - 1>(tup));
+			//여기에 범위 공격 로직 넣어보기.
+		}
+		else 
+			visit_impl<I - 1>::visit(tup, idx, fun);
+	}
 };
 
 //튜플을 모두 순회해서 0이 되었는데도 찾지 못하면 assert
 template <>
 struct visit_impl<0>
 {
-    template <typename T>
-    static void visit(T& tup, size_t idx) { assert(false); }
+	template <typename T, typename F>
+	static void visit(T& tup, size_t idx, F fun) { assert(false); }
 };
 
-template <typename... Ts>
-void visit_at(std::tuple<Ts...> const& tup, size_t idx)
+template <typename F, typename... Ts>
+void visit_at(std::tuple<Ts...> const& tup, size_t idx, F fun)
 {
-    visit_impl<sizeof...(Ts)>::visit(tup, idx);
+    visit_impl<sizeof...(Ts)>::visit(tup, idx, fun);
 }
