@@ -6,6 +6,9 @@
 #include <random>
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "..\Manager\CombatManager.h"
+#include "DrawDebugHelpers.h"
 
 AJesusBoss2::AJesusBoss2()
 {
@@ -560,6 +563,8 @@ void AJesusBoss2::PostInitializeComponents()
 		Boss2AnimInstance->OnEnd.AddUObject(this, &AJesusBoss2::OnEnd);
 		Boss2AnimInstance->OnEnable.AddUObject(this, &AJesusBoss2::CollisionEnableNotify);
 		Boss2AnimInstance->OnDisable.AddUObject(this, &AJesusBoss2::CollisionDisableNotify);
+		Boss2AnimInstance->OnLockOn.AddUObject(this, &AJesusBoss2::LockOn);
+		Boss2AnimInstance->OnLockOff.AddUObject(this, &AJesusBoss2::LockOff);
 	}
 }
 
@@ -602,6 +607,9 @@ void AJesusBoss2::Tick(float DeltaTime)
 		}
 	}
 
+	if (AttackLockOn)
+		RotateToPlayerInterp();
+
 	PlayMoveMontage();
 }
 
@@ -631,6 +639,13 @@ void AJesusBoss2::PlayMoveMontage()
 			IsMontagePlay = false;
 		}
 	}
+}
+
+void AJesusBoss2::RotateToPlayerInterp()
+{
+	FRotator ToTarget = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), PlayerCharacter->GetActorLocation());
+	FRotator LookAtRotation = FMath::RInterpTo(GetActorRotation(), ToTarget, GetWorld()->DeltaTimeSeconds, 4.f);
+	SetActorRotation(LookAtRotation);
 }
 
 void AJesusBoss2::SetMetaData()
@@ -901,6 +916,16 @@ void AJesusBoss2::CollisionDisableNotify()
 	LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	Damage = 0;
+}
+
+void AJesusBoss2::LockOn()
+{
+	AttackLockOn = true;
+}
+
+void AJesusBoss2::LockOff()
+{
+	AttackLockOn = false;
 }
 
 void AJesusBoss2::IsNotifyActive(bool value)

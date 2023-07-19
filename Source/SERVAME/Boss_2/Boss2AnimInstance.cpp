@@ -29,3 +29,7 @@ void UBoss2AnimInstance::AnimNotify_OnEnd() { OnEnd.Broadcast(); }
 void UBoss2AnimInstance::AnimNotify_OnEnable() { OnEnable.Broadcast(); }
 
 void UBoss2AnimInstance::AnimNotify_OnDisable() { OnDisable.Broadcast(); }
+
+void UBoss2AnimInstance::AnimNotify_LockOn() { OnLockOn.Broadcast(); }
+
+void UBoss2AnimInstance::AnimNotify_LockOff() { OnLockOff.Broadcast(); }

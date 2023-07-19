@@ -297,6 +297,7 @@ public:
 	void SetBTAction(Boss2ActionTemp Temp);
 	void PlayAttackAnim(Boss2AnimationType Type);
 	void PlayMoveMontage();
+	void RotateToPlayerInterp();
 
 	/*======================
 	*		UFUNCTION
@@ -314,6 +315,8 @@ public:
 	void OnEnd();
 	void CollisionEnableNotify();
 	void CollisionDisableNotify();
+	void LockOn();
+	void LockOff();
 
 protected:
 	// Called when the game starts or when spawned

@@ -10,6 +10,14 @@ void UAttackCheckNotifyState::NotifyBegin(USkeletalMeshComponent * MeshComp, UAn
 	if (MeshComp && MeshComp->GetOwner())
 	{
 		Boss = Cast<AJesusBoss>(MeshComp->GetOwner());
+		
+		//int num = -1;
+		//
+		//auto temp = visit_at(Test(MeshComp), BossEnumType.GetIntValue());
+
+		//auto Boss = std::get<0>(Test(MeshComp));
+		
+
 
 		if (Boss)
 		{
@@ -54,3 +62,9 @@ void UAttackCheckNotifyState::NotifyBegin(USkeletalMeshComponent * MeshComp, UAn
 		}
 	}
 }
+
+std::tuple<AJesusBoss*, AJesusBoss2*> UAttackCheckNotifyState::Test(USkeletalMeshComponent* MeshComp)
+{
+	return std::tuple<AJesusBoss*, AJesusBoss2*>(Cast<AJesusBoss>(MeshComp->GetOwner()), Cast<AJesusBoss2>(MeshComp->GetOwner()));
+}
+

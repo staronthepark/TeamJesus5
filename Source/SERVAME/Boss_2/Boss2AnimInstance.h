@@ -26,6 +26,8 @@ DECLARE_MULTICAST_DELEGATE(FOnStart);
 DECLARE_MULTICAST_DELEGATE(FOnEnd);
 DECLARE_MULTICAST_DELEGATE(FOnEnable);
 DECLARE_MULTICAST_DELEGATE(FOnDisable);
+DECLARE_MULTICAST_DELEGATE(FOnLockOn);
+DECLARE_MULTICAST_DELEGATE(FOnLockOff);
 
 UCLASS()
 class SERVAME_API UBoss2AnimInstance : public UBaseAnimInstance
@@ -54,6 +56,10 @@ private:
 	void AnimNotify_OnEnable();
 	UFUNCTION()
 	void AnimNotify_OnDisable();
+	UFUNCTION()
+	void AnimNotify_LockOn();
+	UFUNCTION()
+	void AnimNotify_LockOff();
 
 public:
 	FOnCrossFall OnCrossFall;
@@ -61,4 +67,6 @@ public:
 	FOnEnd OnEnd;
 	FOnEnable OnEnable;
 	FOnDisable OnDisable;
+	FOnLockOn OnLockOn;
+	FOnLockOff OnLockOff;
 };
