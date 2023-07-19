@@ -102,9 +102,23 @@ AJesusBoss2::AJesusBoss2()
 
 	BossAttackMap.Add(Boss2ActionType::B2_FALLTHECROSS, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->DoAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, true, Boss2AnimationType::CROSSFALL, Boss2);
+			Boss2->DoAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CROSSFALL, Boss2);
 		}));
 
+	BossAttackMap.Add(Boss2ActionType::B2_SLASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->DoAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::SLASH, Boss2);
+		}));
+
+	BossAttackMap.Add(Boss2ActionType::B2_DOWNSMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->DoAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::DOWNSMASH, Boss2);
+		}));
+
+	BossAttackMap.Add(Boss2ActionType::B2_DOUBLESMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->DoAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::DOUBLESMASH, Boss2);
+		}));
 	//====================================공격타입에 맞는 공격이 끝났을 때 실행되는 맵====================================
 
 	ActionEndMap.Add(Boss2AttackType::B2_MELEE, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
@@ -594,6 +608,34 @@ void AJesusBoss2::Tick(float DeltaTime)
 /*=====================
 *		Function
 =====================*/
+
+void AJesusBoss2::PlayMoveMontage()
+{
+	if (Boss2AnimInstance->Speed > 10 && !IsAttacking && IsPlayerAlive
+		&& AIController->GetBlackboardComponent()->GetValueAsBool("CanMove"))
+	{
+		if (CurrentAnimType == Boss2AnimationType::DIE)
+			return;
+
+		if (CurrentAnimType == Boss2AnimationType::IDLE)
+			ChangeAnimType(Boss2AnimationType::FOWARDWALK);
+
+		if (!IsMontagePlay)
+		{
+			ChangeMontageAnimation(CurrentAnimType);
+			IsMontagePlay = true;
+		}
+	}
+	else
+	{
+		if (!Boss2AnimInstance->IsAnyMontagePlaying())
+		{
+			ChangeMontageAnimation(Boss2AnimationType::IDLE);
+			IsMontagePlay = false;
+		}
+	}
+}
+
 void AJesusBoss2::SetMetaData()
 {
 	Boss2AnimationType Type;
@@ -733,32 +775,6 @@ void AJesusBoss2::PlayAttackAnim(Boss2AnimationType Type)
 	ChangeMontageAnimation(Type);
 }
 
-void AJesusBoss2::PlayMoveMontage()
-{
-	if (Boss2AnimInstance->Speed > 10 && !IsAttacking && IsPlayerAlive
-		&& AIController->GetBlackboardComponent()->GetValueAsBool("CanMove"))
-	{
-		if (CurrentAnimType == Boss2AnimationType::DIE)
-			return;
-
-		if (CurrentAnimType == Boss2AnimationType::IDLE)
-			ChangeAnimType(Boss2AnimationType::FOWARDWALK);
-
-		if (!IsMontagePlay)
-		{
-			ChangeMontageAnimation(CurrentAnimType);
-			IsMontagePlay = true;
-		}
-	}
-	else
-	{
-		if (!Boss2AnimInstance->IsAnyMontagePlaying())
-		{
-			ChangeMontageAnimation(Boss2AnimationType::IDLE);
-			IsMontagePlay = false;
-		}
-	}
-}
 
 void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
