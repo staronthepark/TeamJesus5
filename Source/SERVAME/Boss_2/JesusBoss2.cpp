@@ -617,12 +617,9 @@ void AJesusBoss2::PlayMoveMontage()
 		if (CurrentAnimType == Boss2AnimationType::DIE)
 			return;
 
-		if (CurrentAnimType == Boss2AnimationType::IDLE)
-			ChangeAnimType(Boss2AnimationType::FOWARDWALK);
-
 		if (!IsMontagePlay)
 		{
-			ChangeMontageAnimation(CurrentAnimType);
+			ChangeMontageAnimation(Boss2AnimationType::FOWARDWALK);
 			IsMontagePlay = true;
 		}
 	}
