@@ -36,6 +36,9 @@ enum Boss2ActionType
 	B2_ENUMSTART,
 	B2_NOTIHING UMETA(DisplayName = "B2_NOTIHING"),
 	B2_FALLTHECROSS UMETA(DisplayName = "B2_FALLTHECROSS"),
+	B2_SLASH UMETA(DisplayName = "B2_SLASH"),
+	B2_DOWNSMASH UMETA(DisplayName = "B2_DOWNSMASH"),
+	B2_DOUBLESMASH UMETA(DisplayName = "B2_DOUBLESMASH"),
 	B2_ENUMEND,
 };
 
@@ -160,11 +163,17 @@ public:
 	FVector Y_MinMax;
 	UPROPERTY(EditAnywhere, Category = "Cross")
 	FVector Z_MinMax;
+	UPROPERTY(EditAnywhere, Category = "Cross")
+	float SpawnTime;
+	UPROPERTY(EditAnywhere, Category = "Cross")
+	float DelayBetweenCross;
 	int CurrentCrossCount;
 	FTimerHandle CrossTimerHandle;
+	FTimerHandle CrossSpawnTimerHandle;
+	TQueue<ABaseObjectInPool*> CrossQueue;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss2Data")
-	FBoss2DataStruct Boss2DataStruct;
+	FBoss2DataStruct BossDataStruct;
 
 	UPROPERTY(EditAnywhere, Category = "BossPatternDT")
 	UDataTable* Boss2Actions;
@@ -185,6 +194,8 @@ public:
 	TObjectPtr<USphereComponent> LeftAtkCollision;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USphereComponent> RightAtkCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USceneComponent> AreaAtkPos;
 
 	Boss2BaseAction Boss2SuperAction;
 	Boss2DirectionType PlayerDirection;
@@ -294,6 +305,7 @@ public:
 	void SetBTAction(Boss2ActionTemp Temp);
 	void PlayAttackAnim(Boss2AnimationType Type);
 	void PlayMoveMontage();
+	void RotateToPlayerInterp();
 
 	/*======================
 	*		UFUNCTION
@@ -309,8 +321,13 @@ public:
 	void OnCrossFall();
 	void OnStart();
 	void OnEnd();
-	void CollisionEnableNotify();
-	void CollisionDisableNotify();
+	void RightCollisionEnableNotify();
+	void RightCollisionDisableNotify();
+	void LeftCollisionEnableNotify();
+	void LeftCollisionDisableNotify();
+
+	void LockOn();
+	void LockOff();
 
 protected:
 	// Called when the game starts or when spawned

@@ -26,6 +26,14 @@ void UBoss2AnimInstance::AnimNotify_OnStart() { OnStart.Broadcast(); }
 
 void UBoss2AnimInstance::AnimNotify_OnEnd() { OnEnd.Broadcast(); }
 
-void UBoss2AnimInstance::AnimNotify_OnEnable() { OnEnable.Broadcast(); }
+void UBoss2AnimInstance::AnimNotify_OnRightEnable() { OnRightEnable.Broadcast(); }
 
-void UBoss2AnimInstance::AnimNotify_OnDisable() { OnDisable.Broadcast(); }
+void UBoss2AnimInstance::AnimNotify_OnRightDisable() { OnRightDisable.Broadcast(); }
+
+void UBoss2AnimInstance::AnimNotify_OnLeftEnable() { OnLeftEnable.Broadcast(); }
+
+void UBoss2AnimInstance::AnimNotify_OnLeftDisable() { OnLeftDisable.Broadcast(); }
+
+void UBoss2AnimInstance::AnimNotify_LockOn() { OnLockOn.Broadcast(); }
+
+void UBoss2AnimInstance::AnimNotify_LockOff() { OnLockOff.Broadcast(); }

@@ -5,52 +5,73 @@
 #include "Engine/DamageEvents.h"
 #include "DrawDebugHelpers.h"
 
+UAttackCheckNotifyState::UAttackCheckNotifyState()
+{
+}
+
 void UAttackCheckNotifyState::NotifyBegin(USkeletalMeshComponent * MeshComp, UAnimSequenceBase * Animation, float TotalDuration)
 {
 	if (MeshComp && MeshComp->GetOwner())
 	{
-		Boss = Cast<AJesusBoss>(MeshComp->GetOwner());
+		BaseCharacter = Cast<ABaseCharacter>(MeshComp->GetOwner());
+		
+		if (!BaseCharacter)
+			return;
 
-		if (Boss)
-		{
-			FHitResult HitResult;
-			FCollisionQueryParams Params(NAME_None, false, Boss);
+		//auto Boss = std::get<0>(Test(MeshComp));
+		//visit_at(Test(MeshComp), BossEnumType.GetIntValue(), this->fboss1);
 
-			auto Type = Boss->GetTypeFromMetaData(Boss->GetCurrentMontage());
-
-			bool bResult = Boss->GetWorld()->SweepSingleByChannel(
-				OUT HitResult,
-				Boss->GetActorLocation(),
-				Boss->GetActorLocation(),
-				FQuat::Identity,
-				ECollisionChannel::ECC_GameTraceChannel3,
-				FCollisionShape::MakeSphere(AttackRadius),
-				Params);
-
-			FVector Center = Boss->GetActorLocation();
-			FColor DrawColor;
-
-			if (bResult)
-				DrawColor = FColor::Green;
-			else
-				DrawColor = FColor::Red;
-
-			//DrawDebugSphere(Boss->GetWorld(), Center, AttackRadius, 16, DrawColor, false, 1.f);
-
-			Boss->CameraShake(Boss->PlayerCameraShake);
-			Boss->VibrateGamePad(1.0f, 0.5f);
-
-			if (bResult && HitResult.GetActor())
+		visit_at(Test(MeshComp), BossEnumType.GetIntValue(), [=](auto& val)
 			{
-				UE_LOG(LogTemp, Log, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
-				FDamageEvent DamageEvent;
-				auto Player = Cast<APlayerCharacter>(HitResult.GetActor());
+				UE_LOG(LogTemp, Warning, TEXT("Call_Templet_lamda"));
+				FHitResult HitResult;
+				FCollisionQueryParams Params(NAME_None, false, val);
 
-				Boss->Damage += Boss->BossDataStruct.DamageList[Type];
+				auto Type = val->GetTypeFromMetaData(val->GetCurrentMontage());
 
-				Player->TakeDamage(Boss->Damage, DamageEvent, Boss->GetController(), Boss);
-				//			}
-			}
-		}
+				bool bResult = val->GetWorld()->SweepSingleByChannel(
+					OUT HitResult,
+					val->AreaAtkPos->GetComponentLocation(),
+					val->AreaAtkPos->GetComponentLocation(),
+					FQuat::Identity,
+					ECollisionChannel::ECC_GameTraceChannel3,
+					FCollisionShape::MakeSphere(AttackRadius),
+					Params);
+
+				FVector Center = val->AreaAtkPos->GetComponentLocation();
+				FColor DrawColor;
+
+				if (bResult)
+					DrawColor = FColor::Green;
+				else
+					DrawColor = FColor::Red;
+
+				DrawDebugSphere(val->GetWorld(), Center, AttackRadius, 16, DrawColor, false, 1.f);
+
+				val->CameraShake(val->PlayerCameraShake);
+				val->VibrateGamePad(1.0f, 0.5f);
+
+				if (bResult && HitResult.GetActor())
+				{
+					auto Player = Cast<APlayerCharacter>(HitResult.GetActor());
+
+					if (Player)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Current Atk : %s"), *val->GetCurrentMontage()->GetName());
+						UE_LOG(LogTemp, Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
+						FDamageEvent DamageEvent;
+
+						val->Damage += val->BossDataStruct.DamageList[Type];
+
+						Player->TakeDamage(val->Damage, DamageEvent, val->GetController(), val);
+					}
+				}
+			});
 	}
 }
+
+std::tuple<AJesusBoss*, AJesusBoss2*> UAttackCheckNotifyState::Test(USkeletalMeshComponent* MeshComp)
+{
+	return std::tuple<AJesusBoss*, AJesusBoss2*>(Cast<AJesusBoss>(MeshComp->GetOwner()), Cast<AJesusBoss2>(MeshComp->GetOwner()));
+}
+
