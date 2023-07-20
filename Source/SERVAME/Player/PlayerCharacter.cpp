@@ -273,7 +273,6 @@ APlayerCharacter::APlayerCharacter()
 			character->ActivateSMOverlap();
 			character->ActivateRightWeapon();
 			character->SwordTrailComp->Activate();
-			character->CameraShake(character->PlayerDoorCameraShake);
 		});
 
 	NotifyBeginEndEventMap[AnimationType::ATTACK1].Add(false, [](APlayerCharacter* character)
