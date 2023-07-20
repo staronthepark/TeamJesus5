@@ -315,8 +315,11 @@ public:
 	void OnCrossFall();
 	void OnStart();
 	void OnEnd();
-	void CollisionEnableNotify();
-	void CollisionDisableNotify();
+	void RightCollisionEnableNotify();
+	void RightCollisionDisableNotify();
+	void LeftCollisionEnableNotify();
+	void LeftCollisionDisableNotify();
+
 	void LockOn();
 	void LockOff();
 

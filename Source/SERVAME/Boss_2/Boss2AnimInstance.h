@@ -24,8 +24,10 @@ enum class Boss2AnimationType : uint8
 DECLARE_MULTICAST_DELEGATE(FOnCrossFall);
 DECLARE_MULTICAST_DELEGATE(FOnStart);
 DECLARE_MULTICAST_DELEGATE(FOnEnd);
-DECLARE_MULTICAST_DELEGATE(FOnEnable);
-DECLARE_MULTICAST_DELEGATE(FOnDisable);
+DECLARE_MULTICAST_DELEGATE(FOnRightEnable);
+DECLARE_MULTICAST_DELEGATE(FOnRightDisable);
+DECLARE_MULTICAST_DELEGATE(FOnLeftEnable);
+DECLARE_MULTICAST_DELEGATE(FOnLeftDisable);
 DECLARE_MULTICAST_DELEGATE(FOnLockOn);
 DECLARE_MULTICAST_DELEGATE(FOnLockOff);
 
@@ -53,9 +55,13 @@ private:
 	UFUNCTION()
 	void AnimNotify_OnEnd();
 	UFUNCTION()
-	void AnimNotify_OnEnable();
+	void AnimNotify_OnRightEnable();
 	UFUNCTION()
-	void AnimNotify_OnDisable();
+	void AnimNotify_OnRightDisable();
+	UFUNCTION()
+	void AnimNotify_OnLeftEnable();
+	UFUNCTION()
+	void AnimNotify_OnLeftDisable();
 	UFUNCTION()
 	void AnimNotify_LockOn();
 	UFUNCTION()
@@ -65,8 +71,10 @@ public:
 	FOnCrossFall OnCrossFall;
 	FOnStart OnStart;
 	FOnEnd OnEnd;
-	FOnEnable OnEnable;
-	FOnDisable OnDisable;
+	FOnRightEnable OnRightEnable;
+	FOnRightDisable OnRightDisable;
+	FOnLeftEnable OnLeftEnable;
+	FOnLeftDisable OnLeftDisable;
 	FOnLockOn OnLockOn;
 	FOnLockOff OnLockOff;
 };

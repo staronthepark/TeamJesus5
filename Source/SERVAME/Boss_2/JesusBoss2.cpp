@@ -565,8 +565,10 @@ void AJesusBoss2::PostInitializeComponents()
 		Boss2AnimInstance->OnCrossFall.AddUObject(this, &AJesusBoss2::OnCrossFall);
 		Boss2AnimInstance->OnStart.AddUObject(this, &AJesusBoss2::OnStart);
 		Boss2AnimInstance->OnEnd.AddUObject(this, &AJesusBoss2::OnEnd);
-		Boss2AnimInstance->OnEnable.AddUObject(this, &AJesusBoss2::CollisionEnableNotify);
-		Boss2AnimInstance->OnDisable.AddUObject(this, &AJesusBoss2::CollisionDisableNotify);
+		Boss2AnimInstance->OnRightEnable.AddUObject(this, &AJesusBoss2::RightCollisionEnableNotify);
+		Boss2AnimInstance->OnRightDisable.AddUObject(this, &AJesusBoss2::RightCollisionDisableNotify);
+		Boss2AnimInstance->OnLeftEnable.AddUObject(this, &AJesusBoss2::LeftCollisionEnableNotify);
+		Boss2AnimInstance->OnLeftDisable.AddUObject(this, &AJesusBoss2::LeftCollisionDisableNotify);
 		Boss2AnimInstance->OnLockOn.AddUObject(this, &AJesusBoss2::LockOn);
 		Boss2AnimInstance->OnLockOff.AddUObject(this, &AJesusBoss2::LockOff);
 	}
@@ -808,13 +810,31 @@ void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 
 	if (!Player->Imotal)
 	{
-
+		if (BossDataStruct.DamageList.Contains(Type))
+			Damage += BossDataStruct.DamageList[Type];
+		else
+			return;
+		
+		OtherActor->TakeDamage(Damage, DamageEvent, GetController(), this);
+		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 	}
 }
 
 float AJesusBoss2::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	return 0.0f;
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	BossDataStruct.CharacterHp -= DamageAmount;
+
+	//TODO : 보스 체력 UI
+
+	//TODO : 본 회전 시키기
+
+	//TODO : 그로기 관련 코드
+
+	return DamageAmount;
 }
 
 void AJesusBoss2::HitStop()
@@ -923,16 +943,25 @@ void AJesusBoss2::OnEnd()
 	IsMontagePlay = false;
 }
 
-void AJesusBoss2::CollisionEnableNotify()
+void AJesusBoss2::LeftCollisionEnableNotify()
 {
 	LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
+
+void AJesusBoss2::LeftCollisionDisableNotify()
+{
+	LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Damage = 0;
+}
+
+void AJesusBoss2::RightCollisionEnableNotify()
+{
 	RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
-void AJesusBoss2::CollisionDisableNotify()
+void AJesusBoss2::RightCollisionDisableNotify()
 {
-	LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Damage = 0;
 }
 
