@@ -25,3 +25,7 @@ void UBoss2AnimInstance::AnimNotify_CrossFall() { OnCrossFall.Broadcast(); }
 void UBoss2AnimInstance::AnimNotify_OnStart() { OnStart.Broadcast(); }
 
 void UBoss2AnimInstance::AnimNotify_OnEnd() { OnEnd.Broadcast(); }
+
+void UBoss2AnimInstance::AnimNotify_OnEnable() { OnEnable.Broadcast(); }
+
+void UBoss2AnimInstance::AnimNotify_OnDisable() { OnDisable.Broadcast(); }
