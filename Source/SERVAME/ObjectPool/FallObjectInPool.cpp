@@ -17,17 +17,15 @@ AFallObjectInPool::AFallObjectInPool()
 	GroundHitCollision = CreateDefaultSubobject<UBoxComponent>("GroundHitCollision");
 	GroundHitCollision->SetupAttachment(RootComponent);
 
-	ParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>("Particle");
-	ParticleSystem->SetupAttachment(RootComponent);
+	CrossEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Cross Effect"));
+	CrossEffect->SetupAttachment(RootComponent);
 }
 
 void AFallObjectInPool::BeginPlay()
 {
 	Super::BeginPlay();
 
-
 	SetActorTickEnabled(false);
-
 	HitCollision->OnComponentBeginOverlap.AddDynamic(this, &AFallObjectInPool::OnCollisionBeginOverlap);
 	GroundHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AFallObjectInPool::OnGroundOverlap);
 	GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
@@ -35,7 +33,7 @@ void AFallObjectInPool::BeginPlay()
 
 void AFallObjectInPool::Tick(float DeltaTime)
 {
-	if (!IsHitGround)
+	if (!IsHitGround && IsTick)
 		SetActorRelativeLocation(GetActorLocation() += MoveDir * DeltaTime * FallSpeed);
 }
 
@@ -49,8 +47,13 @@ void AFallObjectInPool::SetActive(bool active)
 {
 	Super::SetActive(active);
 
-	SetActorTickEnabled(true);
+	IsTick = false;
+
+	//SetActorTickEnabled(true);
+
 	MoveDir = -GetActorUpVector();
+
+	CrossEffect->Activate();
 
 	if (LifeTime > 0 && active)
 	{

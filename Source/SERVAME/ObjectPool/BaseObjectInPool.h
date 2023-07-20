@@ -31,6 +31,8 @@ public:
 
 public:	
 
+	bool IsTick;
+
 	virtual void BeginPlay();
 
 	virtual void SetActive(bool active);

@@ -53,14 +53,18 @@ void UAttackCheckNotifyState::NotifyBegin(USkeletalMeshComponent * MeshComp, UAn
 
 				if (bResult && HitResult.GetActor())
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Current Atk : %s"), *val->GetCurrentMontage()->GetName());
-					UE_LOG(LogTemp, Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
-					FDamageEvent DamageEvent;
 					auto Player = Cast<APlayerCharacter>(HitResult.GetActor());
 
-					val->Damage += val->BossDataStruct.DamageList[Type];
+					if (Player)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Current Atk : %s"), *val->GetCurrentMontage()->GetName());
+						UE_LOG(LogTemp, Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
+						FDamageEvent DamageEvent;
 
-					Player->TakeDamage(val->Damage, DamageEvent, val->GetController(), val);
+						val->Damage += val->BossDataStruct.DamageList[Type];
+
+						Player->TakeDamage(val->Damage, DamageEvent, val->GetController(), val);
+					}
 				}
 			});
 	}

@@ -864,6 +864,20 @@ void AJesusBoss2::OnCrossFall()
 	if (NavSystem == nullptr)
 		return;
 
+	GetWorld()->GetTimerManager().SetTimer(CrossSpawnTimerHandle, FTimerDelegate::CreateLambda([=]()
+		{			
+			if (CrossQueue.IsEmpty())
+			{
+				GetWorld()->GetTimerManager().ClearTimer(CrossSpawnTimerHandle);
+				return;
+			}
+			else
+			{
+				ABaseObjectInPool* TempObj;
+				CrossQueue.Dequeue(TempObj);
+				TempObj->IsTick = true;
+			}
+		}), DelayBetweenCross, true, SpawnTime);
 
 	GetWorld()->GetTimerManager().SetTimer(CrossTimerHandle, FTimerDelegate::CreateLambda([=]()
 		{
@@ -884,6 +898,7 @@ void AJesusBoss2::OnCrossFall()
 			{
 				auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[32].ObjClass,
 					RandomLocation.Location + FVector(0,0,SpawnHeight), FRotator(ScaleTempY, ScaleTempZ, ScaleTempX));
+				CrossQueue.Enqueue(PoolObj);
 				auto CastObj = Cast<AActor>(PoolObj);
 				CastObj->SetActorScale3D(FVector(5.f, 5.f, 5.f));
 				CurrentCrossCount++;
@@ -891,6 +906,7 @@ void AJesusBoss2::OnCrossFall()
 
 			if (CurrentCrossCount >= CrossCount)
 			{
+				CurrentCrossCount = 0;
 				GetWorld()->GetTimerManager().ClearTimer(CrossTimerHandle);
 				return;
 			}

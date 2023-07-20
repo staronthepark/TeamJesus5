@@ -163,8 +163,14 @@ public:
 	FVector Y_MinMax;
 	UPROPERTY(EditAnywhere, Category = "Cross")
 	FVector Z_MinMax;
+	UPROPERTY(EditAnywhere, Category = "Cross")
+	float SpawnTime;
+	UPROPERTY(EditAnywhere, Category = "Cross")
+	float DelayBetweenCross;
 	int CurrentCrossCount;
 	FTimerHandle CrossTimerHandle;
+	FTimerHandle CrossSpawnTimerHandle;
+	TQueue<ABaseObjectInPool*> CrossQueue;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss2Data")
 	FBoss2DataStruct BossDataStruct;
