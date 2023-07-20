@@ -14,13 +14,15 @@
 /**
  * 
  */
-
 UCLASS()
 class SERVAME_API UAttackCheckNotifyState : public UAnimNotifyState
 {
 	GENERATED_BODY()
-		
-	AJesusBoss* Boss;
+
+	UAttackCheckNotifyState();
+
+	ABaseCharacter* BaseCharacter;
+
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration);
 	std::tuple<AJesusBoss*, AJesusBoss2*>Test(USkeletalMeshComponent* MeshComp);
 
@@ -29,11 +31,6 @@ public:
 	float AttackRadius;
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<BossType> BossEnumType;
-
-
-	AJesusBoss* asdf(AJesusBoss* a) { return a; }
-
-
 };
 
 template<typename T>
@@ -49,13 +46,13 @@ struct visit_impl
 		if (idx == I - 1)
 		{
 			fun(std::get<I - 1>(tup));
-			//여기에 범위 공격 로직 넣어보기.
 		}
 		else 
 			visit_impl<I - 1>::visit(tup, idx, fun);
 	}
 };
 
+//템플릿 특수화
 //튜플을 모두 순회해서 0이 되었는데도 찾지 못하면 assert
 template <>
 struct visit_impl<0>

@@ -167,7 +167,7 @@ public:
 	FTimerHandle CrossTimerHandle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss2Data")
-	FBoss2DataStruct Boss2DataStruct;
+	FBoss2DataStruct BossDataStruct;
 
 	UPROPERTY(EditAnywhere, Category = "BossPatternDT")
 	UDataTable* Boss2Actions;
@@ -188,6 +188,8 @@ public:
 	TObjectPtr<USphereComponent> LeftAtkCollision;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USphereComponent> RightAtkCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USceneComponent> AreaAtkPos;
 
 	Boss2BaseAction Boss2SuperAction;
 	Boss2DirectionType PlayerDirection;

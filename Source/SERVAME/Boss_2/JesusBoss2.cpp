@@ -30,6 +30,10 @@ AJesusBoss2::AJesusBoss2()
 	RightAtkCollision->SetupAttachment(GetMesh(),FName("RHand"));
 	RightAtkCollision->SetCollisionProfileName("AIWeapon");
 
+	AreaAtkPos = CreateDefaultSubobject<USceneComponent>(TEXT("AreaAtkPos"));
+	AreaAtkPos->SetupAttachment(GetMesh());
+	AreaAtkPos->SetupAttachment(GetMesh(), FName("RHand"));
+
 	MontageStartMap.Add(Boss2AnimationType::NONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 		}));
@@ -571,10 +575,11 @@ void AJesusBoss2::PostInitializeComponents()
 void AJesusBoss2::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	SetMetaData();
 	AIController = Cast<ABoss2AIController>(GetController());
 	Boss2ActionEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("Boss2ActionType"), true);
-	GetCharacterMovement()->MaxWalkSpeed = Boss2DataStruct.CharacterOriginSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = BossDataStruct.CharacterOriginSpeed;
 	MonsterLockOnWidget = Cast<UMonsterWidget>(LockOnWidget->GetWidget());
 	MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
 	
