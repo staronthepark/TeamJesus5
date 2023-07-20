@@ -10,8 +10,6 @@
 #include "Components/PoseableMeshComponent.h"
 #include "..\Player\PlayerCharacter.h"
 #include "NavigationSystem.h"
-#include "Components/WidgetComponent.h"
-#include "..\UI\MonsterWidget.h"
 #include <vector>
 #include "JesusBoss2.generated.h"
 
@@ -181,10 +179,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UCapsuleComponent* Boss2HitCollision;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<USphereComponent> LeftAtkCollision;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<USphereComponent> RightAtkCollision;
 
 	Boss2BaseAction Boss2SuperAction;
 	Boss2DirectionType PlayerDirection;
@@ -194,8 +188,6 @@ public:
 	Boss2ActionTemp CurrentActionTemp{};
 
 	int DecreasePercentageVal = 20;
-	int HitCount;
-	float Damage;
 
 	bool CanAttack = false;
 	bool ChangeSuperAction = false;
@@ -221,14 +213,6 @@ public:
 
 	UPROPERTY()
 	const UEnum* Boss2ActionEnum;
-
-	UPROPERTY()
-	UMonsterWidget* MonsterLockOnWidget;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UWidgetComponent* LockOnWidget;
-
-	TObjectPtr<APlayerCharacter> PlayerCharacter;
 
 	/*=====================
 	*		Map
@@ -269,16 +253,6 @@ public:
 	TArray<Boss2ActionTemp> BackActionArr;
 	TArray<Boss2ActionTemp> BackTempArr;
 	std::vector<int>BackPercentageVec;
-	
-	/*======================
-	*		Override
-	======================*/ 
-	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-	virtual void HitStop() override;
-	virtual void RespawnCharacter() override;
-	virtual void IsNotifyActive(bool value) override;
-	virtual void PlayExecutionAnimation() override;
-	virtual void ActivateLockOnImage(bool value)override;
 
 	/*=====================
 	*		Function
@@ -293,15 +267,6 @@ public:
 	void InitIsExcute();
 	void SetBTAction(Boss2ActionTemp Temp);
 	void PlayAttackAnim(Boss2AnimationType Type);
-	void PlayMoveMontage();
-
-	/*======================
-	*		UFUNCTION
-	======================*/
-
-	UFUNCTION()
-	void AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
 
 	/*=====================
 			Notify
@@ -309,8 +274,6 @@ public:
 	void OnCrossFall();
 	void OnStart();
 	void OnEnd();
-	void CollisionEnableNotify();
-	void CollisionDisableNotify();
 
 protected:
 	// Called when the game starts or when spawned
