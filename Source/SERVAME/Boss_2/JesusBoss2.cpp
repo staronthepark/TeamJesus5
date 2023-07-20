@@ -795,8 +795,21 @@ void AJesusBoss2::PlayAttackAnim(Boss2AnimationType Type)
 
 void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	FDamageEvent DamageEvent;
+
+	auto Player = Cast<APlayerCharacter>(OtherActor);
+	if (Player == nullptr)
+		return;
+
 	LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	auto Type = GetTypeFromMetaData(StartMontage);
+
+	if (!Player->Imotal)
+	{
+
+	}
 }
 
 float AJesusBoss2::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

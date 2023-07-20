@@ -33,9 +33,6 @@ public:
 	TEnumAsByte<BossType> BossEnumType;
 };
 
-template<typename T>
-T GetBoss(T boss) { return boss; }
-
 //런타임에 초기화 되는 변수는 Tuple 값을 가져올 때 사용불가.
 template <size_t I>
 struct visit_impl
