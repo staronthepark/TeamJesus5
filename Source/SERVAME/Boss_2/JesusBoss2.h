@@ -43,8 +43,8 @@ enum Boss2ActionType
 	B2_HEADATTACK UMETA(DisplayName = "B2_HEADATTACK"),
 	B2_CHARGE UMETA(DisplayName = "B2_CHARGE"),
 	B2_FALLTHECROSS_LEFT UMETA(DisplayName = "B2_FALLTHECROSS_LEFT"),
-	B2_FALLTHECROSS_RIGHT UMETA(DisplayName = "B2_FALLTHECROSS"),
-	B2_FALLTHECROSS_BACK UMETA(DisplayName = "B2_FALLTHECROSS"),
+	B2_FALLTHECROSS_RIGHT UMETA(DisplayName = "B2_FALLTHECROSS_RIGHT"),
+	B2_FALLTHECROSS_BACK UMETA(DisplayName = "B2_FALLTHECROSS_BACK"),
 	B2_ENUMEND,
 };
 
@@ -67,6 +67,7 @@ enum Boss2AttackType
 	B2_LEFTATK,
 	B2_RIGHTATK,
 	B2_BACKATK,
+	NONE,
 };
 
 USTRUCT()
@@ -75,7 +76,7 @@ struct FBoss2Action : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	float Speed;
+	float Speed = 60.f;
 
 	UPROPERTY(EditAnywhere)
 	int Percentage;
@@ -99,7 +100,7 @@ struct FBoss2Action : public FTableRowBase
 	TEnumAsByte<Boss2DirectionType> ActionDirectionType;
 
 	UPROPERTY(EditAnywhere)
-	TEnumAsByte<Boss2BaseAction> SuperAction;
+	TEnumAsByte<Boss2BaseAction> SuperAction = Boss2BaseAction::B2_SUPER_ATTACK;
 
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<Boss2AttackType> AttackType;
