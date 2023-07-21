@@ -202,6 +202,11 @@ AJesusBoss2::AJesusBoss2()
 
 			auto Type = GetTypeFromMetaData(Montage);
 		
+			if (CurrentActionTemp.IsAddPercentage)
+				InitPercentageMap[CurrentActionTemp.AttackType]();
+			else
+				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
+
 			if (Type == Boss2AnimationType::DOWNSMASH || Type == Boss2AnimationType::SLASH)
 			{
 				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_FOLLOWUP]();
@@ -220,6 +225,11 @@ AJesusBoss2::AJesusBoss2()
 
 			auto Type = GetTypeFromMetaData(Montage);
 
+			if (CurrentActionTemp.IsAddPercentage)
+				InitPercentageMap[CurrentActionTemp.AttackType]();
+			else
+				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
+
 			SetBTAction(GetRandomPattern(Dist));
 
 			IsAttackMontageEnd = true;
@@ -230,6 +240,11 @@ AJesusBoss2::AJesusBoss2()
 
 			auto Type = GetTypeFromMetaData(Montage);
 
+			if (CurrentActionTemp.IsAddPercentage)
+				InitPercentageMap[CurrentActionTemp.AttackType]();
+			else
+				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
+
 			SetBTAction(GetRandomPattern(Dist));
 			IsAttackMontageEnd = true;
 		}));
@@ -239,6 +254,11 @@ AJesusBoss2::AJesusBoss2()
 			Boss2ActionTemp ActionTemp{};
 
 			auto Type = GetTypeFromMetaData(Montage);
+		
+			if (CurrentActionTemp.IsAddPercentage)
+				InitPercentageMap[CurrentActionTemp.AttackType]();
+			else
+				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
 
 			SetBTAction(GetRandomPattern(Dist));
 			IsAttackMontageEnd = true;
@@ -249,6 +269,11 @@ AJesusBoss2::AJesusBoss2()
 			Boss2ActionTemp ActionTemp{};
 
 			auto Type = GetTypeFromMetaData(Montage);
+			
+			if (CurrentActionTemp.IsAddPercentage)
+				InitPercentageMap[CurrentActionTemp.AttackType]();
+			else
+				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
 
 			SetBTAction(GetRandomPattern(Dist));
 			IsAttackMontageEnd = true;
@@ -259,6 +284,11 @@ AJesusBoss2::AJesusBoss2()
 			Boss2ActionTemp ActionTemp{};
 
 			auto Type = GetTypeFromMetaData(Montage);
+		
+			if (CurrentActionTemp.IsAddPercentage)
+				InitPercentageMap[CurrentActionTemp.AttackType]();
+			else
+				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
 
 			SetBTAction(GetRandomPattern(Dist));
 			IsAttackMontageEnd = true;
@@ -896,6 +926,8 @@ void AJesusBoss2::ResumeMontage()
 
 void AJesusBoss2::RespawnCharacter()
 {
+	Super::RespawnCharacter();
+	SpawnInit();
 }
 
 void AJesusBoss2::PlayExecutionAnimation()
@@ -941,6 +973,30 @@ Boss2ActionTemp AJesusBoss2::GetRandomPattern(float Dist)
 	}
 
 	return CurrentActionTemp;
+}
+
+void AJesusBoss2::SpawnInit()
+{
+	BossDataStruct.CharacterHp = BossDataStruct.CharacterMaxHp;
+	BossDataStruct.CharacterOriginSpeed = 60.f;
+	//TODO : UI 초기화
+	IsDead = false;
+
+	//패턴 확률 초기화
+	InitPercentageMap[Boss2AttackType::B2_MELEE]();
+	InitPercentageMap[Boss2AttackType::B2_RANGE]();
+	InitPercentageMap[Boss2AttackType::B2_FOLLOWUP]();
+	InitPercentageMap[Boss2AttackType::B2_LEFTATK]();
+	InitPercentageMap[Boss2AttackType::B2_RIGHTATK]();
+	InitPercentageMap[Boss2AttackType::B2_BACKATK]();
+
+	//애니
+	ChangeMontageAnimation(Boss2AnimationType::IDLE);
+
+	//BT
+	AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("Boss2BaseAction")), B2_SUPER_MOVE);
+	CurrentActionTemp = MeleeActionArr[0];
+	AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("Boss2ActionType")), CurrentActionTemp.ActionType);
 }
 
 /*=====================

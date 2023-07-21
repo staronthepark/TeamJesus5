@@ -325,6 +325,7 @@ public:
 	void SetLockOff() { AttackLockOn = false; LastPlayerLoc = PlayerCharacter->GetActorLocation(); }
 	FVector Lerp(const FVector& start, const FVector& end, const float t);
 	Boss2ActionTemp GetRandomPattern(float Dist);
+	void SpawnInit();
 
 	/*======================
 	*		UFUNCTION
