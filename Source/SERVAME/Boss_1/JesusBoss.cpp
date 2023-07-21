@@ -1151,6 +1151,8 @@ void AJesusBoss::Tick(float DeltaTime)
 			BossAnimInstance->CurrentBoneRotateVal, ReturnDeltaSeconds, ReturnSpeed);
 		GetWorldTimerManager().ClearTimer(TimerHandle);
 	}
+
+	IsGameStart = BossAnimInstance->IsStart;
 }
 
 void AJesusBoss::PlayMoveMontage()

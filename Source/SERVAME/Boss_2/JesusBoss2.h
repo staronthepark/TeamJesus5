@@ -33,7 +33,7 @@ enum Boss2DirectionType
 UENUM()
 enum Boss2ActionType
 {
-	B2_ENUMSTART,
+	B2_ENUMSTART = 0,
 	B2_NOTIHING UMETA(DisplayName = "B2_NOTIHING"),
 	B2_FALLTHECROSS UMETA(DisplayName = "B2_FALLTHECROSS"),
 	B2_SLASH UMETA(DisplayName = "B2_SLASH"),
@@ -42,6 +42,9 @@ enum Boss2ActionType
 	B2_SCREAMATTACK UMETA(DisplayName = "B2_SCREAMATTACK"),
 	B2_HEADATTACK UMETA(DisplayName = "B2_HEADATTACK"),
 	B2_CHARGE UMETA(DisplayName = "B2_CHARGE"),
+	B2_FALLTHECROSS_LEFT UMETA(DisplayName = "B2_FALLTHECROSS_LEFT"),
+	B2_FALLTHECROSS_RIGHT UMETA(DisplayName = "B2_FALLTHECROSS"),
+	B2_FALLTHECROSS_BACK UMETA(DisplayName = "B2_FALLTHECROSS"),
 	B2_ENUMEND,
 };
 
@@ -222,6 +225,11 @@ public:
 	bool IsAttackMontageEnd = true;
 	bool IsMontagePlay = false;
 	bool IsExplosionPattern = false;
+	bool IsRunArrived = false;
+	bool IsGameStart = false;
+	bool IsArrived;
+
+	FVector LastPlayerLoc;
 
 	TAtomic<bool>IsStart = false;
 	TAtomic<bool>IsEnd = false;
@@ -312,6 +320,10 @@ public:
 	void PlayAttackAnim(Boss2AnimationType Type);
 	void PlayMoveMontage();
 	void RotateToPlayerInterp();
+	void SetLockOn() { AttackLockOn = true; }
+	void SetLockOff() { AttackLockOn = false; LastPlayerLoc = PlayerCharacter->GetActorLocation(); }
+	FVector Lerp(const FVector& start, const FVector& end, const float t);
+
 
 	/*======================
 	*		UFUNCTION

@@ -21,7 +21,7 @@ void UAttackCheckNotifyState::NotifyBegin(USkeletalMeshComponent * MeshComp, UAn
 		//auto Boss = std::get<0>(Test(MeshComp));
 		//visit_at(Test(MeshComp), BossEnumType.GetIntValue(), this->fboss1);
 
-		visit_at(Test(MeshComp), BossEnumType.GetIntValue(), [=](auto& val)
+		visit_at(GetBoss(MeshComp), BossEnumType.GetIntValue(), [=](auto& val)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Call_Templet_lamda"));
 				FHitResult HitResult;
@@ -69,9 +69,3 @@ void UAttackCheckNotifyState::NotifyBegin(USkeletalMeshComponent * MeshComp, UAn
 			});
 	}
 }
-
-std::tuple<AJesusBoss*, AJesusBoss2*> UAttackCheckNotifyState::Test(USkeletalMeshComponent* MeshComp)
-{
-	return std::tuple<AJesusBoss*, AJesusBoss2*>(Cast<AJesusBoss>(MeshComp->GetOwner()), Cast<AJesusBoss2>(MeshComp->GetOwner()));
-}
-

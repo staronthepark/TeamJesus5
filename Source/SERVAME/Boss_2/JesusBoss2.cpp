@@ -190,8 +190,6 @@ AJesusBoss2::AJesusBoss2()
 
 			auto Type = GetTypeFromMetaData(Montage);
 		
-			//TODO : 방향에 맞춰서 GetRandomPatterMap 호출
-
 			if (Dist >= RangeAtk)
 				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
 			else
@@ -226,7 +224,30 @@ AJesusBoss2::AJesusBoss2()
 
 			auto Type = GetTypeFromMetaData(Montage);
 
-			//TODO : 방향에 맞춰서 GetRandomPatterMap 호출
+			if (Dist >= RangeAtk)
+				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
+			else
+			{
+				switch (PlayerDirection)
+				{
+				case B2_FOWARD:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
+					break;
+				case B2_BACK:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_BACKATK]();
+					break;
+				case B2_LEFT:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_LEFTATK]();
+					break;
+				case B2_RIGHT:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RIGHTATK]();
+					break;
+
+				default:
+					UE_LOG(LogTemp, Warning, TEXT("PlayerDirection is not set!"));
+					break;
+				}
+			}
 
 			if (Dist >= RangeAtk)
 				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
@@ -695,6 +716,8 @@ void AJesusBoss2::Tick(float DeltaTime)
 		RotateToPlayerInterp();
 
 	PlayMoveMontage();
+
+	IsGameStart = Boss2AnimInstance->IsStart;
 }
 
 /*=====================
@@ -941,6 +964,12 @@ void AJesusBoss2::ActivateLockOnImage(bool value)
 	value ? MonsterLockOnWidget->SetVisibility(ESlateVisibility::HitTestInvisible) : MonsterLockOnWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
+FVector AJesusBoss2::Lerp(const FVector& start, const FVector& end, const float t)
+{
+	FVector NewLoc = FMath::Lerp(start, end, t);
+	return NewLoc;
+}
+
 /*=====================
 		Notify
 =====================*/
@@ -1087,6 +1116,7 @@ void AJesusBoss2::LockOn()
 void AJesusBoss2::LockOff()
 {
 	AttackLockOn = false;
+	LastPlayerLoc = PlayerCharacter->GetActorLocation();
 }
 
 void AJesusBoss2::IsNotifyActive(bool value)
