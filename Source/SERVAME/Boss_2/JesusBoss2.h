@@ -149,6 +149,7 @@ class SERVAME_API AJesusBoss2 : public ABaseCharacter
 public:
 	// Sets default values for this character's properties
 	AJesusBoss2();
+	~AJesusBoss2();
 
 	UPROPERTY()
 	UBoss2AnimInstance* Boss2AnimInstance;
@@ -314,8 +315,7 @@ public:
 	void ChangeMontageAnimation(Boss2AnimationType Type);
 	void ChangeAnimType(Boss2AnimationType Type);
 	FBoss2Action* GetActionData(FName Name);
-	void DoAttack(float MinRange, float MaxRange, float Dist, bool LockOn, Boss2AnimationType Type, AJesusBoss2* Boss2);
-	void DoRangeAttack(float MinRange, float MaxRange, float Dist, bool LockOn, Boss2AnimationType Type, AJesusBoss2* Boss2);
+	void DoTypeAttack(float MinRange, float MaxRange, float Dist, bool LockOn, Boss2AnimationType Type, AJesusBoss2* Boss2, TArray<Boss2ActionTemp> &arr, Boss2AttackType AtkType);
 	void InitIsExcute();
 	void SetBTAction(Boss2ActionTemp Temp);
 	void PlayAttackAnim(Boss2AnimationType Type);

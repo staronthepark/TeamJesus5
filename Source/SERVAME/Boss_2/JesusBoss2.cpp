@@ -149,49 +149,49 @@ AJesusBoss2::AJesusBoss2()
 
 	BossAttackMap.Add(Boss2ActionType::B2_FALLTHECROSS, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->DoAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CROSSFALL, Boss2);
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CROSSFALL, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
 		}));
 	BossAttackMap.Add(Boss2ActionType::B2_FALLTHECROSS_BACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->DoAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CROSSFALL, Boss2);
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CROSSFALL, Boss2, Boss2->BackActionArr, Boss2AttackType::B2_BACKATK);
 		}));
 	BossAttackMap.Add(Boss2ActionType::B2_FALLTHECROSS_LEFT, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->DoAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CROSSFALL, Boss2);
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CROSSFALL, Boss2, Boss2->LeftActionArr, Boss2AttackType::B2_LEFTATK);
 		}));
 	BossAttackMap.Add(Boss2ActionType::B2_FALLTHECROSS_RIGHT, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->DoAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CROSSFALL, Boss2);
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CROSSFALL, Boss2, Boss2->RightActionArr, Boss2AttackType::B2_RIGHTATK);
 		}));
 
 	BossAttackMap.Add(Boss2ActionType::B2_SLASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->DoAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::SLASH, Boss2);
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::SLASH, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
 		}));
 
 	BossAttackMap.Add(Boss2ActionType::B2_DOWNSMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->DoAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::DOWNSMASH, Boss2);
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::DOWNSMASH, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
 		}));
 
 	BossAttackMap.Add(Boss2ActionType::B2_DOUBLESMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->DoAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::DOUBLESMASH, Boss2);
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::DOUBLESMASH, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
 		}));
 
 	BossAttackMap.Add(Boss2ActionType::B2_SCREAMATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->DoAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::DOUBLESMASH, Boss2);
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::SCREAMATTACK, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
 		}));
 
 	BossAttackMap.Add(Boss2ActionType::B2_HEADATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->DoAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::DOUBLESMASH, Boss2);
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::HEADATTACK, Boss2, Boss2->FollowUpActionArr, Boss2AttackType::B2_FOLLOWUP);
 		}));
 
 	BossAttackMap.Add(Boss2ActionType::B2_CHARGE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->DoAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::DOUBLESMASH, Boss2);
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CHARGE, Boss2, Boss2->RangeActionArr, Boss2AttackType::B2_RANGE);
 		}));
 
 	//====================================공격타입에 맞는 공격이 끝났을 때 실행되는 맵====================================
@@ -202,6 +202,14 @@ AJesusBoss2::AJesusBoss2()
 
 			auto Type = GetTypeFromMetaData(Montage);
 		
+			if (Type == Boss2AnimationType::DOWNSMASH || Type == Boss2AnimationType::SLASH)
+			{
+				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_FOLLOWUP]();
+				SetBTAction(CurrentActionTemp);
+				IsAttackMontageEnd = true;
+				return;
+			}
+
 			if (Dist >= RangeAtk)
 				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
 			else
@@ -226,9 +234,9 @@ AJesusBoss2::AJesusBoss2()
 					break;
 				}
 			}
+
 			SetBTAction(CurrentActionTemp);
 			IsAttackMontageEnd = true;
-
 		}));
 	ActionEndMap.Add(Boss2AttackType::B2_RANGE, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
 		{
@@ -261,11 +269,6 @@ AJesusBoss2::AJesusBoss2()
 				}
 			}
 
-			if (Dist >= RangeAtk)
-				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
-			else
-				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
-
 			SetBTAction(CurrentActionTemp);
 			IsAttackMontageEnd = true;
 		}));
@@ -275,12 +278,30 @@ AJesusBoss2::AJesusBoss2()
 
 			auto Type = GetTypeFromMetaData(Montage);
 
-			//TODO : 방향에 맞춰서 GetRandomPatterMap 호출
-
 			if (Dist >= RangeAtk)
 				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
 			else
-				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
+			{
+				switch (PlayerDirection)
+				{
+				case B2_FOWARD:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
+					break;
+				case B2_BACK:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_BACKATK]();
+					break;
+				case B2_LEFT:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_LEFTATK]();
+					break;
+				case B2_RIGHT:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RIGHTATK]();
+					break;
+
+				default:
+					UE_LOG(LogTemp, Warning, TEXT("PlayerDirection is not set!"));
+					break;
+				}
+			}
 
 			SetBTAction(CurrentActionTemp);
 			IsAttackMontageEnd = true;
@@ -292,12 +313,30 @@ AJesusBoss2::AJesusBoss2()
 
 			auto Type = GetTypeFromMetaData(Montage);
 
-			//TODO : 방향에 맞춰서 GetRandomPatterMap 호출
-
 			if (Dist >= RangeAtk)
 				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
 			else
-				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
+			{
+				switch (PlayerDirection)
+				{
+				case B2_FOWARD:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
+					break;
+				case B2_BACK:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_BACKATK]();
+					break;
+				case B2_LEFT:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_LEFTATK]();
+					break;
+				case B2_RIGHT:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RIGHTATK]();
+					break;
+
+				default:
+					UE_LOG(LogTemp, Warning, TEXT("PlayerDirection is not set!"));
+					break;
+				}
+			}
 
 			SetBTAction(CurrentActionTemp);
 			IsAttackMontageEnd = true;
@@ -309,12 +348,30 @@ AJesusBoss2::AJesusBoss2()
 
 			auto Type = GetTypeFromMetaData(Montage);
 
-			//TODO : 방향에 맞춰서 GetRandomPatterMap 호출
-
 			if (Dist >= RangeAtk)
 				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
 			else
-				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
+			{
+				switch (PlayerDirection)
+				{
+				case B2_FOWARD:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
+					break;
+				case B2_BACK:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_BACKATK]();
+					break;
+				case B2_LEFT:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_LEFTATK]();
+					break;
+				case B2_RIGHT:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RIGHTATK]();
+					break;
+
+				default:
+					UE_LOG(LogTemp, Warning, TEXT("PlayerDirection is not set!"));
+					break;
+				}
+			}
 
 			SetBTAction(CurrentActionTemp);
 			IsAttackMontageEnd = true;
@@ -326,12 +383,30 @@ AJesusBoss2::AJesusBoss2()
 
 			auto Type = GetTypeFromMetaData(Montage);
 
-			//TODO : 방향에 맞춰서 GetRandomPatterMap 호출
-
 			if (Dist >= RangeAtk)
 				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
 			else
-				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
+			{
+				switch (PlayerDirection)
+				{
+				case B2_FOWARD:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
+					break;
+				case B2_BACK:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_BACKATK]();
+					break;
+				case B2_LEFT:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_LEFTATK]();
+					break;
+				case B2_RIGHT:
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RIGHTATK]();
+					break;
+
+				default:
+					UE_LOG(LogTemp, Warning, TEXT("PlayerDirection is not set!"));
+					break;
+				}
+			}
 
 			SetBTAction(CurrentActionTemp);
 			IsAttackMontageEnd = true;
@@ -363,6 +438,18 @@ AJesusBoss2::AJesusBoss2()
 			auto PatternName = Boss2ActionEnum->GetNameStringByValue(RangeActionArr[RandNum].ActionType);
 
 			return  RangeActionArr[RandNum];
+		}));
+
+	GetRandomPatternMap.Add(Boss2AttackType::B2_FOLLOWUP, TFunction<Boss2ActionTemp()>([=]()
+		{
+			if (FollowUpActionArr.Num() <= 0)
+				return Boss2ActionTemp();
+
+			auto RandNum = MakeRandom(FollowUpPercentageVec);
+
+			auto PatternName = Boss2ActionEnum->GetNameStringByValue(FollowUpActionArr[RandNum].ActionType);
+
+			return  FollowUpActionArr[RandNum];
 		}));
 
 	GetRandomPatternMap.Add(Boss2AttackType::B2_LEFTATK, TFunction<Boss2ActionTemp()>([=]()
@@ -662,6 +749,27 @@ AJesusBoss2::AJesusBoss2()
 		}));
 }
 
+AJesusBoss2::~AJesusBoss2()
+{
+	MeleePercentageVec.clear();
+	MeleePercentageVec.shrink_to_fit();
+	
+	RangePercentageVec.clear();
+	RangePercentageVec.shrink_to_fit();
+
+	FollowUpPercentageVec.clear();
+	FollowUpPercentageVec.shrink_to_fit();
+
+	LeftPercentageVec.clear();
+	LeftPercentageVec.shrink_to_fit();
+	
+	RightPercentageVec.clear();
+	RightPercentageVec.shrink_to_fit();
+	
+	BackPercentageVec.clear();
+	BackPercentageVec.shrink_to_fit();
+}
+
 void AJesusBoss2::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -701,6 +809,8 @@ void AJesusBoss2::BeginPlay()
 	LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	RightAtkCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::AttackHit);
 	RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	HeadAtkCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::AttackHit);
+	HeadAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	//임시로 변수 설정
 	CanMove = true;
@@ -810,66 +920,34 @@ FBoss2Action* AJesusBoss2::GetActionData(FName Name)
 	return	Boss2Actions->FindRow<FBoss2Action>(Name, TEXT(""));
 }
 
-void AJesusBoss2::DoAttack(float MinRange, float MaxRange, float Dist, bool LockOn, Boss2AnimationType Type, AJesusBoss2* Boss2)
+void AJesusBoss2::DoTypeAttack(float MinRange, float MaxRange, float Dist, bool LockOn, Boss2AnimationType Type, AJesusBoss2* Boss2, TArray<Boss2ActionTemp> &arr, Boss2AttackType AtkType)
 {
-	if (Dist >= MinRange && Dist <= MaxRange && !Boss2->CurrentActionTemp.IsExcute)
+ 	if (Dist >= MinRange && Dist <= MaxRange && !Boss2->CurrentActionTemp.IsExcute)
 	{
-		//모든 패턴의 IsExcute를 false로 초기화 하는 함수
 		InitIsExcute();
 
 		if (!Boss2->CurrentActionTemp.CanContinuity)
 		{
-			auto FoundIndex = Boss2->MeleeActionArr.Find(Boss2->CurrentActionTemp);
+			auto FoundIndex = arr.Find(Boss2->CurrentActionTemp);
 			if (FoundIndex == INDEX_NONE)
 			{
-				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
+				CurrentActionTemp = GetRandomPatternMap[AtkType]();
 				SetBTAction(CurrentActionTemp);
 				return;
 			}
-			Boss2->MeleeActionArr[FoundIndex].IsExcute = true;
+			
+			arr[FoundIndex].IsExcute = true;
 		}
 
-		Boss2->IsExplosionPattern = false;
 		Boss2->CanMove = false;
-		Boss2->GetCharacterMovement()->MaxWalkSpeed = Boss2->CurrentActionTemp.Speed;
+		Boss2->GetCharacterMovement()->MaxWalkSpeed = CurrentActionTemp.Speed;
 		Boss2->PlayAttackAnim(Type);
 		Boss2->IsLockOn = LockOn;
 		Boss2->IsMontagePlay = false;
 	}
 	else
 	{
-		CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
-		SetBTAction(CurrentActionTemp);
-	}
-}
-
-void AJesusBoss2::DoRangeAttack(float MinRange, float MaxRange, float Dist, bool LockOn, Boss2AnimationType Type, AJesusBoss2* Boss2)
-{
-	if (Dist >= MinRange && Dist <= MaxRange && !Boss2->CurrentActionTemp.IsExcute)
-	{
-		InitIsExcute();
-
-		if (!Boss2->CurrentActionTemp.CanContinuity)
-		{
-			auto FoundIndex = Boss2->RangeActionArr.Find(Boss2->CurrentActionTemp);
-			if (FoundIndex == INDEX_NONE)
-			{
-				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
-				SetBTAction(CurrentActionTemp);
-				return;
-			}
-			Boss2->RangeActionArr[FoundIndex].IsExcute = true;
-		}
-
-		Boss2->CanMove = false;
-		Boss2->GetCharacterMovement()->MaxWalkSpeed = Boss2->CurrentActionTemp.Speed;
-		Boss2->PlayAttackAnim(Type);
-		Boss2->IsLockOn = LockOn;
-		Boss2->IsMontagePlay = false;
-	}
-	else
-	{
-		CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
+		CurrentActionTemp = GetRandomPatternMap[AtkType]();
 		SetBTAction(CurrentActionTemp);
 	}
 }
@@ -917,6 +995,7 @@ void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 
 	LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	HeadAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	auto Type = GetTypeFromMetaData(StartMontage);
 
