@@ -210,32 +210,8 @@ AJesusBoss2::AJesusBoss2()
 				return;
 			}
 
-			if (Dist >= RangeAtk)
-				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
-			else
-			{
-				switch (PlayerDirection)
-				{
-				case B2_FOWARD:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
-					break;
-				case B2_BACK:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_BACKATK]();
-					break;
-				case B2_LEFT:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_LEFTATK]();
-					break;
-				case B2_RIGHT:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RIGHTATK]();
-					break;
+			SetBTAction(GetRandomPattern(Dist));
 
-				default:
-					UE_LOG(LogTemp, Warning, TEXT("PlayerDirection is not set!"));
-					break;
-				}
-			}
-
-			SetBTAction(CurrentActionTemp);
 			IsAttackMontageEnd = true;
 		}));
 	ActionEndMap.Add(Boss2AttackType::B2_RANGE, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
@@ -244,32 +220,8 @@ AJesusBoss2::AJesusBoss2()
 
 			auto Type = GetTypeFromMetaData(Montage);
 
-			if (Dist >= RangeAtk)
-				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
-			else
-			{
-				switch (PlayerDirection)
-				{
-				case B2_FOWARD:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
-					break;
-				case B2_BACK:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_BACKATK]();
-					break;
-				case B2_LEFT:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_LEFTATK]();
-					break;
-				case B2_RIGHT:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RIGHTATK]();
-					break;
+			SetBTAction(GetRandomPattern(Dist));
 
-				default:
-					UE_LOG(LogTemp, Warning, TEXT("PlayerDirection is not set!"));
-					break;
-				}
-			}
-
-			SetBTAction(CurrentActionTemp);
 			IsAttackMontageEnd = true;
 		}));
 	ActionEndMap.Add(Boss2AttackType::B2_FOLLOWUP, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
@@ -278,32 +230,7 @@ AJesusBoss2::AJesusBoss2()
 
 			auto Type = GetTypeFromMetaData(Montage);
 
-			if (Dist >= RangeAtk)
-				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
-			else
-			{
-				switch (PlayerDirection)
-				{
-				case B2_FOWARD:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
-					break;
-				case B2_BACK:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_BACKATK]();
-					break;
-				case B2_LEFT:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_LEFTATK]();
-					break;
-				case B2_RIGHT:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RIGHTATK]();
-					break;
-
-				default:
-					UE_LOG(LogTemp, Warning, TEXT("PlayerDirection is not set!"));
-					break;
-				}
-			}
-
-			SetBTAction(CurrentActionTemp);
+			SetBTAction(GetRandomPattern(Dist));
 			IsAttackMontageEnd = true;
 		}));
 
@@ -313,32 +240,7 @@ AJesusBoss2::AJesusBoss2()
 
 			auto Type = GetTypeFromMetaData(Montage);
 
-			if (Dist >= RangeAtk)
-				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
-			else
-			{
-				switch (PlayerDirection)
-				{
-				case B2_FOWARD:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
-					break;
-				case B2_BACK:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_BACKATK]();
-					break;
-				case B2_LEFT:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_LEFTATK]();
-					break;
-				case B2_RIGHT:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RIGHTATK]();
-					break;
-
-				default:
-					UE_LOG(LogTemp, Warning, TEXT("PlayerDirection is not set!"));
-					break;
-				}
-			}
-
-			SetBTAction(CurrentActionTemp);
+			SetBTAction(GetRandomPattern(Dist));
 			IsAttackMontageEnd = true;
 		}));
 
@@ -348,32 +250,7 @@ AJesusBoss2::AJesusBoss2()
 
 			auto Type = GetTypeFromMetaData(Montage);
 
-			if (Dist >= RangeAtk)
-				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
-			else
-			{
-				switch (PlayerDirection)
-				{
-				case B2_FOWARD:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
-					break;
-				case B2_BACK:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_BACKATK]();
-					break;
-				case B2_LEFT:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_LEFTATK]();
-					break;
-				case B2_RIGHT:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RIGHTATK]();
-					break;
-
-				default:
-					UE_LOG(LogTemp, Warning, TEXT("PlayerDirection is not set!"));
-					break;
-				}
-			}
-
-			SetBTAction(CurrentActionTemp);
+			SetBTAction(GetRandomPattern(Dist));
 			IsAttackMontageEnd = true;
 		}));
 
@@ -383,32 +260,7 @@ AJesusBoss2::AJesusBoss2()
 
 			auto Type = GetTypeFromMetaData(Montage);
 
-			if (Dist >= RangeAtk)
-				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
-			else
-			{
-				switch (PlayerDirection)
-				{
-				case B2_FOWARD:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
-					break;
-				case B2_BACK:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_BACKATK]();
-					break;
-				case B2_LEFT:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_LEFTATK]();
-					break;
-				case B2_RIGHT:
-					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RIGHTATK]();
-					break;
-
-				default:
-					UE_LOG(LogTemp, Warning, TEXT("PlayerDirection is not set!"));
-					break;
-				}
-			}
-
-			SetBTAction(CurrentActionTemp);
+			SetBTAction(GetRandomPattern(Dist));
 			IsAttackMontageEnd = true;
 		}));
 
@@ -1059,6 +911,36 @@ FVector AJesusBoss2::Lerp(const FVector& start, const FVector& end, const float 
 {
 	FVector NewLoc = FMath::Lerp(start, end, t);
 	return NewLoc;
+}
+
+Boss2ActionTemp AJesusBoss2::GetRandomPattern(float Dist)
+{
+	if (Dist >= RangeAtk)
+		CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
+	else
+	{
+		switch (PlayerDirection)
+		{
+		case B2_FOWARD:
+			CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
+			break;
+		case B2_BACK:
+			CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_BACKATK]();
+			break;
+		case B2_LEFT:
+			CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_LEFTATK]();
+			break;
+		case B2_RIGHT:
+			CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RIGHTATK]();
+			break;
+
+		default:
+			UE_LOG(LogTemp, Warning, TEXT("PlayerDirection is not set!"));
+			break;
+		}
+	}
+
+	return CurrentActionTemp;
 }
 
 /*=====================
