@@ -19,12 +19,16 @@ AFallObjectInPool::AFallObjectInPool()
 
 	CrossEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Cross Effect"));
 	CrossEffect->SetupAttachment(RootComponent);
+
+	CrossBurstEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Cross Burst Effect"));
+	CrossBurstEffect->SetupAttachment(RootComponent);
 }
 
 void AFallObjectInPool::BeginPlay()
 {
 	Super::BeginPlay();
 
+	CrossEffect->Deactivate();
 	SetActorTickEnabled(false);
 	HitCollision->OnComponentBeginOverlap.AddDynamic(this, &AFallObjectInPool::OnCollisionBeginOverlap);
 	GroundHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AFallObjectInPool::OnGroundOverlap);
@@ -52,6 +56,7 @@ void AFallObjectInPool::SetActive(bool active)
 	MoveDir = -GetActorUpVector();
 
 	CrossEffect->Activate();
+	CrossBurstEffect->Deactivate();
 
 	if (LifeTime > 0 && active)
 	{
@@ -74,4 +79,6 @@ void AFallObjectInPool::OnGroundOverlap(UPrimitiveComponent* OverlappedComponent
 	IsHitGround = true;
 	SetActorTickEnabled(false);
 	HitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	CrossBurstEffect->Activate();
 }
