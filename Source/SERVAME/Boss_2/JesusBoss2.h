@@ -39,6 +39,9 @@ enum Boss2ActionType
 	B2_SLASH UMETA(DisplayName = "B2_SLASH"),
 	B2_DOWNSMASH UMETA(DisplayName = "B2_DOWNSMASH"),
 	B2_DOUBLESMASH UMETA(DisplayName = "B2_DOUBLESMASH"),
+	B2_SCREAMATTACK UMETA(DisplayName = "B2_SCREAMATTACK"),
+	B2_HEADATTACK UMETA(DisplayName = "B2_HEADATTACK"),
+	B2_CHARGE UMETA(DisplayName = "B2_CHARGE"),
 	B2_ENUMEND,
 };
 
@@ -196,6 +199,8 @@ public:
 	TObjectPtr<USphereComponent> RightAtkCollision;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USceneComponent> AreaAtkPos;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USphereComponent> HeadAtkCollision;
 
 	Boss2BaseAction Boss2SuperAction;
 	Boss2DirectionType PlayerDirection;
@@ -286,6 +291,7 @@ public:
 	======================*/ 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	virtual void HitStop() override;
+	virtual void ResumeMontage() override;
 	virtual void RespawnCharacter() override;
 	virtual void IsNotifyActive(bool value) override;
 	virtual void PlayExecutionAnimation() override;
@@ -325,6 +331,8 @@ public:
 	void RightCollisionDisableNotify();
 	void LeftCollisionEnableNotify();
 	void LeftCollisionDisableNotify();
+	void HeadCollisionEnableNotify();
+	void HeadCollisionDisableNotify();
 
 	void LockOn();
 	void LockOff();

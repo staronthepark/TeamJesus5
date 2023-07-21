@@ -33,7 +33,7 @@ void AFallObjectInPool::BeginPlay()
 
 void AFallObjectInPool::Tick(float DeltaTime)
 {
-	if (!IsHitGround && IsTick)
+	if (!IsHitGround)
 		SetActorRelativeLocation(GetActorLocation() += MoveDir * DeltaTime * FallSpeed);
 }
 
@@ -47,9 +47,7 @@ void AFallObjectInPool::SetActive(bool active)
 {
 	Super::SetActive(active);
 
-	IsTick = false;
-
-	//SetActorTickEnabled(true);
+	SetActorTickEnabled(false);
 
 	MoveDir = -GetActorUpVector();
 

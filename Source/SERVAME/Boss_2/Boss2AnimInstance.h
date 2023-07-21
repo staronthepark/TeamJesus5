@@ -19,6 +19,9 @@ enum class Boss2AnimationType : uint8
 	SLASH,
 	DOUBLESMASH,
 	DIE,
+	SCREAMATTACK,
+	HEADATTACK,
+	CHARGE,
 };
 
 DECLARE_MULTICAST_DELEGATE(FOnCrossFall);
@@ -28,6 +31,8 @@ DECLARE_MULTICAST_DELEGATE(FOnRightEnable);
 DECLARE_MULTICAST_DELEGATE(FOnRightDisable);
 DECLARE_MULTICAST_DELEGATE(FOnLeftEnable);
 DECLARE_MULTICAST_DELEGATE(FOnLeftDisable);
+DECLARE_MULTICAST_DELEGATE(FOnHeadEnable);
+DECLARE_MULTICAST_DELEGATE(FOnHeadDisable);
 DECLARE_MULTICAST_DELEGATE(FOnLockOn);
 DECLARE_MULTICAST_DELEGATE(FOnLockOff);
 
@@ -63,6 +68,10 @@ private:
 	UFUNCTION()
 	void AnimNotify_OnLeftDisable();
 	UFUNCTION()
+	void AnimNotify_OnHeadEnable();
+	UFUNCTION()
+	void AnimNotify_OnHeadDisable();
+	UFUNCTION()
 	void AnimNotify_LockOn();
 	UFUNCTION()
 	void AnimNotify_LockOff();
@@ -75,6 +84,9 @@ public:
 	FOnRightDisable OnRightDisable;
 	FOnLeftEnable OnLeftEnable;
 	FOnLeftDisable OnLeftDisable;
+	FOnHeadEnable OnHeadEnable;
+	FOnHeadDisable OnHeadDisable;
 	FOnLockOn OnLockOn;
 	FOnLockOff OnLockOff;
+
 };
