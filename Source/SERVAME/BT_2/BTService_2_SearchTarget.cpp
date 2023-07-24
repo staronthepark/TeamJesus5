@@ -34,7 +34,7 @@ void UBTService_2_SearchTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(FName(TEXT("Target")), Player);
 		OwnerComp.GetBlackboardComponent()->SetValueAsVector(FName(TEXT("PlayerPos")), Player->GetActorLocation());
 
-		if (Boss2->Boss2DataStruct.CharacterHp <= 0)
+		if (Boss2->BossDataStruct.CharacterHp <= 0)
 			OwnerComp.GetBlackboardComponent()->SetValueAsBool(FName(TEXT("IsDead")), true);
 
 		if (Player->PlayerDataStruct.CharacterHp <= 0)

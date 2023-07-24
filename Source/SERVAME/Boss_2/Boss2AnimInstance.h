@@ -13,11 +13,23 @@ enum class Boss2AnimationType : uint8
 	NONE,
 	IDLE,
 	CROSSFALL,
+	FOWARDWALK,
+	LEFTWALK,
+	DOWNSMASH,
+	SLASH,
+	DOUBLESMASH,
+	DIE,
 };
 
 DECLARE_MULTICAST_DELEGATE(FOnCrossFall);
 DECLARE_MULTICAST_DELEGATE(FOnStart);
 DECLARE_MULTICAST_DELEGATE(FOnEnd);
+DECLARE_MULTICAST_DELEGATE(FOnRightEnable);
+DECLARE_MULTICAST_DELEGATE(FOnRightDisable);
+DECLARE_MULTICAST_DELEGATE(FOnLeftEnable);
+DECLARE_MULTICAST_DELEGATE(FOnLeftDisable);
+DECLARE_MULTICAST_DELEGATE(FOnLockOn);
+DECLARE_MULTICAST_DELEGATE(FOnLockOff);
 
 UCLASS()
 class SERVAME_API UBoss2AnimInstance : public UBaseAnimInstance
@@ -42,9 +54,27 @@ private:
 	void AnimNotify_OnStart();
 	UFUNCTION()
 	void AnimNotify_OnEnd();
+	UFUNCTION()
+	void AnimNotify_OnRightEnable();
+	UFUNCTION()
+	void AnimNotify_OnRightDisable();
+	UFUNCTION()
+	void AnimNotify_OnLeftEnable();
+	UFUNCTION()
+	void AnimNotify_OnLeftDisable();
+	UFUNCTION()
+	void AnimNotify_LockOn();
+	UFUNCTION()
+	void AnimNotify_LockOff();
 
 public:
 	FOnCrossFall OnCrossFall;
 	FOnStart OnStart;
 	FOnEnd OnEnd;
+	FOnRightEnable OnRightEnable;
+	FOnRightDisable OnRightDisable;
+	FOnLeftEnable OnLeftEnable;
+	FOnLeftDisable OnLeftDisable;
+	FOnLockOn OnLockOn;
+	FOnLockOff OnLockOff;
 };

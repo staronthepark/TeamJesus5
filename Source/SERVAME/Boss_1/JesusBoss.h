@@ -240,6 +240,9 @@ public:
 	USphereComponent* DamageSphereTriggerComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USceneComponent> AreaAtkPos;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UNiagaraComponent* ParringTrailComp;
 
 	//UPROPERTY()

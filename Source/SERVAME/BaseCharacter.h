@@ -27,6 +27,13 @@ enum class EArmorType : uint8
 	HIGH,
 };
 
+UENUM()
+enum BossType : uint32
+{
+	BOSS_1 = 0,
+	BOSS_2,
+};
+
 USTRUCT(BlueprintType)
 struct FCharacterBaseDataStruct
 {

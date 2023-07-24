@@ -56,6 +56,9 @@ AJesusBoss::AJesusBoss()
 	DamageSphereTriggerComp = CreateDefaultSubobject<UUDamageSphereTriggerComp>(TEXT("DamageSphere"));
 	DamageSphereTriggerComp->SetupAttachment(GetMesh());
 
+	AreaAtkPos = CreateDefaultSubobject<USceneComponent>(TEXT("AreaAtkPos"));
+	AreaAtkPos->SetupAttachment(GetMesh());
+
 	SpawnPosArr.SetNum(8);
 	for (int i = 0; i < SpawnPosArr.Num(); i++)
 	{

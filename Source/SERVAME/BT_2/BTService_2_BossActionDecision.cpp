@@ -64,7 +64,7 @@ void UBTService_2_BossActionDecision::CheckCanMove(UBehaviorTreeComponent& Owner
 
 void UBTService_2_BossActionDecision::PushAction(TArray<TEnumAsByte<Boss2ActionType>> ActionArr)
 {
-	if (ActionArr.Num() == 0)
+	if (ActionArr.IsEmpty())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Some Array is Empty!!!"));
 		return;

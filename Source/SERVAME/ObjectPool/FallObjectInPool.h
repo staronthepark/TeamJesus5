@@ -7,6 +7,7 @@
 #include "Components/BoxComponent.h"
 #include "..\BaseCharacter.h"
 #include "Engine/DamageEvents.h"
+#include "NiagaraComponent.h"
 #include "FallObjectInPool.generated.h"
 
 /**
@@ -26,8 +27,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Particle)
 	float FallSpeed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Particle)
-	UParticleSystemComponent* ParticleSystem;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UNiagaraComponent* CrossEffect;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Particle)
 	USceneComponent* RootComp;
