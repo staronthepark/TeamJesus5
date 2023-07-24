@@ -178,7 +178,12 @@ public:
 	TQueue<ABaseObjectInPool*> CrossQueue;
 
 	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
-	FRotator BoneRotVal;
+	FRotator HeadBoneRotVal;
+	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
+	FRotator LArmBoneRotVal;
+	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
+	FRotator RArmBoneRotVal;
+
 	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
 	float Time;
 	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
@@ -190,6 +195,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
 	float ReturnDeltaSeconds;
 	FTimerHandle BoneRotateTimerHandle;
+	TMap<Boss2BoneRotateType, TFunction<void()>> BoneMap;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss2Data")
 	FBoss2DataStruct BossDataStruct;
@@ -268,6 +274,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UWidgetComponent* LockOnWidget;
 
+	UPROPERTY()
+	TObjectPtr<USphereComponent> HeadHitCollision;
+	UPROPERTY()
+	TObjectPtr<USphereComponent> RightArmHitCollision;
+	UPROPERTY()
+	TObjectPtr<USphereComponent> LeftArmHitCollision;
+
+
 	TObjectPtr<APlayerCharacter> PlayerCharacter;
 
 	/*=====================
@@ -284,7 +298,6 @@ public:
 	TMap<Boss2AttackType, TFunction<void(Boss2ActionTemp* Temp)>> AddArrMap;
 	TMap<Boss2AttackType, TFunction<void(Boss2ActionTemp* Temp)>> ChangePercentageMap;
 	TMap<Boss2AttackType, TFunction<void()>> InitPercentageMap;
-	TMap<ActionType, TFunction<void()>> HitMap;
 
 	TArray<Boss2ActionTemp> MeleeActionArr;
 	TArray<Boss2ActionTemp> MeleeTempArr;
@@ -342,13 +355,16 @@ public:
 	void SpawnInit();
 	void StartBoneRot();
 	void ReSetBoneRot();
+	void OffHitCollision();
+	void SetBoneHead(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) { Boss2AnimInstance->CurrentBoneType = Boss2BoneRotateType::HEAD; }
+	void SetBoneLArm(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) { Boss2AnimInstance->CurrentBoneType = Boss2BoneRotateType::LEFTARM; }
+	void SetBoneRArm(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) { Boss2AnimInstance->CurrentBoneType = Boss2BoneRotateType::RIGHTARM; }
 
 	/*======================
 	*		UFUNCTION
 	======================*/
 	UFUNCTION()
 	void AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
 
 	/*=====================
 			Notify
@@ -362,7 +378,6 @@ public:
 	void LeftCollisionDisableNotify();
 	void HeadCollisionEnableNotify();
 	void HeadCollisionDisableNotify();
-
 	void LockOn();
 	void LockOff();
 

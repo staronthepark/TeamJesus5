@@ -38,6 +38,17 @@ AJesusBoss2::AJesusBoss2()
 	AreaAtkPos->SetupAttachment(GetMesh());
 	AreaAtkPos->SetupAttachment(GetMesh(), FName("RHand"));
 
+	HeadHitCollision = CreateDefaultSubobject<USphereComponent>(TEXT("HeadHitCollision"));
+	HeadHitCollision->SetupAttachment(GetMesh(), FName("Bip001-Head"));
+	HeadHitCollision->SetCollisionProfileName("AIHit");
+
+	RightArmHitCollision = CreateDefaultSubobject<USphereComponent>(TEXT("RightArmHitCollision"));
+	RightArmHitCollision->SetupAttachment(GetMesh(), FName("Bip001-L-UpperArm"));
+	RightArmHitCollision->SetCollisionProfileName("AIHit");
+
+	LeftArmHitCollision = CreateDefaultSubobject<USphereComponent>(TEXT("LeftArmHitCollision"));
+	LeftArmHitCollision->SetupAttachment(GetMesh(), FName("Bip001-R-UpperArm"));
+	LeftArmHitCollision->SetCollisionProfileName("AIHit");
 
 	MontageStartMap.Add(Boss2AnimationType::NONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
@@ -608,26 +619,48 @@ AJesusBoss2::AJesusBoss2()
 			}
 		}));
 
-	//=======================================플레이어 공격타입에 따른 피격 모션=========================================
+	//=======================================피격 당한 부위에 따른 피격 모션=========================================
 
-	HitMap.Add(ActionType::ATTACK, TFunction<void()>([=]()
+	BoneMap.Add(Boss2BoneRotateType::HEAD, TFunction<void()>([=]()
 		{
-			if (HitCount >= 2)
-				return;
-
-			HitCount++;
-
-			//ChangeMontageAnimation(BossAnimationType::HIT);
+			if (IsStartBoneRot)
+			{
+				Boss2AnimInstance->HeadBoneRotateVal = FMath::RInterpTo(Boss2AnimInstance->HeadBoneRotateVal, HeadBoneRotVal, DeltaSeconds, Speed);
+			}
+			else
+			{
+				Boss2AnimInstance->HeadBoneRotateVal = FMath::RInterpTo(Boss2AnimInstance->HeadBoneRotateVal,
+					Boss2AnimInstance->CurrentBoneRotateVal, ReturnDeltaSeconds, ReturnSpeed);
+				GetWorldTimerManager().ClearTimer(BoneRotateTimerHandle);
+			}
 		}));
 
-	HitMap.Add(ActionType::POWERATTACK, TFunction<void()>([=]()
+	BoneMap.Add(Boss2BoneRotateType::LEFTARM, TFunction<void()>([=]()
 		{
-			if (HitCount >= 2)
-				return;
+			if (IsStartBoneRot)
+			{
+				Boss2AnimInstance->LArmBoneRotateVal = FMath::RInterpTo(Boss2AnimInstance->LArmBoneRotateVal, LArmBoneRotVal, DeltaSeconds, Speed);
+			}
+			else
+			{
+				Boss2AnimInstance->LArmBoneRotateVal = FMath::RInterpTo(Boss2AnimInstance->LArmBoneRotateVal,
+					Boss2AnimInstance->CurrentBoneRotateVal, ReturnDeltaSeconds, ReturnSpeed);
+				GetWorldTimerManager().ClearTimer(BoneRotateTimerHandle);
+			}
+		}));
 
-			HitCount++;
-
-			//ChangeMontageAnimation(BossAnimationType::HIT);
+	BoneMap.Add(Boss2BoneRotateType::RIGHTARM, TFunction<void()>([=]()
+		{
+			if (IsStartBoneRot)
+			{
+				Boss2AnimInstance->RArmBoneRotateVal = FMath::RInterpTo(Boss2AnimInstance->RArmBoneRotateVal, RArmBoneRotVal, DeltaSeconds, Speed);
+			}
+			else
+			{
+				Boss2AnimInstance->RArmBoneRotateVal = FMath::RInterpTo(Boss2AnimInstance->RArmBoneRotateVal,
+					Boss2AnimInstance->CurrentBoneRotateVal, ReturnDeltaSeconds, ReturnSpeed);
+				GetWorldTimerManager().ClearTimer(BoneRotateTimerHandle);
+			}
 		}));
 }
 
@@ -694,6 +727,11 @@ void AJesusBoss2::BeginPlay()
 	HeadAtkCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::AttackHit);
 	HeadAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	HitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
+	HeadHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
+	LeftArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
+	RightArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
+
 	//임시로 변수 설정
 	CanMove = true;
 	IsLockOn = true;
@@ -724,15 +762,15 @@ void AJesusBoss2::Tick(float DeltaTime)
 	IsGameStart = Boss2AnimInstance->IsStart;
 
 	//본 회전시키는 코드
-	if (IsStartBoneRot)
-		StartBoneRot();
-	else
-	{
-		Boss2AnimInstance->BoneRotateVal = FMath::RInterpTo(Boss2AnimInstance->BoneRotateVal,
-			Boss2AnimInstance->CurrentBoneRotateVal, ReturnDeltaSeconds, ReturnSpeed);
-		GetWorldTimerManager().ClearTimer(BoneRotateTimerHandle);
-	}
-
+	//if (IsStartBoneRot)
+	//	StartBoneRot();
+	//else
+	//{
+	//	Boss2AnimInstance->HeadBoneRotateVal = FMath::RInterpTo(Boss2AnimInstance->HeadBoneRotateVal,
+	//		Boss2AnimInstance->CurrentBoneRotateVal, ReturnDeltaSeconds, ReturnSpeed);
+	//	GetWorldTimerManager().ClearTimer(BoneRotateTimerHandle);
+	//}
+	BoneMap[Boss2AnimInstance->CurrentBoneType]();
 }
 
 /*=====================
@@ -877,7 +915,6 @@ void AJesusBoss2::PlayAttackAnim(Boss2AnimationType Type)
 	ChangeMontageAnimation(Type);
 }
 
-
 void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	FDamageEvent DamageEvent;
@@ -909,11 +946,16 @@ void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 float AJesusBoss2::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	
+	OffHitCollision();
 
 	BossDataStruct.CharacterHp -= DamageAmount;
 
 	IsStartBoneRot = true;
-
+	GetWorldTimerManager().SetTimer(BoneRotateTimerHandle, this, &AJesusBoss2::ReSetBoneRot, Time, false);
+	
+	Boss2AnimInstance->CurrentBoneType = Boss2BoneRotateType::HEAD;
+	
 	//TODO : 보스 체력 UI
 
 	//TODO : 그로기 관련 코드
@@ -1012,12 +1054,20 @@ void AJesusBoss2::SpawnInit()
 
 void AJesusBoss2::StartBoneRot()
 {
-	Boss2AnimInstance->BoneRotateVal = FMath::RInterpTo(Boss2AnimInstance->BoneRotateVal, BoneRotVal, DeltaSeconds, Speed);
+	Boss2AnimInstance->HeadBoneRotateVal = FMath::RInterpTo(Boss2AnimInstance->HeadBoneRotateVal, HeadBoneRotVal, DeltaSeconds, Speed);
 }
 
 void AJesusBoss2::ReSetBoneRot()
 {
 	IsStartBoneRot = false;
+}
+
+void AJesusBoss2::OffHitCollision()
+{
+	HitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	HeadHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	LeftArmHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	RightArmHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 /*=====================
