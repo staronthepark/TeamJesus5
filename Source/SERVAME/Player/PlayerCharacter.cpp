@@ -802,6 +802,7 @@ APlayerCharacter::APlayerCharacter()
 	MontageEndEventMap.Add(AnimationType::GAMESTART, [&]()
 		{
 			GameInstance->MainMenuWidget->RemoveFromViewport();
+			GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 			PlayerHUD->AddToViewport();
 			PlayerHUD->ChangeHealCount(CurHealCount);
 			LocketSKMesh->SetVisibility(false);
@@ -1874,12 +1875,13 @@ void APlayerCharacter::PlayExecutionAnimation()
 	//ExecuteLocation = GetActorLocation() - ExecuteDirection * 50.0f;
 	//SetActorLocation(ExecuteLocation);
 
+	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
+
 	DeactivateRightWeapon();
 	DeactivateSMOverlap();
 	SwordTrailComp->Deactivate();
 	ComboAttackEnd();
 	ChangeMontageAnimation(AnimationType::EXECUTIONBOSS);
-	PlayExecutionAnimation();
 	BossExecutionSequncePlayer->Play();
 
 	Imotal = true;
@@ -2123,9 +2125,11 @@ void APlayerCharacter::FadeOut()
 void APlayerCharacter::PlayStartAnimation()
 {
 	GameStartSequncePlayer->Play();
+
 	MontageBlendInTime = 0.0f;
 	ChangeMontageAnimation(AnimationType::GAMESTART);
 	AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+	controller->DisableInput(controller);
 	controller->bShowMouseCursor = false;
 	LocketSKMesh->GetAnimInstance()->Montage_Play(MontageMap[AnimationType::NONE]);
 }
