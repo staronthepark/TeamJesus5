@@ -100,8 +100,8 @@ public:
 	UPROPERTY(EditAnyWhere, Category = "SkillInfoMap")
 		TMap<MonsterAnimationType, FSkillInfo>SkillInfoMap;
 
-	TMap<bool, TFunction<void(AEnemyMonster* monster)>>RotateMap;
-	TMap<int, TFunction<void(AEnemyMonster* monster)>>RandomRotateMap;
+	TMap<bool, TFunction<void()>>RotateMap;
+	TMap<int, TFunction<void()>>RandomRotateMap;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UWidgetComponent* HpWidget;
@@ -152,14 +152,14 @@ public:
 private:
 
 	TMap<MonsterAnimationType, MonsterStateType> AnimTypeToStateType;
-	TMap<MonsterStateType, TMap<MonsterActionType, TFunction<void(AEnemyMonster* monster)>>> MonsterActionEventMap;
-	TMap<MonsterAnimationType, TMap<bool, TFunction<void(AEnemyMonster* monster)>>> NotifyBeginEndEventMap;
-	TMap<MonsterActionType, TFunction<void(AEnemyMonster* monster)>> MonsterTickEventMap;
-	TMap<int, TFunction<void(AEnemyMonster* monster)>> MonsterMoveMap;
-	TMap<bool, TFunction<void(AEnemyMonster* monster)>> CheckDIstanceMap;
-	TMap<MonsterAnimationType, TFunction<void(AEnemyMonster* monster, float percent)>> SetActionByRandomMap;
-	TMap<MonsterAnimationType, TFunction<void(AEnemyMonster* monster)>>MontageEndEventMap;
-	TMap<MonsterAttackType, TFunction<void(AEnemyMonster* monster)>>TargetDetectEventMap;
+	TMap<MonsterStateType, TMap<MonsterActionType, TFunction<void()>>> MonsterActionEventMap;
+	TMap<MonsterAnimationType, TMap<bool, TFunction<void()>>> NotifyBeginEndEventMap;
+	TMap<MonsterActionType, TFunction<void()>> MonsterTickEventMap;
+	TMap<int, TFunction<void()>> MonsterMoveMap;
+	TMap<bool, TFunction<void()>> CheckDIstanceMap;
+	TMap<MonsterAnimationType, TFunction<void(float percent)>> SetActionByRandomMap;
+	TMap<MonsterAnimationType, TFunction<void()>>MontageEndEventMap;
+	TMap<MonsterAttackType, TFunction<void()>>TargetDetectEventMap;
 
 public:
 

@@ -12,7 +12,7 @@ void AInteractionActor::BeginPlay()
 	Super::BeginPlay();
 
 	Character = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
-
+	SetActorTickEnabled(false);
 	Init();
 }
 
@@ -26,6 +26,7 @@ void AInteractionActor::BeginTriggerEvent()
 {
 	Super::BeginTriggerEvent();
 	//Character->PlayerHUD->PlayInteractionAnimation(true);
+	SetActorTickEnabled(true);
 }
 
 void AInteractionActor::EndTriggerEvent()

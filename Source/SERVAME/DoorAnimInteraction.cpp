@@ -66,6 +66,7 @@ void ADoorAnimInteraction::OnOpenDoorOverlapEnd(UPrimitiveComponent* OverlappedC
 void ADoorAnimInteraction::EnableEvent()
 {
 	Super::EnableEvent();
+	SetActorTickEnabled(false);
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[26].ObjClass, GetActorLocation(), GetActorForwardVector().Rotation() + FRotator(0, 0, -20));
 	AnimInstance->DoorAnimationType = DoorAnimationType::OPEN;
 	Character->SetActorLocation(FVector(-4507.492188, -31.434, 133));

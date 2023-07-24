@@ -20,55 +20,55 @@ void AJesusPlayerController::BeginPlay()
 	PlayerSkillType = 2;
 
 	
-	CameraYawRotateEventMap.Add(false, [](AJesusPlayerController* controller, float Val)
+	CameraYawRotateEventMap.Add(false, [&](float Val)
 		{
-			controller->AddYawInput(Val);
+			AddYawInput(Val);
 		});
-	CameraYawRotateEventMap.Add(true, [](AJesusPlayerController* controller, float Val)
+	CameraYawRotateEventMap.Add(true, [&](float Val)
 		{
-			controller->ChangeTargetEventMap[FMath::Abs(Val) > controller->ChangeTargetMouseValue && controller->character->ChangeTargetTime >= 0.5f][Val < 0](controller);
-		});
-
-	ChangeTargetEventMap.Add(false, TMap<bool, TFunction<void(AJesusPlayerController* controller)>>());
-	ChangeTargetEventMap[false].Add(false, [](AJesusPlayerController* controller)
-		{
-		});
-	ChangeTargetEventMap[false].Add(true, [](AJesusPlayerController* controller)
-		{
-		});
-	ChangeTargetEventMap.Add(true, TMap<bool, TFunction<void(AJesusPlayerController* controller)>>());
-	ChangeTargetEventMap[true].Add(false, [](AJesusPlayerController* controller)
-		{
-			controller->character->ChangeTarget(CameraDirection::RIGHT);
-		});
-	ChangeTargetEventMap[true].Add(true, [](AJesusPlayerController* controller)
-		{
-			controller->character->ChangeTarget(CameraDirection::LEFT);
+			ChangeTargetEventMap[FMath::Abs(Val) > ChangeTargetMouseValue && character->ChangeTargetTime >= 0.5f][Val < 0]();
 		});
 
-	CameraPitchRotateEventMap.Add(false, [](AJesusPlayerController* controller, float Val)
+	ChangeTargetEventMap.Add(false, TMap<bool, TFunction<void()>>());
+	ChangeTargetEventMap[false].Add(false, [&]()
 		{
-			controller->AddPitchInput(Val);
+		});
+	ChangeTargetEventMap[false].Add(true, [&]()
+		{
+		});
+	ChangeTargetEventMap.Add(true, TMap<bool, TFunction<void()>>());
+	ChangeTargetEventMap[true].Add(false, [&]()
+		{
+			character->ChangeTarget(CameraDirection::RIGHT);
+		});
+	ChangeTargetEventMap[true].Add(true, [&]()
+		{
+			character->ChangeTarget(CameraDirection::LEFT);
 		});
 
-	CameraPitchRotateEventMap.Add(true, [](AJesusPlayerController* controller, float Val)
+	CameraPitchRotateEventMap.Add(false, [&](float Val)
+		{
+			AddPitchInput(Val);
+		});
+
+	CameraPitchRotateEventMap.Add(true, [&](float Val)
 		{
 		});
 }
 
 void AJesusPlayerController::YawInput(float Val)
 {	
-	CameraYawRotateEventMap[character->IsLockOn](this, Val);
+	CameraYawRotateEventMap[character->IsLockOn](Val);
 }
 
 void AJesusPlayerController::PitchInput(float Val)
 {
-	CameraPitchRotateEventMap[character->IsLockOn](this, Val);
+	CameraPitchRotateEventMap[character->IsLockOn](Val);
 }
 
 void AJesusPlayerController::AddYawInput(float Val)
 {
-	if(!character->GameInstance->MainMenuWidget->IsInViewport() && character->AnimInstance->PlayerAnimationType != AnimationType::EXECUTIONBOSS)
+	if(character->AnimInstance->PlayerAnimationType != AnimationType::EXECUTIONBOSS)
 	{
 		Super::AddYawInput(Val * GameInstance->PlayerOptionSetting.DPI * character->fDeltaTime);
 	}
@@ -76,7 +76,7 @@ void AJesusPlayerController::AddYawInput(float Val)
 
 void AJesusPlayerController::AddPitchInput(float Val)
 {
-	if (!character->GameInstance->MainMenuWidget->IsInViewport() && character->AnimInstance->PlayerAnimationType != AnimationType::EXECUTIONBOSS)
+	if (character->AnimInstance->PlayerAnimationType != AnimationType::EXECUTIONBOSS)
 		Super::AddPitchInput(Val * GameInstance->PlayerOptionSetting.DPI * character->fDeltaTime);
 }
 
@@ -107,12 +107,12 @@ void AJesusPlayerController::PauseTime()
 void AJesusPlayerController::PressAttack()
 {
 	IsInputKeyDown(EKeys::LeftMouseButton) ? character->SetInputType(false) : character->SetInputType(true);
-	character->InputEventMap[character->PlayerCurAction][ActionType::ATTACK][true](character);
+	character->InputEventMap[character->PlayerCurAction][ActionType::ATTACK][true]();
 }
 
 void AJesusPlayerController::UnPressAttack()
 {
-	character->InputEventMap[character->PlayerCurAction][ActionType::ATTACK][false](character);
+	character->InputEventMap[character->PlayerCurAction][ActionType::ATTACK][false]();
 }
 
 void AJesusPlayerController::PressDodge()
@@ -147,7 +147,7 @@ void AJesusPlayerController::PressDodge()
 	}
 
 	character->GetWorldTimerManager().SetTimer(character->SprintStartTimer, character, &APlayerCharacter::SetSprint, 0.2f);
-	character->InputEventMap[character->PlayerCurAction][ActionType::DODGE][true](character);
+	character->InputEventMap[character->PlayerCurAction][ActionType::DODGE][true]();
 }
 
 void AJesusPlayerController::UnPressDodge()
@@ -164,40 +164,40 @@ void AJesusPlayerController::UnPressDodge()
 	}
 	else
 	{
-		character->InputEventMap[character->PlayerCurAction][ActionType::DODGE][false](character);
+		character->InputEventMap[character->PlayerCurAction][ActionType::DODGE][false]();
 	}
 }
 
 void AJesusPlayerController::PressPowerAttack()
 {
 	IsInputKeyDown(EKeys::Gamepad_RightTrigger) ? character->SetInputType(true) : character->SetInputType(false);
-	character->InputEventMap[character->PlayerCurAction][ActionType::POWERATTACK][true](character);
+	character->InputEventMap[character->PlayerCurAction][ActionType::POWERATTACK][true]();
 }
 
 void AJesusPlayerController::UnPressPowerAttack()
 {
-	character->InputEventMap[character->PlayerCurAction][ActionType::POWERATTACK][false](character);
+	character->InputEventMap[character->PlayerCurAction][ActionType::POWERATTACK][false]();
 }
 
 void AJesusPlayerController::PressParring()
 {
 	IsInputKeyDown(EKeys::LeftControl) ? character->SetInputType(false) : character->SetInputType(true);
-	character->InputEventMap[character->PlayerCurAction][ActionType::PARRING][true](character);
+	character->InputEventMap[character->PlayerCurAction][ActionType::PARRING][true]();
 }
 
 void AJesusPlayerController::UnPressParring()
 {
-	character->InputEventMap[character->PlayerCurAction][ActionType::PARRING][false](character);
+	character->InputEventMap[character->PlayerCurAction][ActionType::PARRING][false]();
 }
 
 void AJesusPlayerController::PressUseItem()
 {
-	character->InputEventMap[character->PlayerCurAction][ActionType::HEAL][true](character);
+	character->InputEventMap[character->PlayerCurAction][ActionType::HEAL][true]();
 }
 
 void AJesusPlayerController::UnPressUseItem()
 {
-	character->InputEventMap[character->PlayerCurAction][ActionType::HEAL][false](character);
+	character->InputEventMap[character->PlayerCurAction][ActionType::HEAL][false]();
 }
 
 void AJesusPlayerController::ViewLog()
@@ -263,7 +263,7 @@ void AJesusPlayerController::PressMoveForward()
 	IsInputKeyDown(EKeys::W) ? character->SetInputType(false) : character->SetInputType(true);
 	character->AxisY = 0;
 	character->ForwardMovementValue = 1.0f;
-	character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][true](character);
+	character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][true]();
 }
 
 void AJesusPlayerController::UnPressMoveForward()
@@ -271,7 +271,7 @@ void AJesusPlayerController::UnPressMoveForward()
 	if (character->AxisY == 0)
 	{
 		character->AxisY = 1;	
-		character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][false](character);
+		character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][false]();
 	}
 }
 
@@ -286,7 +286,7 @@ void AJesusPlayerController::PressMoveBack()
 	IsInputKeyDown(EKeys::S) ? character->SetInputType(false) : character->SetInputType(true);
 	character->AxisY = 2;
 	character->ForwardMovementValue = -1.0f;
-	character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][true](character);
+	character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][true]();
 
 	if(character->CurActionType == ActionType::MOVE)
 	character->TargetCameraBoomLength = character->IsShoulderView ? character->ShoulderViewCameraLength : character->BackViewCameraLength;
@@ -297,7 +297,7 @@ void AJesusPlayerController::UnPressMoveBack()
 	if (character->AxisY == 2)
 	{
 		character->AxisY = 1;
-		character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][false](character);
+		character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][false]();
 	}
 	character->TargetCameraBoomLength = character->IsShoulderView ? character->ShoulderViewCameraLength : character->BackViewCameraLength;
 }
@@ -313,7 +313,7 @@ void AJesusPlayerController::PressMoveLeft()
 	IsInputKeyDown(EKeys::A) ? character->SetInputType(false) : character->SetInputType(true);
 	character->AxisX = 0;
 	character->RightMovementValue = -1.0f;
-	character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][true](character);
+	character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][true]();
 }
 
 void AJesusPlayerController::UnPressMoveLeft()
@@ -321,7 +321,7 @@ void AJesusPlayerController::UnPressMoveLeft()
 	if (character->AxisX == 0)
 	{
 		character->AxisX = 1;
-		character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][false](character);
+		character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][false]();
 	}	
 }
 
@@ -336,7 +336,7 @@ void AJesusPlayerController::PressMoveRight()
 	IsInputKeyDown(EKeys::D) ? character->SetInputType(false) : character->SetInputType(true);
 	character->AxisX = 2;
 	character->RightMovementValue = 1.0f;
-	character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][true](character);
+	character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][true]();
 }
 
 void AJesusPlayerController::UnPressMoveRight()
@@ -344,7 +344,7 @@ void AJesusPlayerController::UnPressMoveRight()
 	if (character->AxisX == 2)
 	{
 		character->AxisX = 1;
-		character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][false](character);
+		character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][false]();
 	}
 }
 

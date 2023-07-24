@@ -207,276 +207,276 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SAVEEND, PlayerAction::CANTACT);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::ACTIVESAVEPOINT, PlayerAction::CANTACT);
 
-	NotifyBeginEndEventMap.Add(AnimationType::NONE, TMap<bool, TFunction<void(APlayerCharacter * character)>>());
-	NotifyBeginEndEventMap.Add(AnimationType::IDLE, TMap<bool, TFunction<void(APlayerCharacter * character)>>());
-	NotifyBeginEndEventMap.Add(AnimationType::FORWARDWALK, TMap<bool, TFunction<void(APlayerCharacter * character)>>());
-	NotifyBeginEndEventMap.Add(AnimationType::LEFTWALK, TMap<bool, TFunction<void(APlayerCharacter * character)>>());
-	NotifyBeginEndEventMap.Add(AnimationType::RIGHTWALK, TMap<bool, TFunction<void(APlayerCharacter * character)>>());
-	NotifyBeginEndEventMap.Add(AnimationType::BACKWALK, TMap<bool, TFunction<void(APlayerCharacter * character)>>());
-	NotifyBeginEndEventMap.Add(AnimationType::FORWARDLEFTWALK, TMap<bool, TFunction<void(APlayerCharacter * character)>>());
-	NotifyBeginEndEventMap.Add(AnimationType::FORWARDRIGHTWALK, TMap<bool, TFunction<void(APlayerCharacter * character)>>());
-	NotifyBeginEndEventMap.Add(AnimationType::BACKLEFTWALK, TMap<bool, TFunction<void(APlayerCharacter * character)>>());
-	NotifyBeginEndEventMap.Add(AnimationType::BACKRIGHTWALK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
+	NotifyBeginEndEventMap.Add(AnimationType::NONE, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap.Add(AnimationType::IDLE, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap.Add(AnimationType::FORWARDWALK, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap.Add(AnimationType::LEFTWALK, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap.Add(AnimationType::RIGHTWALK, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap.Add(AnimationType::BACKWALK, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap.Add(AnimationType::FORWARDLEFTWALK, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap.Add(AnimationType::FORWARDRIGHTWALK, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap.Add(AnimationType::BACKLEFTWALK, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap.Add(AnimationType::BACKRIGHTWALK, TMap<bool, TFunction<void()>>());
 
-	NotifyBeginEndEventMap.Add(AnimationType::BATTLEDODGE, TMap<bool, TFunction<void(APlayerCharacter * character)>>());
-	NotifyBeginEndEventMap[AnimationType::BATTLEDODGE].Add(true, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap.Add(AnimationType::BATTLEDODGE, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::BATTLEDODGE].Add(true, [&]()
 		{
-			character->Imotal = true;
+			Imotal = true;
 		});
-	NotifyBeginEndEventMap[AnimationType::BATTLEDODGE].Add(false, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap[AnimationType::BATTLEDODGE].Add(false, [&]()
 		{
-			character->PlayerCurAction = PlayerAction::CANATTACK;
-			character->Imotal = false;
-			character->ComboAttackEnd();
-		});
-
-	NotifyBeginEndEventMap.Add(AnimationType::BASICDODGE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	NotifyBeginEndEventMap[AnimationType::BASICDODGE].Add(true, [](APlayerCharacter* character)
-		{
-			character->Imotal = true;
-		});
-	NotifyBeginEndEventMap[AnimationType::BASICDODGE].Add(false, [](APlayerCharacter* character)
-		{
-			character->PlayerCurAction = PlayerAction::CANATTACK;
-			character->Imotal = false;
-			character->ComboAttackEnd();
+			PlayerCurAction = PlayerAction::CANATTACK;
+			Imotal = false;
+			ComboAttackEnd();
 		});
 
-	NotifyBeginEndEventMap.Add(AnimationType::BACKSTEP, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	NotifyBeginEndEventMap[AnimationType::BACKSTEP].Add(true, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap.Add(AnimationType::BASICDODGE, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::BASICDODGE].Add(true, [&]()
 		{
-			character->Imotal = true;
-
+			Imotal = true;
 		});
-	NotifyBeginEndEventMap[AnimationType::BACKSTEP].Add(false, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap[AnimationType::BASICDODGE].Add(false, [&]()
 		{
-			character->PlayerCurAction = PlayerAction::CANATTACK;
-			character->Imotal = false;
-			character->ComboAttackEnd();
-		});
-
-	NotifyBeginEndEventMap.Add(AnimationType::HEAL, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	NotifyBeginEndEventMap[AnimationType::HEAL].Add(true, [](APlayerCharacter* character)
-		{
-		});
-	NotifyBeginEndEventMap[AnimationType::HEAL].Add(false, [](APlayerCharacter* character)
-		{
-			character->PlayerDataStruct.CharacterHp = FMath::Clamp(character->PlayerDataStruct.CharacterHp += character->PlayerDataStruct.PlayerHealValue, 0.0f, character->PlayerDataStruct.CharacterMaxHp);
-			character->PlayerHUD->SetHP(character->PlayerDataStruct.CharacterHp / character->PlayerDataStruct.CharacterMaxHp);
-			character->GameInstance->DebugLogWidget->T_PlayerHP->SetText(FText::AsNumber(character->PlayerDataStruct.CharacterHp));
+			PlayerCurAction = PlayerAction::CANATTACK;
+			Imotal = false;
+			ComboAttackEnd();
 		});
 
-	NotifyBeginEndEventMap.Add(AnimationType::ATTACK1, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	NotifyBeginEndEventMap[AnimationType::ATTACK1].Add(true, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap.Add(AnimationType::BACKSTEP, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::BACKSTEP].Add(true, [&]()
+		{
+			Imotal = true;
+
+		});
+	NotifyBeginEndEventMap[AnimationType::BACKSTEP].Add(false, [&]()
+		{
+			PlayerCurAction = PlayerAction::CANATTACK;
+			Imotal = false;
+			ComboAttackEnd();
+		});
+
+	NotifyBeginEndEventMap.Add(AnimationType::HEAL, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::HEAL].Add(true, [&]()
+		{
+		});
+	NotifyBeginEndEventMap[AnimationType::HEAL].Add(false, [&]()
+		{
+			PlayerDataStruct.CharacterHp = FMath::Clamp(PlayerDataStruct.CharacterHp += PlayerDataStruct.PlayerHealValue, 0.0f, PlayerDataStruct.CharacterMaxHp);
+			PlayerHUD->SetHP(PlayerDataStruct.CharacterHp / PlayerDataStruct.CharacterMaxHp);
+			GameInstance->DebugLogWidget->T_PlayerHP->SetText(FText::AsNumber(PlayerDataStruct.CharacterHp));
+		});
+
+	NotifyBeginEndEventMap.Add(AnimationType::ATTACK1, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::ATTACK1].Add(true, [&]()
 		{
 			UCombatManager::GetInstance().ActivateCollider();
-			character->ActivateSMOverlap();
-			character->ActivateRightWeapon();
-			character->SwordTrailComp->Activate();
+			ActivateSMOverlap();
+			ActivateRightWeapon();
+			SwordTrailComp->Activate();
 		});
 
-	NotifyBeginEndEventMap[AnimationType::ATTACK1].Add(false, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap[AnimationType::ATTACK1].Add(false, [&]()
 		{
-			character->DeactivateRightWeapon();
-			character->DeactivateSMOverlap();
-			character->SwordTrailComp->Deactivate();
+			DeactivateRightWeapon();
+			DeactivateSMOverlap();
+			SwordTrailComp->Deactivate();
 		});
 
-	NotifyBeginEndEventMap.Add(AnimationType::POWERATTACK1, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
+	NotifyBeginEndEventMap.Add(AnimationType::POWERATTACK1, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::POWERATTACK1].Add(true, NotifyBeginEndEventMap[AnimationType::ATTACK1][true]);
-	NotifyBeginEndEventMap[AnimationType::POWERATTACK1].Add(false, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap[AnimationType::POWERATTACK1].Add(false, [&]()
 		{
-			character->DeactivateRightWeapon();
-			character->DeactivateSMOverlap();			
-			character->SwordTrailComp->Deactivate();
+			DeactivateRightWeapon();
+			DeactivateSMOverlap();			
+			SwordTrailComp->Deactivate();
 		});
 
-	NotifyBeginEndEventMap.Add(AnimationType::ATTACK2, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
+	NotifyBeginEndEventMap.Add(AnimationType::ATTACK2, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::ATTACK2].Add(true, NotifyBeginEndEventMap[AnimationType::ATTACK1][true]);
 	NotifyBeginEndEventMap[AnimationType::ATTACK2].Add(false, NotifyBeginEndEventMap[AnimationType::ATTACK1][false]);
 
-	NotifyBeginEndEventMap.Add(AnimationType::ATTACK3, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
+	NotifyBeginEndEventMap.Add(AnimationType::ATTACK3, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::ATTACK3].Add(true, NotifyBeginEndEventMap[AnimationType::ATTACK1][true]);
 	NotifyBeginEndEventMap[AnimationType::ATTACK3].Add(false, NotifyBeginEndEventMap[AnimationType::ATTACK1][false]);
 
-	NotifyBeginEndEventMap.Add(AnimationType::ATTACK4, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
+	NotifyBeginEndEventMap.Add(AnimationType::ATTACK4, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::ATTACK4].Add(true, NotifyBeginEndEventMap[AnimationType::ATTACK1][true]);
 	NotifyBeginEndEventMap[AnimationType::ATTACK4].Add(false, NotifyBeginEndEventMap[AnimationType::ATTACK1][false]);
 
-	NotifyBeginEndEventMap.Add(AnimationType::RUNATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
+	NotifyBeginEndEventMap.Add(AnimationType::RUNATTACK, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::RUNATTACK].Add(true, NotifyBeginEndEventMap[AnimationType::ATTACK1][true]);
 	NotifyBeginEndEventMap[AnimationType::RUNATTACK].Add(false, NotifyBeginEndEventMap[AnimationType::ATTACK1][false]);
 
-	NotifyBeginEndEventMap.Add(AnimationType::RUNPOWERATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
+	NotifyBeginEndEventMap.Add(AnimationType::RUNPOWERATTACK, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::RUNPOWERATTACK].Add(true, NotifyBeginEndEventMap[AnimationType::ATTACK1][true]);
 	NotifyBeginEndEventMap[AnimationType::RUNPOWERATTACK].Add(false, NotifyBeginEndEventMap[AnimationType::ATTACK1][false]);
 
-	NotifyBeginEndEventMap.Add(AnimationType::POWERATTACK2, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
+	NotifyBeginEndEventMap.Add(AnimationType::POWERATTACK2, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::POWERATTACK2].Add(true, NotifyBeginEndEventMap[AnimationType::ATTACK1][true]);
 	NotifyBeginEndEventMap[AnimationType::POWERATTACK2].Add(false, NotifyBeginEndEventMap[AnimationType::POWERATTACK1][false]);
 
-	NotifyBeginEndEventMap.Add(AnimationType::POWERATTACK3, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
+	NotifyBeginEndEventMap.Add(AnimationType::POWERATTACK3, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::POWERATTACK3].Add(true, NotifyBeginEndEventMap[AnimationType::ATTACK1][true]);
-	NotifyBeginEndEventMap[AnimationType::POWERATTACK3].Add(false, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap[AnimationType::POWERATTACK3].Add(false, [&]()
 		{
-			character->NotifyBeginEndEventMap[AnimationType::POWERATTACK1][false](character);
-			character->PlayerCurAttackIndex = 0;
-			character->CameraShake(character->PlayerCameraShake);
-			character->VibrateGamePad(character->PlayerDataStruct.DamageList[AnimationType::POWERATTACK1].VibrateIntensity,
-			character->PlayerDataStruct.DamageList[AnimationType::POWERATTACK1].VibrateDuration);
+			NotifyBeginEndEventMap[AnimationType::POWERATTACK1][false]();
+			PlayerCurAttackIndex = 0;
+			CameraShake(PlayerCameraShake);
+			VibrateGamePad(PlayerDataStruct.DamageList[AnimationType::POWERATTACK1].VibrateIntensity,
+			PlayerDataStruct.DamageList[AnimationType::POWERATTACK1].VibrateDuration);
 		});
 
-	NotifyBeginEndEventMap.Add(AnimationType::DODGEATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
+	NotifyBeginEndEventMap.Add(AnimationType::DODGEATTACK, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::DODGEATTACK].Add(true, NotifyBeginEndEventMap[AnimationType::ATTACK1][true]);
-	NotifyBeginEndEventMap[AnimationType::DODGEATTACK].Add(false, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap[AnimationType::DODGEATTACK].Add(false, [&]()
 		{
-			character->NotifyBeginEndEventMap[AnimationType::ATTACK1][false](character);
-			character->PlayerCurAttackIndex = 0;
+			NotifyBeginEndEventMap[AnimationType::ATTACK1][false]();
+			PlayerCurAttackIndex = 0;
 		});
 
-	NotifyBeginEndEventMap.Add(AnimationType::PARRING, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	NotifyBeginEndEventMap[AnimationType::PARRING].Add(true, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap.Add(AnimationType::PARRING, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::PARRING].Add(true, [&]()
 		{
-			character->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		});
-	NotifyBeginEndEventMap[AnimationType::PARRING].Add(false, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap[AnimationType::PARRING].Add(false, [&]()
 		{
-			character->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		});
-
-	NotifyBeginEndEventMap.Add(AnimationType::HIT, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	NotifyBeginEndEventMap[AnimationType::HIT].Add(true, [](APlayerCharacter* character)
-		{
-			character->PlayerCurAction = PlayerAction::AFTERATTACK;
-		});
-	NotifyBeginEndEventMap[AnimationType::HIT].Add(false, [](APlayerCharacter* character)
-		{
-
+			ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		});
 
-	NotifyBeginEndEventMap.Add(AnimationType::HITFRONTLEFT, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	NotifyBeginEndEventMap[AnimationType::HITFRONTLEFT].Add(true, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap.Add(AnimationType::HIT, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::HIT].Add(true, [&]()
 		{
-			character->PlayerCurAction = PlayerAction::AFTERATTACK;
+			PlayerCurAction = PlayerAction::AFTERATTACK;
 		});
-	NotifyBeginEndEventMap[AnimationType::HITFRONTLEFT].Add(false, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap[AnimationType::HIT].Add(false, [&]()
 		{
 
 		});
 
-	NotifyBeginEndEventMap.Add(AnimationType::HITFRONTRIGHT, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	NotifyBeginEndEventMap[AnimationType::HITFRONTRIGHT].Add(true, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap.Add(AnimationType::HITFRONTLEFT, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::HITFRONTLEFT].Add(true, [&]()
 		{
-			character->PlayerCurAction = PlayerAction::AFTERATTACK;
+			PlayerCurAction = PlayerAction::AFTERATTACK;
 		});
-	NotifyBeginEndEventMap[AnimationType::HITFRONTRIGHT].Add(false, [](APlayerCharacter* character)
-		{
-
-		});
-
-	NotifyBeginEndEventMap.Add(AnimationType::HITBACKLEFT, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	NotifyBeginEndEventMap[AnimationType::HITBACKLEFT].Add(true, [](APlayerCharacter* character)
-		{
-			character->PlayerCurAction = PlayerAction::AFTERATTACK;
-		});
-	NotifyBeginEndEventMap[AnimationType::HITBACKLEFT].Add(false, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap[AnimationType::HITFRONTLEFT].Add(false, [&]()
 		{
 
 		});
 
-	NotifyBeginEndEventMap.Add(AnimationType::HITBACKRIGHT, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	NotifyBeginEndEventMap[AnimationType::HITBACKRIGHT].Add(true, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap.Add(AnimationType::HITFRONTRIGHT, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::HITFRONTRIGHT].Add(true, [&]()
 		{
-			character->PlayerCurAction = PlayerAction::AFTERATTACK;
+			PlayerCurAction = PlayerAction::AFTERATTACK;
 		});
-	NotifyBeginEndEventMap[AnimationType::HITBACKRIGHT].Add(false, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap[AnimationType::HITFRONTRIGHT].Add(false, [&]()
+		{
+
+		});
+
+	NotifyBeginEndEventMap.Add(AnimationType::HITBACKLEFT, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::HITBACKLEFT].Add(true, [&]()
+		{
+			PlayerCurAction = PlayerAction::AFTERATTACK;
+		});
+	NotifyBeginEndEventMap[AnimationType::HITBACKLEFT].Add(false, [&]()
+		{
+
+		});
+
+	NotifyBeginEndEventMap.Add(AnimationType::HITBACKRIGHT, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::HITBACKRIGHT].Add(true, [&]()
+		{
+			PlayerCurAction = PlayerAction::AFTERATTACK;
+		});
+	NotifyBeginEndEventMap[AnimationType::HITBACKRIGHT].Add(false, [&]()
 		{
 
 		});
 
 
-	NotifyBeginEndEventMap.Add(AnimationType::EXECUTIONBOSS, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	NotifyBeginEndEventMap[AnimationType::EXECUTIONBOSS].Add(true, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap.Add(AnimationType::EXECUTIONBOSS, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::EXECUTIONBOSS].Add(true, [&]()
 		{
-			character->CameraShake(character->PlayerCameraShake);
-			character->VibrateGamePad(0.2f, 0.2f);
+			CameraShake(PlayerCameraShake);
+			VibrateGamePad(0.2f, 0.2f);
 		});
-	NotifyBeginEndEventMap[AnimationType::EXECUTIONBOSS].Add(false, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap[AnimationType::EXECUTIONBOSS].Add(false, [&]()
 		{
 
 		});
 
-	NotifyBeginEndEventMap.Add(AnimationType::SUPERHIT, TMap<bool, TFunction<void(APlayerCharacter * character)>>());
-	NotifyBeginEndEventMap[AnimationType::SUPERHIT].Add(true, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap.Add(AnimationType::SUPERHIT, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::SUPERHIT].Add(true, [&]()
 		{
-			character->PlayerCurAction = PlayerAction::AFTERATTACK;
+			PlayerCurAction = PlayerAction::AFTERATTACK;
 		});
-	NotifyBeginEndEventMap[AnimationType::SUPERHIT].Add(false, [](APlayerCharacter* character)
-		{
-		});
-
-	NotifyBeginEndEventMap.Add(AnimationType::DOOROPEN, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	NotifyBeginEndEventMap[AnimationType::DOOROPEN].Add(false, [](APlayerCharacter* character)
-		{
-			character->CameraShake(character->PlayerDoorCameraShake);
-			character->VibrateGamePad(0.6, 0.2);
-		});
-	NotifyBeginEndEventMap[AnimationType::DOOROPEN].Add(true, [](APlayerCharacter* character)
-		{
-			character->CameraShake(character->PlayerDoorCameraShake);
-			character->VibrateGamePad(0.6, 0.2);
-		});
-
-	NotifyBeginEndEventMap.Add(AnimationType::SAVESTART, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	NotifyBeginEndEventMap[AnimationType::SAVESTART].Add(false, [](APlayerCharacter* character)
-		{
-		});
-	NotifyBeginEndEventMap[AnimationType::SAVESTART].Add(true, [](APlayerCharacter* character)
-		{
-			character->PlayerHUD->FadeInAnimation(true);
-		});
-
-	NotifyBeginEndEventMap.Add(AnimationType::GAMESTART, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	NotifyBeginEndEventMap[AnimationType::GAMESTART].Add(false, [](APlayerCharacter* character)
-		{
-			character->LocketSKMesh->SetVisibility(false);
-		});
-	NotifyBeginEndEventMap[AnimationType::GAMESTART].Add(true, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap[AnimationType::SUPERHIT].Add(false, [&]()
 		{
 		});
 
-	PlayerActionTickMap.Add(PlayerAction::NONE, TMap<ActionType, TFunction<void(APlayerCharacter* character)>>());
-
-	PlayerActionTickMap[PlayerAction::NONE].Add(ActionType::NONE, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap.Add(AnimationType::DOOROPEN, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::DOOROPEN].Add(false, [&]()
 		{
-			character->RecoverStamina();
+			CameraShake(PlayerDoorCameraShake);
+			VibrateGamePad(0.6, 0.2);
+		});
+	NotifyBeginEndEventMap[AnimationType::DOOROPEN].Add(true, [&]()
+		{
+			CameraShake(PlayerDoorCameraShake);
+			VibrateGamePad(0.6, 0.2);
 		});
 
-	PlayerActionTickMap[PlayerAction::NONE].Add(ActionType::DODGE, [](APlayerCharacter* character)
+	NotifyBeginEndEventMap.Add(AnimationType::SAVESTART, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::SAVESTART].Add(false, [&]()
+		{
+		});
+	NotifyBeginEndEventMap[AnimationType::SAVESTART].Add(true, [&]()
+		{
+			PlayerHUD->FadeInAnimation(true);
+		});
+
+	NotifyBeginEndEventMap.Add(AnimationType::GAMESTART, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::GAMESTART].Add(false, [&]()
+		{
+			LocketSKMesh->SetVisibility(false);
+		});
+	NotifyBeginEndEventMap[AnimationType::GAMESTART].Add(true, [&]()
+		{
+		});
+
+	PlayerActionTickMap.Add(PlayerAction::NONE, TMap<ActionType, TFunction<void()>>());
+
+	PlayerActionTickMap[PlayerAction::NONE].Add(ActionType::NONE, [&]()
+		{
+			RecoverStamina();
+		});
+
+	PlayerActionTickMap[PlayerAction::NONE].Add(ActionType::DODGE, [&]()
 		{
 			
 		});
 	PlayerActionTickMap[PlayerAction::NONE].Add(ActionType::ATTACK, PlayerActionTickMap[PlayerAction::NONE][ActionType::DODGE]);
 	PlayerActionTickMap[PlayerAction::NONE].Add(ActionType::PARRING, PlayerActionTickMap[PlayerAction::NONE][ActionType::DODGE]);
 
-	PlayerActionTickMap[PlayerAction::NONE].Add(ActionType::MOVE, [](APlayerCharacter* character)
+	PlayerActionTickMap[PlayerAction::NONE].Add(ActionType::MOVE, [&]()
 		{
-			character->RecoverStamina();
-			character->SetPlayerForwardRotAndDir();
-			character->SetPlayerRightRotAndDir();
-			character->LockOnCameraSettingMap[character->IsLockOn](character);
-			//character->LockOnCameraSettingMap[true](character);
-			character->PlayerMovement();
+			RecoverStamina();
+			SetPlayerForwardRotAndDir();
+			SetPlayerRightRotAndDir();
+			LockOnCameraSettingMap[IsLockOn]();
+			//LockOnCameraSettingMap[true](character);
+			PlayerMovement();
 
 		});
 
-	PlayerActionTickMap[PlayerAction::NONE].Add(ActionType::ROTATE, [](APlayerCharacter* character)
+	PlayerActionTickMap[PlayerAction::NONE].Add(ActionType::ROTATE, [&]()
 		{
-			character->SetPlayerForwardRotAndDir();
-			character->SetPlayerRightRotAndDir();
+			SetPlayerForwardRotAndDir();
+			SetPlayerRightRotAndDir();
 		});
 
-	PlayerActionTickMap.Add(PlayerAction::RUN, TMap<ActionType, TFunction<void(APlayerCharacter* character)>>());
+	PlayerActionTickMap.Add(PlayerAction::RUN, TMap<ActionType, TFunction<void()>>());
 	PlayerActionTickMap[PlayerAction::RUN].Add(ActionType::NONE, PlayerActionTickMap[PlayerAction::NONE][ActionType::NONE]);
 	PlayerActionTickMap[PlayerAction::RUN].Add(ActionType::DODGE, PlayerActionTickMap[PlayerAction::NONE][ActionType::DODGE]);
 	PlayerActionTickMap[PlayerAction::RUN].Add(ActionType::ATTACK, PlayerActionTickMap[PlayerAction::NONE][ActionType::ATTACK]);
@@ -485,16 +485,16 @@ APlayerCharacter::APlayerCharacter()
 	PlayerActionTickMap[PlayerAction::RUN].Add(ActionType::HEAL, PlayerActionTickMap[PlayerAction::NONE][ActionType::MOVE]);
 	PlayerActionTickMap[PlayerAction::RUN].Add(ActionType::HIT, PlayerActionTickMap[PlayerAction::NONE][ActionType::ATTACK]);
 
-	PlayerActionTickMap.Add(PlayerAction::BEFOREATTACK, TMap<ActionType, TFunction<void(APlayerCharacter* character)>>());
+	PlayerActionTickMap.Add(PlayerAction::BEFOREATTACK, TMap<ActionType, TFunction<void()>>());
 	PlayerActionTickMap[PlayerAction::BEFOREATTACK].Add(ActionType::NONE, PlayerActionTickMap[PlayerAction::NONE][ActionType::NONE]);
 	PlayerActionTickMap[PlayerAction::BEFOREATTACK].Add(ActionType::ROTATE, PlayerActionTickMap[PlayerAction::NONE][ActionType::ROTATE]);
 	PlayerActionTickMap[PlayerAction::BEFOREATTACK].Add(ActionType::ATTACK, PlayerActionTickMap[PlayerAction::NONE][ActionType::ATTACK]);
 
-	PlayerActionTickMap.Add(PlayerAction::AFTERATTACK, TMap<ActionType, TFunction<void(APlayerCharacter* character)>>());
+	PlayerActionTickMap.Add(PlayerAction::AFTERATTACK, TMap<ActionType, TFunction<void()>>());
 	PlayerActionTickMap[PlayerAction::AFTERATTACK].Add(ActionType::NONE, PlayerActionTickMap[PlayerAction::NONE][ActionType::NONE]);
 	PlayerActionTickMap[PlayerAction::AFTERATTACK].Add(ActionType::DODGE, PlayerActionTickMap[PlayerAction::NONE][ActionType::DODGE]);
 	PlayerActionTickMap[PlayerAction::AFTERATTACK].Add(ActionType::ATTACK, PlayerActionTickMap[PlayerAction::NONE][ActionType::ATTACK]);
-	PlayerActionTickMap[PlayerAction::AFTERATTACK].Add(ActionType::ROTATE, [](APlayerCharacter* character){});
+	PlayerActionTickMap[PlayerAction::AFTERATTACK].Add(ActionType::ROTATE, [&](){});
 	PlayerActionTickMap[PlayerAction::AFTERATTACK].Add(ActionType::PARRING, PlayerActionTickMap[PlayerAction::NONE][ActionType::PARRING]);
 	PlayerActionTickMap[PlayerAction::AFTERATTACK].Add(ActionType::MOVE, PlayerActionTickMap[PlayerAction::NONE][ActionType::MOVE]);
 	PlayerActionTickMap[PlayerAction::AFTERATTACK].Add(ActionType::HEAL, PlayerActionTickMap[PlayerAction::NONE][ActionType::MOVE]);
@@ -502,184 +502,178 @@ APlayerCharacter::APlayerCharacter()
 
 	
 
-	PlayerActionTickMap.Add(PlayerAction::CANTACT, TMap<ActionType, TFunction<void(APlayerCharacter* character)>>());
-	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::NONE, [](APlayerCharacter* character)
+	PlayerActionTickMap.Add(PlayerAction::CANTACT, TMap<ActionType, TFunction<void()>>());
+	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::NONE, [&]()
 		{
-			if (character->Controller == nullptr)return;
-			const FRotator Rotation = character->Controller->GetControlRotation();
-			character->YawRotation = FRotator(0, Rotation.Yaw, 0);
-			character->PlayerForwardDirection = FRotationMatrix(character->YawRotation).GetUnitAxis(EAxis::X);
-			character->YawRotation = FRotator(0, Rotation.Yaw, 0);
-			character->SetPlayerForwardRotAndDir();
-			character->SetPlayerRightRotAndDir();
+			const FRotator Rotation = Controller->GetControlRotation();
+			YawRotation = FRotator(0, Rotation.Yaw, 0);
+			PlayerForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+			YawRotation = FRotator(0, Rotation.Yaw, 0);
+			SetPlayerForwardRotAndDir();
+			SetPlayerRightRotAndDir();
 		});
-	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::DODGE, [](APlayerCharacter* character)
-		{
-		});
-	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::PARRING, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::DEAD, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::INTERACTION, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::MOVE, [](APlayerCharacter* character)
+	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::DODGE, [&]()
 		{
 		});
-	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::ROTATE, [](APlayerCharacter* character)
+	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::PARRING, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::DEAD, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::INTERACTION, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::MOVE, [&]()
 		{
 		});
-	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::ATTACK, [](APlayerCharacter* character){});
-	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::POWERATTACK, [](APlayerCharacter* character){});
-	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::HIT, [](APlayerCharacter* character){});
-	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::HEAL, [](APlayerCharacter* character){});
+	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::ROTATE, [&]()
+		{
+		});
+	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::ATTACK, [&](){});
+	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::POWERATTACK, [&](){});
+	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::HIT, [&](){});
+	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::HEAL, [&](){});
 
-	PlayerActionTickMap.Add(PlayerAction::CANATTACK, TMap<ActionType, TFunction<void(APlayerCharacter* character)>>());
-	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::NONE, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::DODGE, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::PARRING, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::DEAD, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::INTERACTION, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::MOVE, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::ROTATE, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::ATTACK, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::POWERATTACK, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::HIT, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::HEAL, [](APlayerCharacter* character) {});
+	PlayerActionTickMap.Add(PlayerAction::CANATTACK, TMap<ActionType, TFunction<void()>>());
+	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::NONE, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::DODGE, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::PARRING, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::DEAD, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::INTERACTION, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::MOVE, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::ROTATE, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::ATTACK, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::POWERATTACK, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::HIT, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANATTACK].Add(ActionType::HEAL, [&]() {});
 
-	PlayerActionTickMap.Add(PlayerAction::CANWALK, TMap<ActionType, TFunction<void(APlayerCharacter* character)>>());
+	PlayerActionTickMap.Add(PlayerAction::CANWALK, TMap<ActionType, TFunction<void()>>());
 	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::NONE, PlayerActionTickMap[PlayerAction::NONE][ActionType::DODGE]);
-	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::DODGE, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::PARRING, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::DEAD, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::INTERACTION, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::MOVE, [](APlayerCharacter* character)
+	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::DODGE, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::PARRING, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::DEAD, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::INTERACTION, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::MOVE, [&]()
 		{
-			character->LockOnCameraSettingMap[false](character);
-			character->SetPlayerForwardRotAndDir();
-			character->SetPlayerRightRotAndDir();
-			character->PlayerMovement();
+			LockOnCameraSettingMap[false]();
+			SetPlayerForwardRotAndDir();
+			SetPlayerRightRotAndDir();
+			PlayerMovement();
 		});
 
-	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::HIT, [](APlayerCharacter* character){});
-	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::HEAL, [](APlayerCharacter* character)
+	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::HIT, [&](){});
+	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::HEAL, [&]()
 		{
 		});
 
-	PlayerActionTickMap.Add(PlayerAction::SPRINT, TMap<ActionType, TFunction<void(APlayerCharacter* character)>>());
+	PlayerActionTickMap.Add(PlayerAction::SPRINT, TMap<ActionType, TFunction<void()>>());
 	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::NONE, PlayerActionTickMap[PlayerAction::NONE][ActionType::DODGE]);
-	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::DODGE, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::PARRING, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::DEAD, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::INTERACTION, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::MOVE, [](APlayerCharacter* character)
+	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::DODGE, [&]() {});
+	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::PARRING, [&]() {});
+	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::DEAD, [&]() {});
+	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::INTERACTION, [&]() {});
+	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::MOVE, [&]()
 		{
-			if (!character->DebugMode)
-			{
-				character->PlayerDataStruct.PlayerStamina = FMath::Clamp(character->PlayerDataStruct.PlayerStamina -= character->PlayerDataStruct.PlayerRunStamina * character->fDeltaTime, 0.0f, 100.0f);
-				character->PlayerHUD->SetStamina(character->PlayerDataStruct.PlayerStamina / character->PlayerDataStruct.MaxStamina);
-			}	
 			
-			character->GameInstance->DebugLogWidget->T_PlayerStamina->SetText(FText::AsNumber(character->PlayerDataStruct.PlayerStamina));
+			GameInstance->DebugLogWidget->T_PlayerStamina->SetText(FText::AsNumber(PlayerDataStruct.PlayerStamina));
 
-			if (character->PlayerDataStruct.PlayerStamina <= 0)
+			if (PlayerDataStruct.PlayerStamina <= 0)
 			{
-				character->ChangeMontageAnimation(character->MovementAnimMap[character->IsLockOn](character));
-				character->SetSpeed(character->SpeedMap[character->IsLockOn][false]);
+				ChangeMontageAnimation(MovementAnimMap[IsLockOn]());
+				SetSpeed(SpeedMap[IsLockOn][false]);
 			}
 
-			character->LockOnCameraSettingMap[false](character);
-			character->SetPlayerForwardRotAndDir();
-			character->SetPlayerRightRotAndDir();
+			LockOnCameraSettingMap[false]();
+			SetPlayerForwardRotAndDir();
+			SetPlayerRightRotAndDir();
 
-			if(character->IsLockOn)
-			character->YawRotation.Yaw += character->ForwardRotation[character->AxisY][character->AxisX];
+			if(IsLockOn)
+			YawRotation.Yaw += ForwardRotation[AxisY][AxisX];
 
-			character->PlayerMovement();
+			PlayerMovement();
 		});
 
-	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::HIT, [](APlayerCharacter* character) {});
-	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::HEAL, [](APlayerCharacter* character)
+	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::HIT, [&]() {});
+	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::HEAL, [&]()
 		{
 		});
 
-	MontageEndEventMap.Add(AnimationType::BATTLEDODGE, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::BATTLEDODGE, [&]()
 		{	
-			character->SetSpeed(character->SpeedMap[character->IsLockOn][false]);
-			character->MontageBlendInTime = 0.1f;
-			character->CheckInputKey();
-			character->Imotal = false;
+			SetSpeed(SpeedMap[IsLockOn][false]);
+			MontageBlendInTime = 0.1f;
+			CheckInputKey();
+			Imotal = false;
 		});
-	MontageEndEventMap.Add(AnimationType::BASICDODGE, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::BASICDODGE, [&]()
 		{
-			character->SetSpeed(character->SpeedMap[character->IsLockOn][false]);
-			character->MontageBlendInTime = 0.1f;
-			character->CheckInputKey();
-			character->Imotal = false;
+			SetSpeed(SpeedMap[IsLockOn][false]);
+			MontageBlendInTime = 0.1f;
+			CheckInputKey();
+			Imotal = false;
 		});
 
-	MontageEndEventMap.Add(AnimationType::HEAL, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::HEAL, [&]()
 		{
-			if (character->AnimInstance->BodyBlendAlpha == 1.0f)
+			if (AnimInstance->BodyBlendAlpha == 1.0f)
 			{
-				character->SetSpeed(character->SpeedMap[character->IsLockOn][false]);
-				character->ChangeMontageAnimation(AnimationType::ENDOFHEAL);
+				SetSpeed(SpeedMap[IsLockOn][false]);
+				ChangeMontageAnimation(AnimationType::ENDOFHEAL);
 			}
 			else
 			{
-				character->AnimInstance->BodyBlendAlpha = 1.0f;
-				character->CheckInputKey();
+				AnimInstance->BodyBlendAlpha = 1.0f;
+				CheckInputKey();
 			}	
 		});
 
-	MontageEndEventMap.Add(AnimationType::HIT, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::HIT, [&]()
 		{
-			character->ComboAttackEnd();
-			character->CheckInputKey();
+			ComboAttackEnd();
+			CheckInputKey();
 		});
-	MontageEndEventMap.Add(AnimationType::HITFRONTLEFT, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::HITFRONTLEFT, [&]()
 		{
-			character->ComboAttackEnd();
-			character->CheckInputKey();
+			ComboAttackEnd();
+			CheckInputKey();
 		});
-	MontageEndEventMap.Add(AnimationType::HITFRONTRIGHT, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::HITFRONTRIGHT, [&]()
 		{
-			character->ComboAttackEnd();
-			character->CheckInputKey();
+			ComboAttackEnd();
+			CheckInputKey();
 		});
-	MontageEndEventMap.Add(AnimationType::HITBACKLEFT, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::HITBACKLEFT, [&]()
 		{
-			character->ComboAttackEnd();
-			character->CheckInputKey();
+			ComboAttackEnd();
+			CheckInputKey();
 		});
-	MontageEndEventMap.Add(AnimationType::HITBACKRIGHT, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::HITBACKRIGHT, [&]()
 		{
-			character->ComboAttackEnd();
-			character->CheckInputKey();
+			ComboAttackEnd();
+			CheckInputKey();
 		});
-	MontageEndEventMap.Add(AnimationType::SUPERHIT, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::SUPERHIT, [&]()
 		{
-			character->ComboAttackEnd();
-			character->CheckInputKey();	
-			character->Imotal = false;
-		});
-
-	MontageEndEventMap.Add(AnimationType::DEAD, [](APlayerCharacter* character)
-		{
-			//character->AnimInstance->PauseAnimation(character->AnimInstance->GetCurrentActiveMontage());
-			character->ChangeMontageAnimation(AnimationType::DEADLOOP);
-			character->GetWorldTimerManager().SetTimer(character->DeadTimer, character, &APlayerCharacter::FadeIn, 4.0f);
-			character->IsDead = true;
+			ComboAttackEnd();
+			CheckInputKey();	
+			Imotal = false;
 		});
 
-	MontageEndEventMap.Add(AnimationType::PARRING, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::DEAD, [&]()
 		{
-			UGameplayStatics::SetGlobalTimeDilation(character, 1.0f);
-			character->ComboAttackEnd();
-			character->CheckInputKey();
-			character->Imotal = false;
+			//AnimInstance->PauseAnimation(AnimInstance->GetCurrentActiveMontage());
+			ChangeMontageAnimation(AnimationType::DEADLOOP);
+			GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::FadeIn, 4.0f);
+			IsDead = true;
 		});
 
-	MontageEndEventMap.Add(AnimationType::ATTACK1, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::PARRING, [&]()
 		{
-			character->ComboAttackEnd();	
-			character->CheckInputKey();
+			UGameplayStatics::SetGlobalTimeDilation(this, 1.0f);
+			ComboAttackEnd();
+			CheckInputKey();
+			Imotal = false;
+		});
+
+	MontageEndEventMap.Add(AnimationType::ATTACK1, [&]()
+		{
+			ComboAttackEnd();	
+			CheckInputKey();
 		});
 
 	MontageEndEventMap.Add(AnimationType::ATTACK2, MontageEndEventMap[AnimationType::ATTACK1]);
@@ -689,346 +683,346 @@ APlayerCharacter::APlayerCharacter()
 
 	MontageEndEventMap.Add(AnimationType::POWERATTACK1, MontageEndEventMap[AnimationType::ATTACK1]);
 	MontageEndEventMap.Add(AnimationType::POWERATTACK2, MontageEndEventMap[AnimationType::ATTACK1]);
-	MontageEndEventMap.Add(AnimationType::POWERATTACK3, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::POWERATTACK3, [&]()
 		{
-			character->MontageEndEventMap[AnimationType::ATTACK1](character);
+			MontageEndEventMap[AnimationType::ATTACK1]();
 		});
 
 	MontageEndEventMap.Add(AnimationType::DODGEATTACK, MontageEndEventMap[AnimationType::ATTACK1]);
 
-	MontageEndEventMap.Add(AnimationType::ENDOFHEAL, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::ENDOFHEAL, [&]()
 		{
-			character->CheckInputKey();
+			CheckInputKey();
 		});
 
-	MontageEndEventMap.Add(AnimationType::SPRINTTURN, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::SPRINTTURN, [&]()
 		{
-			if (character->AxisX == 1 && character->AxisY == 1)
+			if (AxisX == 1 && AxisY == 1)
 			{
-				character->SetSpeed(character->SpeedMap[character->IsLockOn][false]);
+				SetSpeed(SpeedMap[IsLockOn][false]);
 			}
 
-			character->SetActorRotation(character->YawRotation);
-			character->CheckInputKey();
+			SetActorRotation(YawRotation);
+			CheckInputKey();
 		});
 
-	MontageEndEventMap.Add(AnimationType::RUNATTACK, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::RUNATTACK, [&]()
 		{
-			if (character->AxisX == 1 && character->AxisY == 1)
+			if (AxisX == 1 && AxisY == 1)
 			{
-				character->SetSpeed(character->SpeedMap[character->IsLockOn][false]);
+				SetSpeed(SpeedMap[IsLockOn][false]);
 			}
 
-			character->MontageEndEventMap[AnimationType::ATTACK1](character);
+			MontageEndEventMap[AnimationType::ATTACK1]();
 		});
-	MontageEndEventMap.Add(AnimationType::RUNPOWERATTACK, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::RUNPOWERATTACK, [&]()
 		{
-			if (character->AxisX == 1 && character->AxisY == 1)
+			if (AxisX == 1 && AxisY == 1)
 			{
-				character->SetSpeed(character->SpeedMap[character->IsLockOn][false]);
+				SetSpeed(SpeedMap[IsLockOn][false]);
 			}
-			character->MontageEndEventMap[AnimationType::ATTACK1](character);
+			MontageEndEventMap[AnimationType::ATTACK1]();
 		});
 
 
-	MontageEndEventMap.Add(AnimationType::DOOROPEN, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::DOOROPEN, [&]()
 		{
-			character->ComboAttackEnd();
+			ComboAttackEnd();
 
-			character->AxisX = 1;
-			character->AxisY = 1;
-			character->CheckInputKey();
-			character->GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(character, 1.0f);
-			character->WeaponMesh->SetVisibility(true);
-			character->Imotal = false;
+			AxisX = 1;
+			AxisY = 1;
+			CheckInputKey();
+			GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(this, 1.0f);
+			WeaponMesh->SetVisibility(true);
+			Imotal = false;
 		});
 
 
 	MontageEndEventMap.Add(AnimationType::BACKSTEP, MontageEndEventMap[AnimationType::BATTLEDODGE]);
-	MontageEndEventMap.Add(AnimationType::ENDOFRUN, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::ENDOFRUN, [&]()
 		{
-			character->ChangeActionType(ActionType::NONE);
-			character->ChangeMontageAnimation(AnimationType::IDLE);
+			ChangeActionType(ActionType::NONE);
+			ChangeMontageAnimation(AnimationType::IDLE);
 		});
-	MontageEndEventMap.Add(AnimationType::ENDOFSPRINT, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::ENDOFSPRINT, [&]()
 		{
-			if (character->AxisX == 1 && character->AxisY == 1)
+			if (AxisX == 1 && AxisY == 1)
 			{
-				character->SetSpeed(character->SpeedMap[character->IsLockOn][false]);
+				SetSpeed(SpeedMap[IsLockOn][false]);
 			}
-			character->CheckInputKey();			
+			CheckInputKey();			
 		});
 
-	MontageEndEventMap.Add(AnimationType::ACTIVESAVEPOINT, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::ACTIVESAVEPOINT, [&]()
 		{
-			character->PlayerHUD->PlayInteractionAnimation(true, EInteractions::rest);
-			character->Imotal = false;
-			character->ChangeMontageAnimation(AnimationType::ENDOFHEAL);
-			character->GetWorld()->GetFirstPlayerController()->EnableInput(character->GetWorld()->GetFirstPlayerController());
+			PlayerHUD->PlayInteractionAnimation(true, EInteractions::rest);
+			Imotal = false;
+			ChangeMontageAnimation(AnimationType::ENDOFHEAL);
+			GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 		});
-	MontageEndEventMap.Add(AnimationType::SAVESTART, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::SAVESTART, [&]()
 		{
-			character->PlayerHUD->PlayInteractionAnimation(true, EInteractions::close);
-			character->ChangeMontageAnimation(AnimationType::SAVELOOP);
-			character->RestoreStat();
-			character->GetWorldTimerManager().SetTimer(character->DeadTimer, character, &APlayerCharacter::FadeOut, 2.0f);
+			PlayerHUD->PlayInteractionAnimation(true, EInteractions::close);
+			ChangeMontageAnimation(AnimationType::SAVELOOP);
+			RestoreStat();
+			GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::FadeOut, 2.0f);
 
 			
-			character->PlayerHUD->PlayExitAnimation(true);
+			PlayerHUD->PlayExitAnimation(true);
 
-			//character->SaveGameInstance->SaveLoc(character->GetActorLocation());
-			//character->SaveGameInstance->SaveRot(character->GetActorRotation());
-			//character->SaveGameInstance->SaveHealCount(10);
+			//SaveGameInstance->SaveLoc(GetActorLocation());
+			//SaveGameInstance->SaveRot(GetActorRotation());
+			//SaveGameInstance->SaveHealCount(10);
 
-			//character->SaveGameInstance->Save(character->SaveGameInstance);
+			//SaveGameInstance->Save(SaveGameInstance);
 		});
-	MontageEndEventMap.Add(AnimationType::SAVELOOP, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::SAVELOOP, [&]()
 		{
-			character->ChangeMontageAnimation(AnimationType::SAVELOOP);
+			ChangeMontageAnimation(AnimationType::SAVELOOP);
 		});
-	MontageEndEventMap.Add(AnimationType::SAVEEND, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::SAVEEND, [&]()
 		{
-			character->GetWorld()->GetFirstPlayerController()->EnableInput(character->GetWorld()->GetFirstPlayerController());
-			character->PlayerHUD->PlayInteractionAnimation(false);
-			character->SpawnLocation = character->GetActorLocation();
-			character->SpawnRotation = character->GetActorRotation();
-			character->CheckInputKey();
-			character->Imotal = false;
+			GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
+			PlayerHUD->PlayInteractionAnimation(false);
+			SpawnLocation = GetActorLocation();
+			SpawnRotation = GetActorRotation();
+			CheckInputKey();
+			Imotal = false;
 		});
-	MontageEndEventMap.Add(AnimationType::EXECUTIONBOSS, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::EXECUTIONBOSS, [&]()
 		{
-			character->CheckInputKey();
-			character->Imotal = false;
-			character->TargetCameraBoomLength = character->IsShoulderView ? character->ShoulderViewCameraLength : character->BackViewCameraLength;
+			CheckInputKey();
+			Imotal = false;
+			TargetCameraBoomLength = IsShoulderView ? ShoulderViewCameraLength : BackViewCameraLength;
 		});
-	MontageEndEventMap.Add(AnimationType::GAMESTARTLOOP, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::GAMESTARTLOOP, [&]()
 		{
-			character->ChangeMontageAnimation(AnimationType::GAMESTARTLOOP);
+			ChangeMontageAnimation(AnimationType::GAMESTARTLOOP);
 		});
-	MontageEndEventMap.Add(AnimationType::GAMESTART, [](APlayerCharacter* character)
+	MontageEndEventMap.Add(AnimationType::GAMESTART, [&]()
 		{
-			character->GameInstance->MainMenuWidget->RemoveFromViewport();
-			character->PlayerHUD->AddToViewport();
-			character->PlayerHUD->ChangeHealCount(character->CurHealCount);
-			character->LocketSKMesh->SetVisibility(false);
-			character->CheckInputKey();
-		});
-
-	MontageEndEventMap.Add(AnimationType::IDLE, [](APlayerCharacter* character)
-		{
-			character->ChangeMontageAnimation(AnimationType::IDLE);
-		});
-	MontageEndEventMap.Add(AnimationType::FORWARDWALK, [](APlayerCharacter* character)
-		{
-			character->ChangeMontageAnimation(AnimationType::FORWARDWALK);
-		});
-	MontageEndEventMap.Add(AnimationType::FORWARDBATTLEWALK, [](APlayerCharacter* character)
-		{
-			character->ChangeMontageAnimation(AnimationType::FORWARDBATTLEWALK);
-		});
-	MontageEndEventMap.Add(AnimationType::LEFTWALK, [](APlayerCharacter* character)
-		{
-			character->ChangeMontageAnimation(AnimationType::LEFTWALK);
-		});
-	MontageEndEventMap.Add(AnimationType::RIGHTWALK, [](APlayerCharacter* character)
-		{
-			character->ChangeMontageAnimation(AnimationType::RIGHTWALK);
-		});
-	MontageEndEventMap.Add(AnimationType::BACKWALK, [](APlayerCharacter* character)
-		{
-			character->ChangeMontageAnimation(AnimationType::BACKWALK);
-		});
-	MontageEndEventMap.Add(AnimationType::FORWARDLEFTWALK, [](APlayerCharacter* character)
-		{
-			character->ChangeMontageAnimation(AnimationType::FORWARDLEFTWALK);
-		});
-	MontageEndEventMap.Add(AnimationType::FORWARDRIGHTWALK, [](APlayerCharacter* character)
-		{
-			character->ChangeMontageAnimation(AnimationType::FORWARDRIGHTWALK);
-		});
-	MontageEndEventMap.Add(AnimationType::BACKLEFTWALK, [](APlayerCharacter* character)
-		{
-			character->ChangeMontageAnimation(AnimationType::BACKLEFTWALK);
-		});
-	MontageEndEventMap.Add(AnimationType::BACKRIGHTWALK, [](APlayerCharacter* character)
-		{
-			character->ChangeMontageAnimation(AnimationType::BACKRIGHTWALK);
+			GameInstance->MainMenuWidget->RemoveFromViewport();
+			PlayerHUD->AddToViewport();
+			PlayerHUD->ChangeHealCount(CurHealCount);
+			LocketSKMesh->SetVisibility(false);
+			CheckInputKey();
 		});
 
-	DodgeAnimationMap.Add(false, [](APlayerCharacter* character)->AnimationType
+	MontageEndEventMap.Add(AnimationType::IDLE, [&]()
 		{
-			if (character->AxisX == 1 && character->AxisY == 1)
+			ChangeMontageAnimation(AnimationType::IDLE);
+		});
+	MontageEndEventMap.Add(AnimationType::FORWARDWALK, [&]()
+		{
+			ChangeMontageAnimation(AnimationType::FORWARDWALK);
+		});
+	MontageEndEventMap.Add(AnimationType::FORWARDBATTLEWALK, [&]()
+		{
+			ChangeMontageAnimation(AnimationType::FORWARDBATTLEWALK);
+		});
+	MontageEndEventMap.Add(AnimationType::LEFTWALK, [&]()
+		{
+			ChangeMontageAnimation(AnimationType::LEFTWALK);
+		});
+	MontageEndEventMap.Add(AnimationType::RIGHTWALK, [&]()
+		{
+			ChangeMontageAnimation(AnimationType::RIGHTWALK);
+		});
+	MontageEndEventMap.Add(AnimationType::BACKWALK, [&]()
+		{
+			ChangeMontageAnimation(AnimationType::BACKWALK);
+		});
+	MontageEndEventMap.Add(AnimationType::FORWARDLEFTWALK, [&]()
+		{
+			ChangeMontageAnimation(AnimationType::FORWARDLEFTWALK);
+		});
+	MontageEndEventMap.Add(AnimationType::FORWARDRIGHTWALK, [&]()
+		{
+			ChangeMontageAnimation(AnimationType::FORWARDRIGHTWALK);
+		});
+	MontageEndEventMap.Add(AnimationType::BACKLEFTWALK, [&]()
+		{
+			ChangeMontageAnimation(AnimationType::BACKLEFTWALK);
+		});
+	MontageEndEventMap.Add(AnimationType::BACKRIGHTWALK, [&]()
+		{
+			ChangeMontageAnimation(AnimationType::BACKRIGHTWALK);
+		});
+
+	DodgeAnimationMap.Add(false, [&]()->AnimationType
+		{
+			if (AxisX == 1 && AxisY == 1)
 			{
 				return AnimationType::BACKSTEP;
 			}
 			else
 			{
-				if (character->IsLockOn)
+				if (IsLockOn)
 				{
 					return AnimationType::BATTLEDODGE;
 				}
 			}
 			return AnimationType::BASICDODGE;
 		});
-	DodgeAnimationMap.Add(true, [](APlayerCharacter* character)->AnimationType
+	DodgeAnimationMap.Add(true, [&]()->AnimationType
 		{
-			return character->DodgeDirection[character->AxisY][character->AxisX];
+			return DodgeDirection[AxisY][AxisX];
 		});
 
-	MovementAnimMap.Add(false, [](APlayerCharacter* character)->AnimationType
+	MovementAnimMap.Add(false, [&]()->AnimationType
 		{
-			return (character->AxisX == 1 && character->AxisY == 1) ? AnimationType::ENDOFRUN : AnimationType::FORWARDWALK;
+			return (AxisX == 1 && AxisY == 1) ? AnimationType::ENDOFRUN : AnimationType::FORWARDWALK;
 		});
-	MovementAnimMap.Add(true, [](APlayerCharacter* character)->AnimationType
+	MovementAnimMap.Add(true, [&]()->AnimationType
 		{
-			return character->MovementAnim[character->AxisY][character->AxisX];
-		});
-
-
-	LockOnCameraSettingMap.Add(true, [](APlayerCharacter* character)
-		{
-			if(character->IsLockOn)
-			character->YawRotation.Yaw = character->GetController()->GetControlRotation().Yaw;
-			character->GetCharacterMovement()->bOrientRotationToMovement = false;
+			return MovementAnim[AxisY][AxisX];
 		});
 
-	LockOnCameraSettingMap.Add(false, [](APlayerCharacter* character)
+
+	LockOnCameraSettingMap.Add(true, [&]()
 		{
-			character->GetCharacterMovement()->bOrientRotationToMovement = true;
+			if(IsLockOn)
+			YawRotation.Yaw = GetController()->GetControlRotation().Yaw;
+			GetCharacterMovement()->bOrientRotationToMovement = false;
 		});
 
-	InputEventMap.Add(PlayerAction::NONE, TMap<ActionType, TMap<bool, TFunction<void(APlayerCharacter* character)>>>());
-	InputEventMap[PlayerAction::NONE].Add(ActionType::DODGE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::NONE].Add(ActionType::ATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::NONE].Add(ActionType::POWERATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::NONE].Add(ActionType::PARRING, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::NONE].Add(ActionType::MOVE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::NONE].Add(ActionType::ROTATE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::NONE].Add(ActionType::HEAL, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::NONE].Add(ActionType::INTERACTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-
-	InputEventMap[PlayerAction::NONE][ActionType::DODGE].Add(true, [](APlayerCharacter* character)
+	LockOnCameraSettingMap.Add(false, [&]()
 		{
-			character->Dodge();
-		});
-	InputEventMap[PlayerAction::NONE][ActionType::DODGE].Add(false, [](APlayerCharacter* character)
-		{
-
+			GetCharacterMovement()->bOrientRotationToMovement = true;
 		});
 
-	InputEventMap[PlayerAction::NONE][ActionType::ATTACK].Add(true, [](APlayerCharacter* character)
+	InputEventMap.Add(PlayerAction::NONE, TMap<ActionType, TMap<bool, TFunction<void()>>>());
+	InputEventMap[PlayerAction::NONE].Add(ActionType::DODGE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::NONE].Add(ActionType::ATTACK, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::NONE].Add(ActionType::POWERATTACK, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::NONE].Add(ActionType::PARRING, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::NONE].Add(ActionType::MOVE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::NONE].Add(ActionType::ROTATE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::NONE].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::NONE].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
+
+	InputEventMap[PlayerAction::NONE][ActionType::DODGE].Add(true, [&]()
 		{
-			character->BasicAttack();
+			Dodge();
 		});
-	InputEventMap[PlayerAction::NONE][ActionType::ATTACK].Add(false, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::NONE][ActionType::DODGE].Add(false, [&]()
 		{
 
 		});
 
-	InputEventMap[PlayerAction::NONE][ActionType::POWERATTACK].Add(true, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::NONE][ActionType::ATTACK].Add(true, [&]()
 		{
-			character->PowerAttack();
+			BasicAttack();
 		});
-	InputEventMap[PlayerAction::NONE][ActionType::POWERATTACK].Add(false, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::NONE][ActionType::ATTACK].Add(false, [&]()
 		{
 
 		});
 
-	InputEventMap[PlayerAction::NONE][ActionType::PARRING].Add(true, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::NONE][ActionType::POWERATTACK].Add(true, [&]()
 		{
-			character->Parring();
+			PowerAttack();
 		});
-	InputEventMap[PlayerAction::NONE][ActionType::PARRING].Add(false, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::NONE][ActionType::POWERATTACK].Add(false, [&]()
 		{
 
 		});
 
-	InputEventMap[PlayerAction::NONE][ActionType::MOVE].Add(true, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::NONE][ActionType::PARRING].Add(true, [&]()
 		{
-			character->ChangeActionType(ActionType::MOVE);
-			character->ChangeMontageAnimation(character->MovementAnimMap[character->IsLockOn](character));
+			Parring();
 		});
-	InputEventMap[PlayerAction::NONE][ActionType::MOVE].Add(false, [](APlayerCharacter* character)
-		{
-			character->ChangeMontageAnimation(character->MovementAnimMap[character->IsLockOn](character));
-		});
-
-	InputEventMap[PlayerAction::NONE][ActionType::ROTATE].Add(true, [](APlayerCharacter* character)
-		{
-
-		});
-	InputEventMap[PlayerAction::NONE][ActionType::ROTATE].Add(false, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::NONE][ActionType::PARRING].Add(false, [&]()
 		{
 
 		});
 
-	InputEventMap[PlayerAction::NONE][ActionType::HEAL].Add(true, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::NONE][ActionType::MOVE].Add(true, [&]()
 		{
-			if (character->CurHealCount > 0)
+			ChangeActionType(ActionType::MOVE);
+			ChangeMontageAnimation(MovementAnimMap[IsLockOn]());
+		});
+	InputEventMap[PlayerAction::NONE][ActionType::MOVE].Add(false, [&]()
+		{
+			ChangeMontageAnimation(MovementAnimMap[IsLockOn]());
+		});
+
+	InputEventMap[PlayerAction::NONE][ActionType::ROTATE].Add(true, [&]()
+		{
+
+		});
+	InputEventMap[PlayerAction::NONE][ActionType::ROTATE].Add(false, [&]()
+		{
+
+		});
+
+	InputEventMap[PlayerAction::NONE][ActionType::HEAL].Add(true, [&]()
+		{
+			if (CurHealCount > 0)
 			{
-				character->SetSpeed(character->PlayerDataStruct.PlayerWalkSpeed);
-				character->UseItem();
+				SetSpeed(PlayerDataStruct.PlayerWalkSpeed);
+				UseItem();
 			}			
 		});
-	InputEventMap[PlayerAction::NONE][ActionType::HEAL].Add(false, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::NONE][ActionType::HEAL].Add(false, [&]()
 		{
 
 		});
 
-	InputEventMap[PlayerAction::NONE][ActionType::INTERACTION].Add(true, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::NONE][ActionType::INTERACTION].Add(true, [&]()
 		{
 
 		});
-	InputEventMap[PlayerAction::NONE][ActionType::INTERACTION].Add(false, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::NONE][ActionType::INTERACTION].Add(false, [&]()
 		{
 
 		});
 
-	InputEventMap.Add(PlayerAction::BEFOREATTACK, TMap<ActionType, TMap<bool, TFunction<void(APlayerCharacter* character)>>>());
-	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::DODGE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::ATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::POWERATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::PARRING, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::MOVE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::ROTATE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::HEAL, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
+	InputEventMap.Add(PlayerAction::BEFOREATTACK, TMap<ActionType, TMap<bool, TFunction<void()>>>());
+	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::DODGE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::ATTACK, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::POWERATTACK, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::PARRING, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::MOVE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::ROTATE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 
-	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::DODGE].Add(true,   [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::DODGE].Add(false,  [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::ATTACK].Add(true,  [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::ATTACK].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::POWERATTACK].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::POWERATTACK].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::PARRING].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::PARRING].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::MOVE].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::MOVE].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::ROTATE].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::ROTATE].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::HEAL].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::HEAL].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::INTERACTION].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::INTERACTION].Add(false, [](APlayerCharacter* character) {});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::DODGE].Add(true,   []() {});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::DODGE].Add(false,  []() {});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::ATTACK].Add(true,  []() {});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::ATTACK].Add(false, [&]() {});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::POWERATTACK].Add(true, [&]() {});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::POWERATTACK].Add(false, [&]() {});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::PARRING].Add(true, [&]() {});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::PARRING].Add(false, [&]() {});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::MOVE].Add(true, [&]() {});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::MOVE].Add(false, [&]() {});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::ROTATE].Add(true, [&]() {});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::ROTATE].Add(false, [&]() {});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::HEAL].Add(true, [&]() {});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::HEAL].Add(false, [&]() {});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::INTERACTION].Add(true, [&]() {});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::INTERACTION].Add(false, [&]() {});
 
-	InputEventMap.Add(PlayerAction::RUN, TMap<ActionType, TMap<bool, TFunction<void(APlayerCharacter* character)>>>());
-	InputEventMap[PlayerAction::RUN].Add(ActionType::DODGE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::RUN].Add(ActionType::ATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::RUN].Add(ActionType::POWERATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::RUN].Add(ActionType::PARRING, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::RUN].Add(ActionType::MOVE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::RUN].Add(ActionType::ROTATE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::RUN].Add(ActionType::HEAL, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::RUN].Add(ActionType::INTERACTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
+	InputEventMap.Add(PlayerAction::RUN, TMap<ActionType, TMap<bool, TFunction<void()>>>());
+	InputEventMap[PlayerAction::RUN].Add(ActionType::DODGE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::RUN].Add(ActionType::ATTACK, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::RUN].Add(ActionType::POWERATTACK, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::RUN].Add(ActionType::PARRING, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::RUN].Add(ActionType::MOVE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::RUN].Add(ActionType::ROTATE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::RUN].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::RUN].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 
-	InputEventMap[PlayerAction::RUN][ActionType::DODGE].Add(true, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::RUN][ActionType::DODGE].Add(true, [&]()
 		{
 		});
-	InputEventMap[PlayerAction::RUN][ActionType::DODGE].Add(false, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::RUN][ActionType::DODGE].Add(false, [&]()
 		{
-			if (!character->IsSprint)
+			if (!IsSprint)
 			{
-				character->Dodge();
+				Dodge();
 			}
 		});
 	InputEventMap[PlayerAction::RUN][ActionType::ATTACK].Add(true, InputEventMap[PlayerAction::NONE][ActionType::ATTACK][true]);
@@ -1037,38 +1031,38 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::RUN][ActionType::POWERATTACK].Add(false, InputEventMap[PlayerAction::NONE][ActionType::POWERATTACK][false]);
 	InputEventMap[PlayerAction::RUN][ActionType::PARRING].Add(true, InputEventMap[PlayerAction::NONE][ActionType::PARRING][true]);
 	InputEventMap[PlayerAction::RUN][ActionType::PARRING].Add(false, InputEventMap[PlayerAction::NONE][ActionType::PARRING][false]);
-	InputEventMap[PlayerAction::RUN][ActionType::MOVE].Add(true, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::RUN][ActionType::MOVE].Add(true, [&]()
 		{
-			character->ChangeActionType(ActionType::MOVE);
-			if(character->IsLockOn)
-			character->ChangeMontageAnimation(character->MovementAnimMap[true](character));
+			ChangeActionType(ActionType::MOVE);
+			if(IsLockOn)
+			ChangeMontageAnimation(MovementAnimMap[true]());
 		});
-	InputEventMap[PlayerAction::RUN][ActionType::MOVE].Add(false, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::RUN][ActionType::MOVE].Add(false, [&]()
 		{
-			AnimationType anitype = character->MovementAnimMap[character->IsLockOn](character);
+			AnimationType anitype = MovementAnimMap[IsLockOn]();
 			if (anitype != AnimationType::FORWARDWALK)
 			{
-				character->ChangeMontageAnimation(anitype);
+				ChangeMontageAnimation(anitype);
 			}
 		});
-	InputEventMap[PlayerAction::RUN][ActionType::ROTATE].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::RUN][ActionType::ROTATE].Add(false, [](APlayerCharacter* character) {});
+	InputEventMap[PlayerAction::RUN][ActionType::ROTATE].Add(true, [&]() {});
+	InputEventMap[PlayerAction::RUN][ActionType::ROTATE].Add(false, [&]() {});
 	InputEventMap[PlayerAction::RUN][ActionType::HEAL].Add(true, InputEventMap[PlayerAction::NONE][ActionType::HEAL][true]);
 	InputEventMap[PlayerAction::RUN][ActionType::HEAL].Add(false, InputEventMap[PlayerAction::NONE][ActionType::HEAL][false]);
 	InputEventMap[PlayerAction::RUN][ActionType::INTERACTION].Add(true, InputEventMap[PlayerAction::NONE][ActionType::INTERACTION][true]);
 	InputEventMap[PlayerAction::RUN][ActionType::INTERACTION].Add(false, InputEventMap[PlayerAction::NONE][ActionType::INTERACTION][false]);
 
-	InputEventMap.Add(PlayerAction::AFTERATTACK, TMap<ActionType, TMap<bool, TFunction<void(APlayerCharacter* character)>>>());
-	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::DODGE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::ATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::POWERATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::PARRING, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::MOVE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::ROTATE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::HEAL, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
+	InputEventMap.Add(PlayerAction::AFTERATTACK, TMap<ActionType, TMap<bool, TFunction<void()>>>());
+	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::DODGE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::ATTACK, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::POWERATTACK, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::PARRING, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::MOVE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::ROTATE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 
-	InputEventMap[PlayerAction::AFTERATTACK][ActionType::DODGE].Add(true, [](APlayerCharacter* character) {});
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::DODGE].Add(true, [&]() {});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::DODGE].Add(false, InputEventMap[PlayerAction::RUN][ActionType::DODGE][false]);
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::ATTACK].Add(true,  InputEventMap[PlayerAction::NONE][ActionType::ATTACK][true]);
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::ATTACK].Add(false, InputEventMap[PlayerAction::NONE][ActionType::ATTACK][false]);
@@ -1076,205 +1070,205 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::POWERATTACK].Add(false, InputEventMap[PlayerAction::NONE][ActionType::POWERATTACK][false]);
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::PARRING].Add(true, InputEventMap[PlayerAction::NONE][ActionType::PARRING][true]);
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::PARRING].Add(false, InputEventMap[PlayerAction::NONE][ActionType::PARRING][false]);
-	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::AFTERATTACK][ActionType::ROTATE].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::AFTERATTACK][ActionType::ROTATE].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::AFTERATTACK][ActionType::HEAL].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::AFTERATTACK][ActionType::HEAL].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::AFTERATTACK][ActionType::INTERACTION].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::AFTERATTACK][ActionType::INTERACTION].Add(false, [](APlayerCharacter* character) {});
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(true, [&]() {});
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(false, [&]() {});
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::ROTATE].Add(true, [&]() {});
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::ROTATE].Add(false, [&]() {});
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::HEAL].Add(true, [&]() {});
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::HEAL].Add(false, [&]() {});
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::INTERACTION].Add(true, [&]() {});
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::INTERACTION].Add(false, [&]() {});
 
-	InputEventMap.Add(PlayerAction::CANWALK, TMap<ActionType, TMap<bool, TFunction<void(APlayerCharacter* character)>>>());
-	InputEventMap[PlayerAction::CANWALK].Add(ActionType::DODGE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANWALK].Add(ActionType::ATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANWALK].Add(ActionType::POWERATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANWALK].Add(ActionType::PARRING, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANWALK].Add(ActionType::MOVE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANWALK].Add(ActionType::ROTATE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANWALK].Add(ActionType::HEAL, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANWALK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
+	InputEventMap.Add(PlayerAction::CANWALK, TMap<ActionType, TMap<bool, TFunction<void()>>>());
+	InputEventMap[PlayerAction::CANWALK].Add(ActionType::DODGE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANWALK].Add(ActionType::ATTACK, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANWALK].Add(ActionType::POWERATTACK, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANWALK].Add(ActionType::PARRING, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANWALK].Add(ActionType::MOVE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANWALK].Add(ActionType::ROTATE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANWALK].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANWALK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 
-	InputEventMap[PlayerAction::CANWALK][ActionType::DODGE].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANWALK][ActionType::DODGE].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANWALK][ActionType::ATTACK].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANWALK][ActionType::ATTACK].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANWALK][ActionType::POWERATTACK].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANWALK][ActionType::POWERATTACK].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANWALK][ActionType::PARRING].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANWALK][ActionType::PARRING].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANWALK][ActionType::MOVE].Add(true, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::CANWALK][ActionType::DODGE].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANWALK][ActionType::DODGE].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANWALK][ActionType::ATTACK].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANWALK][ActionType::ATTACK].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANWALK][ActionType::POWERATTACK].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANWALK][ActionType::POWERATTACK].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANWALK][ActionType::PARRING].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANWALK][ActionType::PARRING].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANWALK][ActionType::MOVE].Add(true, [&]()
 		{
-			character->SetSpeed(character->PlayerDataStruct.PlayerWalkSpeed);
-			character->AnimInstance->BodyBlendAlpha = 0.0f;
+			SetSpeed(PlayerDataStruct.PlayerWalkSpeed);
+			AnimInstance->BodyBlendAlpha = 0.0f;
 		});
-	InputEventMap[PlayerAction::CANWALK][ActionType::MOVE].Add(false, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::CANWALK][ActionType::MOVE].Add(false, [&]()
 		{			
-			if(character->AxisY == 1 && character->AxisX == 1)
-				character->AnimInstance->BodyBlendAlpha = 1.0f;
+			if(AxisY == 1 && AxisX == 1)
+				AnimInstance->BodyBlendAlpha = 1.0f;
 
 		});
-	InputEventMap[PlayerAction::CANWALK][ActionType::ROTATE].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANWALK][ActionType::ROTATE].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANWALK][ActionType::HEAL].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANWALK][ActionType::HEAL].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANWALK][ActionType::INTERACTION].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANWALK][ActionType::INTERACTION].Add(false, [](APlayerCharacter* character) {});
+	InputEventMap[PlayerAction::CANWALK][ActionType::ROTATE].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANWALK][ActionType::ROTATE].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANWALK][ActionType::HEAL].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANWALK][ActionType::HEAL].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANWALK][ActionType::INTERACTION].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANWALK][ActionType::INTERACTION].Add(false, [&]() {});
 
-	InputEventMap.Add(PlayerAction::CANTACT, TMap<ActionType, TMap<bool, TFunction<void(APlayerCharacter* character)>>>());
-	InputEventMap[PlayerAction::CANTACT].Add(ActionType::DODGE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANTACT].Add(ActionType::ATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANTACT].Add(ActionType::POWERATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANTACT].Add(ActionType::PARRING, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANTACT].Add(ActionType::MOVE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANTACT].Add(ActionType::ROTATE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANTACT].Add(ActionType::HEAL, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANTACT].Add(ActionType::INTERACTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
+	InputEventMap.Add(PlayerAction::CANTACT, TMap<ActionType, TMap<bool, TFunction<void()>>>());
+	InputEventMap[PlayerAction::CANTACT].Add(ActionType::DODGE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANTACT].Add(ActionType::ATTACK, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANTACT].Add(ActionType::POWERATTACK, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANTACT].Add(ActionType::PARRING, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANTACT].Add(ActionType::MOVE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANTACT].Add(ActionType::ROTATE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANTACT].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANTACT].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 
-	InputEventMap[PlayerAction::CANTACT][ActionType::DODGE].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::DODGE].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::ATTACK].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::ATTACK].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::POWERATTACK].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::POWERATTACK].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::PARRING].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::PARRING].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::MOVE].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::MOVE].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::ROTATE].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::ROTATE].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::HEAL].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::HEAL].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::INTERACTION].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::INTERACTION].Add(false, [](APlayerCharacter* character) {});
+	InputEventMap[PlayerAction::CANTACT][ActionType::DODGE].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANTACT][ActionType::DODGE].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANTACT][ActionType::ATTACK].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANTACT][ActionType::ATTACK].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANTACT][ActionType::POWERATTACK].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANTACT][ActionType::POWERATTACK].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANTACT][ActionType::PARRING].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANTACT][ActionType::PARRING].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANTACT][ActionType::MOVE].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANTACT][ActionType::MOVE].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANTACT][ActionType::ROTATE].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANTACT][ActionType::ROTATE].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANTACT][ActionType::HEAL].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANTACT][ActionType::HEAL].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANTACT][ActionType::INTERACTION].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANTACT][ActionType::INTERACTION].Add(false, [&]() {});
 
-	InputEventMap.Add(PlayerAction::CANATTACK, TMap<ActionType, TMap<bool, TFunction<void(APlayerCharacter* character)>>>());
-	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::DODGE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::ATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::POWERATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::PARRING, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::MOVE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::ROTATE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::HEAL, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
+	InputEventMap.Add(PlayerAction::CANATTACK, TMap<ActionType, TMap<bool, TFunction<void()>>>());
+	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::DODGE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::ATTACK, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::POWERATTACK, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::PARRING, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::MOVE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::ROTATE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 
-	InputEventMap[PlayerAction::CANATTACK][ActionType::DODGE].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANATTACK][ActionType::DODGE].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANATTACK][ActionType::ATTACK].Add(true, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::CANATTACK][ActionType::DODGE].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANATTACK][ActionType::DODGE].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANATTACK][ActionType::ATTACK].Add(true, [&]()
 		{
-			if (character->UseStamina(character->PlayerUseStaminaMap[ActionType::ATTACK]))
+			if (UseStamina(PlayerUseStaminaMap[ActionType::ATTACK]))
 			{
-				character->PlayerCurAttackIndex++;
-				character->ChangeActionType(ActionType::ATTACK);
-				character->ChangeMontageAnimation(AnimationType::DODGEATTACK);
-				character->CanNextAttack = false;
-				AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[24].ObjClass, character->GetActorLocation(), FRotator::ZeroRotator);
+				PlayerCurAttackIndex++;
+				ChangeActionType(ActionType::ATTACK);
+				ChangeMontageAnimation(AnimationType::DODGEATTACK);
+				CanNextAttack = false;
+				AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[24].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 			}
 		});
-	InputEventMap[PlayerAction::CANATTACK][ActionType::ATTACK].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANATTACK][ActionType::POWERATTACK].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANATTACK][ActionType::POWERATTACK].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANATTACK][ActionType::PARRING].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANATTACK][ActionType::PARRING].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANATTACK][ActionType::MOVE].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANATTACK][ActionType::MOVE].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANATTACK][ActionType::ROTATE].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANATTACK][ActionType::ROTATE].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANATTACK][ActionType::HEAL].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANATTACK][ActionType::HEAL].Add(false, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANATTACK][ActionType::INTERACTION].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::CANATTACK][ActionType::INTERACTION].Add(false, [](APlayerCharacter* character) {});
+	InputEventMap[PlayerAction::CANATTACK][ActionType::ATTACK].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANATTACK][ActionType::POWERATTACK].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANATTACK][ActionType::POWERATTACK].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANATTACK][ActionType::PARRING].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANATTACK][ActionType::PARRING].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANATTACK][ActionType::MOVE].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANATTACK][ActionType::MOVE].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANATTACK][ActionType::ROTATE].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANATTACK][ActionType::ROTATE].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANATTACK][ActionType::HEAL].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANATTACK][ActionType::HEAL].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANATTACK][ActionType::INTERACTION].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANATTACK][ActionType::INTERACTION].Add(false, [&]() {});
 
-	InputEventMap.Add(PlayerAction::SPRINT, TMap<ActionType, TMap<bool, TFunction<void(APlayerCharacter* character)>>>());
-	InputEventMap[PlayerAction::SPRINT].Add(ActionType::DODGE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::SPRINT].Add(ActionType::ATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::SPRINT].Add(ActionType::POWERATTACK, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::SPRINT].Add(ActionType::PARRING, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::SPRINT].Add(ActionType::MOVE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::SPRINT].Add(ActionType::ROTATE, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::SPRINT].Add(ActionType::HEAL, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	InputEventMap[PlayerAction::SPRINT].Add(ActionType::INTERACTION, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
+	InputEventMap.Add(PlayerAction::SPRINT, TMap<ActionType, TMap<bool, TFunction<void()>>>());
+	InputEventMap[PlayerAction::SPRINT].Add(ActionType::DODGE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::SPRINT].Add(ActionType::ATTACK, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::SPRINT].Add(ActionType::POWERATTACK, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::SPRINT].Add(ActionType::PARRING, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::SPRINT].Add(ActionType::MOVE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::SPRINT].Add(ActionType::ROTATE, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::SPRINT].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::SPRINT].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 
-	InputEventMap[PlayerAction::SPRINT][ActionType::DODGE].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::SPRINT][ActionType::DODGE].Add(false, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::SPRINT][ActionType::DODGE].Add(true, [&]() {});
+	InputEventMap[PlayerAction::SPRINT][ActionType::DODGE].Add(false, [&]()
 		{
-			if (character->CurActionType == ActionType::MOVE && 
-				character->AnimInstance->PlayerAnimationType != AnimationType::ENDOFSPRINT &&
-				character->AnimInstance->PlayerAnimationType != AnimationType::HEAL)
+			if (CurActionType == ActionType::MOVE && 
+				AnimInstance->PlayerAnimationType != AnimationType::ENDOFSPRINT &&
+				AnimInstance->PlayerAnimationType != AnimationType::HEAL)
 			{
-				character->Run();
+				Run();
 			}
 		});
-	InputEventMap[PlayerAction::SPRINT][ActionType::ATTACK].Add(true, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::SPRINT][ActionType::ATTACK].Add(true, [&]()
 		{
-			if (character->UseStamina(character->PlayerUseStaminaMap[ActionType::POWERATTACK]))
+			if (UseStamina(PlayerUseStaminaMap[ActionType::POWERATTACK]))
 			{				
-				character->PlayerCurAttackIndex++;
-				character->ChangeActionType(ActionType::ATTACK);
-				character->ChangeMontageAnimation(AnimationType::RUNPOWERATTACK);
-				character->CanNextAttack = false;
-				AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[25].ObjClass, character->GetActorLocation(), FRotator::ZeroRotator);
+				PlayerCurAttackIndex++;
+				ChangeActionType(ActionType::ATTACK);
+				ChangeMontageAnimation(AnimationType::RUNPOWERATTACK);
+				CanNextAttack = false;
+				AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[25].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 			}
 		});
 	InputEventMap[PlayerAction::SPRINT][ActionType::ATTACK].Add(false, InputEventMap[PlayerAction::NONE][ActionType::ATTACK][false]);
-	InputEventMap[PlayerAction::SPRINT][ActionType::POWERATTACK].Add(true, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::SPRINT][ActionType::POWERATTACK].Add(true, [&]()
 		{
-			if (character->UseStamina(character->PlayerUseStaminaMap[ActionType::POWERATTACK]))
+			if (UseStamina(PlayerUseStaminaMap[ActionType::POWERATTACK]))
 			{
-				character->PlayerCurAttackIndex++;
-				character->ChangeActionType(ActionType::ATTACK);
-				character->ChangeMontageAnimation(AnimationType::RUNPOWERATTACK);
-				character->CanNextAttack = false;
-				AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[25].ObjClass, character->GetActorLocation(), FRotator::ZeroRotator);
+				PlayerCurAttackIndex++;
+				ChangeActionType(ActionType::ATTACK);
+				ChangeMontageAnimation(AnimationType::RUNPOWERATTACK);
+				CanNextAttack = false;
+				AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[25].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 			}
 		});
 	InputEventMap[PlayerAction::SPRINT][ActionType::POWERATTACK].Add(false, InputEventMap[PlayerAction::NONE][ActionType::POWERATTACK][false]);
 	InputEventMap[PlayerAction::SPRINT][ActionType::PARRING].Add(true, InputEventMap[PlayerAction::NONE][ActionType::PARRING][true]);
 	InputEventMap[PlayerAction::SPRINT][ActionType::PARRING].Add(false, InputEventMap[PlayerAction::NONE][ActionType::PARRING][false]);
-	InputEventMap[PlayerAction::SPRINT][ActionType::MOVE].Add(true, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::SPRINT][ActionType::MOVE].Add(true, [&]()
 		{
 		});
-	InputEventMap[PlayerAction::SPRINT][ActionType::MOVE].Add(false, [](APlayerCharacter* character)
+	InputEventMap[PlayerAction::SPRINT][ActionType::MOVE].Add(false, [&]()
 		{
-			if (character->AxisX == 1 && character->AxisY == 1)
+			if (AxisX == 1 && AxisY == 1)
 			{
-				character->ChangeMontageAnimation(AnimationType::ENDOFSPRINT);
+				ChangeMontageAnimation(AnimationType::ENDOFSPRINT);
 			}
 		});
-	InputEventMap[PlayerAction::SPRINT][ActionType::ROTATE].Add(true, [](APlayerCharacter* character) {});
-	InputEventMap[PlayerAction::SPRINT][ActionType::ROTATE].Add(false, [](APlayerCharacter* character) {});
+	InputEventMap[PlayerAction::SPRINT][ActionType::ROTATE].Add(true, [&]() {});
+	InputEventMap[PlayerAction::SPRINT][ActionType::ROTATE].Add(false, [&]() {});
 	InputEventMap[PlayerAction::SPRINT][ActionType::HEAL].Add(true, InputEventMap[PlayerAction::NONE][ActionType::HEAL][true]);
 	InputEventMap[PlayerAction::SPRINT][ActionType::HEAL].Add(false,InputEventMap[PlayerAction::NONE][ActionType::HEAL][false]);
 	InputEventMap[PlayerAction::SPRINT][ActionType::INTERACTION].Add(true,  InputEventMap[PlayerAction::NONE][ActionType::INTERACTION][true]);
 	InputEventMap[PlayerAction::SPRINT][ActionType::INTERACTION].Add(false, InputEventMap[PlayerAction::NONE][ActionType::INTERACTION][false]);
 
-	PlayerEventFuncMap.Add(AnimationType::SUPERHIT, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	PlayerEventFuncMap[AnimationType::SUPERHIT].Add(true, [](APlayerCharacter* character)
+	PlayerEventFuncMap.Add(AnimationType::SUPERHIT, TMap<bool, TFunction<void()>>());
+	PlayerEventFuncMap[AnimationType::SUPERHIT].Add(true, [&]()
 		{
-			if (character->PlayerDataStruct.CharacterHp <= 0)
+			if (PlayerDataStruct.CharacterHp <= 0)
 			{
-				character->GetWorldTimerManager().SetTimer(character->DeadTimer, character, &APlayerCharacter::FadeIn, 2.0f);
-				character->PlayerDead(true);
+				GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::FadeIn, 2.0f);
+				PlayerDead(true);
 			}
 		});
-	PlayerEventFuncMap[AnimationType::SUPERHIT].Add(false, [](APlayerCharacter* character)
+	PlayerEventFuncMap[AnimationType::SUPERHIT].Add(false, [&]()
 		{
 		});
 
-	PlayerEventFuncMap.Add(AnimationType::EXECUTIONBOSS, TMap<bool, TFunction<void(APlayerCharacter* character)>>());
-	PlayerEventFuncMap[AnimationType::EXECUTIONBOSS].Add(true, [](APlayerCharacter* character)
+	PlayerEventFuncMap.Add(AnimationType::EXECUTIONBOSS, TMap<bool, TFunction<void()>>());
+	PlayerEventFuncMap[AnimationType::EXECUTIONBOSS].Add(true, [&]()
 		{
-			character->ComboAttackEnd();
-			character->ExecutionCharacter->TakeDamage(character->PlayerDataStruct.PlayerExecutionFirstDamage, character->CharacterDamageEvent, nullptr, character);
-			character->VibrateGamePad(0.4f, 0.4f);
-			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, character->ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
+			ComboAttackEnd();
+			ExecutionCharacter->TakeDamage(PlayerDataStruct.PlayerExecutionFirstDamage, CharacterDamageEvent, nullptr, this);
+			VibrateGamePad(0.4f, 0.4f);
+			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 		});
-	PlayerEventFuncMap[AnimationType::EXECUTIONBOSS].Add(false, [](APlayerCharacter* character)
+	PlayerEventFuncMap[AnimationType::EXECUTIONBOSS].Add(false, [&]()
 		{
-			UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(character->ExecutionCharacter);
-			character->ExecutionCharacter->TakeDamage(character->PlayerDataStruct.PlayerExecutionSecondDamage, character->CharacterDamageEvent, nullptr, character);
-			character->VibrateGamePad(0.4f, 0.4f);
-			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, character->ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
+			UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(ExecutionCharacter);
+			ExecutionCharacter->TakeDamage(PlayerDataStruct.PlayerExecutionSecondDamage, CharacterDamageEvent, nullptr, this);
+			VibrateGamePad(0.4f, 0.4f);
+			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 		});}
 
 APlayerCharacter::~APlayerCharacter()
@@ -1351,7 +1345,7 @@ void APlayerCharacter::BeginPlay()
 
 	RotSpeed = 10.0f;
 
-	LockOnCameraSettingMap[true](this);
+	LockOnCameraSettingMap[true]();
 
 	FollowCamera = Cast<UCameraComponent>(GetComponentByClass(UCameraComponent::StaticClass()));
 
@@ -1404,7 +1398,6 @@ void APlayerCharacter::SetPlayerForwardRotAndDir()
 	PlayerForwardDirection = FVector::ZeroVector;
 	if (AxisY != 1)
 	{		
-		if (Controller == nullptr)return;
 		const FRotator Rotation = Controller->GetControlRotation();
 		YawRotation = FRotator(0, Rotation.Yaw, 0);
 		PlayerForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
@@ -1424,8 +1417,7 @@ void APlayerCharacter::SetPlayerRightRotAndDir()
 	PlayerRightDirection = FVector::ZeroVector;
 	if (AxisX != 1)
 	{
-				if (Controller == nullptr)return;
-const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator Rotation = Controller->GetControlRotation();
 		YawRotation = FRotator(0, Rotation.Yaw, 0);
 		PlayerRightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		if (!IsLockOn)
@@ -1441,7 +1433,7 @@ const FRotator Rotation = Controller->GetControlRotation();
 
 void APlayerCharacter::EndSprint()
 {
-	InputEventMap[PlayerAction::SPRINT][ActionType::DODGE][false](this);
+	InputEventMap[PlayerAction::SPRINT][ActionType::DODGE][false]();
 	IsSprint = false;
 }
 
@@ -1470,7 +1462,7 @@ void APlayerCharacter::Dodge()
 	{
 		AnimInstance->StopMontage(MontageMap[AnimInstance->PlayerAnimationType]);
 		if (MontageEndEventMap.Contains(AnimInstance->PlayerAnimationType))
-			MontageEndEventMap[AnimInstance->PlayerAnimationType](this);
+			MontageEndEventMap[AnimInstance->PlayerAnimationType]();
 
 		DeactivateRightWeapon();
 		DeactivateSMOverlap();
@@ -1478,7 +1470,7 @@ void APlayerCharacter::Dodge()
 		ComboAttackEnd();
 		SwordTrailComp->Deactivate();
 		CanNextAttack = false;
-		LockOnCameraSettingMap[false](this);
+		LockOnCameraSettingMap[false]();
 		UCombatManager::GetInstance().ActivateCollider();
 		SetPlayerForwardRotAndDir();
 		SetPlayerRightRotAndDir();
@@ -1492,7 +1484,7 @@ void APlayerCharacter::Dodge()
 		ChangeActionType(ActionType::DODGE);
 		
 			
-		ChangeMontageAnimation(DodgeAnimationMap[false](this));
+		ChangeMontageAnimation(DodgeAnimationMap[false]());
 	}
 }
 
@@ -1576,7 +1568,6 @@ void APlayerCharacter::GetCompsInScreen(TArray<UPrimitiveComponent*>Array)
 	FVector2D ScreenLocation;
 	FVector CompLocation;
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-	if (PlayerController == nullptr)return;
 	float ViewportSizeX = GEngine->GameViewport->Viewport->GetSizeXY().X;
 	float ViewprotSizeY = GEngine->GameViewport->Viewport->GetSizeXY().Y;
 
@@ -1665,7 +1656,7 @@ void APlayerCharacter::Sprint()
 void APlayerCharacter::Run()
 {
 	SetSpeed(SpeedMap[IsLockOn][false]);
-	InputEventMap[PlayerAction::NONE][ActionType::MOVE][true](this);
+	InputEventMap[PlayerAction::NONE][ActionType::MOVE][true]();
 }
 
 void APlayerCharacter::RecoverStamina()
@@ -1764,7 +1755,7 @@ void APlayerCharacter::IsNotifyActive(bool value)
 	{
 		if (NotifyBeginEndEventMap[AnimInstance->PlayerAnimationType].Contains(value))
 		{
-			NotifyBeginEndEventMap[AnimInstance->PlayerAnimationType][value](this);
+			NotifyBeginEndEventMap[AnimInstance->PlayerAnimationType][value]();
 		}
 	}
 }
@@ -1773,7 +1764,7 @@ void APlayerCharacter::CheckMontageEndNotify()
 {
 	if (MontageEndEventMap.Contains(AnimInstance->PlayerAnimationType))
 	{
-		MontageEndEventMap[AnimInstance->PlayerAnimationType](this);
+		MontageEndEventMap[AnimInstance->PlayerAnimationType]();
 	}
 }
 
@@ -1803,25 +1794,25 @@ void APlayerCharacter::Tick(float DeltaTime)
 	ChangeTargetTime += fDeltaTime;
 
 	
-	PlayerActionTickMap[PlayerCurAction][CurActionType](this);
+	PlayerActionTickMap[PlayerCurAction][CurActionType]();
 
 	LookTarget();
 
-	if (AnimInstance->PlayerAnimationType == AnimationType::EXECUTIONBOSS)
-	{
-		TargetDirection = ExecutionCharacter->GetActorLocation() - GetActorLocation();
-		Difference = FRotationMatrix::MakeFromX(TargetDirection).Rotator();
-		YawRotation = Difference;
-
-		TargetDirection = ExecutionCharacter->GetActorLocation() - FollowCamera->GetComponentLocation();
-		FRotator CameraRotation = FRotationMatrix::MakeFromX(TargetDirection).Rotator();
-		FollowCamera->SetWorldRotation(FMath::Lerp(FollowCamera->GetComponentRotation(), CameraRotation, DeltaTime * 5.0f));
-	}
-	else if(AnimInstance->PlayerAnimationType != AnimationType::GAMESTART
-		&& AnimInstance->PlayerAnimationType != AnimationType::GAMESTARTLOOP && IsLockOn)
-	{
-		FollowCamera->SetWorldRotation(FMath::Lerp(FollowCamera->GetComponentRotation(), GetWorld()->GetFirstPlayerController()->GetControlRotation(), DeltaTime));
-	}
+	//if (AnimInstance->PlayerAnimationType == AnimationType::EXECUTIONBOSS)
+	//{
+	//	TargetDirection = ExecutionGetActorLocation() - GetActorLocation();
+	//	Difference = FRotationMatrix::MakeFromX(TargetDirection).Rotator();
+	//	YawRotation = Difference;
+	//
+	//	TargetDirection = ExecutionGetActorLocation() - FollowCamera->GetComponentLocation();
+	//	FRotator CameraRotation = FRotationMatrix::MakeFromX(TargetDirection).Rotator();
+	//	FollowCamera->SetWorldRotation(FMath::Lerp(FollowCamera->GetComponentRotation(), CameraRotation, DeltaTime * 5.0f));
+	//}
+	//else if(AnimInstance->PlayerAnimationType != AnimationType::GAMESTART
+	//	&& AnimInstance->PlayerAnimationType != AnimationType::GAMESTARTLOOP && IsLockOn)
+	//{
+	//	FollowCamera->SetWorldRotation(FMath::Lerp(FollowCamera->GetComponentRotation(), GetWorld()->GetFirstPlayerController()->GetControlRotation(), DeltaTime));
+	//}
 
 	RotatePlayer();
 
@@ -1831,10 +1822,10 @@ void APlayerCharacter::Tick(float DeltaTime)
 	CameraBoom1->SocketOffset = FMath::Lerp(CameraBoom1->SocketOffset, TargetSocketOffset, DeltaTime * 2.0f);
 
 
-	if (!IsShoulderView)
-	{
-		CameraBoom1->SetWorldLocation(GetActorLocation());
-	}
+	//if (!IsShoulderView)
+	//{
+	//	CameraBoom1->SetWorldLocation(GetActorLocation());
+	//}
 }
 
 void APlayerCharacter::RespawnCharacter()
@@ -1866,7 +1857,7 @@ void APlayerCharacter::EventNotify(bool value)
 {
 	if (PlayerEventFuncMap.Contains(AnimInstance->PlayerAnimationType))
 	{
-		PlayerEventFuncMap[AnimInstance->PlayerAnimationType][value](this);
+		PlayerEventFuncMap[AnimInstance->PlayerAnimationType][value]();
 	}
 }
 
@@ -1877,7 +1868,7 @@ void APlayerCharacter::PlayExecutionAnimation()
 		LockOn();
 	}
 
-	//ExecuteDirection = ExecutionCharacter->GetActorLocation() - GetActorLocation();
+	//ExecuteDirection = ExecutionGetActorLocation() - GetActorLocation();
 	//ExecuteDirection.Normalize();
 
 	//ExecuteLocation = GetActorLocation() - ExecuteDirection * 50.0f;
@@ -1888,7 +1879,7 @@ void APlayerCharacter::PlayExecutionAnimation()
 	SwordTrailComp->Deactivate();
 	ComboAttackEnd();
 	ChangeMontageAnimation(AnimationType::EXECUTIONBOSS);
-	ExecutionCharacter->PlayExecutionAnimation();
+	PlayExecutionAnimation();
 	BossExecutionSequncePlayer->Play();
 
 	Imotal = true;
@@ -2015,7 +2006,7 @@ void APlayerCharacter::Attack()
 {
 	if (ExecutionCharacter && CanExecution)
 	{
-		if (ExecutionCharacter->IsStun && ExecutionCharacter->CanExecution)
+		if (ExecutionCharacter->IsStun && CanExecution)
 		{
 			PlayExecutionAnimation();
 			return;
@@ -2043,7 +2034,7 @@ void APlayerCharacter::PowerAttack()
 {
 	if (ExecutionCharacter && CanExecution)
 	{
-		if (ExecutionCharacter->IsStun)
+		if (ExecutionCharacter->IsStun && CanExecution)
 		{
 			PlayExecutionAnimation();
 			return;
@@ -2198,7 +2189,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 
 		AnimInstance->StopMontage(MontageMap[AnimInstance->PlayerAnimationType]);
 		if (MontageEndEventMap.Contains(AnimInstance->PlayerAnimationType))
-			MontageEndEventMap[AnimInstance->PlayerAnimationType](this);
+			MontageEndEventMap[AnimInstance->PlayerAnimationType]();
 
 		DeactivateRightWeapon();
 		DeactivateSMOverlap();

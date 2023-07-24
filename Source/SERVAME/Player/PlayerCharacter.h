@@ -145,16 +145,16 @@ private:
 	TArray<TArray<AnimationType>> DodgeDirection;
 
 	TMap<AnimationType, PlayerAction>PlayerEnumToAnimTypeMap;
-	TMap<AnimationType, TMap<bool, TFunction<void(APlayerCharacter* character)>>> NotifyBeginEndEventMap;
-	TMap<PlayerAction, TMap<ActionType, TFunction<void(APlayerCharacter* character)>>> PlayerActionTickMap;
-	TMap<AnimationType, TFunction<void(APlayerCharacter* character)>>MontageEndEventMap;
+	TMap<AnimationType, TMap<bool, TFunction<void( )>>> NotifyBeginEndEventMap;
+	TMap<PlayerAction, TMap<ActionType, TFunction<void( )>>> PlayerActionTickMap;
+	TMap<AnimationType, TFunction<void( )>>MontageEndEventMap;
 
 	TMap<ActionType, TMap< int32, AnimationType>>IntToEnumMap;
 
 	TMap<AnimationType, FRotator> HitEffectRotatorList;
 
-	TMap<bool, TFunction<AnimationType (APlayerCharacter* character)>> DodgeAnimationMap;
-	TMap<bool, TFunction<AnimationType(APlayerCharacter* character)>> MovementAnimMap;
+	TMap<bool, TFunction<AnimationType ( )>> DodgeAnimationMap;
+	TMap<bool, TFunction<AnimationType( )>> MovementAnimMap;
 
 public:
 	bool DebugMode;
@@ -205,9 +205,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TSubclassOf< UCameraShakeBase> PlayerDoorCameraShake;
 
-	TMap<AnimationType, TMap<bool, TFunction<void(APlayerCharacter* character)>>> PlayerEventFuncMap;
-	TMap<bool, TFunction<void(APlayerCharacter* character)>> PlayerAttackFuncMap;
-	TMap<PlayerAction, TMap<ActionType, TMap<bool, TFunction<void(APlayerCharacter* character)>>>>InputEventMap;
+	TMap<AnimationType, TMap<bool, TFunction<void( )>>> PlayerEventFuncMap;
+	TMap<bool, TFunction<void( )>> PlayerAttackFuncMap;
+	TMap<PlayerAction, TMap<ActionType, TMap<bool, TFunction<void( )>>>>InputEventMap;
 
 	FVector ExecuteDirection;
 	FVector ExecuteLocation;
@@ -272,7 +272,7 @@ public:
 
 	TMap<bool, TMap<bool, float>>SpeedMap;
 
-	TMap<bool, TFunction<void(APlayerCharacter* character)>> LockOnCameraSettingMap;
+	TMap<bool, TFunction<void( )>> LockOnCameraSettingMap;
 
 	UPROPERTY()
 		TArray<UBoxComponent*> ForwardOverlap;
