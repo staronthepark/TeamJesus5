@@ -154,9 +154,6 @@ public:
 	UPROPERTY()
 	UBoss2AnimInstance* Boss2AnimInstance;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ABoss2AIController* Boss2AIController;
-
 	UPROPERTY(EditAnywhere, Category = "Cross")
 	int CrossCount;
 	UPROPERTY(EditAnywhere, Category = "Cross")
@@ -179,6 +176,20 @@ public:
 	FTimerHandle CrossTimerHandle;
 	FTimerHandle CrossSpawnTimerHandle;
 	TQueue<ABaseObjectInPool*> CrossQueue;
+
+	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
+	FRotator BoneRotVal;
+	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
+	float Time;
+	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
+	float Speed;
+	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
+	float DeltaSeconds;
+	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
+	float ReturnSpeed;
+	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
+	float ReturnDeltaSeconds;
+	FTimerHandle BoneRotateTimerHandle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss2Data")
 	FBoss2DataStruct BossDataStruct;
@@ -214,7 +225,9 @@ public:
 
 	Boss2ActionTemp CurrentActionTemp{};
 
-	int DecreasePercentageVal = 20;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DecreasePercentageVal")
+	int DecreasePercentageVal = 10;
+
 	int HitCount;
 	float Damage;
 
@@ -230,6 +243,7 @@ public:
 	bool IsRunArrived = false;
 	bool IsGameStart = false;
 	bool IsArrived;
+	bool IsStartBoneRot;
 
 	FVector LastPlayerLoc;
 
@@ -326,11 +340,12 @@ public:
 	FVector Lerp(const FVector& start, const FVector& end, const float t);
 	Boss2ActionTemp GetRandomPattern(float Dist);
 	void SpawnInit();
+	void StartBoneRot();
+	void ReSetBoneRot();
 
 	/*======================
 	*		UFUNCTION
 	======================*/
-
 	UFUNCTION()
 	void AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 

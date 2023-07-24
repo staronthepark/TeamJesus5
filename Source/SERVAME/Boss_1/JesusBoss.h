@@ -427,7 +427,6 @@ public:
 	/*=====================
 			DebugLog
 	=====================*/
-	void SetLogWidget();
 	void TestLogStr(FString Str) { UE_LOG(LogTemp, Warning, TEXT("%s"), *Str); }
 	void ActionEndMapTestLog(FString Str, float f);
 

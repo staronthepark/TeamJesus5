@@ -49,6 +49,12 @@ public:
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool IsStart = false;
 
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	FRotator CurrentBoneRotateVal = FRotator::ZeroRotator;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	FRotator BoneRotateVal = FRotator::ZeroRotator;
+
 protected:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
