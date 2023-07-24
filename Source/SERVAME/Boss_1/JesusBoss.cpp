@@ -1095,8 +1095,6 @@ void AJesusBoss::Tick(float DeltaTime)
 		}
 	}
 
-	//UE_LOG(LogTemp, Warning, TEXT("%s"), *GetCapsuleComponent()->GetCollisionProfileName().ToString());
-
 	if (IsMoveStart && BossSuperAction == SUPER_ATTACK)
 	{
 		fDeltaTime += DeltaTime;
@@ -1126,8 +1124,6 @@ void AJesusBoss::Tick(float DeltaTime)
 	CheckBossDie();
 
 	PlayMoveMontage();
-	//디버그 UI
-	SetLogWidget();
 
 	//if (GroundExplosionCnt >= 3)
 	//{
@@ -1812,17 +1808,6 @@ void AJesusBoss::GroundExplosionHit(UPrimitiveComponent* OverlappedComponent, AA
 /*=====================
 		DebugLog
 =====================*/
-void AJesusBoss::SetLogWidget()
-{
-	//디버그 UI
-	if (BossAnimInstance->IsStart && BossDataStruct.CharacterHp > 0)
-	{
-		auto Dist = AIController->GetBlackboardComponent()->GetValueAsFloat("CalcDist");
-		GameInstance->DebugLogWidget->T_Distance->SetText(FText::AsNumber(Dist));
-		GameInstance->DebugLogWidget->T_BossHP->SetText(FText::AsNumber(BossDataStruct.CharacterHp));
-		GameInstance->DebugLogWidget->T_BossGroggyGauage->SetText(FText::AsNumber(BossDataStruct.CurrentGrrogyGauge));
-	}
-}
 
 void AJesusBoss::ActionEndMapTestLog(FString Str, float f)
 {			
