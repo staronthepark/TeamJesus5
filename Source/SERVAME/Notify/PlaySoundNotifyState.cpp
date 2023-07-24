@@ -11,9 +11,16 @@ void UPlaySoundNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimS
 {
 	int Num = static_cast<int>(Type);
 
-	Boss = Cast<AJesusBoss>(MeshComp->GetOwner());
+	BaseCharacter = Cast<ABaseCharacter>(MeshComp->GetOwner());
 
-	if (Boss && Boss->BossAnimInstance->IsStart)
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[Num].ObjClass, Boss->GetActorLocation(), FRotator::ZeroRotator);
+	if (BaseCharacter)
+	{
+		visit_at(GetBoss(MeshComp), BossEnumType.GetIntValue(), [=](auto& val)
+			{
+				if (val->IsGameStart)
+					AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[Num].ObjClass, val->GetActorLocation(), FRotator::ZeroRotator);
+			});
+
+	}
 }
 

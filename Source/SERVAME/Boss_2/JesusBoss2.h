@@ -33,12 +33,18 @@ enum Boss2DirectionType
 UENUM()
 enum Boss2ActionType
 {
-	B2_ENUMSTART,
+	B2_ENUMSTART = 0,
 	B2_NOTIHING UMETA(DisplayName = "B2_NOTIHING"),
 	B2_FALLTHECROSS UMETA(DisplayName = "B2_FALLTHECROSS"),
 	B2_SLASH UMETA(DisplayName = "B2_SLASH"),
 	B2_DOWNSMASH UMETA(DisplayName = "B2_DOWNSMASH"),
 	B2_DOUBLESMASH UMETA(DisplayName = "B2_DOUBLESMASH"),
+	B2_SCREAMATTACK UMETA(DisplayName = "B2_SCREAMATTACK"),
+	B2_HEADATTACK UMETA(DisplayName = "B2_HEADATTACK"),
+	B2_CHARGE UMETA(DisplayName = "B2_CHARGE"),
+	B2_FALLTHECROSS_LEFT UMETA(DisplayName = "B2_FALLTHECROSS_LEFT"),
+	B2_FALLTHECROSS_RIGHT UMETA(DisplayName = "B2_FALLTHECROSS_RIGHT"),
+	B2_FALLTHECROSS_BACK UMETA(DisplayName = "B2_FALLTHECROSS_BACK"),
 	B2_ENUMEND,
 };
 
@@ -61,6 +67,7 @@ enum Boss2AttackType
 	B2_LEFTATK,
 	B2_RIGHTATK,
 	B2_BACKATK,
+	NONE,
 };
 
 USTRUCT()
@@ -69,7 +76,7 @@ struct FBoss2Action : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	float Speed;
+	float Speed = 60.f;
 
 	UPROPERTY(EditAnywhere)
 	int Percentage;
@@ -93,7 +100,7 @@ struct FBoss2Action : public FTableRowBase
 	TEnumAsByte<Boss2DirectionType> ActionDirectionType;
 
 	UPROPERTY(EditAnywhere)
-	TEnumAsByte<Boss2BaseAction> SuperAction;
+	TEnumAsByte<Boss2BaseAction> SuperAction = Boss2BaseAction::B2_SUPER_ATTACK;
 
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<Boss2AttackType> AttackType;
@@ -142,6 +149,7 @@ class SERVAME_API AJesusBoss2 : public ABaseCharacter
 public:
 	// Sets default values for this character's properties
 	AJesusBoss2();
+	~AJesusBoss2();
 
 	UPROPERTY()
 	UBoss2AnimInstance* Boss2AnimInstance;
@@ -196,6 +204,8 @@ public:
 	TObjectPtr<USphereComponent> RightAtkCollision;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USceneComponent> AreaAtkPos;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USphereComponent> HeadAtkCollision;
 
 	Boss2BaseAction Boss2SuperAction;
 	Boss2DirectionType PlayerDirection;
@@ -217,6 +227,11 @@ public:
 	bool IsAttackMontageEnd = true;
 	bool IsMontagePlay = false;
 	bool IsExplosionPattern = false;
+	bool IsRunArrived = false;
+	bool IsGameStart = false;
+	bool IsArrived;
+
+	FVector LastPlayerLoc;
 
 	TAtomic<bool>IsStart = false;
 	TAtomic<bool>IsEnd = false;
@@ -286,6 +301,7 @@ public:
 	======================*/ 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	virtual void HitStop() override;
+	virtual void ResumeMontage() override;
 	virtual void RespawnCharacter() override;
 	virtual void IsNotifyActive(bool value) override;
 	virtual void PlayExecutionAnimation() override;
@@ -299,13 +315,17 @@ public:
 	void ChangeMontageAnimation(Boss2AnimationType Type);
 	void ChangeAnimType(Boss2AnimationType Type);
 	FBoss2Action* GetActionData(FName Name);
-	void DoAttack(float MinRange, float MaxRange, float Dist, bool LockOn, Boss2AnimationType Type, AJesusBoss2* Boss2);
-	void DoRangeAttack(float MinRange, float MaxRange, float Dist, bool LockOn, Boss2AnimationType Type, AJesusBoss2* Boss2);
+	void DoTypeAttack(float MinRange, float MaxRange, float Dist, bool LockOn, Boss2AnimationType Type, AJesusBoss2* Boss2, TArray<Boss2ActionTemp> &arr, Boss2AttackType AtkType);
 	void InitIsExcute();
 	void SetBTAction(Boss2ActionTemp Temp);
 	void PlayAttackAnim(Boss2AnimationType Type);
 	void PlayMoveMontage();
 	void RotateToPlayerInterp();
+	void SetLockOn() { AttackLockOn = true; }
+	void SetLockOff() { AttackLockOn = false; LastPlayerLoc = PlayerCharacter->GetActorLocation(); }
+	FVector Lerp(const FVector& start, const FVector& end, const float t);
+	Boss2ActionTemp GetRandomPattern(float Dist);
+	void SpawnInit();
 
 	/*======================
 	*		UFUNCTION
@@ -325,6 +345,8 @@ public:
 	void RightCollisionDisableNotify();
 	void LeftCollisionEnableNotify();
 	void LeftCollisionDisableNotify();
+	void HeadCollisionEnableNotify();
+	void HeadCollisionDisableNotify();
 
 	void LockOn();
 	void LockOff();

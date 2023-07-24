@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
-#include "..\Boss_1\JesusBoss.h"
+#include "BossBaseNotifyState.h"
 #include "PlaySoundNotifyState.generated.h"
 
 
@@ -19,13 +19,11 @@ enum SoundType
 };
 
 UCLASS()
-class SERVAME_API UPlaySoundNotifyState : public UAnimNotifyState
+class SERVAME_API UPlaySoundNotifyState : public UBossBaseNotifyState
 {
 	GENERATED_BODY()
 
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration);
-
-	AJesusBoss* Boss;
 
 public:
 	UPlaySoundNotifyState();

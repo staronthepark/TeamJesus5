@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
-#include "..\Boss_1\JesusBoss.h"
+#include "BossBaseNotifyState.h"
 #include "RunNotifyState.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SERVAME_API URunNotifyState : public UAnimNotifyState
+class SERVAME_API URunNotifyState : public UBossBaseNotifyState
 {
 	GENERATED_BODY()
-	AJesusBoss* Boss;
+
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration);
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation);
 	virtual void NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime);

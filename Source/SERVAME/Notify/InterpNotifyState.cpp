@@ -7,12 +7,16 @@ void UInterpNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequ
 {
 	if (MeshComp && MeshComp->GetOwner())
 	{
-		Boss = Cast<AJesusBoss>(MeshComp->GetOwner());
+		BaseCharacter = Cast<ABaseCharacter>(MeshComp->GetOwner());
 		
-		if (Boss)
+		if (BaseCharacter)
 		{
-			Boss->IsArrived = false;
-			Boss->LastPlayerLoc = Boss->PlayerCharacter->GetActorLocation();
+			visit_at(GetBoss(MeshComp), BossEnumType.GetIntValue(), [=](auto& val)
+				{
+					val->IsArrived = false;
+					val->LastPlayerLoc = val->PlayerCharacter->GetActorLocation();
+				});
+
 		}
 	}
 }
@@ -21,9 +25,12 @@ void UInterpNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequen
 {
 	if (MeshComp && MeshComp->GetOwner())
 	{
-		if (Boss)
+		if (BaseCharacter)
 		{
-			Boss->IsArrived = false;
+			visit_at(GetBoss(MeshComp), BossEnumType.GetIntValue(), [=](auto& val)
+				{
+					val->IsArrived = false;
+				});
 		}
 	}
 }
@@ -32,21 +39,24 @@ void UInterpNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSeque
 {
 	if (MeshComp && MeshComp->GetOwner())
 	{
-		if (Boss)
+		if (BaseCharacter)
 		{
-			if (!Boss->IsArrived)
-			{
-				auto NewLoc = Boss->Lerp(Boss->GetActorLocation(), Boss->PlayerCharacter->GetActorLocation(), InterpVal);
-				Boss->SetActorLocation(NewLoc);
-			}
+			visit_at(GetBoss(MeshComp), BossEnumType.GetIntValue(), [=](auto& val)
+				{
+					if (!val->IsArrived)
+					{
+						auto NewLoc = val->Lerp(val->GetActorLocation(), val->PlayerCharacter->GetActorLocation(), InterpVal);
+						val->SetActorLocation(NewLoc);
+					}
 
-			auto Dist = FVector::Dist(Boss->GetActorLocation(), Boss->PlayerCharacter->GetActorLocation());
-			
-			if (Dist < 100.f)
-			{
-				Boss->IsArrived = true;
-				return;
-			}
+					auto Dist = FVector::Dist(val->GetActorLocation(), val->PlayerCharacter->GetActorLocation());
+
+					if (Dist < 100.f)
+					{
+						val->IsArrived = true;
+						return;
+					}
+				});
 		}
 	}
 }

@@ -333,6 +333,8 @@ public:
 	bool IsHitStun = false;
 	bool IsDead = false;
 	bool Push2PhasePattern = false;
+	bool IsGameStart = false;
+
 	TTuple<bool, bool> StartEnd;
 
 	TAtomic<bool>IsThrow = false;

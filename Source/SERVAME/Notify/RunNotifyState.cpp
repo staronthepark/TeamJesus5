@@ -7,12 +7,19 @@ void URunNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenc
 {
 	if (MeshComp && MeshComp->GetOwner())
 	{
-		Boss = Cast<AJesusBoss>(MeshComp->GetOwner());
-		if (Boss)
+		BaseCharacter = Cast<ABaseCharacter>(MeshComp->GetOwner());
+
+		if (BaseCharacter)
 		{
-			Boss->IsRunArrived = false;
-			Boss->SetLockOn();
-			Boss->OnStart();
+			//todo
+			visit_at(GetBoss(MeshComp), BossEnumType.GetIntValue(), [=](auto& val)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Call_Templet_lamda"));
+
+					val->IsRunArrived = false;
+					val->SetLockOn();
+					val->OnStart();
+				});
 		}
 	}
 }
@@ -21,12 +28,20 @@ void URunNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceB
 {
 	if (MeshComp && MeshComp->GetOwner())
 	{
-		Boss = Cast<AJesusBoss>(MeshComp->GetOwner());
-		if (Boss && !Boss->IsRunArrived)
-		{
-			Boss->IsRunArrived = true;
-			Boss->SetLockOff();
-			Boss->OnEnd();
+		BaseCharacter = Cast<ABaseCharacter>(MeshComp->GetOwner());
+
+		if (BaseCharacter)
+		{			
+			//todo
+			visit_at(GetBoss(MeshComp), BossEnumType.GetIntValue(), [=](auto& val)
+				{
+					if (!val->IsRunArrived)
+					{
+						val->IsRunArrived = true;
+						val->SetLockOff();
+						val->OnEnd();
+					}
+				});
 		}
 	}
 }
@@ -35,17 +50,22 @@ void URunNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequence
 {
 	if (MeshComp && MeshComp->GetOwner())
 	{
-		Boss = Cast<AJesusBoss>(MeshComp->GetOwner());
-		if (Boss)
-		{
-			Dist = FVector::Dist(Boss->GetActorLocation(), Boss->PlayerCharacter->GetActorLocation());
+		BaseCharacter = Cast<ABaseCharacter>(MeshComp->GetOwner());
 
-			if (Dist <= ArriveDistance && !Boss->IsRunArrived)
-			{
-				Boss->IsRunArrived = true;
-				Boss->SetLockOff();
-				Boss->OnEnd();
-			}
+		if (BaseCharacter)
+		{
+			//todo
+			visit_at(GetBoss(MeshComp), BossEnumType.GetIntValue(), [=](auto& val)
+				{
+					Dist = FVector::Dist(val->GetActorLocation(), val->PlayerCharacter->GetActorLocation());
+
+					if (Dist <= ArriveDistance && !val->IsRunArrived)
+					{
+						val->IsRunArrived = true;
+						val->SetLockOff();
+						val->OnEnd();
+					}
+				});
 		}
 	}
 }

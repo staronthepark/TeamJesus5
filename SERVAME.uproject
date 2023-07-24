@@ -10,7 +10,8 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"CinematicCamera",
-				"ActorSequence"
+				"ActorSequence",
+				"Engine"
 			]
 		}
 	],
