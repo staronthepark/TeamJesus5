@@ -154,9 +154,6 @@ public:
 	UPROPERTY()
 	UBoss2AnimInstance* Boss2AnimInstance;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ABoss2AIController* Boss2AIController;
-
 	UPROPERTY(EditAnywhere, Category = "Cross")
 	int CrossCount;
 	UPROPERTY(EditAnywhere, Category = "Cross")
@@ -214,7 +211,9 @@ public:
 
 	Boss2ActionTemp CurrentActionTemp{};
 
-	int DecreasePercentageVal = 20;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DecreasePercentageVal")
+	int DecreasePercentageVal = 10;
+
 	int HitCount;
 	float Damage;
 
