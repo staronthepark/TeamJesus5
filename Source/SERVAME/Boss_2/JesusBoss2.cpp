@@ -38,17 +38,17 @@ AJesusBoss2::AJesusBoss2()
 	AreaAtkPos->SetupAttachment(GetMesh());
 	AreaAtkPos->SetupAttachment(GetMesh(), FName("RHand"));
 
-	HeadHitCollision = CreateDefaultSubobject<USphereComponent>(TEXT("HeadHitCollision"));
-	HeadHitCollision->SetupAttachment(GetMesh(), FName("Bip001-Head"));
-	HeadHitCollision->SetCollisionProfileName("AIHit");
+	//HeadHitCollision = CreateDefaultSubobject<USphereComponent>(TEXT("HeadHitCollision"));
+	//HeadHitCollision->SetupAttachment(GetMesh(), FName("Bip001-Head"));
+	//HeadHitCollision->SetCollisionProfileName("AIHit");
 
-	RightArmHitCollision = CreateDefaultSubobject<USphereComponent>(TEXT("RightArmHitCollision"));
-	RightArmHitCollision->SetupAttachment(GetMesh(), FName("Bip001-L-UpperArm"));
-	RightArmHitCollision->SetCollisionProfileName("AIHit");
+	//RightArmHitCollision = CreateDefaultSubobject<USphereComponent>(TEXT("RightArmHitCollision"));
+	//RightArmHitCollision->SetupAttachment(GetMesh(), FName("Bip001-L-UpperArm"));
+	//RightArmHitCollision->SetCollisionProfileName("AIHit");
 
-	LeftArmHitCollision = CreateDefaultSubobject<USphereComponent>(TEXT("LeftArmHitCollision"));
-	LeftArmHitCollision->SetupAttachment(GetMesh(), FName("Bip001-R-UpperArm"));
-	LeftArmHitCollision->SetCollisionProfileName("AIHit");
+	//LeftArmHitCollision = CreateDefaultSubobject<USphereComponent>(TEXT("LeftArmHitCollision"));
+	//LeftArmHitCollision->SetupAttachment(GetMesh(), FName("Bip001-R-UpperArm"));
+	//LeftArmHitCollision->SetCollisionProfileName("AIHit");
 
 	MontageStartMap.Add(Boss2AnimationType::NONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
@@ -727,10 +727,10 @@ void AJesusBoss2::BeginPlay()
 	HeadAtkCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::AttackHit);
 	HeadAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	HitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
-	HeadHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
-	LeftArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
-	RightArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
+	//HitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
+	//HeadHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
+	//LeftArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
+	//RightArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
 
 	//임시로 변수 설정
 	CanMove = true;
@@ -1064,10 +1064,10 @@ void AJesusBoss2::ReSetBoneRot()
 
 void AJesusBoss2::OffHitCollision()
 {
-	HitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	HeadHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	LeftArmHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	RightArmHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//HitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//HeadHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//LeftArmHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//RightArmHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 /*=====================
