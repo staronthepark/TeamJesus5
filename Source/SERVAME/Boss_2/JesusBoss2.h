@@ -330,7 +330,8 @@ public:
 	virtual void RespawnCharacter() override;
 	virtual void IsNotifyActive(bool value) override;
 	virtual void PlayExecutionAnimation() override;
-	virtual void ActivateLockOnImage(bool value)override;
+	virtual void ActivateLockOnImage(bool value) override;
+	virtual void ActivateHitCollision() override;
 
 	/*=====================
 	*		Function

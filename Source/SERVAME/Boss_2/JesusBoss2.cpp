@@ -729,12 +729,12 @@ void AJesusBoss2::BeginPlay()
 
 	HitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
 	HeadHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
-	LeftArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
-	RightArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
+	LeftArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneLArm);
+	RightArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneRArm);
 
 	//임시로 변수 설정
 	CanMove = true;
-	IsLockOn = true;
+	IsLockOn = false;
 	Boss2AnimInstance->IsStart = true;
 }
 
@@ -1066,6 +1066,14 @@ void AJesusBoss2::OffHitCollision()
 	HeadHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	LeftArmHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	RightArmHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void AJesusBoss2::ActivateHitCollision()
+{
+	HitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	HeadHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	LeftArmHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	RightArmHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 /*=====================
