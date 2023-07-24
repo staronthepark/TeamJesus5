@@ -33,10 +33,10 @@ public:
 		ULevelSequencePlayer* CurrentSequncePlayer;
 
 
-	TMap<bool, TFunction<void(AJesusPlayerController* controller, float Val)>>CameraYawRotateEventMap;
-	TMap<bool, TMap<bool, TFunction<void(AJesusPlayerController* controller)>>>ChangeTargetEventMap;
+	TMap<bool, TFunction<void(float Val)>>CameraYawRotateEventMap;
+	TMap<bool, TMap<bool, TFunction<void()>>>ChangeTargetEventMap;
 
-	TMap<bool, TFunction<void(AJesusPlayerController* controller, float Val)>>CameraPitchRotateEventMap;
+	TMap<bool, TFunction<void(float Val)>>CameraPitchRotateEventMap;
 
 	virtual void SetupInputComponent() override;
 	virtual void BeginPlay() override;

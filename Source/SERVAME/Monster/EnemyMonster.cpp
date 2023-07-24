@@ -58,206 +58,206 @@ AEnemyMonster::AEnemyMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::EXECUTION, MonsterStateType::CANTACT);
 
 
-	RandomRotateMap.Add(0, [](AEnemyMonster* monster)
+	RandomRotateMap.Add(0, [&]()
 		{
-			monster->AddMovementInput(-((monster->GetActorRotation() - FRotator(0, 0, 0)).Vector() * monster->DiagonalSpeed * monster->fDeltaTime));
+			AddMovementInput(-((GetActorRotation() - FRotator(0, 0, 0)).Vector() * DiagonalSpeed * fDeltaTime));
 		});
-	RandomRotateMap.Add(1, [](AEnemyMonster* monster)
+	RandomRotateMap.Add(1, [&]()
 		{
-			monster->AddMovementInput(-((monster->GetActorRotation() - FRotator(0, -45, 0)).Vector() * monster->DiagonalSpeed * monster->fDeltaTime));
+			AddMovementInput(-((GetActorRotation() - FRotator(0, -45, 0)).Vector() * DiagonalSpeed * fDeltaTime));
 		});
-	RandomRotateMap.Add(2, [](AEnemyMonster* monster)
+	RandomRotateMap.Add(2, [&]()
 		{
-			monster->AddMovementInput(-((monster->GetActorRotation() - FRotator(0, 45, 0)).Vector() * monster->DiagonalSpeed * monster->fDeltaTime));
+			AddMovementInput(-((GetActorRotation() - FRotator(0, 45, 0)).Vector() * DiagonalSpeed * fDeltaTime));
 		});
-	RandomRotateMap.Add(3, [](AEnemyMonster* monster)
+	RandomRotateMap.Add(3, [&]()
 		{
 			
 		});
 
-	MonsterMoveMap.Add(0, [](AEnemyMonster* monster)
+	MonsterMoveMap.Add(0, [&]()
 		{
-			monster->MonsterController->Movement(monster->PatrolLocation);
+			MonsterController->Movement(PatrolLocation);
 		});
-	MonsterMoveMap.Add(1, [](AEnemyMonster* monster)
+	MonsterMoveMap.Add(1, [&]()
 		{			
-			monster->DiagonalSpeed = monster->MonsterDataStruct.CharacterOriginSpeed;
-			monster->MonsterController->Movement(monster->PlayerCharacter->GetActorLocation());
+			DiagonalSpeed = MonsterDataStruct.CharacterOriginSpeed;
+			MonsterController->Movement(PlayerCharacter->GetActorLocation());
 		});
-	MonsterMoveMap.Add(2, [](AEnemyMonster* monster)
+	MonsterMoveMap.Add(2, [&]()
 		{
-			monster->DiagonalSpeed = monster->MonsterDataStruct.LockOnWalkSpeed * sqrt(0.5f) + monster->MonsterDataStruct.LockOnWalkSpeed * sqrt(0.5f);
-			monster->RandomRotateMap[monster->MonsterRandomMove](monster);
+			DiagonalSpeed = MonsterDataStruct.LockOnWalkSpeed * sqrt(0.5f) + MonsterDataStruct.LockOnWalkSpeed * sqrt(0.5f);
+			RandomRotateMap[MonsterRandomMove]();
 		});
 
 
-	CheckDIstanceMap.Add(false, [](AEnemyMonster* monster)
+	CheckDIstanceMap.Add(false, [&]()
 		{
 			
 		});
-	CheckDIstanceMap.Add(true, [](AEnemyMonster* monster)
+	CheckDIstanceMap.Add(true, [&]()
 		{
-			monster->CurrentDistance = FVector::Distance(monster->GetActorLocation(), monster->PlayerCharacter->GetActorLocation());
+			CurrentDistance = FVector::Distance(GetActorLocation(), PlayerCharacter->GetActorLocation());
 		});
 
-	MonsterActionEventMap.Add(MonsterStateType::NONE, TMap<MonsterActionType, TFunction<void(AEnemyMonster * character)>>());
-	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::NONE, [](AEnemyMonster* monster)
+	MonsterActionEventMap.Add(MonsterStateType::NONE, TMap<MonsterActionType, TFunction<void()>>());
+	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::NONE, [&]()
 		{
-			monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
 		});
-	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::DODGE, [](AEnemyMonster* monster)
-		{
-
-		});
-	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::ATTACK, [](AEnemyMonster* monster)
-		{
-			monster->ChangeActionType(MonsterActionType::ATTACK);
-			monster->ChangeMontageAnimation(monster->AttackAnimationType);
-		});
-	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::POWERATTACK, [](AEnemyMonster* monster)
+	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::DODGE, [&]()
 		{
 
 		});
-	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::MOVE, [](AEnemyMonster* monster)
+	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::ATTACK, [&]()
 		{
-			monster->ChangeActionType(MonsterActionType::MOVE);
-			monster->ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+			ChangeActionType(MonsterActionType::ATTACK);
+			ChangeMontageAnimation(AttackAnimationType);
 		});
-	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::HIT, [](AEnemyMonster* monster)
+	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::POWERATTACK, [&]()
 		{
 
 		});
-	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::DEAD, [](AEnemyMonster* monster) {});
+	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::MOVE, [&]()
+		{
+			ChangeActionType(MonsterActionType::MOVE);
+			ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+		});
+	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::HIT, [&]()
+		{
 
-	MonsterActionEventMap.Add(MonsterStateType::BEFOREATTACK, TMap<MonsterActionType, TFunction<void(AEnemyMonster * character)>>());
-	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::NONE, [](AEnemyMonster* monster) {});
-	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::DODGE, [](AEnemyMonster* monster) {});
-	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::ATTACK, [](AEnemyMonster* monster) {});
-	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::POWERATTACK, [](AEnemyMonster* monster) {});
-	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::MOVE, [](AEnemyMonster* monster) {});
-	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::HIT, [](AEnemyMonster* monster) {});
-	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::DEAD, [](AEnemyMonster* monster) {});
+		});
+	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::DEAD, [&]() {});
 
-	MonsterActionEventMap.Add(MonsterStateType::AFTERATTACK, TMap<MonsterActionType, TFunction<void(AEnemyMonster * character)>>());
-	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::NONE, [](AEnemyMonster* monster) {});
-	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::DODGE, [](AEnemyMonster* monster) {});
-	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::ATTACK, [](AEnemyMonster* monster) {});
-	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::POWERATTACK, [](AEnemyMonster* monster) {});
-	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::MOVE, [](AEnemyMonster* monster) {});
-	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::HIT, [](AEnemyMonster* monster) {});
-	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::DEAD, [](AEnemyMonster* monster) {});
+	MonsterActionEventMap.Add(MonsterStateType::BEFOREATTACK, TMap<MonsterActionType, TFunction<void()>>());
+	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::NONE, [&]() {});
+	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::DODGE, [&]() {});
+	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::ATTACK, [&]() {});
+	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::POWERATTACK, [&]() {});
+	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::MOVE, [&]() {});
+	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::HIT, [&]() {});
+	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::DEAD, [&]() {});
 
-	MonsterActionEventMap.Add(MonsterStateType::CANTACT, TMap<MonsterActionType, TFunction<void(AEnemyMonster * character)>>());
-	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::NONE, [](AEnemyMonster* monster) {});
-	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::DODGE, [](AEnemyMonster* monster) {});
-	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::ATTACK, [](AEnemyMonster* monster) {});
-	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::POWERATTACK, [](AEnemyMonster* monster) {});
-	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::MOVE, [](AEnemyMonster* monster) {});
-	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::HIT, [](AEnemyMonster* monster) {});
-	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::DEAD, [](AEnemyMonster* monster) {});
+	MonsterActionEventMap.Add(MonsterStateType::AFTERATTACK, TMap<MonsterActionType, TFunction<void()>>());
+	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::NONE, [&]() {});
+	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::DODGE, [&]() {});
+	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::ATTACK, [&]() {});
+	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::POWERATTACK, [&]() {});
+	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::MOVE, [&]() {});
+	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::HIT, [&]() {});
+	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::DEAD, [&]() {});
 
-	MonsterTickEventMap.Add(MonsterActionType::NONE, [](AEnemyMonster* monster)
+	MonsterActionEventMap.Add(MonsterStateType::CANTACT, TMap<MonsterActionType, TFunction<void()>>());
+	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::NONE, [&]() {});
+	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::DODGE, [&]() {});
+	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::ATTACK, [&]() {});
+	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::POWERATTACK, [&]() {});
+	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::MOVE, [&]() {});
+	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::HIT, [&]() {});
+	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::DEAD, [&]() {});
+
+	MonsterTickEventMap.Add(MonsterActionType::NONE, [&]()
 		{
 			//test
-			monster->RotateMap[monster->PlayerCharacter != nullptr](monster);
+			RotateMap[PlayerCharacter != nullptr]();
 		});
 
-	MonsterTickEventMap.Add(MonsterActionType::DODGE, [](AEnemyMonster* monster)
+	MonsterTickEventMap.Add(MonsterActionType::DODGE, [&]()
 		{
 
 		});
 
-	MonsterTickEventMap.Add(MonsterActionType::ATTACK, [](AEnemyMonster* monster)
+	MonsterTickEventMap.Add(MonsterActionType::ATTACK, [&]()
 		{
-			monster->RotateMap[true](monster);
+			RotateMap[true]();
 		});
 
-	MonsterTickEventMap.Add(MonsterActionType::POWERATTACK, [](AEnemyMonster* monster)
+	MonsterTickEventMap.Add(MonsterActionType::POWERATTACK, [&]()
 		{
-			monster->RotateMap[true](monster);
+			RotateMap[true]();
 		});
 
-	MonsterTickEventMap.Add(MonsterActionType::MOVE, [](AEnemyMonster* monster)
+	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
 		{
-			monster->RotateMap[monster->PlayerCharacter != nullptr](monster);
-			monster->MonsterMoveMap[monster->MonsterMoveEventIndex](monster);
+			RotateMap[PlayerCharacter != nullptr]();
+			MonsterMoveMap[MonsterMoveEventIndex]();
 		});
 
-	MonsterTickEventMap.Add(MonsterActionType::HIT, [](AEnemyMonster* monster)
+	MonsterTickEventMap.Add(MonsterActionType::HIT, [&]()
 		{
 
 		});
 
-	MonsterTickEventMap.Add(MonsterActionType::DEAD, [](AEnemyMonster* monster)
+	MonsterTickEventMap.Add(MonsterActionType::DEAD, [&]()
 		{
-			monster->SkeletalMeshComp->SetScalarParameterValueOnMaterials("Opacity", monster->MeshOpacity -= monster->fDeltaTime * 0.25f);
-			monster->SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", monster->WeaponOpacity  -= monster->fDeltaTime * 0.25f);
-			if (monster->WeaponOpacity < 0.0f)
+			SkeletalMeshComp->SetScalarParameterValueOnMaterials("Opacity", MeshOpacity -= fDeltaTime * 0.25f);
+			SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity  -= fDeltaTime * 0.25f);
+			if (WeaponOpacity < 0.0f)
 			{
-				monster->SetActorHiddenInGame(true);
-				monster->SetActorEnableCollision(false);
-				monster->SetActorTickEnabled(false);
+				SetActorHiddenInGame(true);
+				SetActorEnableCollision(false);
+				SetActorTickEnabled(false);
 
-				if (monster->PlayerCharacter != nullptr)
+				if (PlayerCharacter != nullptr)
 				{
-					if (monster->PlayerCharacter->IsLockOn)
+					if (PlayerCharacter->IsLockOn)
 					{
-						monster->PlayerCharacter->GetCompsInScreen(monster->PlayerCharacter->TargetCompArray);
-						monster->PlayerCharacter->GetFirstTarget();
-						if (monster->PlayerCharacter->TargetComp == nullptr)
-							monster->PlayerCharacter->LockOn();
+						PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
+						PlayerCharacter->GetFirstTarget();
+						if (PlayerCharacter->TargetComp == nullptr)
+							PlayerCharacter->LockOn();
 					}
 				}
 			}
 		});	
 
 
-	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [](AEnemyMonster* monster)
+	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
 		{
-			monster->ChangeMontageAnimation(MonsterAnimationType::DEADLOOP);
-			monster->IsStun = true;
-			monster->CanExecution = true;
+			ChangeMontageAnimation(MonsterAnimationType::DEADLOOP);
+			IsStun = true;
+			CanExecution = true;
 		});
 
-	MontageEndEventMap.Add(MonsterAnimationType::DEADLOOP, [](AEnemyMonster* monster)
+	MontageEndEventMap.Add(MonsterAnimationType::DEADLOOP, [&]()
 		{
-			monster->ChangeMontageAnimation(MonsterAnimationType::DEADLOOP);
+			ChangeMontageAnimation(MonsterAnimationType::DEADLOOP);
 		});
 
-	MontageEndEventMap.Add(MonsterAnimationType::EXECUTION, [](AEnemyMonster* monster)
+	MontageEndEventMap.Add(MonsterAnimationType::EXECUTION, [&]()
 		{
-			monster->ChangeActionType(MonsterActionType::DEAD);
+			ChangeActionType(MonsterActionType::DEAD);
 		});
 
-	MontageEndEventMap.Add(MonsterAnimationType::STANDBY, [](AEnemyMonster* monster)
+	MontageEndEventMap.Add(MonsterAnimationType::STANDBY, [&]()
 		{
-			monster->ChangeMontageAnimation(MonsterAnimationType::STANDBY);
+			ChangeMontageAnimation(MonsterAnimationType::STANDBY);
 		});
 
-	MontageEndEventMap.Add(MonsterAnimationType::IDLE, [](AEnemyMonster* monster)
+	MontageEndEventMap.Add(MonsterAnimationType::IDLE, [&]()
 		{
-			if (monster->PlayerCharacter)
+			if (PlayerCharacter)
 			{
-				monster->StartAttackTrigger(monster->AttackAnimationType);
+				StartAttackTrigger(AttackAnimationType);
 			}
 			else
 			{
-				monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			}
 		});
 
-	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [](AEnemyMonster* monster)
+	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
 		{			
-			if (monster->TracePlayer)
+			if (TracePlayer)
 			{
-				monster->MonsterMoveEventIndex = 1;
-				monster->ChangeActionType(MonsterActionType::MOVE);
-				monster->ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 			}
 			else
 			{
-				monster->ChangeActionType(MonsterActionType::NONE);
-				monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			}				
 		});
 	
@@ -265,134 +265,134 @@ AEnemyMonster::AEnemyMonster()
 	MontageEndEventMap.Add(MonsterAnimationType::RANGEATTACK1, MontageEndEventMap[MonsterAnimationType::ATTACK1]);
 	MontageEndEventMap.Add(MonsterAnimationType::DASHATTACK1, MontageEndEventMap[MonsterAnimationType::ATTACK1]);
 
-	MontageEndEventMap.Add(MonsterAnimationType::HIT, [](AEnemyMonster* monster)
+	MontageEndEventMap.Add(MonsterAnimationType::HIT, [&]()
 		{
-			monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
 		});
 
-	NotifyBeginEndEventMap.Add(MonsterAnimationType::IDLE, TMap<bool, TFunction<void(AEnemyMonster* monster)>>());
-	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(true, [](AEnemyMonster* monster)
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::IDLE, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(true, [&]()
 		{
-			if (monster->AttackAnimationType != MonsterAnimationType::NONE)
-				monster->StartAttackTrigger(monster->AttackAnimationType);
+			if (AttackAnimationType != MonsterAnimationType::NONE)
+				StartAttackTrigger(AttackAnimationType);
 
 		});
-	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(false, [](AEnemyMonster* monster)
+	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(false, [&]()
 		{
-			if (monster->AttackAnimationType != MonsterAnimationType::NONE)
-				monster->StartAttackTrigger(monster->AttackAnimationType);
+			if (AttackAnimationType != MonsterAnimationType::NONE)
+				StartAttackTrigger(AttackAnimationType);
 		});
 
-	NotifyBeginEndEventMap.Add(MonsterAnimationType::ATTACK1, TMap<bool, TFunction<void(AEnemyMonster* monster)>>());
-	NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1].Add(true, [](AEnemyMonster* monster)
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::ATTACK1, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1].Add(true, [&]()
 		{
-			monster->SwordTrailComp->Activate();
-			monster->ParryingCollision1->Activate();
-			monster->ActivateSMOverlap();
-			monster->ActivateRightWeapon();
-			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[24].ObjClass, monster->GetActorLocation(), FRotator::ZeroRotator);
+			SwordTrailComp->Activate();
+			ParryingCollision1->Activate();
+			ActivateSMOverlap();
+			ActivateRightWeapon();
+			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[24].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 
 		});
-	NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1].Add(false, [](AEnemyMonster* monster)
+	NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1].Add(false, [&]()
 		{
-			monster->DeactivateRightWeapon();
-			monster->ParryingCollision1->Deactivate();
-			monster->SwordTrailComp->Deactivate();
-			monster->DeactivateSMOverlap();
+			DeactivateRightWeapon();
+			ParryingCollision1->Deactivate();
+			SwordTrailComp->Deactivate();
+			DeactivateSMOverlap();
 		});	
 
-	NotifyBeginEndEventMap.Add(MonsterAnimationType::POWERATTACK1, TMap<bool, TFunction<void(AEnemyMonster* monster)>>());
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::POWERATTACK1, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::POWERATTACK1].Add(true,  NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1][true]);
 	NotifyBeginEndEventMap[MonsterAnimationType::POWERATTACK1].Add(false, NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1][false]);
 
-	NotifyBeginEndEventMap.Add(MonsterAnimationType::DASHATTACK1, TMap<bool, TFunction<void(AEnemyMonster* monster)>>());
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::DASHATTACK1, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::DASHATTACK1].Add(true, NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1][true]);
 	NotifyBeginEndEventMap[MonsterAnimationType::DASHATTACK1].Add(false, NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1][false]);
 
-	NotifyBeginEndEventMap.Add(MonsterAnimationType::RANGEATTACK1, TMap<bool, TFunction<void(AEnemyMonster* monster)>>());
-	NotifyBeginEndEventMap[MonsterAnimationType::RANGEATTACK1].Add(true, [](AEnemyMonster* monster)
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::RANGEATTACK1, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::RANGEATTACK1].Add(true, [&]()
 		{
-			monster->NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1][true](monster);
-			monster->ShotProjectile();
+			NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1][true]();
+			ShotProjectile();
 		});
-	NotifyBeginEndEventMap[MonsterAnimationType::RANGEATTACK1].Add(false, [](AEnemyMonster* monster)
+	NotifyBeginEndEventMap[MonsterAnimationType::RANGEATTACK1].Add(false, [&]()
 		{
-			monster->NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1][false](monster);
-		});
-
-	NotifyBeginEndEventMap.Add(MonsterAnimationType::EXECUTION, TMap<bool, TFunction<void(AEnemyMonster* monster)>>());
-	NotifyBeginEndEventMap[MonsterAnimationType::EXECUTION].Add(true, [](AEnemyMonster* monster)
-		{
-		});
-	NotifyBeginEndEventMap[MonsterAnimationType::EXECUTION].Add(false, [](AEnemyMonster* monster)
-		{
+			NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1][false]();
 		});
 
-	RotateMap.Add(false, [](AEnemyMonster* monster)
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::EXECUTION, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::EXECUTION].Add(true, [&]()
+		{
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::EXECUTION].Add(false, [&]()
+		{
+		});
+
+	RotateMap.Add(false, [&]()
 		{
 
 		});
 
-	RotateMap.Add(true, [](AEnemyMonster* monster)
+	RotateMap.Add(true, [&]()
 		{
-			if (monster->PlayerCharacter != nullptr)
+			if (PlayerCharacter != nullptr)
 			{
-				monster->TargetRotation = (monster->PlayerCharacter->GetActorLocation() - monster->GetActorLocation()).Rotation();
-				monster->YawRotation = monster->TargetRotation;
+				TargetRotation = (PlayerCharacter->GetActorLocation() - GetActorLocation()).Rotation();
+				YawRotation = TargetRotation;
 			}			
 		});
 
-	TargetDetectEventMap.Add(MonsterAttackType::MELEE, [](AEnemyMonster* monster)
+	TargetDetectEventMap.Add(MonsterAttackType::MELEE, [&]()
 		{
-			monster->MonsterActionEventMap[MonsterStateType::NONE][MonsterActionType::MOVE](monster);
+			MonsterActionEventMap[MonsterStateType::NONE][MonsterActionType::MOVE]();
 		});
-	TargetDetectEventMap.Add(MonsterAttackType::RANGE, [](AEnemyMonster* monster)
+	TargetDetectEventMap.Add(MonsterAttackType::RANGE, [&]()
 		{
-			monster->MonsterActionEventMap[MonsterStateType::NONE][MonsterActionType::MOVE](monster);
+			MonsterActionEventMap[MonsterStateType::NONE][MonsterActionType::MOVE]();
 		});
 
-	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [](AEnemyMonster* monster, float percent)
+	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
 		{
 			if (percent >= 0.5)
 			{
 
 				//UGameplayStatics::SetGlobalTimeDilation(monster, 0.1f);
-				monster->PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::dodge, true);
-				monster->ChangeActionType(MonsterActionType::ATTACK);
-				monster->ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
+				PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::dodge, true);
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
 			}
 			else if (percent < 0.5f)
 			{
 				//UGameplayStatics::SetGlobalTimeDilation(monster, 0.1f);
-				monster->PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::parrying, true);
-				monster->ChangeActionType(MonsterActionType::ATTACK);
-				monster->ChangeMontageAnimation(MonsterAnimationType::POWERATTACK1);
+				PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::parrying, true);
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::POWERATTACK1);
 			}
 		});
-	SetActionByRandomMap.Add(MonsterAnimationType::DASHATTACK1, [](AEnemyMonster* monster, float percent)
+	SetActionByRandomMap.Add(MonsterAnimationType::DASHATTACK1, [&](float percent)
 		{
 			if (percent <= 0.5f)
 			{
-				monster->ChangeActionType(MonsterActionType::ATTACK);
-				monster->ChangeMontageAnimation(MonsterAnimationType::DASHATTACK1);
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::DASHATTACK1);
 			}
 			else
 			{
-				monster->ChangeActionType(MonsterActionType::MOVE);
-				monster->ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 			}
 		});
-	SetActionByRandomMap.Add(MonsterAnimationType::RANGEATTACK1, [](AEnemyMonster* monster, float percent)
+	SetActionByRandomMap.Add(MonsterAnimationType::RANGEATTACK1, [&](float percent)
 		{
 			if (percent <= 0.8f)
 			{
-				monster->ChangeActionType(MonsterActionType::ATTACK);
-				monster->ChangeMontageAnimation(MonsterAnimationType::RANGEATTACK1);
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::RANGEATTACK1);
 			}
 			else
 			{
-				monster->ChangeActionType(MonsterActionType::NONE);
-				monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			}
 		});
 }
@@ -424,7 +424,7 @@ void AEnemyMonster::BeginPlay()
 
 	AnimationType = MonsterAnimationType::IDLE;
 	ChangeActionType(MonsterActionType::NONE);
-	MonsterActionEventMap[MonsterStateType::NONE][MonsterActionType::NONE](this);
+	MonsterActionEventMap[MonsterStateType::NONE][MonsterActionType::NONE]();
 	//ChangeMontageAnimation(MonsterAnimationType::IDLE);
 
 	SkeletalMeshComp = GetMesh();
@@ -485,7 +485,7 @@ void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* Overlappe
 	}
 
 	MonsterMoveEventIndex = 1;
-	TargetDetectEventMap[AttackType](this);
+	TargetDetectEventMap[AttackType]();
 }
 
 void AEnemyMonster::OnTargetDetectionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -556,7 +556,7 @@ void AEnemyMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 		if (SetActionByRandomMap.Contains(AttackAnimType))
 		{
 			MonsterMoveEventIndex = 1;
-			SetActionByRandomMap[AttackAnimType](this, RandomValue);
+			SetActionByRandomMap[AttackAnimType](RandomValue);
 		}
 	}
 }
@@ -621,7 +621,7 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 		MonsterController->StopMovement();
 		AnimInstance->StopMontage(MontageMap[AnimationType]);
 		if (MontageEndEventMap.Contains(AnimationType))
-			MontageEndEventMap[AnimationType](this);
+			MontageEndEventMap[AnimationType]();
 
 		ChangeActionType(MonsterActionType::NONE);
 		ChangeMontageAnimation(MonsterAnimationType::HIT);
@@ -631,7 +631,7 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 		MonsterController->StopMovement();
 		AnimInstance->StopMontage(MontageMap[AnimationType]);
 		if (MontageEndEventMap.Contains(AnimationType))
-			MontageEndEventMap[AnimationType](this);
+			MontageEndEventMap[AnimationType]();
 
 		ChangeActionType(MonsterActionType::NONE);
 		ChangeMontageAnimation(MonsterAnimationType::HIT);
@@ -643,7 +643,7 @@ void AEnemyMonster::CheckMontageEndNotify()
 {
 	if (MontageEndEventMap.Contains(AnimationType))
 	{
-		MontageEndEventMap[AnimationType](this);
+		MontageEndEventMap[AnimationType]();
 	}
 }
 
@@ -661,8 +661,8 @@ void AEnemyMonster::Tick(float DeltaTime)
 	fDeltaTime = DeltaTime;
 
 	
-	CheckDIstanceMap[IsDetect](this);
-	MonsterTickEventMap[ActionType](this);	
+	CheckDIstanceMap[IsDetect]();
+	MonsterTickEventMap[ActionType]();	
 	Rotate();
 }
 
@@ -695,7 +695,7 @@ void AEnemyMonster::IsNotifyActive(bool value)
 {
 	if (NotifyBeginEndEventMap.Contains(AnimationType))
 	{
-		NotifyBeginEndEventMap[AnimationType][value](this);
+		NotifyBeginEndEventMap[AnimationType][value]();
 	}
 }
 
