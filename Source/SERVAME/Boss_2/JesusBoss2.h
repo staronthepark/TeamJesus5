@@ -223,6 +223,12 @@ public:
 	TObjectPtr<USceneComponent> AreaAtkPos;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USphereComponent> HeadAtkCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UCapsuleComponent> HeadHitCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UCapsuleComponent> RightArmHitCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UCapsuleComponent> LeftArmHitCollision;
 
 	Boss2BaseAction Boss2SuperAction;
 	Boss2DirectionType PlayerDirection;
@@ -273,14 +279,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UWidgetComponent* LockOnWidget;
-
-	UPROPERTY()
-	TObjectPtr<USphereComponent> HeadHitCollision;
-	UPROPERTY()
-	TObjectPtr<USphereComponent> RightArmHitCollision;
-	UPROPERTY()
-	TObjectPtr<USphereComponent> LeftArmHitCollision;
-
 
 	TObjectPtr<APlayerCharacter> PlayerCharacter;
 
