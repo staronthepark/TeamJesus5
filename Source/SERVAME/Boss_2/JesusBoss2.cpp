@@ -722,6 +722,17 @@ void AJesusBoss2::Tick(float DeltaTime)
 	PlayMoveMontage();
 
 	IsGameStart = Boss2AnimInstance->IsStart;
+
+	//본 회전시키는 코드
+	if (IsStartBoneRot)
+		StartBoneRot();
+	else
+	{
+		Boss2AnimInstance->BoneRotateVal = FMath::RInterpTo(Boss2AnimInstance->BoneRotateVal,
+			Boss2AnimInstance->CurrentBoneRotateVal, ReturnDeltaSeconds, ReturnSpeed);
+		GetWorldTimerManager().ClearTimer(BoneRotateTimerHandle);
+	}
+
 }
 
 /*=====================
@@ -901,9 +912,9 @@ float AJesusBoss2::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 
 	BossDataStruct.CharacterHp -= DamageAmount;
 
-	//TODO : 보스 체력 UI
+	IsStartBoneRot = true;
 
-	//TODO : 본 회전 시키기
+	//TODO : 보스 체력 UI
 
 	//TODO : 그로기 관련 코드
 
@@ -997,6 +1008,16 @@ void AJesusBoss2::SpawnInit()
 	AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("Boss2BaseAction")), B2_SUPER_MOVE);
 	CurrentActionTemp = MeleeActionArr[0];
 	AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("Boss2ActionType")), CurrentActionTemp.ActionType);
+}
+
+void AJesusBoss2::StartBoneRot()
+{
+	Boss2AnimInstance->BoneRotateVal = FMath::RInterpTo(Boss2AnimInstance->BoneRotateVal, BoneRotVal, DeltaSeconds, Speed);
+}
+
+void AJesusBoss2::ReSetBoneRot()
+{
+	IsStartBoneRot = false;
 }
 
 /*=====================

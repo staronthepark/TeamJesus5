@@ -180,6 +180,20 @@ public:
 	FTimerHandle CrossSpawnTimerHandle;
 	TQueue<ABaseObjectInPool*> CrossQueue;
 
+	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
+	FRotator BoneRotVal;
+	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
+	float Time;
+	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
+	float Speed;
+	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
+	float DeltaSeconds;
+	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
+	float ReturnSpeed;
+	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
+	float ReturnDeltaSeconds;
+	FTimerHandle BoneRotateTimerHandle;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss2Data")
 	FBoss2DataStruct BossDataStruct;
 
@@ -230,6 +244,7 @@ public:
 	bool IsRunArrived = false;
 	bool IsGameStart = false;
 	bool IsArrived;
+	bool IsStartBoneRot;
 
 	FVector LastPlayerLoc;
 
@@ -326,6 +341,8 @@ public:
 	FVector Lerp(const FVector& start, const FVector& end, const float t);
 	Boss2ActionTemp GetRandomPattern(float Dist);
 	void SpawnInit();
+	void StartBoneRot();
+	void ReSetBoneRot();
 
 	/*======================
 	*		UFUNCTION
