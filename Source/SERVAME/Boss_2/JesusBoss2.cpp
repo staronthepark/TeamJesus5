@@ -729,9 +729,9 @@ void AJesusBoss2::BeginPlay()
 
 	HitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
 	HeadHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
-	LeftArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneLArm);
-	RightArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneRArm);
-
+	LeftArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneRArm);
+	RightArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneLArm);
+	
 	//임시로 변수 설정
 	CanMove = true;
 	IsLockOn = false;
@@ -771,6 +771,8 @@ void AJesusBoss2::Tick(float DeltaTime)
 	//	GetWorldTimerManager().ClearTimer(BoneRotateTimerHandle);
 	//}
 	BoneMap[Boss2AnimInstance->CurrentBoneType]();
+
+	UE_LOG(LogTemp, Warning, TEXT("%d"), Boss2AnimInstance->CurrentBoneType);
 }
 
 /*=====================
@@ -1066,6 +1068,21 @@ void AJesusBoss2::OffHitCollision()
 	HeadHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	LeftArmHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	RightArmHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void AJesusBoss2::SetBoneHead(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	Boss2AnimInstance->CurrentBoneType = Boss2BoneRotateType::HEAD;
+}
+
+void AJesusBoss2::SetBoneLArm(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	Boss2AnimInstance->CurrentBoneType = Boss2BoneRotateType::LEFTARM;
+}
+
+void AJesusBoss2::SetBoneRArm(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	Boss2AnimInstance->CurrentBoneType = Boss2BoneRotateType::RIGHTARM;
 }
 
 void AJesusBoss2::ActivateHitCollision()
