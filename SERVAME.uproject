@@ -11,8 +11,7 @@
 			"AdditionalDependencies": [
 				"CinematicCamera",
 				"ActorSequence",
-				"Engine",
-				"AnimGraph"
+				"Engine"
 			]
 		}
 	],
