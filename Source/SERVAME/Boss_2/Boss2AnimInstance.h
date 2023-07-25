@@ -22,6 +22,15 @@ enum class Boss2AnimationType : uint8
 	SCREAMATTACK,
 	HEADATTACK,
 	CHARGE,
+	HEADING,
+};
+
+UENUM(BlueprintType)
+enum class Boss2BoneRotateType : uint8
+{
+	HEAD = 0,
+	LEFTARM,
+	RIGHTARM,
 };
 
 DECLARE_MULTICAST_DELEGATE(FOnCrossFall);
@@ -53,7 +62,16 @@ public:
 	FRotator CurrentBoneRotateVal = FRotator::ZeroRotator;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
-	FRotator BoneRotateVal = FRotator::ZeroRotator;
+	FRotator HeadBoneRotateVal = FRotator::ZeroRotator;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	FRotator LArmBoneRotateVal = FRotator::ZeroRotator;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	FRotator RArmBoneRotateVal = FRotator::ZeroRotator;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	Boss2BoneRotateType CurrentBoneType;
 
 protected:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;

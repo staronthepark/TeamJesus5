@@ -45,6 +45,7 @@ enum Boss2ActionType
 	B2_FALLTHECROSS_LEFT UMETA(DisplayName = "B2_FALLTHECROSS_LEFT"),
 	B2_FALLTHECROSS_RIGHT UMETA(DisplayName = "B2_FALLTHECROSS_RIGHT"),
 	B2_FALLTHECROSS_BACK UMETA(DisplayName = "B2_FALLTHECROSS_BACK"),
+	B2_HEADING UMETA(DisplayName="B2_HEADING"),
 	B2_ENUMEND,
 };
 
@@ -178,7 +179,12 @@ public:
 	TQueue<ABaseObjectInPool*> CrossQueue;
 
 	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
-	FRotator BoneRotVal;
+	FRotator HeadBoneRotVal;
+	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
+	FRotator LArmBoneRotVal;
+	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
+	FRotator RArmBoneRotVal;
+
 	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
 	float Time;
 	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
@@ -190,6 +196,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
 	float ReturnDeltaSeconds;
 	FTimerHandle BoneRotateTimerHandle;
+	TMap<Boss2BoneRotateType, TFunction<void()>> BoneMap;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss2Data")
 	FBoss2DataStruct BossDataStruct;
@@ -217,6 +224,12 @@ public:
 	TObjectPtr<USceneComponent> AreaAtkPos;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USphereComponent> HeadAtkCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UCapsuleComponent> HeadHitCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UCapsuleComponent> RightArmHitCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UCapsuleComponent> LeftArmHitCollision;
 
 	Boss2BaseAction Boss2SuperAction;
 	Boss2DirectionType PlayerDirection;
@@ -284,7 +297,6 @@ public:
 	TMap<Boss2AttackType, TFunction<void(Boss2ActionTemp* Temp)>> AddArrMap;
 	TMap<Boss2AttackType, TFunction<void(Boss2ActionTemp* Temp)>> ChangePercentageMap;
 	TMap<Boss2AttackType, TFunction<void()>> InitPercentageMap;
-	TMap<ActionType, TFunction<void()>> HitMap;
 
 	TArray<Boss2ActionTemp> MeleeActionArr;
 	TArray<Boss2ActionTemp> MeleeTempArr;
@@ -319,7 +331,8 @@ public:
 	virtual void RespawnCharacter() override;
 	virtual void IsNotifyActive(bool value) override;
 	virtual void PlayExecutionAnimation() override;
-	virtual void ActivateLockOnImage(bool value)override;
+	virtual void ActivateLockOnImage(bool value) override;
+	virtual void ActivateHitCollision() override;
 
 	/*=====================
 	*		Function
@@ -342,12 +355,19 @@ public:
 	void SpawnInit();
 	void StartBoneRot();
 	void ReSetBoneRot();
+	void OffHitCollision();
 
 	/*======================
 	*		UFUNCTION
 	======================*/
 	UFUNCTION()
 	void AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void SetBoneHead(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void SetBoneLArm(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void SetBoneRArm(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 
 	/*=====================
@@ -362,7 +382,6 @@ public:
 	void LeftCollisionDisableNotify();
 	void HeadCollisionEnableNotify();
 	void HeadCollisionDisableNotify();
-
 	void LockOn();
 	void LockOff();
 

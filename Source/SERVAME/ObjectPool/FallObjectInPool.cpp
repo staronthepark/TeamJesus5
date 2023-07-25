@@ -22,6 +22,9 @@ AFallObjectInPool::AFallObjectInPool()
 
 	CrossBurstEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Cross Burst Effect"));
 	CrossBurstEffect->SetupAttachment(RootComponent);
+
+	DustEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Dust Effect"));
+	DustEffect->SetupAttachment(RootComponent);
 }
 
 void AFallObjectInPool::BeginPlay()
@@ -57,6 +60,7 @@ void AFallObjectInPool::SetActive(bool active)
 
 	CrossEffect->Activate();
 	CrossBurstEffect->Deactivate();
+	DustEffect->Deactivate();
 
 	if (LifeTime > 0 && active)
 	{
@@ -81,4 +85,5 @@ void AFallObjectInPool::OnGroundOverlap(UPrimitiveComponent* OverlappedComponent
 	HitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	CrossBurstEffect->Activate();
+	DustEffect->Activate();
 }
