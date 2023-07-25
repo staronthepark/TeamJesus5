@@ -102,7 +102,7 @@ AJesusBoss2::AJesusBoss2()
 
 	MontageStartMap.Add(Boss2AnimationType::DOWNSMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->AreaAtkPos->SetupAttachment(Boss2->GetMesh(), FName("RHand"));
+			Boss2->AreaAtkPos->AttachToComponent(Boss2->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("RHand"));
 			Boss2->IsAttackMontageEnd = false;
 			Boss2->CanMove = false;
 		}));
@@ -158,7 +158,7 @@ AJesusBoss2::AJesusBoss2()
 
 	MontageStartMap.Add(Boss2AnimationType::HEADING, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->AreaAtkPos->SetupAttachment(Boss2->GetMesh(), FName("Bip001-Head"));
+			Boss2->AreaAtkPos->AttachToComponent(Boss2->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("Bip001-Head"));
 			Boss2->IsAttackMontageEnd = false;
 			Boss2->CanMove = false;
 		}));
