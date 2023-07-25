@@ -26,6 +26,13 @@ struct FStartSetting
 		float DPI;
 };
 
+UENUM()
+enum class Language :uint8
+{
+	ENG		UMETA(DisplayName = "English"),
+	KOR		UMETA(DisplayName = "Korean")
+};
+
 UCLASS()
 class SERVAME_API UJesusGameInstance : public UGameInstance
 {
@@ -38,18 +45,22 @@ public:
 
 		void SetPostProcessBrightness(float value);
 		float GetPostProcessBrightness();
+		void SetLanguage(Language value);
 
 		FStartSetting PlayerOptionSetting;
 
 		UPROPERTY()
-			TSubclassOf<UMainMenuUI> MainMenuWidgetClass;
+		TSubclassOf<UMainMenuUI> MainMenuWidgetClass;
 
 		UPROPERTY()
-			UMainMenuUI* MainMenuWidget;
+		UMainMenuUI* MainMenuWidget;
 
 		UPROPERTY()
 		TSubclassOf<UDebugLogWidget> DebugLogWidgetClass;
 
 		UPROPERTY()
 		UDebugLogWidget* DebugLogWidget;
+
+		UPROPERTY()
+		Language language;
 };
