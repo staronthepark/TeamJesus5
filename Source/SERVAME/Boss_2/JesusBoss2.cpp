@@ -456,7 +456,7 @@ AJesusBoss2::AJesusBoss2()
 				}
 
 				MeleeActionArr[i].IsAddPercentage = true;
-				MeleeActionArr[i].Percentage += DecreasePercentageVal / MeleeActionArr.Num() - 1;
+				MeleeActionArr[i].Percentage += DecreasePercentageVal / (MeleeActionArr.Num() - 1);
 				MeleePercentageVec.push_back(MeleeActionArr[i].Percentage);
 			}
 		}));
@@ -475,7 +475,7 @@ AJesusBoss2::AJesusBoss2()
 				}
 
 				RangeActionArr[i].IsAddPercentage = true;
-				RangeActionArr[i].Percentage += DecreasePercentageVal / RangeActionArr.Num() - 1;
+				RangeActionArr[i].Percentage += DecreasePercentageVal / (RangeActionArr.Num() - 1);
 				RangePercentageVec.push_back(RangeActionArr[i].Percentage);
 			}
 		}));
@@ -494,7 +494,7 @@ AJesusBoss2::AJesusBoss2()
 				}
 
 				FollowUpActionArr[i].IsAddPercentage = true;
-				FollowUpActionArr[i].Percentage += DecreasePercentageVal / FollowUpActionArr.Num() - 2;
+				FollowUpActionArr[i].Percentage += DecreasePercentageVal / (FollowUpActionArr.Num() - 1);
 				FollowUpPercentageVec.push_back(FollowUpActionArr[i].Percentage);
 			}
 		}));
@@ -513,7 +513,7 @@ AJesusBoss2::AJesusBoss2()
 				}
 
 				LeftActionArr[i].IsAddPercentage = true;
-				LeftActionArr[i].Percentage += DecreasePercentageVal / LeftActionArr.Num() - 2;
+				LeftActionArr[i].Percentage += DecreasePercentageVal / (LeftActionArr.Num() - 1);
 				LeftPercentageVec.push_back(LeftActionArr[i].Percentage);
 			}
 		}));
@@ -532,7 +532,7 @@ AJesusBoss2::AJesusBoss2()
 				}
 
 				RightActionArr[i].IsAddPercentage = true;
-				RightActionArr[i].Percentage += DecreasePercentageVal / RightActionArr.Num() - 1;
+				RightActionArr[i].Percentage += DecreasePercentageVal / (RightActionArr.Num() - 1);
 				RightPercentageVec.push_back(RightActionArr[i].Percentage);
 			}
 		}));
@@ -551,7 +551,7 @@ AJesusBoss2::AJesusBoss2()
 				}
 
 				BackActionArr[i].IsAddPercentage = true;
-				BackActionArr[i].Percentage += DecreasePercentageVal / BackActionArr.Num() - 1;
+				BackActionArr[i].Percentage += DecreasePercentageVal / (BackActionArr.Num() - 1);
 				BackPercentageVec.push_back(BackActionArr[i].Percentage);
 			}
 		}));
