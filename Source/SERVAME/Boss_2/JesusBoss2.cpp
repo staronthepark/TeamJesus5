@@ -102,6 +102,7 @@ AJesusBoss2::AJesusBoss2()
 
 	MontageStartMap.Add(Boss2AnimationType::DOWNSMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
+			Boss2->AreaAtkPos->SetupAttachment(Boss2->GetMesh(), FName("RHand"));
 			Boss2->IsAttackMontageEnd = false;
 			Boss2->CanMove = false;
 		}));
@@ -157,6 +158,7 @@ AJesusBoss2::AJesusBoss2()
 
 	MontageStartMap.Add(Boss2AnimationType::HEADING, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
+			Boss2->AreaAtkPos->SetupAttachment(Boss2->GetMesh(), FName("Bip001-Head"));
 			Boss2->IsAttackMontageEnd = false;
 			Boss2->CanMove = false;
 		}));
@@ -217,7 +219,7 @@ AJesusBoss2::AJesusBoss2()
 
 	BossAttackMap.Add(Boss2ActionType::B2_HEADING, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::HEADATTACK, Boss2, Boss2->FollowUpActionArr, Boss2AttackType::B2_FOLLOWUP);
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::HEADING, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
 		}));
 
 	//====================================공격타입에 맞는 공격이 끝났을 때 실행되는 맵====================================
