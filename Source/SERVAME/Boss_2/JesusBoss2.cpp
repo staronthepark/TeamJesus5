@@ -155,6 +155,16 @@ AJesusBoss2::AJesusBoss2()
 			Boss2->IsLockOn = true;
 		}));
 
+	MontageStartMap.Add(Boss2AnimationType::HEADING, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->IsAttackMontageEnd = false;
+			Boss2->CanMove = false;
+		}));
+	MontageEndMap.Add(Boss2AnimationType::HEADING, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->CanMove = true;
+			Boss2->IsLockOn = true;
+		}));
 
 	//===========================================공격 실행=========================================================
 
@@ -203,6 +213,11 @@ AJesusBoss2::AJesusBoss2()
 	BossAttackMap.Add(Boss2ActionType::B2_CHARGE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CHARGE, Boss2, Boss2->RangeActionArr, Boss2AttackType::B2_RANGE);
+		}));
+
+	BossAttackMap.Add(Boss2ActionType::B2_HEADING, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::HEADATTACK, Boss2, Boss2->FollowUpActionArr, Boss2AttackType::B2_FOLLOWUP);
 		}));
 
 	//====================================공격타입에 맞는 공격이 끝났을 때 실행되는 맵====================================
@@ -734,7 +749,7 @@ void AJesusBoss2::BeginPlay()
 	
 	//임시로 변수 설정
 	CanMove = true;
-	IsLockOn = false;
+	IsLockOn = true;
 	Boss2AnimInstance->IsStart = true;
 }
 

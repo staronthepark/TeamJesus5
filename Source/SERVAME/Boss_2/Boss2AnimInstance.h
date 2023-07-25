@@ -22,6 +22,7 @@ enum class Boss2AnimationType : uint8
 	SCREAMATTACK,
 	HEADATTACK,
 	CHARGE,
+	HEADING,
 };
 
 UENUM(BlueprintType)
