@@ -24,6 +24,10 @@ enum class Boss2AnimationType : uint8
 	CHARGE,
 	HEADING,
 	VOMITFALL,
+	ELBOWSPIN,
+	HUNTJUMP,
+	JUMPEXPLOSION,
+	THROWSTONE,
 };
 
 UENUM(BlueprintType)
