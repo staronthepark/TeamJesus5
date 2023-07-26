@@ -723,6 +723,8 @@ void AJesusBoss2::PostInitializeComponents()
 		Boss2AnimInstance->OnHeadDisable.AddUObject(this, &AJesusBoss2::HeadCollisionDisableNotify);
 		Boss2AnimInstance->OnLockOn.AddUObject(this, &AJesusBoss2::LockOn);
 		Boss2AnimInstance->OnLockOff.AddUObject(this, &AJesusBoss2::LockOff);
+		Boss2AnimInstance->OnJumpStart.AddUObject(this, &AJesusBoss2::SlerpJump);
+		Boss2AnimInstance->OnJumpEnd.AddUObject(this, &AJesusBoss2::SlerpJumpEnd);
 	}
 }
 
@@ -777,6 +779,9 @@ void AJesusBoss2::Tick(float DeltaTime)
 
 	if (AttackLockOn)
 		RotateToPlayerInterp();
+
+	if (JumpMoveStart)
+		JumpMove();
 
 	PlayMoveMontage();
 
@@ -1089,6 +1094,24 @@ void AJesusBoss2::OffHitCollision()
 	HeadHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	LeftArmHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	RightArmHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void AJesusBoss2::SlerpJump()
+{
+	GetCapsuleComponent()->SetCollisionProfileName("IgnorePlayer");
+	JumpMoveStart = true;
+}
+
+void AJesusBoss2::SlerpJumpEnd()
+{
+	JumpMoveStart = false;
+	GetCapsuleComponent()->SetCollisionProfileName("AIPhysics");
+}
+
+void AJesusBoss2::JumpMove()
+{
+	auto NewLoc = Lerp(GetActorLocation(), LastPlayerLoc, 0.05f);
+	SetActorLocation(NewLoc);
 }
 
 void AJesusBoss2::SetBoneHead(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

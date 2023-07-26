@@ -265,6 +265,7 @@ public:
 	bool IsGameStart = false;
 	bool IsArrived;
 	bool IsStartBoneRot;
+	bool JumpMoveStart;
 
 	FVector LastPlayerLoc;
 
@@ -364,6 +365,9 @@ public:
 	void StartBoneRot();
 	void ReSetBoneRot();
 	void OffHitCollision();
+	void SlerpJump();
+	void SlerpJumpEnd();
+	void JumpMove();
 
 	/*======================
 	*		UFUNCTION

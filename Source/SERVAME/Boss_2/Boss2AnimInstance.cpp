@@ -43,3 +43,8 @@ void UBoss2AnimInstance::AnimNotify_OnHeadDisable() { OnHeadDisable.Broadcast();
 void UBoss2AnimInstance::AnimNotify_LockOn() { OnLockOn.Broadcast(); }
 
 void UBoss2AnimInstance::AnimNotify_LockOff() { OnLockOff.Broadcast(); }
+
+void UBoss2AnimInstance::AnimNotify_JumpStart() { OnJumpStart.Broadcast(); }
+
+void UBoss2AnimInstance::AnimNotify_JumpEnd() { OnJumpEnd.Broadcast(); }
+
