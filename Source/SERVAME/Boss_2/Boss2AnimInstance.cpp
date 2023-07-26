@@ -22,6 +22,8 @@ void UBoss2AnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UBoss2AnimInstance::AnimNotify_CrossFall() { OnCrossFall.Broadcast(); }
 
+void UBoss2AnimInstance::AnimNotify_VomitFall() { OnVomitFall.Broadcast(); }
+
 void UBoss2AnimInstance::AnimNotify_OnStart() { OnStart.Broadcast(); }
 
 void UBoss2AnimInstance::AnimNotify_OnEnd() { OnEnd.Broadcast(); }

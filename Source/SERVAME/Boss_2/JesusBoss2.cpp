@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "..\Manager\CombatManager.h"
+#include "..\ObjectPool\VomitObjectInPool.h"
 #include "DrawDebugHelpers.h"
 
 AJesusBoss2::AJesusBoss2()
@@ -711,6 +712,7 @@ void AJesusBoss2::PostInitializeComponents()
 	if (Boss2AnimInstance)
 	{
 		Boss2AnimInstance->OnCrossFall.AddUObject(this, &AJesusBoss2::OnCrossFall);
+		Boss2AnimInstance->OnVomitFall.AddUObject(this, &AJesusBoss2::OnVomitFall);
 		Boss2AnimInstance->OnStart.AddUObject(this, &AJesusBoss2::OnStart);
 		Boss2AnimInstance->OnEnd.AddUObject(this, &AJesusBoss2::OnEnd);
 		Boss2AnimInstance->OnRightEnable.AddUObject(this, &AJesusBoss2::RightCollisionEnableNotify);
@@ -727,7 +729,7 @@ void AJesusBoss2::PostInitializeComponents()
 void AJesusBoss2::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	SetMetaData();
 	AIController = Cast<ABoss2AIController>(GetController());
 	Boss2ActionEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("Boss2ActionType"), true);
@@ -754,7 +756,7 @@ void AJesusBoss2::BeginPlay()
 	IsLockOn = true;
 	Boss2AnimInstance->IsStart = true;
 
-	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[34].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	OnVomitFall();
 }
 
 void AJesusBoss2::Tick(float DeltaTime)
@@ -1170,6 +1172,44 @@ void AJesusBoss2::OnCrossFall()
 			}
 
 		}), SpawnDelay, true);
+}
+
+void AJesusBoss2::OnVomitFall()
+{
+	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
+
+	if (NavSystem == nullptr)
+		return;
+
+	TArray<AVomitObjectInPool*> VomitArr;
+
+	for (int i = 0; i < VomitCount; i++)
+	{
+		auto PoolObject = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[34].ObjClass,
+			HeadAtkCollision->GetComponentLocation(),
+			FRotator::ZeroRotator);
+		auto CastObject = Cast<AVomitObjectInPool>(PoolObject);
+		CastObject->SphereCollision->AddImpulse(FVector(0, 0, 1200));
+		CastObject->ProjectileEffect->Activate();
+		VomitArr.Add(CastObject);
+	}
+
+	GetWorld()->GetTimerManager().SetTimer(VomitTimerHandle, FTimerDelegate::CreateLambda([=]()
+		{	
+			FNavLocation RandomLocation;
+
+			for (int i = 0; i < VomitArr.Num(); i++)
+			{
+				if (NavSystem->GetRandomPointInNavigableRadius(PlayerCharacter->GetActorLocation(), VomitMaxRange, RandomLocation))
+				{
+					VomitArr[i]->arcValue = 0.5f;
+					VomitArr[i]->ShootProjectile(RandomLocation.Location);
+				}
+
+				if(i == VomitArr.Num()-1)
+					GetWorld()->GetTimerManager().ClearTimer(VomitTimerHandle);
+			}
+		}), delay, false);
 }
 
 void AJesusBoss2::OnStart()

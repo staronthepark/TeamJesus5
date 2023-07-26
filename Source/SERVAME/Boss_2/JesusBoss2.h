@@ -198,6 +198,14 @@ public:
 	FTimerHandle BoneRotateTimerHandle;
 	TMap<Boss2BoneRotateType, TFunction<void()>> BoneMap;
 
+	UPROPERTY(EditAnywhere, Category = "Vomit")
+	int VomitCount = 5;
+	UPROPERTY(EditAnywhere, Category = "Vomit")
+	float delay = 5;
+	UPROPERTY(EditAnywhere, Category = "Vomit")
+	float VomitMaxRange;
+	FTimerHandle VomitTimerHandle;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss2Data")
 	FBoss2DataStruct BossDataStruct;
 
@@ -374,6 +382,7 @@ public:
 			Notify
 	=====================*/
 	void OnCrossFall();
+	void OnVomitFall();
 	void OnStart();
 	void OnEnd();
 	void RightCollisionEnableNotify();

@@ -23,6 +23,7 @@ enum class Boss2AnimationType : uint8
 	HEADATTACK,
 	CHARGE,
 	HEADING,
+	VOMITFALL,
 };
 
 UENUM(BlueprintType)
@@ -34,6 +35,7 @@ enum class Boss2BoneRotateType : uint8
 };
 
 DECLARE_MULTICAST_DELEGATE(FOnCrossFall);
+DECLARE_MULTICAST_DELEGATE(FOnVomitFall);
 DECLARE_MULTICAST_DELEGATE(FOnStart);
 DECLARE_MULTICAST_DELEGATE(FOnEnd);
 DECLARE_MULTICAST_DELEGATE(FOnRightEnable);
@@ -80,6 +82,8 @@ private:
 	UFUNCTION()
 	void AnimNotify_CrossFall();
 	UFUNCTION()
+	void AnimNotify_VomitFall();
+	UFUNCTION()
 	void AnimNotify_OnStart();
 	UFUNCTION()
 	void AnimNotify_OnEnd();
@@ -102,6 +106,7 @@ private:
 
 public:
 	FOnCrossFall OnCrossFall;
+	FOnVomitFall OnVomitFall;
 	FOnStart OnStart;
 	FOnEnd OnEnd;
 	FOnRightEnable OnRightEnable;

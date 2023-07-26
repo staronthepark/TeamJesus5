@@ -24,29 +24,32 @@ class SERVAME_API AVomitObjectInPool : public ABaseObjectInPool
 
 	AVomitObjectInPool();
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement")
-	TObjectPtr<UProjectileMovementComponent> ProjectileMoveMentComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Vomit")
-	USceneComponent* RootComp;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement")
+	//TObjectPtr<UProjectileMovementComponent> ProjectileMoveMentComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vomit")
 	float LifeTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vomit")
-	float Speed;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vomit")
+	float Speed = 1.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vomit")
 	float Damage;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vomit")
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vomit")
 	FVector startLoc = FVector::ZeroVector;      // 발사 지점
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vomit")
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vomit")
 	FVector targetLoc = FVector(0, 1000, 1000);  // 타겟 지점.
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vomit")
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vomit")
 	float arcValue = 0.5f;                       // ArcParam (0.0-1.0)
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Vomit")
+	bool debugLine = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Vomit")
+	TObjectPtr<USceneComponent> RootComp;
 
 	UPROPERTY(EditAnywhere, Category = "Vomit")
 	TObjectPtr<USphereComponent> SphereCollision;
@@ -71,6 +74,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
 	virtual void ReturnObject()override;
+
+	void ShootProjectile(FVector target);
 
 	UFUNCTION()
 	void OnCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
