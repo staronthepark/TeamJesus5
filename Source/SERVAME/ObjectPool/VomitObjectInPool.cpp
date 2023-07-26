@@ -34,18 +34,36 @@ AVomitObjectInPool::AVomitObjectInPool()
 
 void AVomitObjectInPool::SetActive(bool active)
 {
+	FVector outVelocity = FVector::ZeroVector;   // 결과 Velocity
+	
+	if (UGameplayStatics::SuggestProjectileVelocity_CustomArc(this, outVelocity, startLoc, targetLoc, GetWorld()->GetGravityZ(), arcValue))
+	{
+		FPredictProjectilePathParams predictParams(20.0f, startLoc, outVelocity, 15.0f);   // 20: tracing 보여질 프로젝타일 크기, 15: 시물레이션되는 Max 시간(초)
+		predictParams.DrawDebugTime = 15.0f;     //디버그 라인 보여지는 시간 (초)
+		predictParams.DrawDebugType = EDrawDebugTrace::Type::ForDuration;  // DrawDebugTime 을 지정하면 EDrawDebugTrace::Type::ForDuration 필요.
+		predictParams.OverrideGravityZ = GetWorld()->GetGravityZ();
+		FPredictProjectilePathResult result;
+		UGameplayStatics::PredictProjectilePath(this, predictParams, result);
+
+		//objectToSend->AddImpluse(outVelocity); // objectToSend는 발사체
+	}
+}
+
+
+void AVomitObjectInPool::BeginPlay()
+{
+	Super::BeginPlay();
+
 }
 
 void AVomitObjectInPool::Tick(float DeltaTime)
 {
 }
 
-void AVomitObjectInPool::BeginPlay()
-{
-}
-
 void AVomitObjectInPool::ReturnObject()
 {
+	Super::ReturnObject();
+
 }
 
 void AVomitObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
