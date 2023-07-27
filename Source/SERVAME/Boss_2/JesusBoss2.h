@@ -45,6 +45,12 @@ enum Boss2ActionType
 	B2_FALLTHECROSS_LEFT UMETA(DisplayName = "B2_FALLTHECROSS_LEFT"),
 	B2_FALLTHECROSS_RIGHT UMETA(DisplayName = "B2_FALLTHECROSS_RIGHT"),
 	B2_FALLTHECROSS_BACK UMETA(DisplayName = "B2_FALLTHECROSS_BACK"),
+	B2_HEADING UMETA(DisplayName="B2_HEADING"),
+	B2_VOMITFALL UMETA(DisplayNAme = "B2_VOMITFALL"),
+	B2_ELBOWSPIN UMETA(DisplayNAme = "B2_ELBOWSPIN"),
+	B2_HUNTJUMP UMETA(DisplayNAme = "B2_HUNTJUMP"),
+	B2_JUMPEXPLOSION UMETA(DisplayNAme = "B2_JUMPEXPLOSION"),
+	B2_THROWSTONE UMETA(DisplayNAme = "B2_THROWSTONE"),
 	B2_ENUMEND,
 };
 
@@ -68,6 +74,15 @@ enum Boss2AttackType
 	B2_RIGHTATK,
 	B2_BACKATK,
 	NONE,
+};
+
+UENUM()
+enum Boss2CollisionType
+{
+	HEAD,
+	LEFTARM,
+	RIGHTARM,
+	CHARGE,
 };
 
 USTRUCT()
@@ -197,6 +212,14 @@ public:
 	FTimerHandle BoneRotateTimerHandle;
 	TMap<Boss2BoneRotateType, TFunction<void()>> BoneMap;
 
+	UPROPERTY(EditAnywhere, Category = "Vomit")
+	int VomitCount = 5;
+	UPROPERTY(EditAnywhere, Category = "Vomit")
+	float delay = 5;
+	UPROPERTY(EditAnywhere, Category = "Vomit")
+	float VomitMaxRange;
+	FTimerHandle VomitTimerHandle;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss2Data")
 	FBoss2DataStruct BossDataStruct;
 
@@ -223,6 +246,8 @@ public:
 	TObjectPtr<USceneComponent> AreaAtkPos;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USphereComponent> HeadAtkCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UCapsuleComponent> ChargeAtkCollision;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UCapsuleComponent> HeadHitCollision;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -256,6 +281,7 @@ public:
 	bool IsGameStart = false;
 	bool IsArrived;
 	bool IsStartBoneRot;
+	bool JumpMoveStart;
 
 	FVector LastPlayerLoc;
 
@@ -296,6 +322,7 @@ public:
 	TMap<Boss2AttackType, TFunction<void(Boss2ActionTemp* Temp)>> AddArrMap;
 	TMap<Boss2AttackType, TFunction<void(Boss2ActionTemp* Temp)>> ChangePercentageMap;
 	TMap<Boss2AttackType, TFunction<void()>> InitPercentageMap;
+	TMap<Boss2CollisionType, TFunction<void(bool OnOff)>> CollisionMap;
 
 	TArray<Boss2ActionTemp> MeleeActionArr;
 	TArray<Boss2ActionTemp> MeleeTempArr;
@@ -355,6 +382,9 @@ public:
 	void StartBoneRot();
 	void ReSetBoneRot();
 	void OffHitCollision();
+	void SlerpJump();
+	void SlerpJumpEnd();
+	void JumpMove();
 
 	/*======================
 	*		UFUNCTION
@@ -373,14 +403,9 @@ public:
 			Notify
 	=====================*/
 	void OnCrossFall();
+	void OnVomitFall();
 	void OnStart();
 	void OnEnd();
-	void RightCollisionEnableNotify();
-	void RightCollisionDisableNotify();
-	void LeftCollisionEnableNotify();
-	void LeftCollisionDisableNotify();
-	void HeadCollisionEnableNotify();
-	void HeadCollisionDisableNotify();
 	void LockOn();
 	void LockOff();
 
