@@ -7,9 +7,6 @@ AFallObjectInPool::AFallObjectInPool()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	RootComp = CreateDefaultSubobject<USceneComponent>("RootSceneComp");
-	RootComponent = RootComp;
-
 	HitCollision = CreateDefaultSubobject<UBoxComponent>("HitCollision");
 	HitCollision->SetupAttachment(RootComponent);
 	HitCollision->SetCollisionProfileName("AIProjectile");
