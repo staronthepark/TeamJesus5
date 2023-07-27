@@ -3,3 +3,28 @@
 
 #include "AIWeaponCollision_NotifyState.h"
 
+void UAIWeaponCollision_NotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
+{
+	if (MeshComp && MeshComp->GetOwner())
+	{
+		Boss2 = Cast<AJesusBoss2>(MeshComp->GetOwner());
+
+		if (Boss2)
+		{
+			Boss2->CollisionMap[CollisionType](true);
+		}
+	}
+}
+
+void UAIWeaponCollision_NotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
+{
+	if (MeshComp && MeshComp->GetOwner())
+	{
+		Boss2 = Cast<AJesusBoss2>(MeshComp->GetOwner());
+
+		if (Boss2)
+		{
+			Boss2->CollisionMap[CollisionType](false);
+		}
+	}
+}

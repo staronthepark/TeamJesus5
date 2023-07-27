@@ -764,6 +764,50 @@ AJesusBoss2::AJesusBoss2()
 				GetWorldTimerManager().ClearTimer(BoneRotateTimerHandle);
 			}
 		}));
+
+	//=======================================보스 공격 콜리전 부위별로 켜줌=========================================
+
+	CollisionMap.Add(Boss2CollisionType::HEAD, TFunction<void(bool)>([=](bool OnOff)
+		{
+			if(OnOff)
+				HeadAtkCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			else
+			{
+				HeadAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				Damage = 0;
+			}
+		}));
+	CollisionMap.Add(Boss2CollisionType::LEFTARM, TFunction<void(bool)>([=](bool OnOff)
+		{
+			if (OnOff)
+				LeftArmHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			else
+			{
+				LeftArmHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				Damage = 0;
+			}
+		}));
+	CollisionMap.Add(Boss2CollisionType::RIGHTARM, TFunction<void(bool)>([=](bool OnOff)
+		{
+			if (OnOff)
+				RightArmHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			else
+			{
+				RightArmHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				Damage = 0;
+			}
+		}));
+	CollisionMap.Add(Boss2CollisionType::CHARGE, TFunction<void(bool)>([=](bool OnOff)
+		{
+			if (OnOff)
+				ChargeAtkCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			else
+			{
+				ChargeAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				Damage = 0;
+			}
+		}));
+
 }
 
 AJesusBoss2::~AJesusBoss2()
@@ -799,12 +843,6 @@ void AJesusBoss2::PostInitializeComponents()
 		Boss2AnimInstance->OnVomitFall.AddUObject(this, &AJesusBoss2::OnVomitFall);
 		Boss2AnimInstance->OnStart.AddUObject(this, &AJesusBoss2::OnStart);
 		Boss2AnimInstance->OnEnd.AddUObject(this, &AJesusBoss2::OnEnd);
-		Boss2AnimInstance->OnRightEnable.AddUObject(this, &AJesusBoss2::RightCollisionEnableNotify);
-		Boss2AnimInstance->OnRightDisable.AddUObject(this, &AJesusBoss2::RightCollisionDisableNotify);
-		Boss2AnimInstance->OnLeftEnable.AddUObject(this, &AJesusBoss2::LeftCollisionEnableNotify);
-		Boss2AnimInstance->OnLeftDisable.AddUObject(this, &AJesusBoss2::LeftCollisionDisableNotify);
-		Boss2AnimInstance->OnHeadEnable.AddUObject(this, &AJesusBoss2::HeadCollisionEnableNotify);
-		Boss2AnimInstance->OnHeadDisable.AddUObject(this, &AJesusBoss2::HeadCollisionDisableNotify);
 		Boss2AnimInstance->OnLockOn.AddUObject(this, &AJesusBoss2::LockOn);
 		Boss2AnimInstance->OnLockOff.AddUObject(this, &AJesusBoss2::LockOff);
 		Boss2AnimInstance->OnJumpStart.AddUObject(this, &AJesusBoss2::SlerpJump);
@@ -1363,39 +1401,6 @@ void AJesusBoss2::OnEnd()
 	IsStart.Exchange(false);
 	IsAttackMontageEnd = true;
 	IsMontagePlay = false;
-}
-
-void AJesusBoss2::LeftCollisionEnableNotify()
-{
-	LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-}
-
-void AJesusBoss2::LeftCollisionDisableNotify()
-{
-	LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	Damage = 0;
-}
-
-void AJesusBoss2::RightCollisionEnableNotify()
-{
-	RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-}
-
-void AJesusBoss2::RightCollisionDisableNotify()
-{
-	RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	Damage = 0;
-}
-
-void AJesusBoss2::HeadCollisionEnableNotify()
-{
-	HeadAtkCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-}
-
-void AJesusBoss2::HeadCollisionDisableNotify()
-{
-	HeadAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	Damage = 0;
 }
 
 void AJesusBoss2::LockOn()

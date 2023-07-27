@@ -76,6 +76,15 @@ enum Boss2AttackType
 	NONE,
 };
 
+UENUM()
+enum Boss2CollisionType
+{
+	HEAD,
+	LEFTARM,
+	RIGHTARM,
+	CHARGE,
+};
+
 USTRUCT()
 struct FBoss2Action : public FTableRowBase
 {
@@ -313,6 +322,7 @@ public:
 	TMap<Boss2AttackType, TFunction<void(Boss2ActionTemp* Temp)>> AddArrMap;
 	TMap<Boss2AttackType, TFunction<void(Boss2ActionTemp* Temp)>> ChangePercentageMap;
 	TMap<Boss2AttackType, TFunction<void()>> InitPercentageMap;
+	TMap<Boss2CollisionType, TFunction<void(bool OnOff)>> CollisionMap;
 
 	TArray<Boss2ActionTemp> MeleeActionArr;
 	TArray<Boss2ActionTemp> MeleeTempArr;
@@ -396,12 +406,6 @@ public:
 	void OnVomitFall();
 	void OnStart();
 	void OnEnd();
-	void RightCollisionEnableNotify();
-	void RightCollisionDisableNotify();
-	void LeftCollisionEnableNotify();
-	void LeftCollisionDisableNotify();
-	void HeadCollisionEnableNotify();
-	void HeadCollisionDisableNotify();
 	void LockOn();
 	void LockOff();
 
