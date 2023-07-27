@@ -769,7 +769,7 @@ AJesusBoss2::AJesusBoss2()
 
 	CollisionMap.Add(Boss2CollisionType::HEAD, TFunction<void(bool)>([=](bool OnOff)
 		{
-			if(OnOff)
+			if (OnOff)
 				HeadAtkCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			else
 			{
@@ -780,20 +780,20 @@ AJesusBoss2::AJesusBoss2()
 	CollisionMap.Add(Boss2CollisionType::LEFTARM, TFunction<void(bool)>([=](bool OnOff)
 		{
 			if (OnOff)
-				LeftArmHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+				LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			else
 			{
-				LeftArmHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 				Damage = 0;
 			}
 		}));
 	CollisionMap.Add(Boss2CollisionType::RIGHTARM, TFunction<void(bool)>([=](bool OnOff)
 		{
 			if (OnOff)
-				RightArmHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+				RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			else
 			{
-				RightArmHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 				Damage = 0;
 			}
 		}));
@@ -807,7 +807,6 @@ AJesusBoss2::AJesusBoss2()
 				Damage = 0;
 			}
 		}));
-
 }
 
 AJesusBoss2::~AJesusBoss2()
@@ -910,17 +909,7 @@ void AJesusBoss2::Tick(float DeltaTime)
 	IsGameStart = Boss2AnimInstance->IsStart;
 
 	//본 회전시키는 코드
-	//if (IsStartBoneRot)
-	//	StartBoneRot();
-	//else
-	//{
-	//	Boss2AnimInstance->HeadBoneRotateVal = FMath::RInterpTo(Boss2AnimInstance->HeadBoneRotateVal,
-	//		Boss2AnimInstance->CurrentBoneRotateVal, ReturnDeltaSeconds, ReturnSpeed);
-	//	GetWorldTimerManager().ClearTimer(BoneRotateTimerHandle);
-	//}
 	BoneMap[Boss2AnimInstance->CurrentBoneType]();
-
-	UE_LOG(LogTemp, Warning, TEXT("%d"), Boss2AnimInstance->CurrentBoneType);
 }
 
 /*=====================
@@ -1073,10 +1062,7 @@ void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 	if (Player == nullptr)
 		return;
 
-	LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	HeadAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	ChargeAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	OffHitCollision();
 
 	auto Type = GetTypeFromMetaData(StartMontage);
 
@@ -1332,8 +1318,7 @@ void AJesusBoss2::OnVomitFall()
 	for (int i = 0; i < VomitCount; i++)
 	{
 		auto PoolObject = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[34].ObjClass,
-			HeadAtkCollision->GetComponentLocation(),
-			FRotator::ZeroRotator);
+			HeadAtkCollision->GetComponentLocation(),FRotator::ZeroRotator);
 		auto CastObject = Cast<AVomitObjectInPool>(PoolObject);
 		CastObject->SphereCollision->AddImpulse(FVector(0, 0, 1200));
 		CastObject->ProjectileEffect->Activate();

@@ -24,9 +24,6 @@ class SERVAME_API AVomitObjectInPool : public ABaseObjectInPool
 
 	AVomitObjectInPool();
 public:
-	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement")
-	//TObjectPtr<UProjectileMovementComponent> ProjectileMoveMentComponent;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vomit")
 	float LifeTime;
 

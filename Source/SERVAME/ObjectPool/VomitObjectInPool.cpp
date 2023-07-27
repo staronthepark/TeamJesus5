@@ -22,14 +22,6 @@ AVomitObjectInPool::AVomitObjectInPool()
 
 	BurstEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Vomit Burst Effect"));
 	BurstEffect->SetupAttachment(SphereCollision);
-
-	//ProjectileMoveMentComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
-	//ProjectileMoveMentComponent->SetUpdatedComponent(SphereCollision);
-	//ProjectileMoveMentComponent->InitialSpeed = 3000.0f;
-	//ProjectileMoveMentComponent->MaxSpeed = 3000.0f;
-	//ProjectileMoveMentComponent->bRotationFollowsVelocity = true;
-	//ProjectileMoveMentComponent->bShouldBounce = true;
-	//ProjectileMoveMentComponent->Bounciness = 0.3f;
 }
 
 void AVomitObjectInPool::BeginPlay()
@@ -39,6 +31,7 @@ void AVomitObjectInPool::BeginPlay()
 	SetActorTickEnabled(false);
 	ProjectileEffect->Deactivate();
 	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AVomitObjectInPool::OnCollisionBeginOverlap);
+	SphereCollision->SetEnableGravity(false);
 	GroundHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AVomitObjectInPool::OnGroundOverlap);
 }
 
@@ -55,6 +48,7 @@ void AVomitObjectInPool::SetActive(bool active)
 
 	if (active && LifeTime > 0)
 	{
+		SphereCollision->SetEnableGravity(true);
 		GetWorldTimerManager().SetTimer(LifeTimer, this, &AVomitObjectInPool::ReturnObject, LifeTime);
 	}
 }
@@ -94,6 +88,8 @@ void AVomitObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* Overlapped
 
 	if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
 	{
+		ProjectileEffect->Deactivate();
+		BurstEffect->Activate();
 		SphereCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 }
