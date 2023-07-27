@@ -9,6 +9,7 @@ void UPlayerHUD::NativeOnInitialized()
 	Super::NativeOnInitialized();
 	GuideAnimationFunction.Add(EGuides::keyguide, [&](bool value)
 		{
+			currentLanguage = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->language;
 			PlayKeyGuideAnimation(value);
 		});
 	GuideAnimationFunction.Add(EGuides::dodge, [&](bool value)
@@ -33,6 +34,7 @@ void UPlayerHUD::NativeOnInitialized()
 		});
 	GuideAnimationFunction.Add(EGuides::map, [&](bool value)
 		{
+			currentLanguage = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->language;
 			PlayMapUIAnimation("asd");
 		});
 
@@ -46,6 +48,7 @@ void UPlayerHUD::NativeConstruct()
 	Super::NativeConstruct();
 	if(this->IsInViewport())
 		PlayAnimation(HUDOpenAnimation);
+	currentLanguage = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->language;
 }
 
 void UPlayerHUD::SetHP(float value)
@@ -107,7 +110,8 @@ void UPlayerHUD::PlayAnimations(EGuides type, bool IsOpen)
 
 void UPlayerHUD::PlayGuidesAnimation(EGuides type, bool IsOpen)
 {
-	IsOpen ? WBP_PlayerGuideUI->StartGuide(type) : WBP_PlayerGuideUI->Disable();
+	currentLanguage = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->language;
+	IsOpen ? WBP_PlayerGuideUI->StartGuide(type, currentLanguage) : WBP_PlayerGuideUI->Disable();
 }
 
 void UPlayerHUD::PlayKeyGuideAnimation(bool IsOpen)
@@ -118,7 +122,13 @@ void UPlayerHUD::PlayKeyGuideAnimation(bool IsOpen)
 
 void UPlayerHUD::PlayInteractionAnimation(bool IsOpen, EInteractions interactions)
 {
-	Interaction_Image->SetBrushFromTexture(InteractionTextures.Find(interactions)->Textures[isGamePad]); 
+	currentLanguage = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->language;
+	if(currentLanguage == Language::ENG)
+		Interaction_Image->SetBrushFromTexture(InteractionTextures.Find(interactions)->EngTextures[isGamePad]); 
+	else if(currentLanguage == Language::KOR)
+		Interaction_Image->SetBrushFromTexture(InteractionTextures.Find(interactions)->KorTextures[isGamePad]); 
+
+
 	if (IsOpen && Interaction_Image->GetRenderOpacity() < 0.1f)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OPEN"));
@@ -178,7 +188,6 @@ void UPlayerHUD::PlayMapUIAnimation(FString MapName)
 
 void UPlayerHUD::FadeInAnimation(bool isFadeIn)
 {
-	UE_LOG(LogTemp, Warning, TEXT("!@#!@#"));
 	if (WBP_FadeInOutUI)
 		WBP_FadeInOutUI->PlayFadeInOutAnimation(isFadeIn);
 }
