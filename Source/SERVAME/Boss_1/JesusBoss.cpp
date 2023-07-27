@@ -115,7 +115,8 @@ AJesusBoss::AJesusBoss()
 		}));
 	MontageEndMap.Add(BossAnimationType::HIT, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
-
+			Boss->IsAttackMontageEnd = true;
+			Boss->IsAttacking = false;
 		}));
 
 	MontageStartMap.Add(BossAnimationType::POWERHIT, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
@@ -126,7 +127,8 @@ AJesusBoss::AJesusBoss()
 		}));
 	MontageEndMap.Add(BossAnimationType::POWERHIT, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
-
+			Boss->IsAttackMontageEnd = true;
+			Boss->IsAttacking = false;
 		}));
 
 	MontageStartMap.Add(BossAnimationType::RUN, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
