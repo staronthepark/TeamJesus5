@@ -36,3 +36,5 @@ void UBoss2AnimInstance::AnimNotify_JumpStart() { OnJumpStart.Broadcast(); }
 
 void UBoss2AnimInstance::AnimNotify_JumpEnd() { OnJumpEnd.Broadcast(); }
 
+void UBoss2AnimInstance::AnimNotify_ThrowStone() { OnStoneThrow.Broadcast(); }
+

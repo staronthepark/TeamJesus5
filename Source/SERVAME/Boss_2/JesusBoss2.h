@@ -308,6 +308,8 @@ public:
 
 	TObjectPtr<APlayerCharacter> PlayerCharacter;
 
+	TObjectPtr<class AStoneObjectInPool> StonePoolObj;
+
 	/*=====================
 	*		Map
 	=====================*/
@@ -408,6 +410,7 @@ public:
 	void OnEnd();
 	void LockOn();
 	void LockOff();
+	void ThrowStone();
 
 protected:
 	// Called when the game starts or when spawned

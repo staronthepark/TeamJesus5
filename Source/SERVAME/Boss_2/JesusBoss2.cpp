@@ -9,6 +9,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "..\Manager\CombatManager.h"
 #include "..\ObjectPool\VomitObjectInPool.h"
+#include "..\ObjectPool\StoneObjectInPool.h"
 #include "DrawDebugHelpers.h"
 
 AJesusBoss2::AJesusBoss2()
@@ -220,6 +221,11 @@ AJesusBoss2::AJesusBoss2()
 
 	MontageStartMap.Add(Boss2AnimationType::THROWSTONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
+			auto RightHandSocket = Boss2->GetMesh()->GetSocketLocation(FName("StonePos"));
+			auto PoolObject = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[35].ObjClass,
+				RightHandSocket, FRotator::ZeroRotator);
+
+			Boss2->StonePoolObj = Cast<AStoneObjectInPool>(PoolObject);
 			Boss2->IsAttackMontageEnd = false;
 			Boss2->CanMove = false;
 		}));
@@ -846,6 +852,7 @@ void AJesusBoss2::PostInitializeComponents()
 		Boss2AnimInstance->OnLockOff.AddUObject(this, &AJesusBoss2::LockOff);
 		Boss2AnimInstance->OnJumpStart.AddUObject(this, &AJesusBoss2::SlerpJump);
 		Boss2AnimInstance->OnJumpEnd.AddUObject(this, &AJesusBoss2::SlerpJumpEnd);
+		Boss2AnimInstance->OnStoneThrow.AddUObject(this, &AJesusBoss2::ThrowStone);
 	}
 }
 
@@ -1397,6 +1404,12 @@ void AJesusBoss2::LockOff()
 {
 	AttackLockOn = false;
 	LastPlayerLoc = PlayerCharacter->GetActorLocation();
+}
+
+void AJesusBoss2::ThrowStone()
+{
+	if (StonePoolObj != nullptr)
+		StonePoolObj->SetActorTickEnabled(true);
 }
 
 void AJesusBoss2::IsNotifyActive(bool value)

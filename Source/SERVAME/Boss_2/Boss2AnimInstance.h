@@ -46,6 +46,7 @@ DECLARE_MULTICAST_DELEGATE(FOnLockOn);
 DECLARE_MULTICAST_DELEGATE(FOnLockOff);
 DECLARE_MULTICAST_DELEGATE(FOnJumpMoveStart);
 DECLARE_MULTICAST_DELEGATE(FOnJumpMoveEnd);
+DECLARE_MULTICAST_DELEGATE(FOnStoneThorw);
 
 
 UCLASS()
@@ -96,6 +97,8 @@ private:
 	void AnimNotify_JumpStart();
 	UFUNCTION()
 	void AnimNotify_JumpEnd();
+	UFUNCTION()
+	void AnimNotify_ThrowStone();
 
 public:
 	FOnCrossFall OnCrossFall;
@@ -106,4 +109,5 @@ public:
 	FOnLockOff OnLockOff;
 	FOnJumpMoveStart OnJumpStart;
 	FOnJumpMoveEnd OnJumpEnd;
+	FOnStoneThorw OnStoneThrow;
 };
