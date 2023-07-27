@@ -221,11 +221,12 @@ AJesusBoss2::AJesusBoss2()
 
 	MontageStartMap.Add(Boss2AnimationType::THROWSTONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			auto RightHandSocket = Boss2->GetMesh()->GetSocketLocation(FName("StonePos"));
+			UE_LOG(LogTemp, Warning, TEXT("stone"));
+			auto RightHandSocket = Boss2->GetMesh()->GetSocketLocation(FName("RHand"));
 			auto PoolObject = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[35].ObjClass,
 				RightHandSocket, FRotator::ZeroRotator);
-
 			Boss2->StonePoolObj = Cast<AStoneObjectInPool>(PoolObject);
+			Boss2->StonePoolObj->SceneComp->AttachToComponent(Boss2->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("RHand"));
 			Boss2->IsAttackMontageEnd = false;
 			Boss2->CanMove = false;
 		}));
@@ -1069,7 +1070,10 @@ void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 	if (Player == nullptr)
 		return;
 
-	OffHitCollision();
+	HeadAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ChargeAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	auto Type = GetTypeFromMetaData(StartMontage);
 
@@ -1358,7 +1362,7 @@ void AJesusBoss2::OnStart()
 		StartEnd.Value = false;
 
 		StartMontage = GetCurrentMontage();
-		//UE_LOG(LogTemp, Warning, TEXT("Start : %s"), *StartMontage->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Start : %s"), *StartMontage->GetName());
 		MontageStartMap[GetTypeFromMetaData(StartMontage)](this);
 	}
 }
@@ -1409,7 +1413,10 @@ void AJesusBoss2::LockOff()
 void AJesusBoss2::ThrowStone()
 {
 	if (StonePoolObj != nullptr)
+	{
+		StonePoolObj->SceneComp->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 		StonePoolObj->SetActorTickEnabled(true);
+	}
 }
 
 void AJesusBoss2::IsNotifyActive(bool value)
