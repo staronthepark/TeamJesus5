@@ -35,6 +35,10 @@ AJesusBoss2::AJesusBoss2()
 	HeadAtkCollision->SetupAttachment(GetMesh(), FName("Bip001-Head"));
 	HeadAtkCollision->SetCollisionProfileName("AIWeapon");
 
+	ChargeAtkCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Boss Charge"));
+	ChargeAtkCollision->SetupAttachment(GetMesh(), FName("Bip001-Head"));
+	ChargeAtkCollision->SetCollisionProfileName("AIWeapon");
+
 	AreaAtkPos = CreateDefaultSubobject<USceneComponent>(TEXT("AreaAtkPos"));
 	AreaAtkPos->SetupAttachment(GetMesh());
 	AreaAtkPos->SetupAttachment(GetMesh(), FName("RHand"));
@@ -204,6 +208,7 @@ AJesusBoss2::AJesusBoss2()
 
 	MontageStartMap.Add(Boss2AnimationType::JUMPEXPLOSION, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
+			Boss2->AreaAtkPos->AttachToComponent(Boss2->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("Bip001-Neck"));
 			Boss2->IsAttackMontageEnd = false;
 			Boss2->CanMove = false;
 		}));
@@ -826,6 +831,8 @@ void AJesusBoss2::BeginPlay()
 	RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	HeadAtkCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::AttackHit);
 	HeadAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ChargeAtkCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::AttackHit);
+	ChargeAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	HitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
 	HeadHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
@@ -1031,6 +1038,7 @@ void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 	LeftAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	RightAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	HeadAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ChargeAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	auto Type = GetTypeFromMetaData(StartMontage);
 
