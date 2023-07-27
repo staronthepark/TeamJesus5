@@ -130,7 +130,7 @@ public:
 	virtual void ActivateSMOverlap()  { WeaponOverlapStaticMeshCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);  }
 	virtual void DeactivateSMOverlap() {WeaponOverlapStaticMeshCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);   }
 
-	void ActivateHitCollision();
+	virtual void ActivateHitCollision();
 	void DeactivateHitCollision();
 
 	virtual void RespawnCharacter();

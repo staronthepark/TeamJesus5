@@ -1124,6 +1124,7 @@ void AJesusBoss::Tick(float DeltaTime)
 	CheckBossDie();
 
 	PlayMoveMontage();
+	//µð¹ö±× UI
 
 	//if (GroundExplosionCnt >= 3)
 	//{
