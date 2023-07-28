@@ -854,6 +854,8 @@ void AJesusBoss2::PostInitializeComponents()
 		Boss2AnimInstance->OnJumpStart.AddUObject(this, &AJesusBoss2::SlerpJump);
 		Boss2AnimInstance->OnJumpEnd.AddUObject(this, &AJesusBoss2::SlerpJumpEnd);
 		Boss2AnimInstance->OnStoneThrow.AddUObject(this, &AJesusBoss2::ThrowStone);
+
+		Boss2AnimInstance->OnMontageEnded.AddDynamic(this, &AJesusBoss2::GetEndedMontage);
 	}
 }
 
@@ -1255,6 +1257,11 @@ void AJesusBoss2::ActivateHitCollision()
 	HeadHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	LeftArmHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	RightArmHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
+void AJesusBoss2::GetEndedMontage(UAnimMontage* Montage, bool bInterrupted)
+{
+	IsStart.Exchange(false);
+	auto Type = GetTypeFromMetaData(Montage);
 }
 
 /*=====================
