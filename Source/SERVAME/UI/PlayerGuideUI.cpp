@@ -2,7 +2,6 @@
 
 
 #include "PlayerGuideUI.h"
-#include <SERVAME/Manager/JesusGameInstance.h>
 #include <Kismet/GameplayStatics.h>
 
 
@@ -11,18 +10,14 @@ void UPlayerGuideUI::SetGamePad(int isPad)
 	isGamePad = isPad;
 }
 
-void UPlayerGuideUI::StartGuide(EGuides type, Language language)
+void UPlayerGuideUI::StartGuide(EGuides type)
 {
 	if (GuideTextures.Find(type)->isRenderedOnce == true)
 		return;
 	IsRenderImage = true;
 	UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
 	this->SetRenderOpacity(1.0f);
-	if(language == Language::KOR)
-		GuideImage->SetBrushFromTexture(GuideTextures.Find(type)->KorTextures[isGamePad]);
-	else if(language == Language::ENG)
-		GuideImage->SetBrushFromTexture(GuideTextures.Find(type)->EngTextures[isGamePad]);
-
+	GuideImage->SetBrushFromTexture(GuideTextures.Find(type)->Textures[isGamePad]);
 	GuideTextures.Find(type)->isRenderedOnce = true;
 }
 

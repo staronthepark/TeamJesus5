@@ -16,8 +16,6 @@ void UUserSettingGameUI::NativeOnInitialized()
 	WBP_Camera_Button->LeftButton->OnClicked.AddDynamic(this, &UUserSettingGameUI::ChangeCameraView);
 	WBP_Camera_Button->RightButton->OnClicked.AddDynamic(this, &UUserSettingGameUI::ChangeCameraView);
 
-	WBP_Language_Button->RightButton->OnClicked.AddDynamic(this, &UUserSettingGameUI::SetLanguage);
-	WBP_Language_Button->LeftButton->OnClicked.AddDynamic(this, &UUserSettingGameUI::SetLanguage);
 
 	//LightSettingButton->OnClicked.AddDynamic(this, &UUserSettingGameUI::ClickLightSettingButton);
 }
@@ -64,18 +62,10 @@ void UUserSettingGameUI::SetMouseSensitive(float value)
 
 void UUserSettingGameUI::ChangeCameraView()
 {
+
 	if(WBP_Camera_Button->GetValue() == 0)
 		Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController())->character->ShoulderView(true);
 	else
 		Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController())->character->ShoulderView(false);
-}
-
-void UUserSettingGameUI::SetLanguage()
-{
-	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	if (WBP_Language_Button->GetValue() == 0)
-		GameInstance->SetLanguage(Language::ENG);
-	else
-		GameInstance->SetLanguage(Language::KOR);
 }
 

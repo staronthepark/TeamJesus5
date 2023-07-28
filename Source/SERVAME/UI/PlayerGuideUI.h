@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include <Components/Image.h>
-#include <SERVAME/Manager/JesusGameInstance.h>
 #include "PlayerGuideUI.generated.h"
 
 #define Gamepad 0
@@ -32,9 +31,7 @@ struct SERVAME_API FGuideTextures
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
-	TArray<UTexture2D*> KorTextures;
-	UPROPERTY(EditAnywhere)
-	TArray<UTexture2D*> EngTextures;
+	TArray<UTexture2D*> Textures;
 
 	bool isRenderedOnce = false;
 };
@@ -45,7 +42,7 @@ class SERVAME_API UPlayerGuideUI : public UUserWidget
 	GENERATED_BODY()
 
 	UPROPERTY(meta = (BindWidget))
-	UImage* GuideImage;
+		UImage* GuideImage;
 
 	UPROPERTY(EditAnywhere)
 	TMap<EGuides, FGuideTextures> GuideTextures;
@@ -54,7 +51,7 @@ class SERVAME_API UPlayerGuideUI : public UUserWidget
 	bool IsRenderImage;
 public:
 	void SetGamePad(int isPad);
-	void StartGuide(EGuides type, Language language);
+	void StartGuide(EGuides type);
 
 	bool IsRender();
 

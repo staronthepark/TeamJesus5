@@ -38,9 +38,7 @@ struct SERVAME_API FInteractionTextures
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
-	TArray<UTexture2D*> KorTextures;
-	UPROPERTY(EditAnywhere)
-	TArray<UTexture2D*> EngTextures;
+	TArray<UTexture2D*> Textures;
 };
 
 UCLASS()
@@ -107,7 +105,7 @@ class SERVAME_API UPlayerHUD : public UUserWidget
 
 
 	int isGamePad;
-	Language currentLanguage;
+
 
 public:
 	virtual void NativeOnInitialized() override;
