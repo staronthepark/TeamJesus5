@@ -33,6 +33,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UNiagaraComponent* CrossBurstEffect;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UNiagaraComponent* DustEffect;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Particle)
 	USceneComponent* RootComp;
 
