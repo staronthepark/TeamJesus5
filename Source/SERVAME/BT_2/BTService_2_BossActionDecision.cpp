@@ -47,9 +47,6 @@ void UBTService_2_BossActionDecision::DecisionBossAction(UBehaviorTreeComponent&
 		PushAction(BossPatternArr);
 		PushAction(BossRangePatternArr);
 		PushAction(BossFollowUpPatternArr);
-		PushAction(BossLeftPatternArr);
-		PushAction(BossRightPatternArr);
-		PushAction(BossBackPatternArr);
 
 		Boss2->CurrentActionTemp = Boss2->MeleeActionArr[0];
 		IsExcute = true;
