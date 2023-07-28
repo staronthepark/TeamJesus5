@@ -883,8 +883,8 @@ void AJesusBoss2::BeginPlay()
 
 	HitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
 	HeadHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
-	LeftArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneRArm);
-	RightArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneLArm);
+	LeftArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneLArm);
+	RightArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneRArm);
 	
 	//임시로 변수 설정
 	CanMove = true;
