@@ -115,7 +115,8 @@ AJesusBoss::AJesusBoss()
 		}));
 	MontageEndMap.Add(BossAnimationType::HIT, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
-
+			Boss->IsAttackMontageEnd = true;
+			Boss->IsAttacking = false;
 		}));
 
 	MontageStartMap.Add(BossAnimationType::POWERHIT, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
@@ -126,7 +127,8 @@ AJesusBoss::AJesusBoss()
 		}));
 	MontageEndMap.Add(BossAnimationType::POWERHIT, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
-
+			Boss->IsAttackMontageEnd = true;
+			Boss->IsAttacking = false;
 		}));
 
 	MontageStartMap.Add(BossAnimationType::RUN, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
@@ -844,7 +846,7 @@ AJesusBoss::AJesusBoss()
 				}
 
 				MeleeActionArr[i].IsAddPercentage = true;
-				MeleeActionArr[i].Percentage += DecreasePercentageVal / MeleeActionArr.Num() - 1;
+				MeleeActionArr[i].Percentage += DecreasePercentageVal / (MeleeActionArr.Num() - 1);
 				MeleePercentageVec.push_back(MeleeActionArr[i].Percentage);
 			}
 		}));
@@ -862,7 +864,7 @@ AJesusBoss::AJesusBoss()
 				}
 
 				RangeActionArr[i].IsAddPercentage = true;
-				RangeActionArr[i].Percentage += DecreasePercentageVal / RangeActionArr.Num() - 1;
+				RangeActionArr[i].Percentage += DecreasePercentageVal / (RangeActionArr.Num() - 1);
 				RangePercentageVec.push_back(RangeActionArr[i].Percentage);
 			}
 		}));
@@ -885,7 +887,7 @@ AJesusBoss::AJesusBoss()
 				}
 
 				FollowUpActionArr[i].IsAddPercentage = true;
-				FollowUpActionArr[i].Percentage += DecreasePercentageVal / FollowUpActionArr.Num() - 2;
+				FollowUpActionArr[i].Percentage += DecreasePercentageVal / (FollowUpActionArr.Num() - 2);
 				FollowUpPercentageVec.push_back(FollowUpActionArr[i].Percentage);
 			}
 		}));

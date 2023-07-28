@@ -23,10 +23,13 @@ class SERVAME_API UUserSettingGameUI : public USubUserSettingUI
 		//	UButtonUI* WBP_Setting_Button;
 
 	UPROPERTY(meta = (BindWidget))
-		UButtonUI* WBP_Camera_Button;
+	UButtonUI* WBP_Camera_Button;
 
 	UPROPERTY(meta = (BindWidget))
-		USliderUI* WBP_Setting_Slider;
+	USliderUI* WBP_Setting_Slider;
+
+	UPROPERTY(meta = (BindWidget))
+	UButtonUI* WBP_Language_Button;
 
 
 	//UPROPERTY(meta = (BindWidget))
@@ -54,4 +57,6 @@ public:
 	UFUNCTION()
 		void ChangeCameraView();
 
+	UFUNCTION()
+		void SetLanguage();
 };
