@@ -80,8 +80,3 @@ float UJesusGameInstance::GetPostProcessBrightness()
 	return PlayerOptionSetting.Gamma;
 }
 
-void UJesusGameInstance::SetLanguage(Language value)
-{
-	language = value;
-}
-
