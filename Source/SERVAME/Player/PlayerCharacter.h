@@ -164,6 +164,9 @@ public:
 		USpringArmComponent* CameraBoom1;
 
 	UPROPERTY()
+		UBoxComponent* CameraOverlapComp;
+
+	UPROPERTY()
 		TSubclassOf<UPlayerHUD> PlayerUIClass;
 
 	UPROPERTY()
