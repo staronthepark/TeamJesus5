@@ -70,4 +70,7 @@ public:
 	void ClickLightSettingButton();
 
 	void UnselectAllButton();
+
+	UFUNCTION()
+	void ChangeLanguage();
 };
