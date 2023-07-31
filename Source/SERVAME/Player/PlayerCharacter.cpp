@@ -1878,7 +1878,7 @@ void APlayerCharacter::PlayExecutionAnimation()
 	//SetActorLocation(ExecuteLocation);
 
 	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
-
+	ExecutionCharacter->PlayExecutionAnimation();
 	DeactivateRightWeapon();
 	DeactivateSMOverlap();
 	SwordTrailComp->Deactivate();
@@ -2010,7 +2010,7 @@ void APlayerCharacter::Attack()
 {
 	if (ExecutionCharacter && CanExecution)
 	{
-		if (ExecutionCharacter->IsStun && CanExecution)
+		if (ExecutionCharacter->CanExecution)
 		{
 			PlayExecutionAnimation();
 			return;
@@ -2038,7 +2038,7 @@ void APlayerCharacter::PowerAttack()
 {
 	if (ExecutionCharacter && CanExecution)
 	{
-		if (ExecutionCharacter->IsStun && CanExecution)
+		if (ExecutionCharacter->CanExecution)
 		{
 			PlayExecutionAnimation();
 			return;
