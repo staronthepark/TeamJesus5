@@ -2,6 +2,8 @@
 
 
 #include "GameExitUI.h"
+#include <Kismet/KismetSystemLibrary.h>
+#include <Kismet/GameplayStatics.h>
 
 void UGameExitUI::NativeOnInitialized()
 {
@@ -12,7 +14,7 @@ void UGameExitUI::NativeOnInitialized()
 
 void UGameExitUI::YesButtonClicked()
 {
-	FGenericPlatformMisc::RequestExit(true);
+	UKismetSystemLibrary::QuitGame(GetWorld(), UGameplayStatics::GetPlayerController(GetWorld(), 0), EQuitPreference::Quit, true);
 }
 
 void UGameExitUI::NoButtonClicked()
