@@ -338,17 +338,17 @@ public:
 	TArray<Boss2ActionTemp> FollowUpTempArr;
 	std::vector<int>FollowUpPercentageVec;
 
-	TArray<Boss2ActionTemp> LeftActionArr;
-	TArray<Boss2ActionTemp> LeftTempArr;
-	std::vector<int>LeftPercentageVec;
+	//TArray<Boss2ActionTemp> LeftActionArr;
+	//TArray<Boss2ActionTemp> LeftTempArr;
+	//std::vector<int>LeftPercentageVec;
 
-	TArray<Boss2ActionTemp> RightActionArr;
-	TArray<Boss2ActionTemp> RightTempArr;
-	std::vector<int>RightPercentageVec;
+	//TArray<Boss2ActionTemp> RightActionArr;
+	//TArray<Boss2ActionTemp> RightTempArr;
+	//std::vector<int>RightPercentageVec;
 
-	TArray<Boss2ActionTemp> BackActionArr;
-	TArray<Boss2ActionTemp> BackTempArr;
-	std::vector<int>BackPercentageVec;
+	//TArray<Boss2ActionTemp> BackActionArr;
+	//TArray<Boss2ActionTemp> BackTempArr;
+	//std::vector<int>BackPercentageVec;
 	
 	/*======================
 	*		Override
