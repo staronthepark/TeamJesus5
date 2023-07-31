@@ -87,7 +87,7 @@ void UMainMenuUI::ClickQuitButton()
 void UMainMenuUI::SequenceFinish()
 {
 	if (this->IsInViewport())
-		this->RemoveFromViewport();
+		this->RemoveFromParent();
 }
 
 

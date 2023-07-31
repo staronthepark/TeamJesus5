@@ -802,7 +802,7 @@ APlayerCharacter::APlayerCharacter()
 		});
 	MontageEndEventMap.Add(AnimationType::GAMESTART, [&]()
 		{
-			GameInstance->MainMenuWidget->RemoveFromViewport();
+			GameInstance->MainMenuWidget->RemoveFromParent();
 			GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 			PlayerHUD->AddToViewport();
 			PlayerHUD->ChangeHealCount(CurHealCount);
