@@ -130,7 +130,7 @@ void AJesusPlayerController::PressDodge()
 		{
 			SetPause(false);
 			bShowMouseCursor = false;
-			character->UserSettingUI->RemoveFromViewport();
+			character->UserSettingUI->RemoveFromParent();
 			return;
 		}
 	}
@@ -207,7 +207,7 @@ void AJesusPlayerController::ViewLog()
 	if (GameInstance->DebugLogWidget->IsInViewport())
 	{
 		character->DebugMode = false;
-		GameInstance->DebugLogWidget->RemoveFromViewport();
+		GameInstance->DebugLogWidget->RemoveFromParent();
 	}
 	else
 	{
@@ -221,7 +221,7 @@ void AJesusPlayerController::PressLockon()
 	if (GameInstance->MainMenuWidget->IsInViewport())
 	{
 		bShowMouseCursor = false;
-		character->UserSettingUI->RemoveFromViewport();
+		character->UserSettingUI->RemoveFromParent();
 	}
 
 	if (character->AnimInstance->PlayerAnimationType == AnimationType::SAVELOOP)
@@ -375,7 +375,7 @@ void AJesusPlayerController::OpenMenu()
 		{
 			SetPause(false);
 			bShowMouseCursor = false;
-			character->UserSettingUI->RemoveFromViewport();
+			character->UserSettingUI->RemoveFromParent();
 		}
 	}
 }
@@ -394,7 +394,7 @@ void AJesusPlayerController::CloseMenu()
 		{
 			SetPause(false);
 			bShowMouseCursor = false;
-			character->UserSettingUI->RemoveFromViewport();
+			character->UserSettingUI->RemoveFromParent();
 		}
 	}
 }

@@ -83,7 +83,7 @@ void ABossAIController::Tick(float DeltaTime)
 			UE_LOG(LogTemp, Warning, TEXT("Hidden"));
 			if (IsValid(BossUI))
 			{
-				BossUI->RemoveFromViewport();
+				BossUI->RemoveFromParent();
 			}
 		}
 	}
