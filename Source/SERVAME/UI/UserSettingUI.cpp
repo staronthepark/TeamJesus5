@@ -24,6 +24,9 @@ void UUserSettingUI::NativeOnInitialized()
 	SelectSettingArray[2]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickQuitSettingButton);
 
 	WBP_UserSetting_GameUI->LightSettingButton->OnClicked.AddDynamic(this, &UUserSettingUI::ClickLightSettingButton);
+
+	WBP_UserSetting_GameUI->WBP_Language_Button->RightButton->OnClicked.AddDynamic(this, &UUserSettingUI::ChangeLanguage);
+	WBP_UserSetting_GameUI->WBP_Language_Button->LeftButton->OnClicked.AddDynamic(this, &UUserSettingUI::ChangeLanguage);
 }
 
 void UUserSettingUI::NativeConstruct()
@@ -78,6 +81,14 @@ void UUserSettingUI::UnselectAllButton()
 	for (int i = 0; i < SubUserSettingArray.Num(); i++) {
 		SubUserSettingArray[i]->SetVisibility(ESlateVisibility::Collapsed);
 	}
+}
+
+void UUserSettingUI::ChangeLanguage()
+{
+	WBP_UserSetting_SelectUI->ChangeLanguage();
+	WBP_UserSetting_AudioUI->ChangeLanguage();
+	UMG_GameExit->ChangeLanguage();
+	WBP_UserSetting_LightUI->ChangeLanguage();
 }
 
 

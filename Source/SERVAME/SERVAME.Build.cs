@@ -9,5 +9,6 @@ public class SERVAME : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "NavigationSystem", "AIModule", "UMG", "GameplayTasks", "LevelSequence", "MovieScene", "MediaAssets", "Niagara" });
+        PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
     }
 }

@@ -3,6 +3,7 @@
 
 #include "UserSettingAudioUI.h"
 #include "..\Manager\SoundManager.h"
+#include <SERVAME/Manager/JesusGameInstance.h>
 
 #define On 0
 #define Off 1
@@ -32,6 +33,7 @@ void UUserSettingAudioUI::NativeConstruct()
 	WBP_Setting_Slider_SE->SetValue(ASoundManager::ASoundManager::GetInstance().GetSFXVolume());
 	WBP_Setting_Slider_Voice->SetValue(ASoundManager::ASoundManager::GetInstance().GetVoiceVolume());
 
+	ChangeLanguage();
 }
 
 void UUserSettingAudioUI::SetMuteSound()
@@ -67,4 +69,25 @@ void UUserSettingAudioUI::SetVoiceVolume(float value)
 	ASoundManager::ASoundManager::GetInstance().SetVoiceVolume(value);
 	//ASoundManager::ASoundManager::GetInstance().MuteSound(false);
 	//WBP_Setting_Button->SetValue(On);
+}
+
+void UUserSettingAudioUI::ChangeLanguage()
+{
+	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (GameInstance->language == Language::ENG)
+	{
+		TitleAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::title)->EngTexture, true);
+		MasterAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::master)->EngTexture, true);
+		BGMAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::bgm)->EngTexture, true);
+		SEAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::se)->EngTexture, true);
+		VoiceAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::voice)->EngTexture, true);
+	}
+	else if (GameInstance->language == Language::KOR)
+	{
+		TitleAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::title)->KorTexture, true);
+		MasterAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::master)->KorTexture, true);
+		BGMAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::bgm)->KorTexture, true);
+		SEAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::se)->KorTexture, true);
+		VoiceAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::voice)->KorTexture, true);
+	}
 }
