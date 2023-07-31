@@ -242,18 +242,18 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CROSSFALL, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
 		}));
-	BossAttackMap.Add(Boss2ActionType::B2_FALLTHECROSS_BACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
-		{
-			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CROSSFALL, Boss2, Boss2->BackActionArr, Boss2AttackType::B2_BACKATK);
-		}));
-	BossAttackMap.Add(Boss2ActionType::B2_FALLTHECROSS_LEFT, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
-		{
-			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CROSSFALL, Boss2, Boss2->LeftActionArr, Boss2AttackType::B2_LEFTATK);
-		}));
-	BossAttackMap.Add(Boss2ActionType::B2_FALLTHECROSS_RIGHT, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
-		{
-			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CROSSFALL, Boss2, Boss2->RightActionArr, Boss2AttackType::B2_RIGHTATK);
-		}));
+	//BossAttackMap.Add(Boss2ActionType::B2_FALLTHECROSS_BACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+	//	{
+	//		Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CROSSFALL, Boss2, Boss2->BackActionArr, Boss2AttackType::B2_BACKATK);
+	//	}));
+	//BossAttackMap.Add(Boss2ActionType::B2_FALLTHECROSS_LEFT, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+	//	{
+	//		Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CROSSFALL, Boss2, Boss2->LeftActionArr, Boss2AttackType::B2_LEFTATK);
+	//	}));
+	//BossAttackMap.Add(Boss2ActionType::B2_FALLTHECROSS_RIGHT, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+	//	{
+	//		Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CROSSFALL, Boss2, Boss2->RightActionArr, Boss2AttackType::B2_RIGHTATK);
+	//	}));
 
 	BossAttackMap.Add(Boss2ActionType::B2_SLASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
@@ -295,10 +295,10 @@ AJesusBoss2::AJesusBoss2()
 			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::VOMITFALL, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
 		}));
 
-	BossAttackMap.Add(Boss2ActionType::B2_ELBOWSPIN, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
-		{
-			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::ELBOWSPIN, Boss2, Boss2->BackActionArr, Boss2AttackType::B2_BACKATK);
-		}));
+	//BossAttackMap.Add(Boss2ActionType::B2_ELBOWSPIN, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+	//	{
+	//		Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::ELBOWSPIN, Boss2, Boss2->BackActionArr, Boss2AttackType::B2_BACKATK);
+	//	}));
 
 	BossAttackMap.Add(Boss2ActionType::B2_HUNTJUMP, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
@@ -455,44 +455,44 @@ AJesusBoss2::AJesusBoss2()
 			return  FollowUpActionArr[RandNum];
 		}));
 
-	GetRandomPatternMap.Add(Boss2AttackType::B2_LEFTATK, TFunction<Boss2ActionTemp()>([=]()
-		{
-			if (LeftActionArr.Num() <= 0)
-				return Boss2ActionTemp();
+	//GetRandomPatternMap.Add(Boss2AttackType::B2_LEFTATK, TFunction<Boss2ActionTemp()>([=]()
+	//	{
+	//		if (LeftActionArr.Num() <= 0)
+	//			return Boss2ActionTemp();
 
-			auto RandNum = MakeRandom(LeftPercentageVec);
+	//		auto RandNum = MakeRandom(LeftPercentageVec);
 
-			//로그 찍기 용 패턴 이름
-			auto PatternName = Boss2ActionEnum->GetNameStringByValue(LeftActionArr[RandNum].ActionType);
+	//		//로그 찍기 용 패턴 이름
+	//		auto PatternName = Boss2ActionEnum->GetNameStringByValue(LeftActionArr[RandNum].ActionType);
 
-			return  LeftActionArr[RandNum];
-		}));
+	//		return  LeftActionArr[RandNum];
+	//	}));
 
-	GetRandomPatternMap.Add(Boss2AttackType::B2_RIGHTATK, TFunction<Boss2ActionTemp()>([=]()
-		{
-			if (RightActionArr.Num() <= 0)
-				return Boss2ActionTemp();
+	//GetRandomPatternMap.Add(Boss2AttackType::B2_RIGHTATK, TFunction<Boss2ActionTemp()>([=]()
+	//	{
+	//		if (RightActionArr.Num() <= 0)
+	//			return Boss2ActionTemp();
 
-			auto RandNum = MakeRandom(RightPercentageVec);
+	//		auto RandNum = MakeRandom(RightPercentageVec);
 
-			//로그 찍기 용 패턴 이름
-			auto PatternName = Boss2ActionEnum->GetNameStringByValue(RightActionArr[RandNum].ActionType);
+	//		//로그 찍기 용 패턴 이름
+	//		auto PatternName = Boss2ActionEnum->GetNameStringByValue(RightActionArr[RandNum].ActionType);
 
-			return  RightActionArr[RandNum];
-		}));
+	//		return  RightActionArr[RandNum];
+	//	}));
 
-	GetRandomPatternMap.Add(Boss2AttackType::B2_BACKATK, TFunction<Boss2ActionTemp()>([=]()
-		{
-			if (BackActionArr.Num() <= 0)
-				return Boss2ActionTemp();
+	//GetRandomPatternMap.Add(Boss2AttackType::B2_BACKATK, TFunction<Boss2ActionTemp()>([=]()
+	//	{
+	//		if (BackActionArr.Num() <= 0)
+	//			return Boss2ActionTemp();
 
-			auto RandNum = MakeRandom(BackPercentageVec);
+	//		auto RandNum = MakeRandom(BackPercentageVec);
 
-			//로그 찍기 용 패턴 이름
-			auto PatternName = Boss2ActionEnum->GetNameStringByValue(BackActionArr[RandNum].ActionType);
+	//		//로그 찍기 용 패턴 이름
+	//		auto PatternName = Boss2ActionEnum->GetNameStringByValue(BackActionArr[RandNum].ActionType);
 
-			return  BackActionArr[RandNum];
-		}));
+	//		return  BackActionArr[RandNum];
+	//	}));
 
 	//===================================배열에 패턴 추가==============================================
 
@@ -514,23 +514,23 @@ AJesusBoss2::AJesusBoss2()
 			FollowUpPercentageVec.push_back(Temp->Percentage);
 		}));
 
-	AddArrMap.Add(B2_LEFTATK, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
-		{
-			LeftActionArr.Add(*Temp);
-			LeftPercentageVec.push_back(Temp->Percentage);
-		}));
+	//AddArrMap.Add(B2_LEFTATK, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
+	//	{
+	//		LeftActionArr.Add(*Temp);
+	//		LeftPercentageVec.push_back(Temp->Percentage);
+	//	}));
 
-	AddArrMap.Add(B2_RIGHTATK, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
-		{
-			RightActionArr.Add(*Temp);
-			RightPercentageVec.push_back(Temp->Percentage);
-		}));
+	//AddArrMap.Add(B2_RIGHTATK, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
+	//	{
+	//		RightActionArr.Add(*Temp);
+	//		RightPercentageVec.push_back(Temp->Percentage);
+	//	}));
 
-	AddArrMap.Add(B2_BACKATK, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
-		{
-			BackActionArr.Add(*Temp);
-			BackPercentageVec.push_back(Temp->Percentage);
-		}));
+	//AddArrMap.Add(B2_BACKATK, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
+	//	{
+	//		BackActionArr.Add(*Temp);
+	//		BackPercentageVec.push_back(Temp->Percentage);
+	//	}));
 
 	//====================================확률 변경============================================
 
@@ -591,62 +591,62 @@ AJesusBoss2::AJesusBoss2()
 			}
 		}));
 
-	ChangePercentageMap.Add(B2_LEFTATK, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
-		{
-			LeftPercentageVec.clear();
+	//ChangePercentageMap.Add(B2_LEFTATK, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
+	//	{
+	//		LeftPercentageVec.clear();
 
-			for (int i = 0; i < LeftActionArr.Num(); i++)
-			{
-				if (LeftActionArr[i].ActionType == Temp->ActionType)
-				{
-					LeftActionArr[i].Percentage -= DecreasePercentageVal;
-					LeftPercentageVec.push_back(LeftActionArr[i].Percentage);
-					continue;
-				}
+	//		for (int i = 0; i < LeftActionArr.Num(); i++)
+	//		{
+	//			if (LeftActionArr[i].ActionType == Temp->ActionType)
+	//			{
+	//				LeftActionArr[i].Percentage -= DecreasePercentageVal;
+	//				LeftPercentageVec.push_back(LeftActionArr[i].Percentage);
+	//				continue;
+	//			}
 
-				LeftActionArr[i].IsAddPercentage = true;
-				LeftActionArr[i].Percentage += DecreasePercentageVal / (LeftActionArr.Num() - 1);
-				LeftPercentageVec.push_back(LeftActionArr[i].Percentage);
-			}
-		}));
+	//			LeftActionArr[i].IsAddPercentage = true;
+	//			LeftActionArr[i].Percentage += DecreasePercentageVal / (LeftActionArr.Num() - 1);
+	//			LeftPercentageVec.push_back(LeftActionArr[i].Percentage);
+	//		}
+	//	}));
 
-	ChangePercentageMap.Add(B2_RIGHTATK, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
-		{
-			RightPercentageVec.clear();
+	//ChangePercentageMap.Add(B2_RIGHTATK, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
+	//	{
+	//		RightPercentageVec.clear();
 
-			for (int i = 0; i < RightActionArr.Num(); i++)
-			{
-				if (RightActionArr[i].ActionType == Temp->ActionType)
-				{
-					RightActionArr[i].Percentage -= DecreasePercentageVal;
-					RightPercentageVec.push_back(RightActionArr[i].Percentage);
-					continue;
-				}
+	//		for (int i = 0; i < RightActionArr.Num(); i++)
+	//		{
+	//			if (RightActionArr[i].ActionType == Temp->ActionType)
+	//			{
+	//				RightActionArr[i].Percentage -= DecreasePercentageVal;
+	//				RightPercentageVec.push_back(RightActionArr[i].Percentage);
+	//				continue;
+	//			}
 
-				RightActionArr[i].IsAddPercentage = true;
-				RightActionArr[i].Percentage += DecreasePercentageVal / (RightActionArr.Num() - 1);
-				RightPercentageVec.push_back(RightActionArr[i].Percentage);
-			}
-		}));
+	//			RightActionArr[i].IsAddPercentage = true;
+	//			RightActionArr[i].Percentage += DecreasePercentageVal / (RightActionArr.Num() - 1);
+	//			RightPercentageVec.push_back(RightActionArr[i].Percentage);
+	//		}
+	//	}));
 
-	ChangePercentageMap.Add(B2_BACKATK, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
-		{
-			BackPercentageVec.clear();
+	//ChangePercentageMap.Add(B2_BACKATK, TFunction<void(Boss2ActionTemp*)>([=](Boss2ActionTemp* Temp)
+	//	{
+	//		BackPercentageVec.clear();
 
-			for (int i = 0; i < BackActionArr.Num(); i++)
-			{
-				if (BackActionArr[i].ActionType == Temp->ActionType)
-				{
-					BackActionArr[i].Percentage -= DecreasePercentageVal;
-					BackPercentageVec.push_back(BackActionArr[i].Percentage);
-					continue;
-				}
+	//		for (int i = 0; i < BackActionArr.Num(); i++)
+	//		{
+	//			if (BackActionArr[i].ActionType == Temp->ActionType)
+	//			{
+	//				BackActionArr[i].Percentage -= DecreasePercentageVal;
+	//				BackPercentageVec.push_back(BackActionArr[i].Percentage);
+	//				continue;
+	//			}
 
-				BackActionArr[i].IsAddPercentage = true;
-				BackActionArr[i].Percentage += DecreasePercentageVal / (BackActionArr.Num() - 1);
-				BackPercentageVec.push_back(BackActionArr[i].Percentage);
-			}
-		}));
+	//			BackActionArr[i].IsAddPercentage = true;
+	//			BackActionArr[i].Percentage += DecreasePercentageVal / (BackActionArr.Num() - 1);
+	//			BackPercentageVec.push_back(BackActionArr[i].Percentage);
+	//		}
+	//	}));
 
 	//===============================확률 초기화========================================
 
@@ -689,44 +689,44 @@ AJesusBoss2::AJesusBoss2()
 			}
 		}));
 
-	InitPercentageMap.Add(B2_LEFTATK, TFunction<void()>([=]()
-		{
-			LeftPercentageVec.clear();
+	//InitPercentageMap.Add(B2_LEFTATK, TFunction<void()>([=]()
+	//	{
+	//		LeftPercentageVec.clear();
 
-			for (int i = 0; i < LeftActionArr.Num(); i++)
-			{
-				auto BossActionName = Boss2ActionEnum->GetNameStringByValue(LeftActionArr[i].ActionType);
-				LeftActionArr[i].Percentage = GetActionData(*BossActionName)->Percentage;
-				LeftActionArr[i].IsAddPercentage = false;
-				LeftPercentageVec.push_back(LeftActionArr[i].Percentage);
-			}
-		}));
+	//		for (int i = 0; i < LeftActionArr.Num(); i++)
+	//		{
+	//			auto BossActionName = Boss2ActionEnum->GetNameStringByValue(LeftActionArr[i].ActionType);
+	//			LeftActionArr[i].Percentage = GetActionData(*BossActionName)->Percentage;
+	//			LeftActionArr[i].IsAddPercentage = false;
+	//			LeftPercentageVec.push_back(LeftActionArr[i].Percentage);
+	//		}
+	//	}));
 
-	InitPercentageMap.Add(B2_RIGHTATK, TFunction<void()>([=]()
-		{
-			RightPercentageVec.clear();
+	//InitPercentageMap.Add(B2_RIGHTATK, TFunction<void()>([=]()
+	//	{
+	//		RightPercentageVec.clear();
 
-			for (int i = 0; i < RightActionArr.Num(); i++)
-			{
-				auto BossActionName = Boss2ActionEnum->GetNameStringByValue(RightActionArr[i].ActionType);
-				RightActionArr[i].Percentage = GetActionData(*BossActionName)->Percentage;
-				RightActionArr[i].IsAddPercentage = false;
-				RightPercentageVec.push_back(RightActionArr[i].Percentage);
-			}
-		}));
+	//		for (int i = 0; i < RightActionArr.Num(); i++)
+	//		{
+	//			auto BossActionName = Boss2ActionEnum->GetNameStringByValue(RightActionArr[i].ActionType);
+	//			RightActionArr[i].Percentage = GetActionData(*BossActionName)->Percentage;
+	//			RightActionArr[i].IsAddPercentage = false;
+	//			RightPercentageVec.push_back(RightActionArr[i].Percentage);
+	//		}
+	//	}));
 
-	InitPercentageMap.Add(B2_BACKATK, TFunction<void()>([=]()
-		{
-			BackPercentageVec.clear();
+	//InitPercentageMap.Add(B2_BACKATK, TFunction<void()>([=]()
+	//	{
+	//		BackPercentageVec.clear();
 
-			for (int i = 0; i < RightActionArr.Num(); i++)
-			{
-				auto BossActionName = Boss2ActionEnum->GetNameStringByValue(BackActionArr[i].ActionType);
-				BackActionArr[i].Percentage = GetActionData(*BossActionName)->Percentage;
-				BackActionArr[i].IsAddPercentage = false;
-				BackPercentageVec.push_back(BackActionArr[i].Percentage);
-			}
-		}));
+	//		for (int i = 0; i < RightActionArr.Num(); i++)
+	//		{
+	//			auto BossActionName = Boss2ActionEnum->GetNameStringByValue(BackActionArr[i].ActionType);
+	//			BackActionArr[i].Percentage = GetActionData(*BossActionName)->Percentage;
+	//			BackActionArr[i].IsAddPercentage = false;
+	//			BackPercentageVec.push_back(BackActionArr[i].Percentage);
+	//		}
+	//	}));
 
 	//=======================================피격 당한 부위에 따른 피격 모션=========================================
 
@@ -827,14 +827,14 @@ AJesusBoss2::~AJesusBoss2()
 	FollowUpPercentageVec.clear();
 	FollowUpPercentageVec.shrink_to_fit();
 
-	LeftPercentageVec.clear();
-	LeftPercentageVec.shrink_to_fit();
-	
-	RightPercentageVec.clear();
-	RightPercentageVec.shrink_to_fit();
-	
-	BackPercentageVec.clear();
-	BackPercentageVec.shrink_to_fit();
+	//LeftPercentageVec.clear();
+	//LeftPercentageVec.shrink_to_fit();
+	//
+	//RightPercentageVec.clear();
+	//RightPercentageVec.shrink_to_fit();
+	//
+	//BackPercentageVec.clear();
+	//BackPercentageVec.shrink_to_fit();
 }
 
 void AJesusBoss2::PostInitializeComponents()
@@ -883,8 +883,8 @@ void AJesusBoss2::BeginPlay()
 
 	HitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
 	HeadHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
-	LeftArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneRArm);
-	RightArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneLArm);
+	LeftArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneLArm);
+	RightArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneRArm);
 	
 	//임시로 변수 설정
 	CanMove = true;
@@ -1040,12 +1040,12 @@ void AJesusBoss2::InitIsExcute()
 		RangeActionArr[i].IsExcute = false;
 	for (int i = 0; i < FollowUpActionArr.Num(); i++)
 		FollowUpActionArr[i].IsExcute = false;
-	for (int i = 0; i < LeftActionArr.Num(); i++)
-		LeftActionArr[i].IsExcute = false;
-	for (int i = 0; i < RightActionArr.Num(); i++)
-		RightActionArr[i].IsExcute = false;
-	for (int i = 0; i < BackActionArr.Num(); i++)
-		BackActionArr[i].IsExcute = false;
+	//for (int i = 0; i < LeftActionArr.Num(); i++)
+	//	LeftActionArr[i].IsExcute = false;
+	//for (int i = 0; i < RightActionArr.Num(); i++)
+	//	RightActionArr[i].IsExcute = false;
+	//for (int i = 0; i < BackActionArr.Num(); i++)
+	//	BackActionArr[i].IsExcute = false;
 }
 
 void AJesusBoss2::SetBTAction(Boss2ActionTemp Temp)
@@ -1152,25 +1152,27 @@ Boss2ActionTemp AJesusBoss2::GetRandomPattern(float Dist)
 		CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RANGE]();
 	else
 	{
-		switch (PlayerDirection)
-		{
-		case B2_FOWARD:
-			CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
-			break;
-		case B2_BACK:
-			CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_BACKATK]();
-			break;
-		case B2_LEFT:
-			CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_LEFTATK]();
-			break;
-		case B2_RIGHT:
-			CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RIGHTATK]();
-			break;
+		CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
 
-		default:
-			UE_LOG(LogTemp, Warning, TEXT("PlayerDirection is not set!"));
-			break;
-		}
+		//switch (PlayerDirection)
+		//{
+		//case B2_FOWARD:
+		//	CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_MELEE]();
+		//	break;
+		//case B2_BACK:
+		//	CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_BACKATK]();
+		//	break;
+		//case B2_LEFT:
+		//	CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_LEFTATK]();
+		//	break;
+		//case B2_RIGHT:
+		//	CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_RIGHTATK]();
+		//	break;
+
+		//default:
+		//	UE_LOG(LogTemp, Warning, TEXT("PlayerDirection is not set!"));
+		//	break;
+		//}
 	}
 
 	return CurrentActionTemp;
