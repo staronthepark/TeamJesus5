@@ -51,7 +51,7 @@ APlayerCharacter::APlayerCharacter()
 	CameraBoom1->SetupAttachment(GetMesh(), FName("Ref_Bip001-Spine"));
 	CameraBoom1->TargetArmLength = 0.5f;
 	CameraBoom1->bUsePawnControlRotation = true; 
-	
+
 	TargetDetectionCollison = CreateDefaultSubobject<USphereComponent>(TEXT("Enemy Detection Collider"));
 	TargetDetectionCollison->SetupAttachment(RootComponent);
 	TargetDetectionCollison->SetCollisionProfileName("Weapon");
