@@ -569,9 +569,9 @@ APlayerCharacter::APlayerCharacter()
 	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::INTERACTION, [&]() {});
 	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::MOVE, [&]()
 		{
-			
+			PlayerDataStruct.PlayerStamina = FMath::Clamp(PlayerDataStruct.PlayerStamina -= PlayerDataStruct.PlayerRunStamina * fDeltaTime, 0.0f, 100.0f);
+			PlayerHUD->DecreaseStaminaGradual(this, PlayerDataStruct.PlayerStamina / PlayerDataStruct.MaxStamina);
 			GameInstance->DebugLogWidget->T_PlayerStamina->SetText(FText::AsNumber(PlayerDataStruct.PlayerStamina));
-
 			if (PlayerDataStruct.PlayerStamina <= 0)
 			{
 				ChangeMontageAnimation(MovementAnimMap[IsLockOn]());
@@ -905,10 +905,10 @@ APlayerCharacter::APlayerCharacter()
 
 	InputEventMap[PlayerAction::NONE][ActionType::DODGE].Add(true, [&]()
 		{
-			Dodge();
 		});
 	InputEventMap[PlayerAction::NONE][ActionType::DODGE].Add(false, [&]()
 		{
+			Dodge();
 
 		});
 
@@ -1022,10 +1022,7 @@ APlayerCharacter::APlayerCharacter()
 		});
 	InputEventMap[PlayerAction::RUN][ActionType::DODGE].Add(false, [&]()
 		{
-			if (!IsSprint)
-			{
 				Dodge();
-			}
 		});
 	InputEventMap[PlayerAction::RUN][ActionType::ATTACK].Add(true, InputEventMap[PlayerAction::NONE][ActionType::ATTACK][true]);
 	InputEventMap[PlayerAction::RUN][ActionType::ATTACK].Add(false, InputEventMap[PlayerAction::NONE][ActionType::ATTACK][false]);
@@ -1045,6 +1042,9 @@ APlayerCharacter::APlayerCharacter()
 			if (anitype != AnimationType::FORWARDWALK)
 			{
 				ChangeMontageAnimation(anitype);
+				if(anitype == AnimationType::IDLE)
+					ChangeActionType(ActionType::NONE);
+
 			}
 		});
 	InputEventMap[PlayerAction::RUN][ActionType::ROTATE].Add(true, [&]() {});
@@ -1194,6 +1194,7 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::SPRINT][ActionType::DODGE].Add(true, [&]() {});
 	InputEventMap[PlayerAction::SPRINT][ActionType::DODGE].Add(false, [&]()
 		{
+			IsSprint = false;
 			if (CurActionType == ActionType::MOVE && 
 				AnimInstance->PlayerAnimationType != AnimationType::ENDOFSPRINT &&
 				AnimInstance->PlayerAnimationType != AnimationType::HEAL)
@@ -1297,6 +1298,9 @@ void APlayerCharacter::BeginPlay()
 	asd = GetComponentsByTag(UActorSequenceComponent::StaticClass(), FName("Parrying"));
 	BossParryingSequncePlayer = Cast<UActorSequenceComponent>(asd[0])->GetSequencePlayer();
 
+	asd = GetComponentsByTag(UBoxComponent::StaticClass(), FName("Camera"));
+	CameraOverlapComp = Cast<UBoxComponent>(asd[0]);
+
 	if (IsValid(PlayerUIClass))
 	{
 		PlayerHUD = Cast<UPlayerHUD>(CreateWidget(GetWorld(), PlayerUIClass));		
@@ -1362,6 +1366,8 @@ void APlayerCharacter::BeginPlay()
 	GameStartSequncePlayer->Play();
 	GameStartSequncePlayer->Pause();
 
+	CameraOverlapComp->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnCamOverlapBegin);
+	CameraOverlapComp->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnCamOverlapEnd);
 	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnWeaponOverlapBegin);
 	ExecutionTrigger->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnExecutionOverlapBegin);
 	ExecutionTrigger->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnExecutionOverlapEnd);
@@ -1432,12 +1438,6 @@ void APlayerCharacter::SetPlayerRightRotAndDir()
 			YawRotation = FRotator(0, Rotation.Yaw, 0);
 		}
 	}
-}
-
-void APlayerCharacter::EndSprint()
-{
-	InputEventMap[PlayerAction::SPRINT][ActionType::DODGE][false]();
-	IsSprint = false;
 }
 
 void APlayerCharacter::RotatePlayer()
@@ -1966,6 +1966,16 @@ void APlayerCharacter::OnExecutionOverlapEnd(UPrimitiveComponent* OverlappedComp
 	CanExecution = false;
 }
 
+void APlayerCharacter::OnCamOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	UE_LOG(LogTemp, Warning, TEXT("!@#!@#"));
+}
+
+void APlayerCharacter::OnCamOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	UE_LOG(LogTemp, Warning, TEXT("!@#!@#2"));
+}
+
 
 void APlayerCharacter::OnParryingOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -2112,7 +2122,8 @@ void APlayerCharacter::SetSprint()
 {
 	IsSprint = true;
 	if (CurActionType == ActionType::MOVE
-		&& AnimInstance->PlayerAnimationType != AnimationType::HEAL && PlayerCurAction != PlayerAction::CANTACT)
+		&& AnimInstance->PlayerAnimationType != AnimationType::HEAL && PlayerCurAction != PlayerAction::CANTACT
+		&& AnimInstance->PlayerAnimationType != AnimationType::ENDOFRUN && AnimInstance->PlayerAnimationType != AnimationType::ENDOFSPRINT)
 	{
 		Sprint();
 	}

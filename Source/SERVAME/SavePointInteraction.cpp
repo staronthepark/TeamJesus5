@@ -42,9 +42,6 @@ void ASavePointInteraction::Tick(float DeltaTime)
 	{
 		MeshCompArray[i]->SetScalarParameterValueOnMaterials("Dissolve", DissolveValue);
 	}
-
-	if(DissolveValue <= 0.0f)
-		SetActorTickEnabled(false);
 }
 
 void ASavePointInteraction::BeginTriggerEvent()

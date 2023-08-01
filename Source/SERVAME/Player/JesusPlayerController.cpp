@@ -126,6 +126,7 @@ void AJesusPlayerController::PressDodge()
 			character->PlayerHUD->PlayAnimations(EGuides::dodge, false);
 			return;
 		}
+
 		if (character->UserSettingUI->IsInViewport())
 		{
 			SetPause(false);
@@ -135,12 +136,6 @@ void AJesusPlayerController::PressDodge()
 		}
 	}
 
-	if (character->AnimInstance->PlayerAnimationType == AnimationType::GAMESTART ||
-		character->AnimInstance->PlayerAnimationType == AnimationType::GAMESTARTLOOP)
-	{
-		return;
-	}
-
 	if (character->AnimInstance->PlayerAnimationType == AnimationType::SAVELOOP && IsInputKeyDown(EKeys::Gamepad_FaceButton_Right))
 	{
 		character->ChangeMontageAnimation(AnimationType::SAVEEND);
@@ -148,26 +143,11 @@ void AJesusPlayerController::PressDodge()
 		return;
 	}
 
-	character->GetWorldTimerManager().SetTimer(character->SprintStartTimer, character, &APlayerCharacter::SetSprint, 0.2f);
-	character->InputEventMap[character->PlayerCurAction][ActionType::DODGE][true]();
+	character->InputEventMap[character->PlayerCurAction][ActionType::DODGE][false]();
 }
 
 void AJesusPlayerController::UnPressDodge()
 {
-	if (character->AnimInstance->PlayerAnimationType == AnimationType::GAMESTART || 
-		character->AnimInstance->PlayerAnimationType == AnimationType::GAMESTARTLOOP)
-	{
-		return;
-	}
-	character->GetWorldTimerManager().ClearTimer(character->SprintStartTimer);
-	if (character->IsSprint)
-	{
-		character->GetWorldTimerManager().SetTimer(character->SprintEndTimer, character, &APlayerCharacter::EndSprint, 0.1f);
-	}
-	else
-	{
-		character->InputEventMap[character->PlayerCurAction][ActionType::DODGE][false]();
-	}
 }
 
 void AJesusPlayerController::PressPowerAttack()
@@ -200,6 +180,16 @@ void AJesusPlayerController::PressUseItem()
 void AJesusPlayerController::UnPressUseItem()
 {
 	character->InputEventMap[character->PlayerCurAction][ActionType::HEAL][false]();
+}
+
+void AJesusPlayerController::PressSprint()
+{
+	character->SetSprint();
+}
+
+void AJesusPlayerController::UnPressSprint()
+{
+	character->InputEventMap[PlayerAction::SPRINT][ActionType::DODGE][false]();
 }
 
 void AJesusPlayerController::ViewLog()
@@ -419,17 +409,17 @@ void AJesusPlayerController::SetupInputComponent()
 	InputComponent->BindAction("Parring", IE_Pressed, this, &AJesusPlayerController::PressParring);
 	InputComponent->BindAction("Parring", IE_Released, this, &AJesusPlayerController::UnPressParring);
 
-	InputComponent->BindAction("MoveForward", IE_Pressed, this, &AJesusPlayerController::PressMoveForward);
-	InputComponent->BindAction("MoveForward", IE_Released, this, &AJesusPlayerController::UnPressMoveForward);
+	InputComponent->BindAction("MoveForward", IE_Pressed, this, &AJesusPlayerController::PressMoveForward).bExecuteWhenPaused = true;
+	InputComponent->BindAction("MoveForward", IE_Released, this, &AJesusPlayerController::UnPressMoveForward).bExecuteWhenPaused = true;
 
-	InputComponent->BindAction("MoveBack", IE_Pressed, this, &AJesusPlayerController::PressMoveBack);
-	InputComponent->BindAction("MoveBack", IE_Released, this, &AJesusPlayerController::UnPressMoveBack);
+	InputComponent->BindAction("MoveBack", IE_Pressed, this, &AJesusPlayerController::PressMoveBack).bExecuteWhenPaused = true;
+	InputComponent->BindAction("MoveBack", IE_Released, this, &AJesusPlayerController::UnPressMoveBack).bExecuteWhenPaused = true;
 
-	InputComponent->BindAction("MoveRight", IE_Pressed, this, &AJesusPlayerController::PressMoveRight);
-	InputComponent->BindAction("MoveRight", IE_Released, this, &AJesusPlayerController::UnPressMoveRight);
+	InputComponent->BindAction("MoveRight", IE_Pressed, this, &AJesusPlayerController::PressMoveRight).bExecuteWhenPaused = true;
+	InputComponent->BindAction("MoveRight", IE_Released, this, &AJesusPlayerController::UnPressMoveRight).bExecuteWhenPaused = true;
 
-	InputComponent->BindAction("MoveLeft", IE_Pressed, this, &AJesusPlayerController::PressMoveLeft);
-	InputComponent->BindAction("MoveLeft", IE_Released, this, &AJesusPlayerController::UnPressMoveLeft);
+	InputComponent->BindAction("MoveLeft", IE_Pressed, this, &AJesusPlayerController::PressMoveLeft).bExecuteWhenPaused = true;
+	InputComponent->BindAction("MoveLeft", IE_Released, this, &AJesusPlayerController::UnPressMoveLeft).bExecuteWhenPaused = true;
 
 	InputComponent->BindAction("UseItem", IE_Pressed, this, &AJesusPlayerController::PressUseItem);
 	InputComponent->BindAction("UseItem", IE_Released, this, &AJesusPlayerController::UnPressUseItem);
@@ -449,4 +439,7 @@ void AJesusPlayerController::SetupInputComponent()
 	InputComponent->BindAction("CloseMenu", IE_Pressed, this, &AJesusPlayerController::CloseMenu).bExecuteWhenPaused = true;
 
 	InputComponent->BindAction("ChangeView", IE_Pressed, this, &AJesusPlayerController::ChangeView);
+
+	InputComponent->BindAction("Sprint", IE_Pressed, this, &AJesusPlayerController::PressSprint).bExecuteWhenPaused = true;
+	InputComponent->BindAction("Sprint", IE_Released, this, &AJesusPlayerController::UnPressSprint).bExecuteWhenPaused = true;
 }

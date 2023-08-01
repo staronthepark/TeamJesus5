@@ -75,6 +75,9 @@ public:
 	void PressUseItem();
 	void UnPressUseItem();
 
+	void PressSprint();
+	void UnPressSprint();
+
 	void PressPowerAttack();
 	void UnPressPowerAttack();
 
