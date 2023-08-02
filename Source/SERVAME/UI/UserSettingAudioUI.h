@@ -13,6 +13,28 @@
 /**
  * 
  */
+
+UENUM()
+enum class EAudioSettings : uint8
+{
+	title	UMETA(DisplayName = "Title"),
+	master	UMETA(DisplayName = "Master"),
+	bgm		UMETA(DisplayName = "BGM"),
+	se		UMETA(DisplayName = "SE"),
+	voice	UMETA(DisplayName = "Voice")
+};
+
+USTRUCT(BlueprintType)
+struct SERVAME_API FAudioTextures
+{
+	GENERATED_BODY();
+public:
+	UPROPERTY(EditAnywhere)
+		UTexture2D* KorTexture;
+	UPROPERTY(EditAnywhere)
+		UTexture2D* EngTexture;
+};
+
 UCLASS()
 class SERVAME_API UUserSettingAudioUI : public USubUserSettingUI
 {
@@ -31,6 +53,24 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	USliderUI* WBP_Setting_Slider_Voice;
 
+	UPROPERTY(meta = (BindWidget))
+	UImage* TitleAudioImage;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* MasterAudioImage;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* BGMAudioImage;	
+	
+	UPROPERTY(meta = (BindWidget))
+	UImage* SEAudioImage;
+	
+	UPROPERTY(meta = (BindWidget))
+	UImage* VoiceAudioImage;
+
+	UPROPERTY(EditAnywhere)
+		TMap<EAudioSettings, FAudioTextures> ImageTextures;
+
 
 public:
 	virtual void NativeOnInitialized() override;
@@ -44,5 +84,8 @@ public:
 	void SetSFXVolume(float value);
 	UFUNCTION()
 	void SetVoiceVolume(float value);
+
+	UFUNCTION()
+	void ChangeLanguage();
 
 };

@@ -12,6 +12,18 @@
 /**
  * 
  */
+
+USTRUCT(BlueprintType)
+struct SERVAME_API FButtonTextures
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+		UTexture2D* KorTexture;
+	UPROPERTY(EditAnywhere)
+		UTexture2D* EngTexture;
+};
+
 UCLASS()
 class SERVAME_API UButtonUI : public UUserWidget
 {
@@ -21,8 +33,11 @@ class SERVAME_API UButtonUI : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 		UImage* OnOffImage;
 
+	//UPROPERTY(EditAnywhere)
+	//	TArray<UTexture2D*> OnOffImages;
+
 	UPROPERTY(EditAnywhere)
-		TArray<UTexture2D*> OnOffImages;
+		TMap<int, FButtonTextures> OnOffImages;
 
 	int index; 
 
@@ -40,4 +55,6 @@ public:
 
 	int GetValue();
 	void SetValue(int value);
+
+	void ChangeLanguage();
 };

@@ -2,6 +2,7 @@
 
 
 #include "ButtonUI.h"
+#include <SERVAME/Manager/JesusGameInstance.h>
 
 void UButtonUI::NativeOnInitialized()
 {
@@ -9,19 +10,19 @@ void UButtonUI::NativeOnInitialized()
 	LeftButton->OnClicked.AddDynamic(this, &UButtonUI::LeftButtonClicked);
 	RightButton->OnClicked.AddDynamic(this, &UButtonUI::RightButtonClicked);
 	index = 0;
-	OnOffImage->SetBrushFromTexture(OnOffImages[index]);
+	ChangeLanguage();
 }
 
 void UButtonUI::LeftButtonClicked()
 {
 	index = FMath::Abs(--index % OnOffImages.Num());
-	OnOffImage->SetBrushFromTexture(OnOffImages[index]);
+	ChangeLanguage();
 }
 
 void UButtonUI::RightButtonClicked()
 {
 	index = FMath::Abs(++index % OnOffImages.Num());
-	OnOffImage->SetBrushFromTexture(OnOffImages[index]);
+	ChangeLanguage();
 }
 
 int UButtonUI::GetValue()
@@ -32,5 +33,18 @@ int UButtonUI::GetValue()
 void UButtonUI::SetValue(int value)
 {
 	index = FMath::Clamp(value, 0, OnOffImages.Num() - 1);
-	OnOffImage->SetBrushFromTexture(OnOffImages[index]);
+	ChangeLanguage();
+}
+
+void UButtonUI::ChangeLanguage()
+{
+	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (GameInstance->language == Language::ENG)
+	{
+		OnOffImage->SetBrushFromTexture(OnOffImages.Find(index)->EngTexture, true);
+	}
+	else if (GameInstance->language == Language::KOR)
+	{
+		OnOffImage->SetBrushFromTexture(OnOffImages.Find(index)->KorTexture, true);
+	}
 }

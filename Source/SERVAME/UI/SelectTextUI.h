@@ -12,6 +12,25 @@
 /**
  * 
  */
+
+UENUM()
+enum class EHoverTextures : uint8
+{
+	hovered		UMETA(DiplayName = "Hovered"),
+	unhovered	UMETA(DisplayName = "Unhovered")
+};
+
+USTRUCT(BlueprintType)
+struct SERVAME_API FSelectTexture
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+		UTexture2D* KorTextures;
+	UPROPERTY(EditAnywhere)
+		UTexture2D* EngTextures;
+
+};
 UCLASS()
 class SERVAME_API USelectTextUI : public UUserWidget
 {
@@ -28,13 +47,14 @@ class SERVAME_API USelectTextUI : public UUserWidget
 
 
 	UPROPERTY(EditAnywhere)
-		TArray<UTexture2D*> TextIcons;
-
+		TMap<EHoverTextures, FSelectTexture> SelectTextTextures;
 public:
 	UPROPERTY(meta = (BindWidget))
 	UButton* Button;
 
 	virtual void NativeOnInitialized() override;
+
+	virtual void NativeConstruct() override;
 
 	UFUNCTION()
 	void Select();
@@ -47,4 +67,6 @@ public:
 
 	UFUNCTION()
 	void OnUnhovered();
+
+	void ChangeLanguage();
 };
