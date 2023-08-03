@@ -143,7 +143,7 @@ void AJesusPlayerController::PressDodge()
 		return;
 	}
 
-	character->InputEventMap[character->PlayerCurAction][ActionType::DODGE][false]();
+	character->InputEventMap[character->PlayerCurAction][ActionType::DODGE][true]();
 }
 
 void AJesusPlayerController::UnPressDodge()

@@ -905,10 +905,10 @@ APlayerCharacter::APlayerCharacter()
 
 	InputEventMap[PlayerAction::NONE][ActionType::DODGE].Add(true, [&]()
 		{
+			Dodge();
 		});
 	InputEventMap[PlayerAction::NONE][ActionType::DODGE].Add(false, [&]()
 		{
-			Dodge();
 
 		});
 
@@ -1019,10 +1019,10 @@ APlayerCharacter::APlayerCharacter()
 
 	InputEventMap[PlayerAction::RUN][ActionType::DODGE].Add(true, [&]()
 		{
+			Dodge();
 		});
 	InputEventMap[PlayerAction::RUN][ActionType::DODGE].Add(false, [&]()
 		{
-				Dodge();
 		});
 	InputEventMap[PlayerAction::RUN][ActionType::ATTACK].Add(true, InputEventMap[PlayerAction::NONE][ActionType::ATTACK][true]);
 	InputEventMap[PlayerAction::RUN][ActionType::ATTACK].Add(false, InputEventMap[PlayerAction::NONE][ActionType::ATTACK][false]);
@@ -1191,7 +1191,10 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::SPRINT].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::SPRINT].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 
-	InputEventMap[PlayerAction::SPRINT][ActionType::DODGE].Add(true, [&]() {});
+	InputEventMap[PlayerAction::SPRINT][ActionType::DODGE].Add(true, [&]()
+		{
+			Dodge();
+		});
 	InputEventMap[PlayerAction::SPRINT][ActionType::DODGE].Add(false, [&]()
 		{
 			IsSprint = false;
