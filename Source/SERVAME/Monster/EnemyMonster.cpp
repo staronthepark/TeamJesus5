@@ -437,11 +437,11 @@ void AEnemyMonster::BeginPlay()
 
 	WeaponOpacity = 0.171653f;
 	MeshOpacity = 0.171653f;
-
 	//MonsterHpWidget = Cast<UMonsterWidget>(HpWidget->GetWidget());
 	
 	DeactivateHpBar();
 
+	CatchByPlayer();
 
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &AEnemyMonster::OnTargetDetectionBeginOverlap);
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &AEnemyMonster::OnTargetDetectionEndOverlap);
@@ -580,6 +580,13 @@ void AEnemyMonster::Rotate()
 	SetActorRotation(FMath::Lerp(GetActorRotation(), YawRotation, MonsterDataStruct.RotateSpeed * fDeltaTime));
 }
 
+void AEnemyMonster::CatchByPlayer()
+{
+	AnimInstance->StopAllMontages(0.2f);
+	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+	GetMesh()->SetSimulatePhysics(true);
+}
+
 float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 
@@ -663,6 +670,12 @@ void AEnemyMonster::Tick(float DeltaTime)
 	
 	CheckDIstanceMap[IsDetect]();
 	MonsterTickEventMap[ActionType]();	
+
+	if (PlayerCharacter)
+	{
+		GetMesh()->SetWorldLocation(PlayerCharacter->GetActorLocation());
+	}
+
 	Rotate();
 }
 

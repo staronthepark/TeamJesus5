@@ -1064,8 +1064,8 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 
-	InputEventMap[PlayerAction::AFTERATTACK][ActionType::DODGE].Add(true, [&]() {});
-	InputEventMap[PlayerAction::AFTERATTACK][ActionType::DODGE].Add(false, InputEventMap[PlayerAction::RUN][ActionType::DODGE][false]);
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::DODGE].Add(true, InputEventMap[PlayerAction::RUN][ActionType::DODGE][true]);
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::DODGE].Add(false, [&]() {});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::ATTACK].Add(true,  InputEventMap[PlayerAction::NONE][ActionType::ATTACK][true]);
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::ATTACK].Add(false, InputEventMap[PlayerAction::NONE][ActionType::ATTACK][false]);
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::POWERATTACK].Add(true, InputEventMap[PlayerAction::NONE][ActionType::POWERATTACK][true]);
