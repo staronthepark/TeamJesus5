@@ -148,6 +148,7 @@ public:
 	bool IsDetect;
 	bool CanAttack;
 	bool TracePlayer;
+	bool IsCaught;
 
 private:
 
