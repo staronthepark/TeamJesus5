@@ -246,6 +246,8 @@ public:
 	bool IsSprint;
 	bool IsInteraction;
 	bool IsDead;
+	
+	float TargetOpacity;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MontageBlendInTime;
