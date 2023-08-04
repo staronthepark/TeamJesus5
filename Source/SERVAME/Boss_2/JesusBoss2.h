@@ -13,6 +13,7 @@
 #include "Components/WidgetComponent.h"
 #include "..\UI\MonsterWidget.h"
 #include <vector>
+#include <mutex>
 #include "JesusBoss2.generated.h"
 
 UENUM()
@@ -165,6 +166,10 @@ public:
 	// Sets default values for this character's properties
 	AJesusBoss2();
 	~AJesusBoss2();
+
+	std::mutex m1;
+	std::mutex m2;
+	std::mutex m3;
 
 	UPROPERTY()
 	UBoss2AnimInstance* Boss2AnimInstance;

@@ -10,7 +10,7 @@ JesusThreadManager::JesusThreadManager() : StopAllThread(false)
 	for (int i = 0; i < threadNum; i++)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ThreadCreate"));
-		Thread = FRunnableThread::Create(this, TEXT("WorkerThread"));
+		Thread = FRunnableThread::Create(this, TEXT("JesusWorkerThread"));
 		Threads.Push(Thread);
 	}
 }
