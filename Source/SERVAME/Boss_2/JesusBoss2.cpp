@@ -56,6 +56,11 @@ AJesusBoss2::AJesusBoss2()
 	RightArmHitCollision->SetupAttachment(GetMesh(), FName("Bip001-R-UpperArm"));
 	RightArmHitCollision->SetCollisionProfileName("AIHit");
 
+	JumpExplosonCollider = CreateDefaultSubobject<USphereComponent>(TEXT("JumpExplosionCollision"));
+	JumpExplosonCollider->SetupAttachment(GetMesh());
+	JumpExplosonCollider->SetCollisionProfileName("AIWeapon");
+
+
 	MontageStartMap.Add(Boss2AnimationType::NONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 		}));
@@ -209,6 +214,7 @@ AJesusBoss2::AJesusBoss2()
 
 	MontageStartMap.Add(Boss2AnimationType::JUMPEXPLOSION, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
+			Boss2->GetWorldTimerManager().SetTimer(Boss2->JumpExplosionTimer, Boss2, &AJesusBoss2::JumpExplosionCheck, 1.f, true, 3.7f);
 			Boss2->AreaAtkPos->AttachToComponent(Boss2->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("Bip001-Neck"));
 			Boss2->IsAttackMontageEnd = false;
 			Boss2->CanMove = false;
@@ -882,6 +888,8 @@ void AJesusBoss2::BeginPlay()
 	HeadAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ChargeAtkCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::AttackHit);
 	ChargeAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	JumpExplosonCollider->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::AttackHit);
+	JumpExplosonCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	HitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
 	HeadHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
@@ -908,6 +916,14 @@ void AJesusBoss2::Tick(float DeltaTime)
 		{
 			MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
 		}
+	}
+
+	if (JumpExplosionCnt >= 3)
+	{
+		GetWorldTimerManager().ClearTimer(JumpExplosionTimer);
+		JumpExplosionCnt = 0;
+		JumpExplosonCollider->SetSphereRadius(1.f);
+		JumpExplosonCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 
 	if (AttackLockOn)
@@ -1238,6 +1254,21 @@ void AJesusBoss2::JumpMove()
 {
 	auto NewLoc = Lerp(GetActorLocation(), LastPlayerLoc, 0.05f);
 	SetActorLocation(NewLoc);
+}
+
+void AJesusBoss2::JumpExplosionCheck()
+{
+	if(JumpExplosionCnt == 0)
+		JumpExplosonCollider->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+	JumpExplosionCnt += 1;
+
+	if (JumpExplosionCnt == 1)
+		JumpExplosonCollider->SetSphereRadius(400.f);
+	else if (JumpExplosionCnt == 2)
+		JumpExplosonCollider->SetSphereRadius(700.f);
+	else if (JumpExplosionCnt == 3)
+		JumpExplosonCollider->SetSphereRadius(1000.f);
 }
 
 void AJesusBoss2::SetBoneHead(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

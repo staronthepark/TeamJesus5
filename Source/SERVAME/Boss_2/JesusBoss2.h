@@ -235,6 +235,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = Boss2)
 	float MaxAtkRange = 2500.f;
 
+	int JumpExplosionCnt = 0;
+	FTimerHandle JumpExplosionTimer;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UCapsuleComponent* Boss2HitCollision;
 
@@ -254,6 +257,8 @@ public:
 	TObjectPtr<UCapsuleComponent> RightArmHitCollision;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UCapsuleComponent> LeftArmHitCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USphereComponent* JumpExplosonCollider;
 
 	Boss2BaseAction Boss2SuperAction;
 	Boss2DirectionType PlayerDirection;
@@ -389,6 +394,7 @@ public:
 	void SlerpJump();
 	void SlerpJumpEnd();
 	void JumpMove();
+	void JumpExplosionCheck();
 
 	/*======================
 	*		UFUNCTION
@@ -403,7 +409,6 @@ public:
 	void SetBoneRArm(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	void GetEndedMontage(UAnimMontage* Montage, bool bInterrupted);
-
 
 	/*=====================
 			Notify
