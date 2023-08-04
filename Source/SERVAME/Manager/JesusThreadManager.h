@@ -24,11 +24,9 @@ public:
 	void Exit() override;
 
 	void Work();
-
-	TFunction<void(void)> CallBack;
-
 	void EnqueueJob(TFunction<void(void)> job);
 
+	TFunction<void(void)> CallBack;
 	TQueue<TFunction<void(void)>> Job;
 private:
 	JesusThreadManager();

@@ -41,8 +41,6 @@ uint32 JesusThreadManager::Run()
 void JesusThreadManager::Exit()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Thread Exit"));
-
-	//스레드 풀에 돌려주기
 }
 
 void JesusThreadManager::Work()
@@ -52,6 +50,10 @@ void JesusThreadManager::Work()
 	while (true)
 	{
 		std::unique_lock<std::mutex> lock(m);
+		
+		//조건 확인.
+		//조건이 만족하면 빠져나와서 이어서 코드를 진행.
+		//조건이 만족하지 않으면 lock을 풀어주고 대기 상태로 전환한다.
 		cv.wait(lock, [this]() {return !this->Job.IsEmpty() || StopAllThread; });
 
 		if (StopAllThread && this->Job.IsEmpty())
