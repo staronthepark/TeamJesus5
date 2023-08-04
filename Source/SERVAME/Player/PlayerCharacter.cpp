@@ -1318,6 +1318,8 @@ void APlayerCharacter::BeginPlay()
 
 	CurHealCount = PlayerDataStruct.MaxHealCount;
 
+	TargetOpacity = 1.0f;
+
 	SpeedMap.Add(false, TMap<bool, float>());
 	SpeedMap[false].Add(false, PlayerDataStruct.CharacterOriginSpeed);
 	SpeedMap[false].Add(true,  PlayerDataStruct.PlayerRunSpeed);
@@ -1804,34 +1806,13 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	LookTarget();
 
-	//if (AnimInstance->PlayerAnimationType == AnimationType::EXECUTIONBOSS)
-	//{
-	//	TargetDirection = ExecutionGetActorLocation() - GetActorLocation();
-	//	Difference = FRotationMatrix::MakeFromX(TargetDirection).Rotator();
-	//	YawRotation = Difference;
-	//
-	//	TargetDirection = ExecutionGetActorLocation() - FollowCamera->GetComponentLocation();
-	//	FRotator CameraRotation = FRotationMatrix::MakeFromX(TargetDirection).Rotator();
-	//	FollowCamera->SetWorldRotation(FMath::Lerp(FollowCamera->GetComponentRotation(), CameraRotation, DeltaTime * 5.0f));
-	//}
-	//else if(AnimInstance->PlayerAnimationType != AnimationType::GAMESTART
-	//	&& AnimInstance->PlayerAnimationType != AnimationType::GAMESTARTLOOP && IsLockOn)
-	//{
-	//	FollowCamera->SetWorldRotation(FMath::Lerp(FollowCamera->GetComponentRotation(), GetWorld()->GetFirstPlayerController()->GetControlRotation(), DeltaTime));
-	//}
-
 	RotatePlayer();
 
 	SetActorRotation(FRotator(0, GetActorRotation().Yaw, 0));
+
 	FollowCamera->SetWorldRotation(FRotator(FollowCamera->GetComponentRotation().Pitch, FollowCamera->GetComponentRotation().Yaw, 0));
 	CameraBoom1->TargetArmLength = FMath::Lerp(CameraBoom1->TargetArmLength, TargetCameraBoomLength, DeltaTime * 2.0f);
 	CameraBoom1->SocketOffset = FMath::Lerp(CameraBoom1->SocketOffset, TargetSocketOffset, DeltaTime * 2.0f);
-
-
-	//if (!IsShoulderView)
-	//{
-	//	CameraBoom1->SetWorldLocation(GetActorLocation());
-	//}
 }
 
 void APlayerCharacter::RespawnCharacter()
@@ -1971,11 +1952,13 @@ void APlayerCharacter::OnExecutionOverlapEnd(UPrimitiveComponent* OverlappedComp
 
 void APlayerCharacter::OnCamOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	SetActorHiddenInGame(true);
 	UE_LOG(LogTemp, Warning, TEXT("!@#!@#"));
 }
 
 void APlayerCharacter::OnCamOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	SetActorHiddenInGame(false);
 	UE_LOG(LogTemp, Warning, TEXT("!@#!@#2"));
 }
 
