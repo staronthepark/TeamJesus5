@@ -12,16 +12,16 @@ AFallObjectInPool::AFallObjectInPool()
 	HitCollision->SetCollisionProfileName("AIProjectile");
 
 	GroundHitCollision = CreateDefaultSubobject<UBoxComponent>("GroundHitCollision");
-	GroundHitCollision->SetupAttachment(RootComponent);
+	GroundHitCollision->SetupAttachment(HitCollision);
 
 	CrossEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Cross Effect"));
-	CrossEffect->SetupAttachment(RootComponent);
+	CrossEffect->SetupAttachment(HitCollision);
 
 	CrossBurstEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Cross Burst Effect"));
-	CrossBurstEffect->SetupAttachment(RootComponent);
+	CrossBurstEffect->SetupAttachment(HitCollision);
 
 	DustEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Dust Effect"));
-	DustEffect->SetupAttachment(RootComponent);
+	DustEffect->SetupAttachment(HitCollision);
 }
 
 void AFallObjectInPool::BeginPlay()
@@ -55,12 +55,13 @@ void AFallObjectInPool::SetActive(bool active)
 
 	MoveDir = -GetActorUpVector();
 
-	CrossEffect->Activate();
-	CrossBurstEffect->Deactivate();
-	DustEffect->Deactivate();
 
 	if (LifeTime > 0 && active)
 	{
+		CrossEffect->Activate();
+		CrossBurstEffect->Deactivate();
+		DustEffect->Deactivate();
+
 		GetWorldTimerManager().SetTimer(LifeTimer, this, &AFallObjectInPool::ReturnObject, LifeTime);
 	}
 }
@@ -77,6 +78,7 @@ void AFallObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* OverlappedC
 
 void AFallObjectInPool::OnGroundOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	UE_LOG(LogTemp, Warning, TEXT("??????"));
 	IsHitGround = true;
 	SetActorTickEnabled(false);
 	HitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
