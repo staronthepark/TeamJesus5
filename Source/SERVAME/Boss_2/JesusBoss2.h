@@ -395,6 +395,7 @@ public:
 	void SlerpJumpEnd();
 	void JumpMove();
 	void JumpExplosionCheck();
+	void threadtest() { UE_LOG(LogTemp, Warning, TEXT("123123123123")); }
 
 	/*======================
 	*		UFUNCTION

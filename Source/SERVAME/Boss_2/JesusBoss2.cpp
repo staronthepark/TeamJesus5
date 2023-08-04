@@ -11,6 +11,7 @@
 #include "..\ObjectPool\VomitObjectInPool.h"
 #include "..\ObjectPool\StoneObjectInPool.h"
 #include "DrawDebugHelpers.h"
+#include "..\Manager\JesusThreadManager.h"
 
 AJesusBoss2::AJesusBoss2()
 {
@@ -869,6 +870,9 @@ void AJesusBoss2::PostInitializeComponents()
 void AJesusBoss2::BeginPlay()
 {
 	Super::BeginPlay();
+
+	JesusThreadManager& t = JesusThreadManager::GetInstance();
+	t.EnqueueJob(TFunction<void(void)>([=](void) { UE_LOG(LogTemp, Warning, TEXT("123123123123")); }));
 
 	SetMetaData();
 	AIController = Cast<ABoss2AIController>(GetController());
