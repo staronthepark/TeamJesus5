@@ -221,7 +221,6 @@ AJesusBoss2::AJesusBoss2()
 
 	MontageStartMap.Add(Boss2AnimationType::THROWSTONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("stone"));
 			auto RightHandSocket = Boss2->GetMesh()->GetSocketLocation(FName("RHand"));
 			auto PoolObject = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[35].ObjClass,
 				RightHandSocket, FRotator::ZeroRotator);
@@ -322,7 +321,9 @@ AJesusBoss2::AJesusBoss2()
 			Boss2ActionTemp ActionTemp{};
 
 			auto Type = GetTypeFromMetaData(Montage);
-		
+			auto name = Boss2AnimationEnum->GetNameStringByValue((uint64)Type);
+			UE_LOG(LogTemp, Warning, TEXT("end attack name : %s"), *name);
+
 			if (CurrentActionTemp.IsAddPercentage)
 				InitPercentageMap[CurrentActionTemp.AttackType]();
 			else
@@ -330,9 +331,9 @@ AJesusBoss2::AJesusBoss2()
 
 			if (Type == Boss2AnimationType::DOWNSMASH || Type == Boss2AnimationType::SLASH)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("get follow up attack"));
 				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_FOLLOWUP]();
 				SetBTAction(CurrentActionTemp);
-				IsAttackMontageEnd = true;
 				return;
 			}
 
@@ -866,6 +867,7 @@ void AJesusBoss2::BeginPlay()
 	SetMetaData();
 	AIController = Cast<ABoss2AIController>(GetController());
 	Boss2ActionEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("Boss2ActionType"), true);
+	Boss2AnimationEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("Boss2AnimationType"), true);
 	GetCharacterMovement()->MaxWalkSpeed = BossDataStruct.CharacterOriginSpeed;
 	MonsterLockOnWidget = Cast<UMonsterWidget>(LockOnWidget->GetWidget());
 	MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
@@ -1371,7 +1373,7 @@ void AJesusBoss2::OnStart()
 		StartEnd.Value = false;
 
 		StartMontage = GetCurrentMontage();
-		UE_LOG(LogTemp, Warning, TEXT("Start : %s"), *StartMontage->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("Start : %s"), *StartMontage->GetName());
 		MontageStartMap[GetTypeFromMetaData(StartMontage)](this);
 	}
 }

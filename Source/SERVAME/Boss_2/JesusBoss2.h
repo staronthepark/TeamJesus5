@@ -299,6 +299,8 @@ public:
 
 	UPROPERTY()
 	const UEnum* Boss2ActionEnum;
+	UPROPERTY()
+	const UEnum* Boss2AnimationEnum;
 
 	UPROPERTY()
 	UMonsterWidget* MonsterLockOnWidget;
