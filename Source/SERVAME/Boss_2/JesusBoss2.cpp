@@ -1027,6 +1027,7 @@ void AJesusBoss2::DoTypeAttack(float MinRange, float MaxRange, float Dist, bool 
 	{
 		//InitIsExcute();
 
+		//스레드 사용
 		JesusThreadManager& t = JesusThreadManager::GetInstance();
 
 		t.EnqueueJob(TFunction<void(void)>([=](void)
@@ -1049,7 +1050,6 @@ void AJesusBoss2::DoTypeAttack(float MinRange, float MaxRange, float Dist, bool 
 				SetBTAction(CurrentActionTemp);
 				return;
 			}
-			
 			
 			std::unique_lock<std::mutex> lock(m1);
 			arr[FoundIndex].IsExcute = true;
