@@ -74,6 +74,8 @@ AJesusBoss2::AJesusBoss2()
 		}));
 	MontageEndMap.Add(Boss2AnimationType::IDLE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
+			Boss2->IsAttackMontageEnd = true;
+			Boss2->IsAttacking = false;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::CROSSFALL, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -871,9 +873,6 @@ void AJesusBoss2::BeginPlay()
 {
 	Super::BeginPlay();
 
-	JesusThreadManager& t = JesusThreadManager::GetInstance();
-	t.EnqueueJob(TFunction<void(void)>([=](void) { UE_LOG(LogTemp, Warning, TEXT("123123123123")); }));
-
 	SetMetaData();
 	AIController = Cast<ABoss2AIController>(GetController());
 	Boss2ActionEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("Boss2ActionType"), true);
@@ -1026,7 +1025,25 @@ void AJesusBoss2::DoTypeAttack(float MinRange, float MaxRange, float Dist, bool 
 {
  	if (Dist >= MinRange && Dist <= MaxRange && !Boss2->CurrentActionTemp.IsExcute)
 	{
-		InitIsExcute();
+		//InitIsExcute();
+
+		JesusThreadManager& t = JesusThreadManager::GetInstance();
+		t.EnqueueJob(TFunction<void(void)>([=](void)
+			{ 
+				for (int i = 0; i < MeleeActionArr.Num(); i++)
+					MeleeActionArr[i].IsExcute = false;
+			}));
+		t.EnqueueJob(TFunction<void(void)>([=](void)
+			{
+				for (int i = 0; i < RangeActionArr.Num(); i++)
+					RangeActionArr[i].IsExcute = false;
+			}));
+		t.EnqueueJob(TFunction<void(void)>([=](void)
+			{
+				for (int i = 0; i < FollowUpActionArr.Num(); i++)
+					FollowUpActionArr[i].IsExcute = false;
+			}));
+
 
 		if (!Boss2->CurrentActionTemp.CanContinuity)
 		{

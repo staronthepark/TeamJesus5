@@ -45,8 +45,6 @@ void JesusThreadManager::Exit()
 
 void JesusThreadManager::Work()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Thread Work"));
-
 	while (true)
 	{
 		std::unique_lock<std::mutex> lock(m);
@@ -60,9 +58,9 @@ void JesusThreadManager::Work()
 			return;
 
 		Job.Dequeue(CallBack);
-
 		lock.unlock();
 
+		UE_LOG(LogTemp, Warning, TEXT("Thread Work"));
 		CallBack();
 	}
 }

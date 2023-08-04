@@ -94,6 +94,8 @@ AJesusBoss::AJesusBoss()
 		}));
 	MontageEndMap.Add(BossAnimationType::IDLE, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
+			Boss->IsAttackMontageEnd = true;
+			Boss->IsAttacking = false;
 			Boss->IdleMontageEndInit(BossAnimationType::IDLE);
 		}));
 
