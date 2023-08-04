@@ -582,9 +582,26 @@ void AEnemyMonster::Rotate()
 
 void AEnemyMonster::CatchByPlayer()
 {
-	AnimInstance->StopAllMontages(0.2f);
+	IsCaught = true;
+	DetachFromControllerPendingDestroy();
+	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
+	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	CapsuleComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+
+	GetMesh()->SetAllBodiesSimulatePhysics(true);
 	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->WakeAllRigidBodies();
+	GetMesh()->bBlendPhysics = true;
+
+	UCharacterMovementComponent* CharacterComp = Cast<UCharacterMovementComponent>(GetMovementComponent());
+	if (CharacterComp)
+	{
+		CharacterComp->StopMovementImmediately();
+		CharacterComp->DisableMovement();
+		CharacterComp->SetComponentTickEnabled(false);
+	}
 }
 
 float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -667,14 +684,17 @@ void AEnemyMonster::Tick(float DeltaTime)
 
 	fDeltaTime = DeltaTime;
 
-	
+	if (IsCaught)
+	{
+		if (PlayerCharacter)
+		{
+			GetMesh()->SetWorldLocation(PlayerCharacter->GetActorLocation());
+			return;
+		}
+	}
+
 	CheckDIstanceMap[IsDetect]();
 	MonsterTickEventMap[ActionType]();	
-
-	if (PlayerCharacter)
-	{
-		GetMesh()->SetWorldLocation(PlayerCharacter->GetActorLocation());
-	}
 
 	Rotate();
 }
