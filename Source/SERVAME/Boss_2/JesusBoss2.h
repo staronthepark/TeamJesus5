@@ -168,8 +168,6 @@ public:
 	~AJesusBoss2();
 
 	std::mutex m1;
-	std::mutex m2;
-	std::mutex m3;
 
 	UPROPERTY()
 	UBoss2AnimInstance* Boss2AnimInstance;

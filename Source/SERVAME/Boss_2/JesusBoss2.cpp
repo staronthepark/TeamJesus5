@@ -1030,24 +1030,15 @@ void AJesusBoss2::DoTypeAttack(float MinRange, float MaxRange, float Dist, bool 
 		JesusThreadManager& t = JesusThreadManager::GetInstance();
 
 		t.EnqueueJob(TFunction<void(void)>([=](void)
-			{ 
+			{ 				
 				std::unique_lock<std::mutex> lock(m1);
-				for (int i = 0; i < this->MeleeActionArr.Num(); i++)
-					this->MeleeActionArr[i].IsExcute = false;
+				for (int i = 0; i < MeleeActionArr.Num(); i++)
+					MeleeActionArr[i].IsExcute = false;
+				for (int i = 0; i < RangeActionArr.Num(); i++)
+					RangeActionArr[i].IsExcute = false;
+				for (int i = 0; i < FollowUpActionArr.Num(); i++)
+					FollowUpActionArr[i].IsExcute = false;
 			}));
-		t.EnqueueJob(TFunction<void(void)>([=](void)
-			{
-				std::unique_lock<std::mutex> lock(m2);
-				for (int i = 0; i < this->RangeActionArr.Num(); i++)
-					this->RangeActionArr[i].IsExcute = false;
-			}));
-		t.EnqueueJob(TFunction<void(void)>([=](void)
-			{
-				std::unique_lock<std::mutex> lock(m3);
-				for (int i = 0; i < this->FollowUpActionArr.Num(); i++)
-					this->FollowUpActionArr[i].IsExcute = false;
-			}));
-
 
 		if (!Boss2->CurrentActionTemp.CanContinuity)
 		{
@@ -1059,6 +1050,8 @@ void AJesusBoss2::DoTypeAttack(float MinRange, float MaxRange, float Dist, bool 
 				return;
 			}
 			
+			
+			std::unique_lock<std::mutex> lock(m1);
 			arr[FoundIndex].IsExcute = true;
 		}
 
