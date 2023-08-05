@@ -935,6 +935,9 @@ void AJesusBoss2::Tick(float DeltaTime)
 	if (JumpMoveStart)
 		JumpMove();
 
+	if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
+		OnCrossFall();
+
 	PlayMoveMontage();
 
 	IsGameStart = Boss2AnimInstance->IsStart;
@@ -1136,6 +1139,7 @@ float AJesusBoss2::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	OffHitCollision();
 
 	BossDataStruct.CharacterHp -= DamageAmount;
+	UE_LOG(LogTemp, Warning, TEXT("%f"), BossDataStruct.CharacterHp);
 
 	IsStartBoneRot = true;
 	GetWorldTimerManager().SetTimer(BoneRotateTimerHandle, this, &AJesusBoss2::ReSetBoneRot, Time, false);
@@ -1322,6 +1326,7 @@ void AJesusBoss2::GetEndedMontage(UAnimMontage* Montage, bool bInterrupted)
 =====================*/
 void AJesusBoss2::OnCrossFall()
 {
+	CrossEvent = true;
 	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
 
 	if (NavSystem == nullptr)

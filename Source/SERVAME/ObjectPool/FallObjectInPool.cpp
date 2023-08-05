@@ -59,6 +59,7 @@ void AFallObjectInPool::SetActive(bool active)
 	if (LifeTime > 0 && active)
 	{
 		CrossEffect->Activate();
+
 		CrossBurstEffect->Deactivate();
 		DustEffect->Deactivate();
 

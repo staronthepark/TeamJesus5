@@ -290,6 +290,7 @@ public:
 	bool IsArrived;
 	bool IsStartBoneRot;
 	bool JumpMoveStart;
+	bool CrossEvent = false;
 
 	FVector LastPlayerLoc;
 
