@@ -112,6 +112,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::DOWNSMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -124,6 +125,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::DOUBLESMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -135,6 +137,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::SCREAMATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -146,6 +149,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::HEADATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -157,6 +161,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::CHARGE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -168,6 +173,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::HEADING, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -180,6 +186,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::VOMITFALL, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -191,6 +198,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::ELBOWSPIN, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -202,6 +210,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::HUNTJUMP, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -213,6 +222,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::JUMPEXPLOSION, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -226,6 +236,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::THROWSTONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -242,6 +253,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	//===========================================공격 실행=========================================================
@@ -940,6 +952,8 @@ void AJesusBoss2::Tick(float DeltaTime)
 
 	PlayMoveMontage();
 
+	CheckBossDie();
+
 	IsGameStart = Boss2AnimInstance->IsStart;
 
 	//본 회전시키는 코드
@@ -1144,7 +1158,8 @@ float AJesusBoss2::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	IsStartBoneRot = true;
 	GetWorldTimerManager().SetTimer(BoneRotateTimerHandle, this, &AJesusBoss2::ReSetBoneRot, Time, false);
 		
-	//TODO : 보스 체력 UI
+	AIController->BossUI->DecreaseHPGradual(this, BossDataStruct.CharacterHp / BossDataStruct.CharacterMaxHp);
+	AIController->BossUI->SetDamageText(DamageAmount);
 
 	//TODO : 그로기 관련 코드
 
@@ -1222,7 +1237,7 @@ void AJesusBoss2::SpawnInit()
 {
 	BossDataStruct.CharacterHp = BossDataStruct.CharacterMaxHp;
 	BossDataStruct.CharacterOriginSpeed = 60.f;
-	//TODO : UI 초기화
+	AIController->BossUI->SetHP(1);
 	IsDead = false;
 
 	//패턴 확률 초기화
@@ -1291,6 +1306,28 @@ void AJesusBoss2::JumpExplosionCheck()
 		JumpExplosonCollider->SetSphereRadius(700.f);
 	else if (JumpExplosionCnt == 3)
 		JumpExplosonCollider->SetSphereRadius(1000.f);
+}
+
+void AJesusBoss2::CheckBossDie()
+{
+	if (BossDataStruct.CharacterHp <= 0 && IsDead == false)
+	{
+		IsLockOn = false;
+		CanMove = false;
+		IsDead = true;
+		PlayerCharacter->AxisX = 1;
+		PlayerCharacter->AxisY = 1;
+		GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
+		ChangeMontageAnimation(Boss2AnimationType::DIE);
+		
+		AIController->BossUI->PlayBossDiedAnimtion();
+		AIController->OnUnPossess();
+
+		for (auto iter = BossDataStruct.DamageList.begin(); iter != BossDataStruct.DamageList.end(); iter.operator++())
+		{
+			iter.Value() = 0;
+		}
+	}
 }
 
 void AJesusBoss2::SetBoneHead(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
