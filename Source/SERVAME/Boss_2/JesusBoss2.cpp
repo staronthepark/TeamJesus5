@@ -1056,7 +1056,6 @@ void AJesusBoss2::DoTypeAttack(float MinRange, float MaxRange, float Dist, bool 
 					RangeActionArr[i].IsExcute = false;
 				for (int i = 0; i < FollowUpActionArr.Num(); i++)
 					FollowUpActionArr[i].IsExcute = false;
-				UE_LOG(LogTemp, Warning, TEXT("IsExcute = false"));
 			}));
 
 		if (!Boss2->CurrentActionTemp.CanContinuity)
@@ -1074,7 +1073,6 @@ void AJesusBoss2::DoTypeAttack(float MinRange, float MaxRange, float Dist, bool 
 				{
 					std::unique_lock<std::mutex> lock(m1);
 					arr[FoundIndex].IsExcute = true;
-					UE_LOG(LogTemp, Warning, TEXT("IsExcute = true"));
 				}));
 		}
 
