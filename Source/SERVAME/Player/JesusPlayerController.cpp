@@ -199,10 +199,10 @@ void AJesusPlayerController::PressGrab()
 		if (character->ExecutionCharacter)
 		{
 			character->ExecutionCharacter->CatchByPlayer();
+			character->IsGrab = true;
 			if (character->IsLockOn)
 			{
 				character->LockOn();
-				character->IsGrab = true;
 			}
 		}
 	}

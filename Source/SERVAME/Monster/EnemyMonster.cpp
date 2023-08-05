@@ -275,7 +275,18 @@ AEnemyMonster::AEnemyMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::HIT, [&]()
 		{
-			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			UE_LOG(LogTemp, Warning, TEXT("!@#!@#"));
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+			}
+			else
+			{
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			}
 		});
 
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::IDLE, TMap<bool, TFunction<void()>>());
@@ -363,8 +374,6 @@ AEnemyMonster::AEnemyMonster()
 		{
 			if (percent >= 0.5)
 			{
-
-				//UGameplayStatics::SetGlobalTimeDilation(monster, 0.1f);
 				PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::dodge, true);
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
@@ -420,7 +429,6 @@ void AEnemyMonster::BeginPlay()
 
 	MonsterController = Cast<AMonsterController>(GetController());
 
-	UE_LOG(LogTemp, Warning, TEXT("monsterbegin"));
 	UCombatManager::GetInstance().MonsterInfoArray.Add(this);
 		
 	PlayerCharacter = nullptr;
@@ -484,7 +492,6 @@ void AEnemyMonster::DeactivateHpBar()
 
 void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Detect"));
 	if (ActionType == MonsterActionType::DEAD)return;
 	if (PlayerCharacter == nullptr)
 	{
@@ -492,7 +499,7 @@ void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* Overlappe
 		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
 		PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::camera, true);
 	}
-
+	TracePlayer = true;
 	MonsterMoveEventIndex = 1;
 	TargetDetectEventMap[AttackType]();
 }
@@ -570,7 +577,7 @@ void AEnemyMonster::OnGrabCollisionOverlapBegin(UPrimitiveComponent* OverlappedC
 void AEnemyMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
 	TracePlayer = false;
-	if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP)return;
+	if (StateType == MonsterStateType::CANTACT)return;
 	AttackAnimationType = AttackAnimType;
 	if (ActionType != MonsterActionType::ATTACK)
 	{
@@ -608,11 +615,13 @@ void AEnemyMonster::CatchByPlayer()
 {
 	IsCaught = true;
 	SetActorTickEnabled(false);
+	AnimInstance->StopAllMontages(0.25f);
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
 	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	CapsuleComp->SetCollisionResponseToAllChannels(ECR_Ignore);
 	DetachFromControllerPendingDestroy();
 	ChangeMontageAnimation(MonsterAnimationType::IDLE);
+	StateType = MonsterStateType::CANTACT;
 	GrabShieldCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
@@ -641,8 +650,17 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 {
 
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	if (Imotal)return 0;
-
+	if (Imotal)
+	{
+		if (IsCaught)
+		{
+			CameraShake(PlayerCameraShake);
+			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
+		}
+		return 0;
+	}
 	
 	//MonsterHpWidget->Hp->SetVisibility(ESlateVisibility::Visible);
 	//MonsterHpWidget->HpBG->SetVisibility(ESlateVisibility::Visible);
