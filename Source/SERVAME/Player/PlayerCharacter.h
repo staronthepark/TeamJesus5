@@ -103,7 +103,8 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PlayerExecutionSecondDamage;
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float LaunchCharacterPower;
 };
 
 UCLASS()
@@ -162,6 +163,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraSpringArm")
 		USpringArmComponent* CameraBoom1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UBoxComponent* GrabPosition;
 
 	UPROPERTY()
 		UBoxComponent* CameraOverlapComp;
@@ -246,6 +250,7 @@ public:
 	bool IsSprint;
 	bool IsInteraction;
 	bool IsDead;
+	bool IsGrab;
 	
 	float TargetOpacity;
 

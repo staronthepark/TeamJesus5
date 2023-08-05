@@ -39,6 +39,14 @@ AEnemyMonster::AEnemyMonster()
 	WeaponOverlapStaticMeshCollision->SetupAttachment(GetMesh(), FName("Weapon_Bone"));
 	WeaponOverlapStaticMeshCollision->SetCollisionProfileName("Weapon");
 
+	GrabCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Grab Damage"));
+	GrabCollision->SetupAttachment(GetMesh());
+	GrabCollision->SetCollisionProfileName("Grab Damage");
+
+	GrabShieldCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Grab Guard"));
+	GrabShieldCollision->SetupAttachment(GetMesh());
+	GrabShieldCollision->SetCollisionProfileName("Grab Guard");
+
 	AnimTypeToStateType.Add(MonsterAnimationType::FORWARDMOVE, MonsterStateType::NONE);
 	AnimTypeToStateType.Add(MonsterAnimationType::LEFTMOVE, MonsterStateType::NONE);
 	AnimTypeToStateType.Add(MonsterAnimationType::RIGHTMOVE, MonsterStateType::NONE);
@@ -439,9 +447,10 @@ void AEnemyMonster::BeginPlay()
 	MeshOpacity = 0.171653f;
 	//MonsterHpWidget = Cast<UMonsterWidget>(HpWidget->GetWidget());
 	
-	DeactivateHpBar();
+	GrabShieldCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GrabCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	CatchByPlayer();
+	DeactivateHpBar();
 
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &AEnemyMonster::OnTargetDetectionBeginOverlap);
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &AEnemyMonster::OnTargetDetectionEndOverlap);
@@ -451,7 +460,7 @@ void AEnemyMonster::BeginPlay()
 	WeaponOverlapStaticMeshCollision->OnComponentEndOverlap.AddDynamic(this, &AEnemyMonster::OnSMOverlapEnd);
 
 	ParryingCollision1->OnComponentBeginOverlap.AddDynamic(this, &AEnemyMonster::OnParryingOverlap);
-
+	GrabCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyMonster::OnGrabCollisionOverlapBegin);
 }
 
 
@@ -543,6 +552,21 @@ void AEnemyMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, 
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
 }
 
+void AEnemyMonster::OnGrabCollisionOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->TakeDamage(10.0f, CharacterDamageEvent, nullptr, this))
+	{
+		UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(Cast<ABaseCharacter>(OtherActor));
+
+		VibrateGamePad(0.4f, 0.4f);
+
+		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
+	}
+}
+
+
 void AEnemyMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
 	TracePlayer = false;
@@ -583,11 +607,23 @@ void AEnemyMonster::Rotate()
 void AEnemyMonster::CatchByPlayer()
 {
 	IsCaught = true;
-	DetachFromControllerPendingDestroy();
+	SetActorTickEnabled(false);
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
 	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	CapsuleComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+	DetachFromControllerPendingDestroy();
+	ChangeMontageAnimation(MonsterAnimationType::IDLE);
+	GrabShieldCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
 
+void AEnemyMonster::LaunchCharacter(FVector Dir, float Power)
+{	
+	GrabCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	DeactivateHitCollision();
+	HitCollision->SetCollisionResponseToAllChannels(ECR_Ignore);
+	DeactivateSMOverlap();
+	DeactivateRightWeapon();
+	ParryingCollision1->Deactivate();
 
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 	GetMesh()->SetAllBodiesSimulatePhysics(true);
@@ -595,13 +631,10 @@ void AEnemyMonster::CatchByPlayer()
 	GetMesh()->WakeAllRigidBodies();
 	GetMesh()->bBlendPhysics = true;
 
-	UCharacterMovementComponent* CharacterComp = Cast<UCharacterMovementComponent>(GetMovementComponent());
-	if (CharacterComp)
-	{
-		CharacterComp->StopMovementImmediately();
-		CharacterComp->DisableMovement();
-		CharacterComp->SetComponentTickEnabled(false);
-	}
+	GetMesh()->AddImpulseToAllBodiesBelow(Dir * Power, NAME_None, true);
+
+	GetMovementComponent()->StopMovementImmediately();
+	GetMovementComponent()->SetComponentTickEnabled(false);
 }
 
 float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

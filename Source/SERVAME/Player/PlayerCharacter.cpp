@@ -64,6 +64,10 @@ APlayerCharacter::APlayerCharacter()
 	ExecutionTrigger->SetupAttachment(RootComponent);
 	ExecutionTrigger->SetCollisionProfileName("Execution Trigger");
 
+	GrabPosition = CreateDefaultSubobject<UBoxComponent>(TEXT("Grab Position"));
+	GrabPosition->SetupAttachment(RootComponent);
+	GrabPosition->SetCollisionProfileName("Grab Position");
+
 	WeaponCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Right Weapon Box"));
 	WeaponCollision->SetupAttachment(WeaponMesh);
 	WeaponCollision->SetCollisionProfileName("Weapon");
@@ -1517,12 +1521,15 @@ void APlayerCharacter::LockOn()
 
 	if (IsLockOn)
 	{
-		GetCompsInScreen(TargetCompArray);
-		GetFirstTarget();
 		if (TargetComp == nullptr)
 		{
-			IsLockOn = false;
-			return;
+			GetCompsInScreen(TargetCompArray);
+			GetFirstTarget();
+			if (TargetComp == nullptr)
+			{
+				IsLockOn = false;
+				return;
+			}
 		}
 
 		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true);
@@ -1630,7 +1637,10 @@ void APlayerCharacter::ChangeTarget(CameraDirection CamDirection)
 			TargetIdx = i;
 	}
 
+	Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false);
 	TargetComp = TargetArray[TargetIdx];
+	Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true);
+
 	TargetArray.Empty();
 }
 
@@ -1813,6 +1823,11 @@ void APlayerCharacter::Tick(float DeltaTime)
 	FollowCamera->SetWorldRotation(FRotator(FollowCamera->GetComponentRotation().Pitch, FollowCamera->GetComponentRotation().Yaw, 0));
 	CameraBoom1->TargetArmLength = FMath::Lerp(CameraBoom1->TargetArmLength, TargetCameraBoomLength, DeltaTime * 2.0f);
 	CameraBoom1->SocketOffset = FMath::Lerp(CameraBoom1->SocketOffset, TargetSocketOffset, DeltaTime * 2.0f);
+
+	if (ExecutionCharacter && IsGrab)
+	{
+		ExecutionCharacter->SetActorLocation(GrabPosition->GetComponentLocation());
+	}
 }
 
 void APlayerCharacter::RespawnCharacter()
@@ -1852,6 +1867,7 @@ void APlayerCharacter::PlayExecutionAnimation()
 {
 	if (!IsLockOn)
 	{
+		//TargetComp = ExecutionCharacter->
 		LockOn();
 	}
 
@@ -1869,6 +1885,8 @@ void APlayerCharacter::PlayExecutionAnimation()
 	ComboAttackEnd();
 	ChangeMontageAnimation(AnimationType::EXECUTIONBOSS);
 	BossExecutionSequncePlayer->Play();
+	AxisX = 1;
+	AxisY = 1;
 
 	Imotal = true;
 }

@@ -192,6 +192,28 @@ void AJesusPlayerController::UnPressSprint()
 	character->InputEventMap[PlayerAction::SPRINT][ActionType::DODGE][false]();
 }
 
+void AJesusPlayerController::PressGrab()
+{
+	if (!character->IsGrab)
+	{
+		if (character->ExecutionCharacter)
+		{
+			character->ExecutionCharacter->CatchByPlayer();
+			if (character->IsLockOn)
+			{
+				character->LockOn();
+				character->IsGrab = true;
+			}
+		}
+	}
+	else
+	{
+		character->ExecutionCharacter->LaunchCharacter(character->GetActorRotation().Vector(),
+			character->PlayerDataStruct.LaunchCharacterPower);
+		character->IsGrab = false;
+	}
+}
+
 void AJesusPlayerController::ViewLog()
 {
 	if (GameInstance->DebugLogWidget->IsInViewport())
@@ -442,4 +464,7 @@ void AJesusPlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("Sprint", IE_Pressed, this, &AJesusPlayerController::PressSprint).bExecuteWhenPaused = true;
 	InputComponent->BindAction("Sprint", IE_Released, this, &AJesusPlayerController::UnPressSprint).bExecuteWhenPaused = true;
+
+	InputComponent->BindAction("Grab", IE_Pressed, this, &AJesusPlayerController::PressGrab);
+
 }
