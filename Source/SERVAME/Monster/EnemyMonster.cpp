@@ -436,6 +436,9 @@ void AEnemyMonster::BeginPlay()
 	MonsterController = Cast<AMonsterController>(GetController());
 
 	UCombatManager::GetInstance().MonsterInfoArray.Add(this);
+
+	//test
+	UCombatManager::GetInstance().HitMonsterInfoArray.Add(this);
 		
 	PlayerCharacter = nullptr;
 	
