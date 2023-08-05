@@ -392,50 +392,50 @@ AJesusBoss2::AJesusBoss2()
 			IsAttackMontageEnd = true;
 		}));
 
-	ActionEndMap.Add(Boss2AttackType::B2_LEFTATK, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
-		{
-			Boss2ActionTemp ActionTemp{};
+	//ActionEndMap.Add(Boss2AttackType::B2_LEFTATK, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
+	//	{
+	//		Boss2ActionTemp ActionTemp{};
 
-			auto Type = GetTypeFromMetaData(Montage);
-		
-			if (CurrentActionTemp.IsAddPercentage)
-				InitPercentageMap[CurrentActionTemp.AttackType]();
-			else
-				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
+	//		auto Type = GetTypeFromMetaData(Montage);
+	//	
+	//		if (CurrentActionTemp.IsAddPercentage)
+	//			InitPercentageMap[CurrentActionTemp.AttackType]();
+	//		else
+	//			ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
 
-			SetBTAction(GetRandomPattern(Dist));
-			IsAttackMontageEnd = true;
-		}));
+	//		SetBTAction(GetRandomPattern(Dist));
+	//		IsAttackMontageEnd = true;
+	//	}));
 
-	ActionEndMap.Add(Boss2AttackType::B2_RIGHTATK, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
-		{
-			Boss2ActionTemp ActionTemp{};
+	//ActionEndMap.Add(Boss2AttackType::B2_RIGHTATK, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
+	//	{
+	//		Boss2ActionTemp ActionTemp{};
 
-			auto Type = GetTypeFromMetaData(Montage);
-			
-			if (CurrentActionTemp.IsAddPercentage)
-				InitPercentageMap[CurrentActionTemp.AttackType]();
-			else
-				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
+	//		auto Type = GetTypeFromMetaData(Montage);
+	//		
+	//		if (CurrentActionTemp.IsAddPercentage)
+	//			InitPercentageMap[CurrentActionTemp.AttackType]();
+	//		else
+	//			ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
 
-			SetBTAction(GetRandomPattern(Dist));
-			IsAttackMontageEnd = true;
-		}));
+	//		SetBTAction(GetRandomPattern(Dist));
+	//		IsAttackMontageEnd = true;
+	//	}));
 
-	ActionEndMap.Add(Boss2AttackType::B2_BACKATK, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
-		{
-			Boss2ActionTemp ActionTemp{};
+	//ActionEndMap.Add(Boss2AttackType::B2_BACKATK, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
+	//	{
+	//		Boss2ActionTemp ActionTemp{};
 
-			auto Type = GetTypeFromMetaData(Montage);
-		
-			if (CurrentActionTemp.IsAddPercentage)
-				InitPercentageMap[CurrentActionTemp.AttackType]();
-			else
-				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
+	//		auto Type = GetTypeFromMetaData(Montage);
+	//	
+	//		if (CurrentActionTemp.IsAddPercentage)
+	//			InitPercentageMap[CurrentActionTemp.AttackType]();
+	//		else
+	//			ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
 
-			SetBTAction(GetRandomPattern(Dist));
-			IsAttackMontageEnd = true;
-		}));
+	//		SetBTAction(GetRandomPattern(Dist));
+	//		IsAttackMontageEnd = true;
+	//	}));
 
 	//======================================확률에 의한 랜덤 패턴 가져오기========================================
 
@@ -1040,7 +1040,7 @@ FBoss2Action* AJesusBoss2::GetActionData(FName Name)
 
 void AJesusBoss2::DoTypeAttack(float MinRange, float MaxRange, float Dist, bool LockOn, Boss2AnimationType Type, AJesusBoss2* Boss2, TArray<Boss2ActionTemp> &arr, Boss2AttackType AtkType)
 {
- 	if (Dist >= MinRange && Dist <= MaxRange && !Boss2->CurrentActionTemp.IsExcute)
+	if (Dist >= MinRange && Dist <= MaxRange && !Boss2->CurrentActionTemp.IsExcute)
 	{
 		//InitIsExcute();
 
@@ -1048,7 +1048,7 @@ void AJesusBoss2::DoTypeAttack(float MinRange, float MaxRange, float Dist, bool 
 		JesusThreadManager& t = JesusThreadManager::GetInstance();
 
 		t.EnqueueJob(TFunction<void(void)>([=](void)
-			{ 				
+			{
 				std::unique_lock<std::mutex> lock(m1);
 				for (int i = 0; i < MeleeActionArr.Num(); i++)
 					MeleeActionArr[i].IsExcute = false;
@@ -1056,20 +1056,26 @@ void AJesusBoss2::DoTypeAttack(float MinRange, float MaxRange, float Dist, bool 
 					RangeActionArr[i].IsExcute = false;
 				for (int i = 0; i < FollowUpActionArr.Num(); i++)
 					FollowUpActionArr[i].IsExcute = false;
+				UE_LOG(LogTemp, Warning, TEXT("IsExcute = false"));
 			}));
 
 		if (!Boss2->CurrentActionTemp.CanContinuity)
 		{
 			auto FoundIndex = arr.Find(Boss2->CurrentActionTemp);
+
 			if (FoundIndex == INDEX_NONE)
 			{
 				CurrentActionTemp = GetRandomPatternMap[AtkType]();
 				SetBTAction(CurrentActionTemp);
 				return;
 			}
-			
-			std::unique_lock<std::mutex> lock(m1);
-			arr[FoundIndex].IsExcute = true;
+
+			t.EnqueueJob(TFunction<void(void)>([=, &arr](void)
+				{
+					std::unique_lock<std::mutex> lock(m1);
+					arr[FoundIndex].IsExcute = true;
+					UE_LOG(LogTemp, Warning, TEXT("IsExcute = true"));
+				}));
 		}
 
 		Boss2->CanMove = false;

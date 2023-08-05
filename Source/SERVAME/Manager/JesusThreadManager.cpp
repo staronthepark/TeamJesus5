@@ -58,10 +58,10 @@ void JesusThreadManager::Work()
 			return;
 
 		Job.Dequeue(CallBack);
-		lock.unlock();
 
 		UE_LOG(LogTemp, Warning, TEXT("Thread Work"));
 		CallBack();
+		lock.unlock();
 	}
 }
 
