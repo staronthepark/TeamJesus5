@@ -211,6 +211,7 @@ void AJesusPlayerController::PressGrab()
 		character->ExecutionCharacter->LaunchCharacter(character->GetActorRotation().Vector(),
 			character->PlayerDataStruct.LaunchCharacterPower);
 		character->IsGrab = false;
+		character->CameraShake(character->PlayerCameraShake);
 	}
 }
 

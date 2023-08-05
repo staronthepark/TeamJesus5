@@ -213,7 +213,13 @@ AEnemyMonster::AEnemyMonster()
 						PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
 						PlayerCharacter->GetFirstTarget();
 						if (PlayerCharacter->TargetComp == nullptr)
+						{
 							PlayerCharacter->LockOn();
+						}
+						else
+						{
+							Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true);
+						}
 					}
 				}
 			}
@@ -563,7 +569,7 @@ void AEnemyMonster::OnGrabCollisionOverlapBegin(UPrimitiveComponent* OverlappedC
 {
 	if (OtherActor->TakeDamage(10.0f, CharacterDamageEvent, nullptr, this))
 	{
-		UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(Cast<ABaseCharacter>(OtherActor));
+		//UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(Cast<ABaseCharacter>(OtherActor));
 
 		VibrateGamePad(0.4f, 0.4f);
 
@@ -577,7 +583,7 @@ void AEnemyMonster::OnGrabCollisionOverlapBegin(UPrimitiveComponent* OverlappedC
 void AEnemyMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
 	TracePlayer = false;
-	if (StateType == MonsterStateType::CANTACT)return;
+	if (StateType == MonsterStateType::CANTACT || GetMesh()->GetCollisionProfileName() == "Ragdoll")return;
 	AttackAnimationType = AttackAnimType;
 	if (ActionType != MonsterActionType::ATTACK)
 	{
@@ -616,7 +622,9 @@ void AEnemyMonster::CatchByPlayer()
 	IsCaught = true;
 	SetActorTickEnabled(false);
 	AnimInstance->StopAllMontages(0.25f);
+	UCombatManager::GetInstance().HitMonsterInfoArray.Remove(this);
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
+	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	CapsuleComp->SetCollisionResponseToAllChannels(ECR_Ignore);
 	DetachFromControllerPendingDestroy();
@@ -632,7 +640,7 @@ void AEnemyMonster::LaunchCharacter(FVector Dir, float Power)
 	HitCollision->SetCollisionResponseToAllChannels(ECR_Ignore);
 	DeactivateSMOverlap();
 	DeactivateRightWeapon();
-	ParryingCollision1->Deactivate();
+	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 	GetMesh()->SetAllBodiesSimulatePhysics(true);

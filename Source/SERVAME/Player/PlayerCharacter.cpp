@@ -468,7 +468,7 @@ APlayerCharacter::APlayerCharacter()
 			RecoverStamina();
 			SetPlayerForwardRotAndDir();
 			SetPlayerRightRotAndDir();
-			LockOnCameraSettingMap[IsLockOn]();
+			LockOnCameraSettingMap[IsLockOn || IsGrab]();
 			//LockOnCameraSettingMap[true](character);
 			PlayerMovement();
 
@@ -579,7 +579,7 @@ APlayerCharacter::APlayerCharacter()
 			if (PlayerDataStruct.PlayerStamina <= 0)
 			{
 				ChangeMontageAnimation(MovementAnimMap[IsLockOn]());
-				SetSpeed(SpeedMap[IsLockOn][false]);
+				SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
 			}
 
 			LockOnCameraSettingMap[false]();
@@ -599,14 +599,14 @@ APlayerCharacter::APlayerCharacter()
 
 	MontageEndEventMap.Add(AnimationType::BATTLEDODGE, [&]()
 		{	
-			SetSpeed(SpeedMap[IsLockOn][false]);
+			SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
 			MontageBlendInTime = 0.1f;
 			CheckInputKey();
 			Imotal = false;
 		});
 	MontageEndEventMap.Add(AnimationType::BASICDODGE, [&]()
 		{
-			SetSpeed(SpeedMap[IsLockOn][false]);
+			SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
 			MontageBlendInTime = 0.1f;
 			CheckInputKey();
 			Imotal = false;
@@ -616,7 +616,7 @@ APlayerCharacter::APlayerCharacter()
 		{
 			if (AnimInstance->BodyBlendAlpha == 1.0f)
 			{
-				SetSpeed(SpeedMap[IsLockOn][false]);
+				SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
 				ChangeMontageAnimation(AnimationType::ENDOFHEAL);
 			}
 			else
@@ -703,7 +703,7 @@ APlayerCharacter::APlayerCharacter()
 		{
 			if (AxisX == 1 && AxisY == 1)
 			{
-				SetSpeed(SpeedMap[IsLockOn][false]);
+				SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
 			}
 
 			SetActorRotation(YawRotation);
@@ -714,7 +714,7 @@ APlayerCharacter::APlayerCharacter()
 		{
 			if (AxisX == 1 && AxisY == 1)
 			{
-				SetSpeed(SpeedMap[IsLockOn][false]);
+				SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
 			}
 
 			MontageEndEventMap[AnimationType::ATTACK1]();
@@ -723,7 +723,7 @@ APlayerCharacter::APlayerCharacter()
 		{
 			if (AxisX == 1 && AxisY == 1)
 			{
-				SetSpeed(SpeedMap[IsLockOn][false]);
+				SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
 			}
 			MontageEndEventMap[AnimationType::ATTACK1]();
 		});
@@ -752,7 +752,7 @@ APlayerCharacter::APlayerCharacter()
 		{
 			if (AxisX == 1 && AxisY == 1)
 			{
-				SetSpeed(SpeedMap[IsLockOn][false]);
+				SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
 			}
 			CheckInputKey();			
 		});
@@ -887,7 +887,7 @@ APlayerCharacter::APlayerCharacter()
 
 	LockOnCameraSettingMap.Add(true, [&]()
 		{
-			if(IsLockOn)
+			if(IsLockOn || IsGrab)
 			YawRotation.Yaw = GetController()->GetControlRotation().Yaw;
 			GetCharacterMovement()->bOrientRotationToMovement = false;
 		});
@@ -946,11 +946,11 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::NONE][ActionType::MOVE].Add(true, [&]()
 		{
 			ChangeActionType(ActionType::MOVE);
-			ChangeMontageAnimation(MovementAnimMap[IsLockOn]());
+			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
 		});
 	InputEventMap[PlayerAction::NONE][ActionType::MOVE].Add(false, [&]()
 		{
-			ChangeMontageAnimation(MovementAnimMap[IsLockOn]());
+			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
 		});
 
 	InputEventMap[PlayerAction::NONE][ActionType::ROTATE].Add(true, [&]()
@@ -1037,12 +1037,11 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::RUN][ActionType::MOVE].Add(true, [&]()
 		{
 			ChangeActionType(ActionType::MOVE);
-			if(IsLockOn)
-			ChangeMontageAnimation(MovementAnimMap[true]());
+			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
 		});
 	InputEventMap[PlayerAction::RUN][ActionType::MOVE].Add(false, [&]()
 		{
-			AnimationType anitype = MovementAnimMap[IsLockOn]();
+			AnimationType anitype = MovementAnimMap[IsLockOn || IsGrab]();
 			if (anitype != AnimationType::FORWARDWALK)
 			{
 				ChangeMontageAnimation(anitype);
@@ -1269,6 +1268,7 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEventFuncMap[AnimationType::EXECUTIONBOSS].Add(true, [&]()
 		{
 			ComboAttackEnd();
+			HitStop();
 			ExecutionCharacter->TakeDamage(PlayerDataStruct.PlayerExecutionFirstDamage, CharacterDamageEvent, nullptr, this);
 			VibrateGamePad(0.4f, 0.4f);
 			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
@@ -1276,6 +1276,7 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEventFuncMap[AnimationType::EXECUTIONBOSS].Add(false, [&]()
 		{
 			UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(ExecutionCharacter);
+			HitStop();
 			ExecutionCharacter->TakeDamage(PlayerDataStruct.PlayerExecutionSecondDamage, CharacterDamageEvent, nullptr, this);
 			VibrateGamePad(0.4f, 0.4f);
 			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
@@ -1419,7 +1420,7 @@ void APlayerCharacter::SetPlayerForwardRotAndDir()
 		const FRotator Rotation = Controller->GetControlRotation();
 		YawRotation = FRotator(0, Rotation.Yaw, 0);
 		PlayerForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		if (!IsLockOn)
+		if (!IsLockOn && !IsGrab)
 		{
 			YawRotation = FRotator(0, Rotation.Yaw + ForwardRotation[AxisY][AxisX], 0);
 		}
@@ -1438,7 +1439,7 @@ void APlayerCharacter::SetPlayerRightRotAndDir()
 		const FRotator Rotation = Controller->GetControlRotation();
 		YawRotation = FRotator(0, Rotation.Yaw, 0);
 		PlayerRightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-		if (!IsLockOn)
+		if (!IsLockOn && !IsGrab)
 		{
 			YawRotation = FRotator(0, Rotation.Yaw + ForwardRotation[AxisY][AxisX], 0);
 		}
@@ -1487,7 +1488,7 @@ void APlayerCharacter::Dodge()
 		SetPlayerForwardRotAndDir();
 		SetPlayerRightRotAndDir();
 
-		if (IsLockOn)
+		if (IsLockOn || IsGrab)
 		{
 			YawRotation += FRotator(0, ForwardRotation[AxisY][AxisX], 0);
 		}
@@ -1536,7 +1537,7 @@ void APlayerCharacter::LockOn()
 
 		if (AnimInstance->PlayerAnimationType != AnimationType::HEAL)
 		{
-			SetSpeed(SpeedMap[IsLockOn][IsSprint]);
+			SetSpeed(SpeedMap[IsLockOn || IsGrab][IsSprint]);
 		}
 
 		CurRotateIndex = 1;
@@ -1547,7 +1548,7 @@ void APlayerCharacter::LockOn()
 		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false);
 		TargetComp = nullptr;
 		if (AnimInstance->PlayerAnimationType != AnimationType::HEAL)
-			SetSpeed(SpeedMap[IsLockOn][IsSprint]);
+			SetSpeed(SpeedMap[IsLockOn || IsGrab][IsSprint]);
 		CurRotateIndex = 0;
 	}
 
@@ -1667,13 +1668,13 @@ void APlayerCharacter::SetInputType(bool IsPad)
 
 void APlayerCharacter::Sprint()
 {
-	SetSpeed(SpeedMap[IsLockOn][true]);
+	SetSpeed(SpeedMap[IsLockOn || IsGrab][true]);
 	ChangeMontageAnimation(AnimationType::SPRINT);
 }
 
 void APlayerCharacter::Run()
 {
-	SetSpeed(SpeedMap[IsLockOn][false]);
+	SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
 	InputEventMap[PlayerAction::NONE][ActionType::MOVE][true]();
 }
 
@@ -1717,7 +1718,7 @@ void APlayerCharacter::CheckInputKey()
 	}
 	else if(AnimInstance->PlayerAnimationType != AnimationType::ENDOFHEAL)
 	{
-		SetSpeed(SpeedMap[IsLockOn][false]);
+		SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
 		ChangeActionType(ActionType::NONE);
 		ChangeMontageAnimation(AnimationType::IDLE);
 	}
@@ -2039,6 +2040,7 @@ void APlayerCharacter::Attack()
 		if (UseStamina(PlayerUseStaminaMap[ActionType::ATTACK]))
 		{
 			Imotal = false;
+			
 			PlayerAttackType = ActionType::ATTACK;
 			ComboAttackStart();
 			CanNextAttack = false;
@@ -2102,7 +2104,10 @@ void APlayerCharacter::ComboAttackStart()
 			PlayerCurAttackIndex = 0;
 		}		
 	}
+	if(!IsGrab)
 	ChangeMontageAnimation(IntToEnumMap[PlayerAttackType][PlayerCurAttackIndex++]);
+	else
+		ChangeMontageAnimation(AnimationType::DODGEATTACK);
 }
 
 void APlayerCharacter::ChangeMontageAnimation(AnimationType type)
