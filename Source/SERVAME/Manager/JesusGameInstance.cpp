@@ -41,9 +41,9 @@ void UJesusGameInstance::InitInstance()
 		setting->SetGlobalIlluminationQuality(1);
 		setting->SetReflectionQuality(2);
 		setting->SetVisualEffectQuality(2);
-		setting->SetTextureQuality(3);
 
 		//const
+		setting->SetTextureQuality(3);
 		setting->SetFoliageQuality(0);
 		setting->SetShadingQuality(0);
 		setting->SetViewDistanceQuality(0);
