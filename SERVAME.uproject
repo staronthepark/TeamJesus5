@@ -11,7 +11,8 @@
 			"AdditionalDependencies": [
 				"CinematicCamera",
 				"ActorSequence",
-				"Engine"
+				"Engine",
+				"AIModule"
 			]
 		}
 	],
