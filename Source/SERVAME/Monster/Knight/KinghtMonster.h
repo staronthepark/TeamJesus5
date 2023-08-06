@@ -182,8 +182,6 @@ public:
 	void StartAttackTrigger(KnightAnimationType AttackAnimType);
 	void EndAttackTrigger(KnightAnimationType AttackAnimType);
 
-	void ShotProjectile();
-
 	void Rotate();
 
 	virtual void CatchByPlayer() override;
