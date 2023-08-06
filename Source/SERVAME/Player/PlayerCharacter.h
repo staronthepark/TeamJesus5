@@ -103,7 +103,8 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PlayerExecutionSecondDamage;
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float LaunchCharacterPower;
 };
 
 UCLASS()
@@ -162,6 +163,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraSpringArm")
 		USpringArmComponent* CameraBoom1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UBoxComponent* GrabPosition;
 
 	UPROPERTY()
 		UBoxComponent* CameraOverlapComp;
@@ -246,6 +250,7 @@ public:
 	bool IsSprint;
 	bool IsInteraction;
 	bool IsDead;
+	bool IsGrab;
 	
 	float TargetOpacity;
 
@@ -290,6 +295,8 @@ public:
 		float BackViewCameraLength;
 	UPROPERTY(EditAnyWhere, Category = "CameraViewSetting")
 		float ShoulderViewCameraLength;
+	UPROPERTY(EditAnyWhere, Category = "CameraViewSetting")
+		float GrabCameraLength;
 
 	UPROPERTY(EditAnyWhere, Category = "CameraViewSetting")
 		FVector TargetSocketOffset;
@@ -297,6 +304,8 @@ public:
 		FVector ShoulderViewSocketOffset;
 	UPROPERTY(EditAnyWhere, Category = "CameraViewSetting")
 		FVector BackViewSocketOffset;
+	UPROPERTY(EditAnyWhere, Category = "CameraViewSetting")
+		FVector GrabSocketOffset;
 
 public:
 
@@ -362,6 +371,8 @@ public:
 	void SetSprint();
 
 	void FadeOut();
+
+	void SetCameraTarget(FVector Offset, float Length);
 
 
 	UFUNCTION()

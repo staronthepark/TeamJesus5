@@ -39,6 +39,14 @@ AEnemyMonster::AEnemyMonster()
 	WeaponOverlapStaticMeshCollision->SetupAttachment(GetMesh(), FName("Weapon_Bone"));
 	WeaponOverlapStaticMeshCollision->SetCollisionProfileName("Weapon");
 
+	GrabCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Grab Damage"));
+	GrabCollision->SetupAttachment(GetMesh());
+	GrabCollision->SetCollisionProfileName("Grab Damage");
+
+	GrabShieldCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Grab Guard"));
+	GrabShieldCollision->SetupAttachment(GetMesh());
+	GrabShieldCollision->SetCollisionProfileName("Grab Guard");
+
 	AnimTypeToStateType.Add(MonsterAnimationType::FORWARDMOVE, MonsterStateType::NONE);
 	AnimTypeToStateType.Add(MonsterAnimationType::LEFTMOVE, MonsterStateType::NONE);
 	AnimTypeToStateType.Add(MonsterAnimationType::RIGHTMOVE, MonsterStateType::NONE);
@@ -205,7 +213,13 @@ AEnemyMonster::AEnemyMonster()
 						PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
 						PlayerCharacter->GetFirstTarget();
 						if (PlayerCharacter->TargetComp == nullptr)
+						{
 							PlayerCharacter->LockOn();
+						}
+						else
+						{
+							Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true);
+						}
 					}
 				}
 			}
@@ -267,7 +281,18 @@ AEnemyMonster::AEnemyMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::HIT, [&]()
 		{
-			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			UE_LOG(LogTemp, Warning, TEXT("!@#!@#"));
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+			}
+			else
+			{
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			}
 		});
 
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::IDLE, TMap<bool, TFunction<void()>>());
@@ -355,8 +380,6 @@ AEnemyMonster::AEnemyMonster()
 		{
 			if (percent >= 0.5)
 			{
-
-				//UGameplayStatics::SetGlobalTimeDilation(monster, 0.1f);
 				PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::dodge, true);
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
@@ -412,8 +435,10 @@ void AEnemyMonster::BeginPlay()
 
 	MonsterController = Cast<AMonsterController>(GetController());
 
-	UE_LOG(LogTemp, Warning, TEXT("monsterbegin"));
 	UCombatManager::GetInstance().MonsterInfoArray.Add(this);
+
+	//test
+	UCombatManager::GetInstance().HitMonsterInfoArray.Add(this);
 		
 	PlayerCharacter = nullptr;
 	
@@ -439,9 +464,10 @@ void AEnemyMonster::BeginPlay()
 	MeshOpacity = 0.171653f;
 	//MonsterHpWidget = Cast<UMonsterWidget>(HpWidget->GetWidget());
 	
-	DeactivateHpBar();
+	GrabShieldCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GrabCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	CatchByPlayer();
+	DeactivateHpBar();
 
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &AEnemyMonster::OnTargetDetectionBeginOverlap);
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &AEnemyMonster::OnTargetDetectionEndOverlap);
@@ -451,7 +477,7 @@ void AEnemyMonster::BeginPlay()
 	WeaponOverlapStaticMeshCollision->OnComponentEndOverlap.AddDynamic(this, &AEnemyMonster::OnSMOverlapEnd);
 
 	ParryingCollision1->OnComponentBeginOverlap.AddDynamic(this, &AEnemyMonster::OnParryingOverlap);
-
+	GrabCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyMonster::OnGrabCollisionOverlapBegin);
 }
 
 
@@ -475,7 +501,6 @@ void AEnemyMonster::DeactivateHpBar()
 
 void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Detect"));
 	if (ActionType == MonsterActionType::DEAD)return;
 	if (PlayerCharacter == nullptr)
 	{
@@ -483,7 +508,7 @@ void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* Overlappe
 		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
 		PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::camera, true);
 	}
-
+	TracePlayer = true;
 	MonsterMoveEventIndex = 1;
 	TargetDetectEventMap[AttackType]();
 }
@@ -543,10 +568,25 @@ void AEnemyMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, 
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
 }
 
+void AEnemyMonster::OnGrabCollisionOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->TakeDamage(10.0f, CharacterDamageEvent, nullptr, this))
+	{
+		//UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(Cast<ABaseCharacter>(OtherActor));
+
+		VibrateGamePad(0.4f, 0.4f);
+
+		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
+	}
+}
+
+
 void AEnemyMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
 	TracePlayer = false;
-	if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP)return;
+	if (StateType == MonsterStateType::CANTACT || GetMesh()->GetCollisionProfileName() == "Ragdoll")return;
 	AttackAnimationType = AttackAnimType;
 	if (ActionType != MonsterActionType::ATTACK)
 	{
@@ -583,34 +623,65 @@ void AEnemyMonster::Rotate()
 void AEnemyMonster::CatchByPlayer()
 {
 	IsCaught = true;
-	DetachFromControllerPendingDestroy();
+	SetActorTickEnabled(false);
+	AnimInstance->StopAllMontages(0.25f);
+	UCombatManager::GetInstance().HitMonsterInfoArray.Remove(this);
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
+	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	CapsuleComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+	DetachFromControllerPendingDestroy();
+	ChangeMontageAnimation(MonsterAnimationType::IDLE);
+	StateType = MonsterStateType::CANTACT;
+	GrabShieldCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
 
+void AEnemyMonster::LaunchCharacter(FVector Dir, float Power)
+{	
+	GrabCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	DeactivateHitCollision();
+	HitCollision->SetCollisionResponseToAllChannels(ECR_Ignore);
+	DeactivateSMOverlap();
+	DeactivateRightWeapon();
+	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 	GetMesh()->SetAllBodiesSimulatePhysics(true);
 	GetMesh()->SetSimulatePhysics(true);
 	GetMesh()->WakeAllRigidBodies();
 	GetMesh()->bBlendPhysics = true;
+	GetMesh()->SetAllBodiesPhysicsBlendWeight(.5f);
 
-	UCharacterMovementComponent* CharacterComp = Cast<UCharacterMovementComponent>(GetMovementComponent());
-	if (CharacterComp)
-	{
-		CharacterComp->StopMovementImmediately();
-		CharacterComp->DisableMovement();
-		CharacterComp->SetComponentTickEnabled(false);
-	}
+	GetMesh()->AddImpulseToAllBodiesBelow(Dir * Power, NAME_None, true);
+
+	GetMovementComponent()->StopMovementImmediately();
+	GetMovementComponent()->SetComponentTickEnabled(false);
 }
 
 float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	if (Imotal)return 0;
-
+	if (Imotal)
+	{
+		if (IsCaught)
+		{
+			CameraShake(PlayerCameraShake);
+			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
+		}
+		return 0;
+	}
 	
+	if (PlayerCharacter == nullptr)
+	{
+		PlayerCharacter = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetOwner());
+		TracePlayer = true;
+		MonsterMoveEventIndex = 1;
+	}
+
+
 	//MonsterHpWidget->Hp->SetVisibility(ESlateVisibility::Visible);
 	//MonsterHpWidget->HpBG->SetVisibility(ESlateVisibility::Visible);
 	GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);

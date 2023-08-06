@@ -78,6 +78,8 @@ public:
 	void PressSprint();
 	void UnPressSprint();
 
+	void PressGrab();
+
 	void PressPowerAttack();
 	void UnPressPowerAttack();
 

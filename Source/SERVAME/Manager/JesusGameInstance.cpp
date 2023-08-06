@@ -4,6 +4,7 @@
 #include "JesusGameInstance.h"
 #include "Engine/PostProcessVolume.h"
 #include "SoundManager.h"
+#include "GameFramework/GameUserSettings.h"
 #include "Kismet/GameplayStatics.h"
 
 UJesusGameInstance::UJesusGameInstance()
@@ -20,11 +21,44 @@ UJesusGameInstance::UJesusGameInstance()
 	MainMenuWidgetClass = ASD.Class;
 }
 
-void UJesusGameInstance::InitInstance()
+#define LOW 0
+#define MIDDLE 1
+#define HIGH 2
+#define VERYHIGH 3
+
+void UJesusGameInstance::Init()
 {
+	Super::Init();
+	int32 scalabilityLevel = 0;
+	//get game user setting
+	UGameUserSettings* setting = GEngine->GetGameUserSettings();
+	if (setting)
+	{
+		setting->SetPostProcessingQuality(MIDDLE);
+		setting->SetShadowQuality(MIDDLE);
+		setting->SetGlobalIlluminationQuality(MIDDLE);
+		setting->SetReflectionQuality(HIGH);
+		setting->SetVisualEffectQuality(HIGH);
+
+		//const
+		setting->SetFoliageQuality(LOW);
+		setting->SetShadingQuality(LOW);
+		setting->SetViewDistanceQuality(LOW);
+		setting->SetAntiAliasingQuality(LOW);
+		setting->SetTextureQuality(LOW);
+		setting->SetResolutionScaleValue(0);
+
+		setting->ApplySettings(true);
+	}
+
 	ASoundManager::GetInstance().Init();
 	ASoundManager::GetInstance().StartBGMSound();
 
+	
+}
+
+void UJesusGameInstance::InitInstance()
+{
 	if (IsValid(DebugLogWidgetClass))
 	{
 		DebugLogWidget = Cast<UDebugLogWidget>(CreateWidget(GetWorld(), DebugLogWidgetClass));
@@ -41,8 +75,6 @@ void UJesusGameInstance::InitDefaultSetting()
 
 	UWorld* World = GetWorld();
 
-	//TArray<AActor*> PostProcessVolumes;
-	//UGameplayStatics::GetAllActorsOfClass(World, APostProcessVolume::StaticClass(), PostProcessVolumes);
 
 	for (auto Actor : World->PostProcessVolumes)
 	{
@@ -52,12 +84,6 @@ void UJesusGameInstance::InitDefaultSetting()
 			PostProcessSettings->AutoExposureMinBrightness = PlayerOptionSetting.Gamma;
 			break;
 		}
-		//FPostProcessSettings PostProcessSettings = PostProcessVolume->Settings;
-
-		//PostProcessSettings.bOverride_SceneColorTint = true;
-		//PostProcessSettings.SceneColorTint = FLinearColor(PlayerOptionSetting.Gamma, PlayerOptionSetting.Gamma, PlayerOptionSetting.Gamma, 1.0f);
-		//PostProcessSettings.BloomIntensity = PlayerOptionSetting.Gamma;
-		//PostProcessVolume->Settings = PostProcessSettings;
 
 	}
 }
