@@ -4,6 +4,7 @@
 #include "JesusGameInstance.h"
 #include "Engine/PostProcessVolume.h"
 #include "SoundManager.h"
+#include "GameFramework/GameUserSettings.h"
 #include "Kismet/GameplayStatics.h"
 
 UJesusGameInstance::UJesusGameInstance()
@@ -20,17 +21,35 @@ UJesusGameInstance::UJesusGameInstance()
 	MainMenuWidgetClass = ASD.Class;
 }
 
+#define LOW 0
+#define MIDDLE 1
+#define HIGH 2
+#define VERYHIGH 3
+
 void UJesusGameInstance::Init()
 {
 	Super::Init();
 	int32 scalabilityLevel = 0;
 	//get game user setting
-	//UGameUserSettings* setting = GEngine->GetGameUserSettings();
-	//if (setting)
-	//{
-	//	setting->SetOverallScalabilityLevel(scalabilityLevel);
-	//	setting->ApplySettings(true);
-	//}
+	UGameUserSettings* setting = GEngine->GetGameUserSettings();
+	if (setting)
+	{
+		setting->SetPostProcessingQuality(MIDDLE);
+		setting->SetShadowQuality(MIDDLE);
+		setting->SetGlobalIlluminationQuality(MIDDLE);
+		setting->SetReflectionQuality(HIGH);
+		setting->SetVisualEffectQuality(HIGH);
+
+		//const
+		setting->SetFoliageQuality(LOW);
+		setting->SetShadingQuality(LOW);
+		setting->SetViewDistanceQuality(LOW);
+		setting->SetAntiAliasingQuality(LOW);
+		setting->SetTextureQuality(LOW);
+		setting->SetResolutionScaleValue(0);
+
+		setting->ApplySettings(true);
+	}
 
 	ASoundManager::GetInstance().Init();
 	ASoundManager::GetInstance().StartBGMSound();
