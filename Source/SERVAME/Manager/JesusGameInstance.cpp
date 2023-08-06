@@ -20,7 +20,8 @@ UJesusGameInstance::UJesusGameInstance()
 		DebugLogWidgetClass = DLW.Class;
 	MainMenuWidgetClass = ASD.Class;
 }
-
+//#include "HardwareInfo.h"
+//#include "GenericPlatform/GenericPlatformMisc.h"
 void UJesusGameInstance::InitInstance()
 {
 	if (IsValid(DebugLogWidgetClass))
@@ -28,30 +29,14 @@ void UJesusGameInstance::InitInstance()
 		DebugLogWidget = Cast<UDebugLogWidget>(CreateWidget(GetWorld(), DebugLogWidgetClass));
 	}
 
+	//FGenericPlatformMisc::benchmark();
+
 	MainMenuWidget = Cast<UMainMenuUI>(CreateWidget(GetWorld(), MainMenuWidgetClass));
 
 	ASoundManager::GetInstance().Init();
 	ASoundManager::GetInstance().StartBGMSound();
 
-	UGameUserSettings* setting = GEngine->GetGameUserSettings();
-	if (setting)
-	{
-		setting->SetPostProcessingQuality(1);
-		setting->SetShadowQuality(1);
-		setting->SetGlobalIlluminationQuality(1);
-		setting->SetReflectionQuality(2);
-		setting->SetVisualEffectQuality(2);
-
-		//const
-		setting->SetTextureQuality(0);
-		setting->SetFoliageQuality(0);
-		setting->SetShadingQuality(0);
-		setting->SetViewDistanceQuality(0);
-		setting->SetAntiAliasingQuality(1);
-		setting->SetResolutionScaleValue(0);
-
-		setting->ApplySettings(true);
-	}
+	
 	//MainMenuWidget->AddToViewport();
 }
 
@@ -74,6 +59,34 @@ void UJesusGameInstance::InitDefaultSetting()
 			break;
 		}
 
+	}
+}
+
+void UJesusGameInstance::Init()
+{
+	UGameUserSettings* setting = GEngine->GetGameUserSettings();
+	if (setting)
+	{
+		setting->RunHardwareBenchmark();
+
+		UE_LOG(LogTemp, Error, TEXT("%f"), setting->GetLastGPUBenchmarkResult());
+		//setting->SetFrameRateLimit(60);
+		//setting->SetVSyncEnabled(false);
+		//setting->SetPostProcessingQuality(1);
+		//setting->SetShadowQuality(1);
+		//setting->SetGlobalIlluminationQuality(1);
+		//setting->SetReflectionQuality(2);
+		//setting->SetVisualEffectQuality(2);
+		//
+		////const
+		//setting->SetTextureQuality(0);
+		//setting->SetFoliageQuality(0);
+		//setting->SetShadingQuality(0);
+		//setting->SetViewDistanceQuality(0);
+		//setting->SetAntiAliasingQuality(1);
+		//setting->SetResolutionScaleValue(0);
+		//
+		//setting->ApplySettings(true);
 	}
 }
 

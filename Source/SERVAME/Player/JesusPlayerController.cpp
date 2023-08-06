@@ -20,7 +20,7 @@ void AJesusPlayerController::BeginPlay()
 
 	PlayerSkillType = 2;
 
-	ConsoleCommand("t.maxfps 60");
+	//ConsoleCommand("t.maxfps 60");
 
 	
 	CameraYawRotateEventMap.Add(false, [&](float Val)
