@@ -7,20 +7,22 @@
 #include "SoundManager.h"
 #include "Kismet/GameplayStatics.h"
 
+#define LOW 0
+#define MIDDLE 1
+#define HIGH 2
+#define VERYHIGH 3
+
 UJesusGameInstance::UJesusGameInstance()
 {
-
-
 	static ConstructorHelpers::FClassFinder<UDebugLogWidget> DLW(TEXT("/Game/02_Resource/04_UI/01_WBP/99_Debug/WBP_DebugLog"));
-
-
 	static ConstructorHelpers::FClassFinder<UMainMenuUI> ASD(TEXT("/Game/02_Resource/04_UI/01_WBP/00_MainMenu/WBP_MainMenu"));
 
 	if (DLW.Succeeded())
 		DebugLogWidgetClass = DLW.Class;
 	MainMenuWidgetClass = ASD.Class;
 }
-
+//#include "HardwareInfo.h"
+//#include "GenericPlatform/GenericPlatformMisc.h"
 void UJesusGameInstance::InitInstance()
 {
 	if (IsValid(DebugLogWidgetClass))
@@ -28,30 +30,14 @@ void UJesusGameInstance::InitInstance()
 		DebugLogWidget = Cast<UDebugLogWidget>(CreateWidget(GetWorld(), DebugLogWidgetClass));
 	}
 
+	//FGenericPlatformMisc::benchmark();
+
 	MainMenuWidget = Cast<UMainMenuUI>(CreateWidget(GetWorld(), MainMenuWidgetClass));
 
 	ASoundManager::GetInstance().Init();
 	ASoundManager::GetInstance().StartBGMSound();
 
-	UGameUserSettings* setting = GEngine->GetGameUserSettings();
-	if (setting)
-	{
-		setting->SetPostProcessingQuality(1);
-		setting->SetShadowQuality(1);
-		setting->SetGlobalIlluminationQuality(1);
-		setting->SetReflectionQuality(2);
-		setting->SetVisualEffectQuality(2);
-		setting->SetTextureQuality(3);
-
-		//const
-		setting->SetFoliageQuality(0);
-		setting->SetShadingQuality(0);
-		setting->SetViewDistanceQuality(0);
-		setting->SetAntiAliasingQuality(1);
-		setting->SetResolutionScaleValue(0);
-
-		setting->ApplySettings(true);
-	}
+	
 	//MainMenuWidget->AddToViewport();
 }
 
@@ -74,6 +60,53 @@ void UJesusGameInstance::InitDefaultSetting()
 			break;
 		}
 
+	}
+}
+
+void UJesusGameInstance::Init()
+{
+	UGameUserSettings* setting = GEngine->GetGameUserSettings();
+	if (setting)
+	{
+		setting->RunHardwareBenchmark();
+
+		float GPU = setting->GetLastGPUBenchmarkResult();
+
+		UE_LOG(LogTemp, Error, TEXT("%f"), GPU);
+
+		setting->SetFrameRateLimit(60);
+		setting->SetVSyncEnabled(false);
+
+		if (GPU > 580)
+		{
+			setting->SetPostProcessingQuality(HIGH);
+			setting->SetShadowQuality(HIGH);
+			setting->SetGlobalIlluminationQuality(HIGH);
+			setting->SetReflectionQuality(HIGH);
+			setting->SetVisualEffectQuality(HIGH);
+			setting->SetTextureQuality(HIGH);
+			setting->SetFoliageQuality(HIGH);
+			setting->SetShadingQuality(HIGH);
+			setting->SetViewDistanceQuality(HIGH);
+			setting->SetAntiAliasingQuality(HIGH);
+			setting->SetResolutionScaleValue(HIGH);
+		}
+		else if(GPU <= 290)
+		{
+			setting->SetPostProcessingQuality(1);
+			setting->SetShadowQuality(1);
+			setting->SetGlobalIlluminationQuality(1);
+			setting->SetReflectionQuality(2);
+			setting->SetVisualEffectQuality(2);
+			setting->SetTextureQuality(0);
+			setting->SetFoliageQuality(0);
+			setting->SetShadingQuality(0);
+			setting->SetViewDistanceQuality(0);
+			setting->SetAntiAliasingQuality(1);
+			setting->SetResolutionScaleValue(0);
+		}
+
+		setting->ApplySettings(true);
 	}
 }
 

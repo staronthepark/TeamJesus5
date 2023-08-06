@@ -42,6 +42,7 @@ public:
 		UJesusGameInstance();
 		void InitInstance();
 		void InitDefaultSetting();
+		virtual void Init();
 
 		void SetPostProcessBrightness(float value);
 		float GetPostProcessBrightness();
