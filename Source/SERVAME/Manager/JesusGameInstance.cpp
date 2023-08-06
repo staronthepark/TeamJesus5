@@ -90,7 +90,7 @@ void UJesusGameInstance::Init()
 			setting->SetAntiAliasingQuality(3);
 			setting->SetResolutionScaleValue(3);
 		}
-		else
+		else if(GPU <= 290)
 		{
 			setting->SetPostProcessingQuality(1);
 			setting->SetShadowQuality(1);
