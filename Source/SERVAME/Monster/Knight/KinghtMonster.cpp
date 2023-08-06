@@ -658,6 +658,7 @@ void AKinghtMonster::LaunchCharacter(FVector Dir, float Power)
 float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	
 	if (Imotal)
 	{
 		if (IsCaught)
@@ -719,6 +720,7 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 		ChangeActionType(KnightActionType::NONE);
 		ChangeMontageAnimation(KnightAnimationType::HIT);
 	}
+
 	return DamageAmount;
 }
 

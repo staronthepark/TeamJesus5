@@ -698,10 +698,11 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 		return DamageAmount;
 	}
 
-	if (ArmorType == EArmorType::HIGH)
-	{
-		return DamageAmount;
-	}
+	//여기서 자꾸 컴파일 안돼서 임시로 주석
+	//if (ArmorType == EArmorType::HIGH)
+	//{
+	//	return DamageAmount;
+	//}
 
 	if (DamageAmount >= 30)
 	{
