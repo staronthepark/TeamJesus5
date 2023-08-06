@@ -60,12 +60,375 @@ AKinghtMonster::AKinghtMonster()
 	AnimTypeToStateType.Add(KnightAnimationType::DEAD, KnightStateType::CANTACT);
 	AnimTypeToStateType.Add(KnightAnimationType::DEADLOOP, KnightStateType::CANTACT);
 	AnimTypeToStateType.Add(KnightAnimationType::EXECUTION, KnightStateType::CANTACT);
+
+	RandomRotateMap.Add(0, [&]()
+		{
+			AddMovementInput(-((GetActorRotation() - FRotator(0, 0, 0)).Vector() * DiagonalSpeed * fDeltaTime));
+		});
+	RandomRotateMap.Add(1, [&]()
+		{
+			AddMovementInput(-((GetActorRotation() - FRotator(0, -45, 0)).Vector() * DiagonalSpeed * fDeltaTime));
+		});
+	RandomRotateMap.Add(2, [&]()
+		{
+			AddMovementInput(-((GetActorRotation() - FRotator(0, 45, 0)).Vector() * DiagonalSpeed * fDeltaTime));
+		});
+
+	MonsterMoveMap.Add(0, [&]()
+		{
+			KnightController->Movement(PatrolLocation);
+		});
+	MonsterMoveMap.Add(1, [&]()
+		{
+			DiagonalSpeed = KnightDataStruct.CharacterOriginSpeed;
+			KnightController->Movement(PlayerCharacter->GetActorLocation());
+		});
+	MonsterMoveMap.Add(2, [&]()
+		{
+			DiagonalSpeed = KnightDataStruct.LockOnWalkSpeed * sqrt(0.5f) + KnightDataStruct.LockOnWalkSpeed * sqrt(0.5f);
+			//TODO : MonsterRandomMove에 랜덤 값 할당	
+			RandomRotateMap[MonsterRandomMove]();
+		});
+
+	CheckDIstanceMap.Add(false, [&]()
+		{
+
+		});
+	CheckDIstanceMap.Add(true, [&]()
+		{
+			CurrentDistance = FVector::Distance(GetActorLocation(), PlayerCharacter->GetActorLocation());
+		});
+
+	MonsterActionEventMap.Add(KnightStateType::NONE, TMap<KnightActionType, TFunction<void()>>());
+	MonsterActionEventMap[KnightStateType::NONE].Add(KnightActionType::NONE, [&]()
+		{
+			ChangeMontageAnimation(KnightAnimationType::IDLE);
+		});
+	MonsterActionEventMap[KnightStateType::NONE].Add(KnightActionType::DODGE, [&]()
+		{
+
+		});
+	MonsterActionEventMap[KnightStateType::NONE].Add(KnightActionType::ATTACK, [&]()
+		{
+			ChangeActionType(KnightActionType::ATTACK);
+			ChangeMontageAnimation(AttackAnimationType);
+		});
+	MonsterActionEventMap[KnightStateType::NONE].Add(KnightActionType::POWERATTACK, [&]()
+		{
+
+		});
+	MonsterActionEventMap[KnightStateType::NONE].Add(KnightActionType::MOVE, [&]()
+		{
+			ChangeActionType(KnightActionType::MOVE);
+			ChangeMontageAnimation(KnightAnimationType::FORWARDMOVE);
+		});
+	MonsterActionEventMap[KnightStateType::NONE].Add(KnightActionType::HIT, [&]()
+		{
+
+		});
+	MonsterActionEventMap[KnightStateType::NONE].Add(KnightActionType::DEAD, [&]() {});
+
+	MonsterActionEventMap.Add(KnightStateType::BEFOREATTACK, TMap<KnightActionType, TFunction<void()>>());
+	MonsterActionEventMap[KnightStateType::BEFOREATTACK].Add(KnightActionType::NONE, [&]() {});
+	MonsterActionEventMap[KnightStateType::BEFOREATTACK].Add(KnightActionType::DODGE, [&]() {});
+	MonsterActionEventMap[KnightStateType::BEFOREATTACK].Add(KnightActionType::ATTACK, [&]() {});
+	MonsterActionEventMap[KnightStateType::BEFOREATTACK].Add(KnightActionType::POWERATTACK, [&]() {});
+	MonsterActionEventMap[KnightStateType::BEFOREATTACK].Add(KnightActionType::MOVE, [&]() {});
+	MonsterActionEventMap[KnightStateType::BEFOREATTACK].Add(KnightActionType::HIT, [&]() {});
+	MonsterActionEventMap[KnightStateType::BEFOREATTACK].Add(KnightActionType::DEAD, [&]() {});
+
+	MonsterActionEventMap.Add(KnightStateType::AFTERATTACK, TMap<KnightActionType, TFunction<void()>>());
+	MonsterActionEventMap[KnightStateType::AFTERATTACK].Add(KnightActionType::NONE, [&]() {});
+	MonsterActionEventMap[KnightStateType::AFTERATTACK].Add(KnightActionType::DODGE, [&]() {});
+	MonsterActionEventMap[KnightStateType::AFTERATTACK].Add(KnightActionType::ATTACK, [&]() {});
+	MonsterActionEventMap[KnightStateType::AFTERATTACK].Add(KnightActionType::POWERATTACK, [&]() {});
+	MonsterActionEventMap[KnightStateType::AFTERATTACK].Add(KnightActionType::MOVE, [&]() {});
+	MonsterActionEventMap[KnightStateType::AFTERATTACK].Add(KnightActionType::HIT, [&]() {});
+	MonsterActionEventMap[KnightStateType::AFTERATTACK].Add(KnightActionType::DEAD, [&]() {});
+
+	MonsterActionEventMap.Add(KnightStateType::CANTACT, TMap<KnightActionType, TFunction<void()>>());
+	MonsterActionEventMap[KnightStateType::CANTACT].Add(KnightActionType::NONE, [&]() {});
+	MonsterActionEventMap[KnightStateType::CANTACT].Add(KnightActionType::DODGE, [&]() {});
+	MonsterActionEventMap[KnightStateType::CANTACT].Add(KnightActionType::ATTACK, [&]() {});
+	MonsterActionEventMap[KnightStateType::CANTACT].Add(KnightActionType::POWERATTACK, [&]() {});
+	MonsterActionEventMap[KnightStateType::CANTACT].Add(KnightActionType::MOVE, [&]() {});
+	MonsterActionEventMap[KnightStateType::CANTACT].Add(KnightActionType::HIT, [&]() {});
+	MonsterActionEventMap[KnightStateType::CANTACT].Add(KnightActionType::DEAD, [&]() {});
+
+	MonsterTickEventMap.Add(KnightActionType::NONE, [&]()
+		{
+			//test
+			RotateMap[PlayerCharacter != nullptr]();
+		});
+
+	MonsterTickEventMap.Add(KnightActionType::DODGE, [&]()
+		{
+
+		});
+
+	MonsterTickEventMap.Add(KnightActionType::ATTACK, [&]()
+		{
+			RotateMap[true]();
+		});
+
+	MonsterTickEventMap.Add(KnightActionType::POWERATTACK, [&]()
+		{
+			RotateMap[true]();
+		});
+
+	MonsterTickEventMap.Add(KnightActionType::MOVE, [&]()
+		{
+			RotateMap[PlayerCharacter != nullptr]();
+			MonsterMoveMap[MonsterMoveEventIndex]();
+		});
+
+	MonsterTickEventMap.Add(KnightActionType::HIT, [&]()
+		{
+
+		});
+
+	MonsterTickEventMap.Add(KnightActionType::DEAD, [&]()
+		{
+			SkeletalMeshComp->SetScalarParameterValueOnMaterials("Opacity", MeshOpacity -= fDeltaTime * 0.25f);
+			SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity -= fDeltaTime * 0.25f);
+			if (WeaponOpacity < 0.0f)
+			{
+				SetActorHiddenInGame(true);
+				SetActorEnableCollision(false);
+				SetActorTickEnabled(false);
+
+				if (PlayerCharacter != nullptr)
+				{
+					if (PlayerCharacter->IsLockOn)
+					{
+						PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
+						PlayerCharacter->GetFirstTarget();
+						if (PlayerCharacter->TargetComp == nullptr)
+						{
+							PlayerCharacter->LockOn();
+						}
+						else
+						{
+							Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true);
+						}
+					}
+				}
+			}
+		});
+
+	MontageEndEventMap.Add(KnightAnimationType::DEAD, [&]()
+		{
+			ChangeMontageAnimation(KnightAnimationType::DEADLOOP);
+			IsStun = true;
+			CanExecution = true;
+		});
+
+	MontageEndEventMap.Add(KnightAnimationType::DEADLOOP, [&]()
+		{
+			ChangeMontageAnimation(KnightAnimationType::DEADLOOP);
+		});
+
+	MontageEndEventMap.Add(KnightAnimationType::EXECUTION, [&]()
+		{
+			ChangeActionType(KnightActionType::DEAD);
+		});
+
+	MontageEndEventMap.Add(KnightAnimationType::IDLE, [&]()
+		{
+			if (PlayerCharacter)
+			{
+				StartAttackTrigger(AttackAnimationType);
+			}
+			else
+			{
+				ChangeMontageAnimation(KnightAnimationType::IDLE);
+			}
+		});
+
+	MontageEndEventMap.Add(KnightAnimationType::ATTACK1, [&]()
+		{
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(KnightActionType::MOVE);
+				ChangeMontageAnimation(KnightAnimationType::FORWARDMOVE);
+			}
+			else
+			{
+				ChangeActionType(KnightActionType::NONE);
+				ChangeMontageAnimation(KnightAnimationType::IDLE);
+			}
+		});
+
+	MontageEndEventMap.Add(KnightAnimationType::POWERATTACK1, MontageEndEventMap[KnightAnimationType::ATTACK1]);
+
+	MontageEndEventMap.Add(KnightAnimationType::HIT, [&]()
+		{
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(KnightActionType::MOVE);
+				ChangeMontageAnimation(KnightAnimationType::FORWARDMOVE);
+			}
+			else
+			{
+				ChangeActionType(KnightActionType::NONE);
+				ChangeMontageAnimation(KnightAnimationType::IDLE);
+			}
+		});
+
+	NotifyBeginEndEventMap.Add(KnightAnimationType::IDLE, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[KnightAnimationType::IDLE].Add(true, [&]()
+		{
+			if (AttackAnimationType != KnightAnimationType::NONE)
+				StartAttackTrigger(AttackAnimationType);
+
+		});
+	NotifyBeginEndEventMap[KnightAnimationType::IDLE].Add(false, [&]()
+		{
+			if (AttackAnimationType != KnightAnimationType::NONE)
+				StartAttackTrigger(AttackAnimationType);
+		});
+
+	NotifyBeginEndEventMap.Add(KnightAnimationType::ATTACK1, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[KnightAnimationType::ATTACK1].Add(true, [&]()
+		{
+			SwordTrailComp->Activate();
+			ParryingCollision1->Activate();
+			ActivateSMOverlap();
+			ActivateRightWeapon();
+			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[24].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+
+		});
+	NotifyBeginEndEventMap[KnightAnimationType::ATTACK1].Add(false, [&]()
+		{
+			DeactivateRightWeapon();
+			ParryingCollision1->Deactivate();
+			SwordTrailComp->Deactivate();
+			DeactivateSMOverlap();
+		});
+
+	NotifyBeginEndEventMap.Add(KnightAnimationType::POWERATTACK1, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[KnightAnimationType::POWERATTACK1].Add(true, NotifyBeginEndEventMap[KnightAnimationType::ATTACK1][true]);
+	NotifyBeginEndEventMap[KnightAnimationType::POWERATTACK1].Add(false, NotifyBeginEndEventMap[KnightAnimationType::ATTACK1][false]);
+
+	NotifyBeginEndEventMap.Add(KnightAnimationType::EXECUTION, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[KnightAnimationType::EXECUTION].Add(true, [&]()
+		{
+		});
+	NotifyBeginEndEventMap[KnightAnimationType::EXECUTION].Add(false, [&]()
+		{
+		});
+
+	RotateMap.Add(false, [&]()
+		{
+
+		});
+
+	RotateMap.Add(true, [&]()
+		{
+			if (PlayerCharacter != nullptr)
+			{
+				TargetRotation = (PlayerCharacter->GetActorLocation() - GetActorLocation()).Rotation();
+				YawRotation = TargetRotation;
+			}
+		});
+
+	TargetDetectEventMap.Add(KnightAttackType::MELEE, [&]()
+		{
+			MonsterActionEventMap[KnightStateType::NONE][KnightActionType::MOVE]();
+		});
+	TargetDetectEventMap.Add(KnightAttackType::RANGE, [&]()
+		{
+			MonsterActionEventMap[KnightStateType::NONE][KnightActionType::MOVE]();
+		});
+
+	SetActionByRandomMap.Add(KnightAnimationType::ATTACK1, [&](float percent)
+		{
+			if (percent >= 0.5)
+			{
+				PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::dodge, true);
+				ChangeActionType(KnightActionType::ATTACK);
+				ChangeMontageAnimation(KnightAnimationType::ATTACK1);
+			}
+			else if (percent < 0.5f)
+			{
+				//UGameplayStatics::SetGlobalTimeDilation(monster, 0.1f);
+				PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::parrying, true);
+				ChangeActionType(KnightActionType::ATTACK);
+				ChangeMontageAnimation(KnightAnimationType::POWERATTACK1);
+			}
+		});
+
+	//SetActionByRandomMap.Add(KnightAnimationType::DASHATTACK1, [&](float percent)
+	//	{
+	//		if (percent <= 0.5f)
+	//		{
+	//			ChangeActionType(KnightActionType::ATTACK);
+	//			ChangeMontageAnimation(KnightAnimationType::DASHATTACK1);
+	//		}
+	//		else
+	//		{
+	//			ChangeActionType(KnightActionType::MOVE);
+	//			ChangeMontageAnimation(KnightAnimationType::FORWARDMOVE);
+	//		}
+	//	});
 }
 
 void AKinghtMonster::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GetCharacterMovement()->MaxWalkSpeed = KnightDataStruct.CharacterOriginSpeed;
+	YawRotation = GetActorRotation();
+
+	MonsterHPWidget = Cast<UMonsterHPUI>(HpWidget->GetWidget());
+	MonsterLockOnWidget = Cast<UMonsterWidget>(LockOnWidget->GetWidget());
+
+	MonsterLockOnWidget->SetVisibility(ESlateVisibility::Collapsed);
+
+	KnightController = Cast<AKnightController>(GetController());
+
+	UCombatManager::GetInstance().MonsterInfoArray.Add(this);
+
+	//test
+	UCombatManager::GetInstance().HitMonsterInfoArray.Add(this);
+
+	PlayerCharacter = nullptr;
+
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+
+	AnimInstance = Cast<UKnightAnimInstance>(GetMesh()->GetAnimInstance());
+
+	AnimationType = KnightAnimationType::IDLE;
+	ChangeActionType(KnightActionType::NONE);
+	MonsterActionEventMap[KnightStateType::NONE][KnightActionType::NONE]();
+
+	SkeletalMeshComp = GetMesh();
+	SwordMeshComp = Cast<UStaticMeshComponent>(GetComponentByClass(UStaticMeshComponent::StaticClass()));
+
+	DeactivateSMOverlap();
+	SwordTrailComp->Deactivate();
+	ParryingCollision1->Deactivate();
+	DeactivateRightWeapon();
+
+	WeaponOpacity = 0.171653f;
+	MeshOpacity = 0.171653f;
+
+	GrabShieldCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GrabCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	DeactivateHpBar();
+
+	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &AKinghtMonster::OnTargetDetectionBeginOverlap);
+	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &AKinghtMonster::OnTargetDetectionEndOverlap);
+
+	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &AKinghtMonster::OnWeaponOverlapBegin);
+	WeaponOverlapStaticMeshCollision->OnComponentBeginOverlap.AddDynamic(this, &AKinghtMonster::OnSMOverlapBegin);
+	WeaponOverlapStaticMeshCollision->OnComponentEndOverlap.AddDynamic(this, &AKinghtMonster::OnSMOverlapEnd);
+
+	ParryingCollision1->OnComponentBeginOverlap.AddDynamic(this, &AKinghtMonster::OnParryingOverlap);
+	GrabCollision->OnComponentBeginOverlap.AddDynamic(this, &AKinghtMonster::OnGrabCollisionOverlapBegin);
 }
 
 void AKinghtMonster::Tick(float DeltaTime)
@@ -102,6 +465,10 @@ void AKinghtMonster::HitStop()
 
 void AKinghtMonster::ChangeMontageAnimation(KnightAnimationType type)
 {
+	AnimInstance->StopMontage(MontageMap[AnimationType]);
+	AnimationType = type;
+	StateType = AnimTypeToStateType[type];
+	AnimInstance->PlayMontage(MontageMap[type]);
 }
 
 void AKinghtMonster::ChangeActionType(KnightActionType type)

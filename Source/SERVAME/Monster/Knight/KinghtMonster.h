@@ -110,7 +110,7 @@ public:
 
 	TArray<UBoxComponent*> AttackOverlapArray;
 
-	AKnightController* MonsterController;
+	AKnightController* KnightController;
 	APlayerCharacter* PlayerCharacter;
 
 	FVector PatrolLocation;
