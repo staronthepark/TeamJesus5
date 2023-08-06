@@ -86,7 +86,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	MonsterType MonsterType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		MonsterAttackType AttackType;
+	MonsterAttackType AttackType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FMonsterDataStruct MonsterDataStruct;

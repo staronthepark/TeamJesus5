@@ -3,3 +3,17 @@
 
 #include "KnightController.h"
 
+AKnightController::AKnightController()
+{
+
+}
+
+void AKnightController::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void AKnightController::Movement(FVector Location)
+{
+	MoveToLocation(Location);
+}

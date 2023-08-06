@@ -14,4 +14,10 @@ class SERVAME_API AKnightController : public AAIController
 {
 	GENERATED_BODY()
 	
+public:
+	AKnightController();
+
+	virtual void BeginPlay();
+
+	void Movement(FVector Location);
 };
