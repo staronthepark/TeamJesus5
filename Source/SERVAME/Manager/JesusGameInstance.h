@@ -47,8 +47,6 @@ public:
 		float GetPostProcessBrightness();
 		void SetLanguage(Language value);
 
-		virtual void Init()override;
-
 		FStartSetting PlayerOptionSetting;
 
 		UPROPERTY()

@@ -1,5 +1,6 @@
 #include "..\Boss_1\JesusBoss.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/GameUserSettings.h"
 #include "JesusPlayerController.h"
 
 void AJesusPlayerController::BeginPlay()
@@ -119,6 +120,26 @@ void AJesusPlayerController::UnPressAttack()
 
 void AJesusPlayerController::PressDodge()
 {
+
+	UGameUserSettings* setting = GEngine->GetGameUserSettings();
+	if (setting)
+	{
+		setting->SetPostProcessingQuality(1);
+		setting->SetShadowQuality(1);
+		setting->SetGlobalIlluminationQuality(1);
+		setting->SetReflectionQuality(2);
+		setting->SetVisualEffectQuality(2);
+		setting->SetTextureQuality(3);
+
+		//const
+		setting->SetFoliageQuality(0);
+		setting->SetShadingQuality(0);
+		setting->SetViewDistanceQuality(0);
+		setting->SetAntiAliasingQuality(0);
+		setting->SetResolutionScaleValue(0);
+
+		setting->ApplySettings(true);
+	}
 	if (!GameInstance->MainMenuWidget->IsInViewport())
 	{
 		if (character->PlayerHUD->IsRender())
@@ -374,7 +395,27 @@ void AJesusPlayerController::ChangeView()
 }
 
 void AJesusPlayerController::OpenMenu()
-{
+{	
+
+	UGameUserSettings* setting = GEngine->GetGameUserSettings();
+	if (setting)
+	{
+		setting->SetPostProcessingQuality(1);
+		setting->SetShadowQuality(1);
+		setting->SetGlobalIlluminationQuality(1);
+		setting->SetReflectionQuality(2);
+		setting->SetVisualEffectQuality(2);
+		setting->SetTextureQuality(3);
+
+		//const
+		setting->SetFoliageQuality(0);
+		setting->SetShadingQuality(0);
+		setting->SetViewDistanceQuality(0);
+		setting->SetAntiAliasingQuality(0);
+		setting->SetResolutionScaleValue(0);
+
+		setting->ApplySettings(true);
+	}
 	if (!GameInstance->MainMenuWidget->IsInViewport())
 	{
 		if (character->PlayerHUD->IsRender())

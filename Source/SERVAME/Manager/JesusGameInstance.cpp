@@ -3,8 +3,8 @@
 
 #include "JesusGameInstance.h"
 #include "Engine/PostProcessVolume.h"
-#include "SoundManager.h"
 #include "GameFramework/GameUserSettings.h"
+#include "SoundManager.h"
 #include "Kismet/GameplayStatics.h"
 
 UJesusGameInstance::UJesusGameInstance()
@@ -21,42 +21,6 @@ UJesusGameInstance::UJesusGameInstance()
 	MainMenuWidgetClass = ASD.Class;
 }
 
-#define LOW 0
-#define MIDDLE 1
-#define HIGH 2
-#define VERYHIGH 3
-
-void UJesusGameInstance::Init()
-{
-	Super::Init();
-	int32 scalabilityLevel = 0;
-	//get game user setting
-	UGameUserSettings* setting = GEngine->GetGameUserSettings();
-	if (setting)
-	{
-		setting->SetPostProcessingQuality(MIDDLE);
-		setting->SetShadowQuality(MIDDLE);
-		setting->SetGlobalIlluminationQuality(MIDDLE);
-		setting->SetReflectionQuality(HIGH);
-		setting->SetVisualEffectQuality(HIGH);
-
-		//const
-		setting->SetFoliageQuality(LOW);
-		setting->SetShadingQuality(LOW);
-		setting->SetViewDistanceQuality(LOW);
-		setting->SetAntiAliasingQuality(LOW);
-		setting->SetTextureQuality(LOW);
-		setting->SetResolutionScaleValue(0);
-
-		setting->ApplySettings(true);
-	}
-
-	ASoundManager::GetInstance().Init();
-	ASoundManager::GetInstance().StartBGMSound();
-
-	
-}
-
 void UJesusGameInstance::InitInstance()
 {
 	if (IsValid(DebugLogWidgetClass))
@@ -65,11 +29,36 @@ void UJesusGameInstance::InitInstance()
 	}
 
 	MainMenuWidget = Cast<UMainMenuUI>(CreateWidget(GetWorld(), MainMenuWidgetClass));
+
+	ASoundManager::GetInstance().Init();
+	ASoundManager::GetInstance().StartBGMSound();
+
+	UGameUserSettings* setting = GEngine->GetGameUserSettings();
+	if (setting)
+	{
+		setting->SetPostProcessingQuality(1);
+		setting->SetShadowQuality(1);
+		setting->SetGlobalIlluminationQuality(1);
+		setting->SetReflectionQuality(2);
+		setting->SetVisualEffectQuality(2);
+		setting->SetTextureQuality(3);
+
+		//const
+		setting->SetFoliageQuality(0);
+		setting->SetShadingQuality(0);
+		setting->SetViewDistanceQuality(0);
+		setting->SetAntiAliasingQuality(0);
+		setting->SetResolutionScaleValue(0);
+
+		setting->ApplySettings(true);
+	}
 	//MainMenuWidget->AddToViewport();
 }
 
 void UJesusGameInstance::InitDefaultSetting()
 {
+	
+
 	PlayerOptionSetting.Gamma = 0.2f;
 	PlayerOptionSetting.DPI = 40.0f;
 
