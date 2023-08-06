@@ -1,16 +1,20 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "KinghtMonster.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/Character.h"
+#include "Math/RandomStream.h"
+#include "..\..\Manager\CombatManager.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 AKinghtMonster::AKinghtMonster()
 {
 	IsDetect = false;
 
-	TargetDetectionCollison = CreateDefaultSubobject<USphereComponent>(TEXT("Target Detection Collider"));
-	TargetDetectionCollison->SetupAttachment(RootComponent);
-	TargetDetectionCollison->SetCollisionProfileName("Detection");
-	TargetDetectionCollison->SetSphereRadius(500.0f);
+	//TargetDetectionCollison = CreateDefaultSubobject<USphereComponent>(TEXT("Target Detection Collider"));
+	//TargetDetectionCollison->SetupAttachment(RootComponent);
+	//TargetDetectionCollison->SetCollisionProfileName("Detection");
+	//TargetDetectionCollison->SetSphereRadius(500.0f);
 
 	ParryingCollision1 = CreateDefaultSubobject<UBoxComponent>(TEXT("Parrying Collision"));
 	ParryingCollision1->SetupAttachment(GetMesh(), FName("Weapon_Bone"));
