@@ -64,6 +64,8 @@ void ASavePointInteraction::EnableEvent()
 	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 	if (IsActive)
 	{
+		Character->AxisX = 1;
+		Character->AxisY = 1;
 		Character->Imotal = true;
 		Character->ChangeMontageAnimation(AnimationType::SAVESTART);
 	}

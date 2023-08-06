@@ -42,6 +42,7 @@ void AProjectileObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* Overl
 	if (ReturnWhenHit)
 	{
 		ReturnObject();
+		SetActorTickEnabled(false);
 	}
 
 	FVector HitDir = OtherActor->GetActorLocation() - GetActorLocation();
@@ -65,14 +66,8 @@ void AProjectileObjectInPool::SetActive(bool active)
 	Super::SetActive(active);
 
 	MoveDir = GetActorForwardVector();
-
 //	ParticleSystem->SetWorldLocation(GetActorLocation());
 //	ParticleSystem->SetActive(active, false);
-
-	if (LifeTime > 0 && active)
-	{
-		GetWorldTimerManager().SetTimer(LifeTimer, this, &AProjectileObjectInPool::ReturnObject, LifeTime);
-	}
 }
 
 void AProjectileObjectInPool::Tick(float DeltaTime)

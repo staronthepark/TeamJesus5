@@ -798,6 +798,7 @@ APlayerCharacter::APlayerCharacter()
 			GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 			CheckInputKey();
 			Imotal = false;
+			if(!IsGrab)
 			TargetCameraBoomLength = IsShoulderView ? ShoulderViewCameraLength : BackViewCameraLength;
 		});
 	MontageEndEventMap.Add(AnimationType::GAMESTARTLOOP, [&]()
@@ -1703,7 +1704,7 @@ void APlayerCharacter::CheckInputKey()
 {
 	if (AxisX != 1  || AxisY != 1)
 	{
-		if(AxisY == 2)
+		if(AxisY == 2 && !IsGrab)
 		TargetCameraBoomLength = 350.0f;
 
 		ChangeActionType(ActionType::MOVE);
@@ -1734,7 +1735,11 @@ void APlayerCharacter::SetSpeed(float speed)
 	{
 		RotSpeed = 5.0f;
 	}
-	CameraBoom1->CameraLagSpeed = speed * 0.02f;
+	if (!IsGrab)
+	{
+		CameraBoom1->CameraLagSpeed = speed * 0.02f;
+	}
+
 	GetCharacterMovement()->MaxWalkSpeed = speed;
 }
 
@@ -2145,6 +2150,12 @@ void APlayerCharacter::FadeOut()
 {
 	PlayerHUD->FadeInAnimation(false);
 	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
+}
+
+void APlayerCharacter::SetCameraTarget(FVector Offset, float Length)
+{
+	TargetSocketOffset = Offset;
+	TargetCameraBoomLength = Length;
 }
 
 void APlayerCharacter::PlayStartAnimation()

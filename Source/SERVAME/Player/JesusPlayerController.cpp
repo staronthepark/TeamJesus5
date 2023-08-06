@@ -200,6 +200,8 @@ void AJesusPlayerController::PressGrab()
 		{
 			character->ExecutionCharacter->CatchByPlayer();
 			character->IsGrab = true;
+			character->CameraBoom1->CameraLagSpeed = 30.0f;
+			character->SetCameraTarget(character->GrabSocketOffset, character->GrabCameraLength);
 			if (character->IsLockOn)
 			{
 				character->LockOn();
@@ -208,6 +210,7 @@ void AJesusPlayerController::PressGrab()
 	}
 	else
 	{
+		character->ShoulderView(character->IsShoulderView);
 		character->ExecutionCharacter->LaunchCharacter(character->GetActorRotation().Vector(),
 			character->PlayerDataStruct.LaunchCharacterPower);
 		character->IsGrab = false;
@@ -303,7 +306,7 @@ void AJesusPlayerController::PressMoveBack()
 	character->ForwardMovementValue = -1.0f;
 	character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][true]();
 
-	if(character->CurActionType == ActionType::MOVE)
+	if(character->CurActionType == ActionType::MOVE && !character->IsGrab)
 	character->TargetCameraBoomLength = character->IsShoulderView ? character->ShoulderViewCameraLength : character->BackViewCameraLength;
 }
 
@@ -314,6 +317,8 @@ void AJesusPlayerController::UnPressMoveBack()
 		character->AxisY = 1;
 		character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][false]();
 	}
+
+	if(!character->IsGrab)
 	character->TargetCameraBoomLength = character->IsShoulderView ? character->ShoulderViewCameraLength : character->BackViewCameraLength;
 }
 

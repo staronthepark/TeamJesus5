@@ -650,6 +650,7 @@ void AEnemyMonster::LaunchCharacter(FVector Dir, float Power)
 	GetMesh()->SetSimulatePhysics(true);
 	GetMesh()->WakeAllRigidBodies();
 	GetMesh()->bBlendPhysics = true;
+	GetMesh()->SetAllBodiesPhysicsBlendWeight(.5f);
 
 	GetMesh()->AddImpulseToAllBodiesBelow(Dir * Power, NAME_None, true);
 
@@ -673,6 +674,14 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 		return 0;
 	}
 	
+	if (PlayerCharacter == nullptr)
+	{
+		PlayerCharacter = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetOwner());
+		TracePlayer = true;
+		MonsterMoveEventIndex = 1;
+	}
+
+
 	//MonsterHpWidget->Hp->SetVisibility(ESlateVisibility::Visible);
 	//MonsterHpWidget->HpBG->SetVisibility(ESlateVisibility::Visible);
 	GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);

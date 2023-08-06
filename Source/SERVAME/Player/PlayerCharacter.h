@@ -295,6 +295,8 @@ public:
 		float BackViewCameraLength;
 	UPROPERTY(EditAnyWhere, Category = "CameraViewSetting")
 		float ShoulderViewCameraLength;
+	UPROPERTY(EditAnyWhere, Category = "CameraViewSetting")
+		float GrabCameraLength;
 
 	UPROPERTY(EditAnyWhere, Category = "CameraViewSetting")
 		FVector TargetSocketOffset;
@@ -302,6 +304,8 @@ public:
 		FVector ShoulderViewSocketOffset;
 	UPROPERTY(EditAnyWhere, Category = "CameraViewSetting")
 		FVector BackViewSocketOffset;
+	UPROPERTY(EditAnyWhere, Category = "CameraViewSetting")
+		FVector GrabSocketOffset;
 
 public:
 
@@ -367,6 +371,8 @@ public:
 	void SetSprint();
 
 	void FadeOut();
+
+	void SetCameraTarget(FVector Offset, float Length);
 
 
 	UFUNCTION()
