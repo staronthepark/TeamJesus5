@@ -47,7 +47,7 @@ void UJesusGameInstance::InitInstance()
 		setting->SetFoliageQuality(0);
 		setting->SetShadingQuality(0);
 		setting->SetViewDistanceQuality(0);
-		setting->SetAntiAliasingQuality(0);
+		setting->SetAntiAliasingQuality(1);
 		setting->SetResolutionScaleValue(0);
 
 		setting->ApplySettings(true);
