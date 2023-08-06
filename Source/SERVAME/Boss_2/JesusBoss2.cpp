@@ -11,6 +11,7 @@
 #include "..\ObjectPool\VomitObjectInPool.h"
 #include "..\ObjectPool\StoneObjectInPool.h"
 #include "DrawDebugHelpers.h"
+#include "..\Manager\JesusThreadManager.h"
 
 AJesusBoss2::AJesusBoss2()
 {
@@ -73,6 +74,8 @@ AJesusBoss2::AJesusBoss2()
 		}));
 	MontageEndMap.Add(Boss2AnimationType::IDLE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
+			Boss2->IsAttackMontageEnd = true;
+			Boss2->IsAttacking = false;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::CROSSFALL, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -109,6 +112,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::DOWNSMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -121,6 +125,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::DOUBLESMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -132,6 +137,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::SCREAMATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -143,6 +149,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::HEADATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -154,6 +161,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::CHARGE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -165,6 +173,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::HEADING, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -177,6 +186,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::VOMITFALL, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -188,6 +198,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::ELBOWSPIN, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -199,6 +210,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::HUNTJUMP, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -210,6 +222,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::JUMPEXPLOSION, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -223,6 +236,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::THROWSTONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -239,6 +253,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	//===========================================공격 실행=========================================================
@@ -377,50 +392,50 @@ AJesusBoss2::AJesusBoss2()
 			IsAttackMontageEnd = true;
 		}));
 
-	ActionEndMap.Add(Boss2AttackType::B2_LEFTATK, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
-		{
-			Boss2ActionTemp ActionTemp{};
+	//ActionEndMap.Add(Boss2AttackType::B2_LEFTATK, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
+	//	{
+	//		Boss2ActionTemp ActionTemp{};
 
-			auto Type = GetTypeFromMetaData(Montage);
-		
-			if (CurrentActionTemp.IsAddPercentage)
-				InitPercentageMap[CurrentActionTemp.AttackType]();
-			else
-				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
+	//		auto Type = GetTypeFromMetaData(Montage);
+	//	
+	//		if (CurrentActionTemp.IsAddPercentage)
+	//			InitPercentageMap[CurrentActionTemp.AttackType]();
+	//		else
+	//			ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
 
-			SetBTAction(GetRandomPattern(Dist));
-			IsAttackMontageEnd = true;
-		}));
+	//		SetBTAction(GetRandomPattern(Dist));
+	//		IsAttackMontageEnd = true;
+	//	}));
 
-	ActionEndMap.Add(Boss2AttackType::B2_RIGHTATK, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
-		{
-			Boss2ActionTemp ActionTemp{};
+	//ActionEndMap.Add(Boss2AttackType::B2_RIGHTATK, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
+	//	{
+	//		Boss2ActionTemp ActionTemp{};
 
-			auto Type = GetTypeFromMetaData(Montage);
-			
-			if (CurrentActionTemp.IsAddPercentage)
-				InitPercentageMap[CurrentActionTemp.AttackType]();
-			else
-				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
+	//		auto Type = GetTypeFromMetaData(Montage);
+	//		
+	//		if (CurrentActionTemp.IsAddPercentage)
+	//			InitPercentageMap[CurrentActionTemp.AttackType]();
+	//		else
+	//			ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
 
-			SetBTAction(GetRandomPattern(Dist));
-			IsAttackMontageEnd = true;
-		}));
+	//		SetBTAction(GetRandomPattern(Dist));
+	//		IsAttackMontageEnd = true;
+	//	}));
 
-	ActionEndMap.Add(Boss2AttackType::B2_BACKATK, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
-		{
-			Boss2ActionTemp ActionTemp{};
+	//ActionEndMap.Add(Boss2AttackType::B2_BACKATK, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
+	//	{
+	//		Boss2ActionTemp ActionTemp{};
 
-			auto Type = GetTypeFromMetaData(Montage);
-		
-			if (CurrentActionTemp.IsAddPercentage)
-				InitPercentageMap[CurrentActionTemp.AttackType]();
-			else
-				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
+	//		auto Type = GetTypeFromMetaData(Montage);
+	//	
+	//		if (CurrentActionTemp.IsAddPercentage)
+	//			InitPercentageMap[CurrentActionTemp.AttackType]();
+	//		else
+	//			ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
 
-			SetBTAction(GetRandomPattern(Dist));
-			IsAttackMontageEnd = true;
-		}));
+	//		SetBTAction(GetRandomPattern(Dist));
+	//		IsAttackMontageEnd = true;
+	//	}));
 
 	//======================================확률에 의한 랜덤 패턴 가져오기========================================
 
@@ -932,7 +947,12 @@ void AJesusBoss2::Tick(float DeltaTime)
 	if (JumpMoveStart)
 		JumpMove();
 
+	if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
+		OnCrossFall();
+
 	PlayMoveMontage();
+
+	CheckBossDie();
 
 	IsGameStart = Boss2AnimInstance->IsStart;
 
@@ -1020,21 +1040,40 @@ FBoss2Action* AJesusBoss2::GetActionData(FName Name)
 
 void AJesusBoss2::DoTypeAttack(float MinRange, float MaxRange, float Dist, bool LockOn, Boss2AnimationType Type, AJesusBoss2* Boss2, TArray<Boss2ActionTemp> &arr, Boss2AttackType AtkType)
 {
- 	if (Dist >= MinRange && Dist <= MaxRange && !Boss2->CurrentActionTemp.IsExcute)
+	if (Dist >= MinRange && Dist <= MaxRange && !Boss2->CurrentActionTemp.IsExcute)
 	{
-		InitIsExcute();
+		//InitIsExcute();
+
+		//스레드 사용
+		JesusThreadManager& t = JesusThreadManager::GetInstance();
+
+		t.EnqueueJob(TFunction<void(void)>([=](void)
+			{
+				std::unique_lock<std::mutex> lock(m1);
+				for (int i = 0; i < MeleeActionArr.Num(); i++)
+					MeleeActionArr[i].IsExcute = false;
+				for (int i = 0; i < RangeActionArr.Num(); i++)
+					RangeActionArr[i].IsExcute = false;
+				for (int i = 0; i < FollowUpActionArr.Num(); i++)
+					FollowUpActionArr[i].IsExcute = false;
+			}));
 
 		if (!Boss2->CurrentActionTemp.CanContinuity)
 		{
 			auto FoundIndex = arr.Find(Boss2->CurrentActionTemp);
+
 			if (FoundIndex == INDEX_NONE)
 			{
 				CurrentActionTemp = GetRandomPatternMap[AtkType]();
 				SetBTAction(CurrentActionTemp);
 				return;
 			}
-			
-			arr[FoundIndex].IsExcute = true;
+
+			t.EnqueueJob(TFunction<void(void)>([=, &arr](void)
+				{
+					std::unique_lock<std::mutex> lock(m1);
+					arr[FoundIndex].IsExcute = true;
+				}));
 		}
 
 		Boss2->CanMove = false;
@@ -1118,11 +1157,13 @@ float AJesusBoss2::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	OffHitCollision();
 
 	BossDataStruct.CharacterHp -= DamageAmount;
+	UE_LOG(LogTemp, Warning, TEXT("%f"), BossDataStruct.CharacterHp);
 
 	IsStartBoneRot = true;
 	GetWorldTimerManager().SetTimer(BoneRotateTimerHandle, this, &AJesusBoss2::ReSetBoneRot, Time, false);
 		
-	//TODO : 보스 체력 UI
+	AIController->BossUI->DecreaseHPGradual(this, BossDataStruct.CharacterHp / BossDataStruct.CharacterMaxHp);
+	AIController->BossUI->SetDamageText(DamageAmount);
 
 	//TODO : 그로기 관련 코드
 
@@ -1200,7 +1241,7 @@ void AJesusBoss2::SpawnInit()
 {
 	BossDataStruct.CharacterHp = BossDataStruct.CharacterMaxHp;
 	BossDataStruct.CharacterOriginSpeed = 60.f;
-	//TODO : UI 초기화
+	AIController->BossUI->SetHP(1);
 	IsDead = false;
 
 	//패턴 확률 초기화
@@ -1271,6 +1312,28 @@ void AJesusBoss2::JumpExplosionCheck()
 		JumpExplosonCollider->SetSphereRadius(1000.f);
 }
 
+void AJesusBoss2::CheckBossDie()
+{
+	if (BossDataStruct.CharacterHp <= 0 && IsDead == false)
+	{
+		IsLockOn = false;
+		CanMove = false;
+		IsDead = true;
+		PlayerCharacter->AxisX = 1;
+		PlayerCharacter->AxisY = 1;
+		GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
+		ChangeMontageAnimation(Boss2AnimationType::DIE);
+		
+		AIController->BossUI->PlayBossDiedAnimtion();
+		AIController->OnUnPossess();
+
+		for (auto iter = BossDataStruct.DamageList.begin(); iter != BossDataStruct.DamageList.end(); iter.operator++())
+		{
+			iter.Value() = 0;
+		}
+	}
+}
+
 void AJesusBoss2::SetBoneHead(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	Boss2AnimInstance->CurrentBoneType = Boss2BoneRotateType::HEAD;
@@ -1304,6 +1367,7 @@ void AJesusBoss2::GetEndedMontage(UAnimMontage* Montage, bool bInterrupted)
 =====================*/
 void AJesusBoss2::OnCrossFall()
 {
+	CrossEvent = true;
 	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
 
 	if (NavSystem == nullptr)

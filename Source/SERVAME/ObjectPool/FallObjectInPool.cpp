@@ -59,6 +59,7 @@ void AFallObjectInPool::SetActive(bool active)
 	if (LifeTime > 0 && active)
 	{
 		CrossEffect->Activate();
+
 		CrossBurstEffect->Deactivate();
 		DustEffect->Deactivate();
 
@@ -78,7 +79,6 @@ void AFallObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* OverlappedC
 
 void AFallObjectInPool::OnGroundOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("??????"));
 	IsHitGround = true;
 	SetActorTickEnabled(false);
 	HitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);

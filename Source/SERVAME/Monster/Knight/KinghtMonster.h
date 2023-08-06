@@ -3,17 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "..\BaseCharacter.h"
-#include "MonsterController.h"
-#include "..\Player\PlayerCharacter.h"
-#include "MonsterAnimInstance.h"
-#include "..\UI\MonsterWidget.h"
-#include "../UI/MonsterHPUI.h"
+#include "..\..\BaseCharacter.h"
+#include "..\..\Player\PlayerCharacter.h"
+#include "..\..\UI\MonsterHPUI.h"
+#include "..\..\UI\MonsterWidget.h"
 #include "Components/WidgetComponent.h"
-#include "EnemyMonster.generated.h"
+#include "KnightAnimInstance.h"
+#include "KnightController.h"
+#include "KinghtMonster.generated.h"
 
 UENUM(BlueprintType)
-enum class MonsterStateType : uint8
+enum class KnightStateType : uint8
 {
 	NONE,
 	BEFOREATTACK,
@@ -22,7 +22,14 @@ enum class MonsterStateType : uint8
 };
 
 UENUM(BlueprintType)
-enum class MonsterActionType : uint8
+enum class KnightAttackType : uint8
+{
+	MELEE,
+	RANGE,
+};
+
+UENUM(BlueprintType)
+enum class KnightActionType : uint8
 {
 	NONE,
 	DODGE,
@@ -33,25 +40,8 @@ enum class MonsterActionType : uint8
 	DEAD,
 };
 
-UENUM(BlueprintType)
-enum class MonsterAttackType : uint8
-{
-	MELEE,
-	RANGE,
-};
-
-UENUM(BlueprintType)
-enum class MonsterType : uint8
-{
-	COMMONMELEE,
-	COMMONRANGE,
-	ELETEMELEE,
-	ELETERANGE,
-	BOSS,
-};
-
 USTRUCT(BlueprintType)
-struct FSkillInfo
+struct FKnightSkillInfo
 {
 	GENERATED_BODY()
 
@@ -63,80 +53,75 @@ struct FSkillInfo
 };
 
 USTRUCT(BlueprintType)
-struct FMonsterDataStruct : public FCharacterBaseDataStruct
+struct FKnightDataStruct : public FCharacterBaseDataStruct
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float PatrolSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float RotateSpeed;
+	float RotateSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float LockOnWalkSpeed;
+	float LockOnWalkSpeed;
 };
 
+
 UCLASS()
-class SERVAME_API AEnemyMonster : public ABaseCharacter
+class SERVAME_API AKinghtMonster : public ABaseCharacter
 {
 	GENERATED_BODY()
-	
 public:
-	AEnemyMonster();
+	AKinghtMonster();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	MonsterType MonsterType;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	MonsterAttackType AttackType;
+	FKnightDataStruct KnightDataStruct;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FMonsterDataStruct MonsterDataStruct;
+	USphereComponent* GrabCollision;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		USphereComponent* GrabCollision;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		USphereComponent* GrabShieldCollision;
-
+	USphereComponent* GrabShieldCollision;
+	
 	UPROPERTY()
-	UMonsterAnimInstance* AnimInstance;
+	UKnightAnimInstance* AnimInstance;
 
 	UPROPERTY(EditAnyWhere, Category = "MontageMap")
-	TMap<MonsterAnimationType, UAnimMontage*> MontageMap;
+	TMap<KnightAnimationType, UAnimMontage*> MontageMap;
 
 	UPROPERTY(EditAnyWhere, Category = "SkillInfoMap")
-		TMap<MonsterAnimationType, FSkillInfo>SkillInfoMap;
+	TMap<KnightAnimationType, FKnightSkillInfo>SkillInfoMap;
 
 	TMap<bool, TFunction<void()>>RotateMap;
 	TMap<int, TFunction<void()>>RandomRotateMap;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UWidgetComponent* HpWidget;
+	UWidgetComponent* HpWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UWidgetComponent* LockOnWidget;
+	UWidgetComponent* LockOnWidget;
 
 	UPROPERTY()
-		UMonsterHPUI* MonsterHPWidget;
+	UMonsterHPUI* MonsterHPWidget;
 
 	UPROPERTY()
-		UMonsterWidget* MonsterLockOnWidget;
+	UMonsterWidget* MonsterLockOnWidget;
 
-		FTimerHandle HpTimer;
+	FTimerHandle HpTimer;
 
 	TArray<UBoxComponent*> AttackOverlapArray;
 
-	AMonsterController* MonsterController;
+	AKnightController* MonsterController;
 	APlayerCharacter* PlayerCharacter;
 
 	FVector PatrolLocation;
 	FRotator YawRotation;
 	FRotator TargetRotation;
 
-	MonsterStateType StateType;
-	MonsterActionType ActionType;
-	
-	MonsterAnimationType AnimationType;
-	MonsterAnimationType AttackAnimationType;
+	KnightStateType StateType;
+	KnightActionType ActionType;
+
+	KnightAnimationType AnimationType;
+	KnightAnimationType AttackAnimationType;
 
 	USkeletalMeshComponent* SkeletalMeshComp;
 	UStaticMeshComponent* SwordMeshComp;
@@ -144,7 +129,7 @@ public:
 	float WeaponOpacity;
 	float MeshOpacity;
 
-	float CurrentDistance;	
+	float CurrentDistance;
 	float DiagonalSpeed;
 
 	int32 MonsterMoveEventIndex;
@@ -157,21 +142,19 @@ public:
 	bool IsCaught;
 
 private:
-
-	TMap<MonsterAnimationType, MonsterStateType> AnimTypeToStateType;
-	TMap<MonsterStateType, TMap<MonsterActionType, TFunction<void()>>> MonsterActionEventMap;
-	TMap<MonsterAnimationType, TMap<bool, TFunction<void()>>> NotifyBeginEndEventMap;
-	TMap<MonsterActionType, TFunction<void()>> MonsterTickEventMap;
+	TMap<KnightAnimationType, KnightStateType> AnimTypeToStateType;
+	TMap<KnightStateType, TMap<KnightActionType, TFunction<void()>>> MonsterActionEventMap;
+	TMap<KnightAnimationType, TMap<bool, TFunction<void()>>> NotifyBeginEndEventMap;
+	TMap<KnightActionType, TFunction<void()>> MonsterTickEventMap;
 	TMap<int, TFunction<void()>> MonsterMoveMap;
 	TMap<bool, TFunction<void()>> CheckDIstanceMap;
-	TMap<MonsterAnimationType, TFunction<void(float percent)>> SetActionByRandomMap;
-	TMap<MonsterAnimationType, TFunction<void()>>MontageEndEventMap;
-	TMap<MonsterAttackType, TFunction<void()>>TargetDetectEventMap;
+	TMap<KnightAnimationType, TFunction<void(float percent)>> SetActionByRandomMap;
+	TMap<KnightAnimationType, TFunction<void()>>MontageEndEventMap;
+	TMap<KnightAttackType, TFunction<void()>>TargetDetectEventMap;
 
 public:
-
-	void ChangeMontageAnimation(MonsterAnimationType type);
-	void ChangeActionType(MonsterActionType type);
+	void ChangeMontageAnimation(KnightAnimationType type);
+	void ChangeActionType(KnightActionType type);
 
 	void DeactivateHpBar();
 
@@ -191,13 +174,13 @@ public:
 	void OnSMOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UFUNCTION()
-		void OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
-		void OnGrabCollisionOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnGrabCollisionOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	void StartAttackTrigger(MonsterAnimationType AttackAnimType);
-	void EndAttackTrigger(MonsterAnimationType AttackAnimType);
+	void StartAttackTrigger(KnightAnimationType AttackAnimType);
+	void EndAttackTrigger(KnightAnimationType AttackAnimType);
 
 	void ShotProjectile();
 

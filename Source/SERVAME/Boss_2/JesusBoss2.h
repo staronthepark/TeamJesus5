@@ -13,6 +13,7 @@
 #include "Components/WidgetComponent.h"
 #include "..\UI\MonsterWidget.h"
 #include <vector>
+#include <mutex>
 #include "JesusBoss2.generated.h"
 
 UENUM()
@@ -166,6 +167,8 @@ public:
 	AJesusBoss2();
 	~AJesusBoss2();
 
+	std::mutex m1;
+
 	UPROPERTY()
 	UBoss2AnimInstance* Boss2AnimInstance;
 
@@ -287,6 +290,7 @@ public:
 	bool IsArrived;
 	bool IsStartBoneRot;
 	bool JumpMoveStart;
+	bool CrossEvent = false;
 
 	FVector LastPlayerLoc;
 
@@ -395,6 +399,7 @@ public:
 	void SlerpJumpEnd();
 	void JumpMove();
 	void JumpExplosionCheck();
+	void CheckBossDie();
 
 	/*======================
 	*		UFUNCTION
