@@ -69,24 +69,43 @@ void UJesusGameInstance::Init()
 	{
 		setting->RunHardwareBenchmark();
 
-		UE_LOG(LogTemp, Error, TEXT("%f"), setting->GetLastGPUBenchmarkResult());
-		//setting->SetFrameRateLimit(60);
-		//setting->SetVSyncEnabled(false);
-		//setting->SetPostProcessingQuality(1);
-		//setting->SetShadowQuality(1);
-		//setting->SetGlobalIlluminationQuality(1);
-		//setting->SetReflectionQuality(2);
-		//setting->SetVisualEffectQuality(2);
-		//
-		////const
-		//setting->SetTextureQuality(0);
-		//setting->SetFoliageQuality(0);
-		//setting->SetShadingQuality(0);
-		//setting->SetViewDistanceQuality(0);
-		//setting->SetAntiAliasingQuality(1);
-		//setting->SetResolutionScaleValue(0);
-		//
-		//setting->ApplySettings(true);
+		float GPU = setting->GetLastGPUBenchmarkResult();
+
+		UE_LOG(LogTemp, Error, TEXT("%f"), GPU);
+
+		setting->SetFrameRateLimit(60);
+		setting->SetVSyncEnabled(false);
+
+		if (GPU > 580)
+		{
+			setting->SetPostProcessingQuality(3);
+			setting->SetShadowQuality(3);
+			setting->SetGlobalIlluminationQuality(3);
+			setting->SetReflectionQuality(3);
+			setting->SetVisualEffectQuality(3);
+			setting->SetTextureQuality(3);
+			setting->SetFoliageQuality(3);
+			setting->SetShadingQuality(3);
+			setting->SetViewDistanceQuality(3);
+			setting->SetAntiAliasingQuality(3);
+			setting->SetResolutionScaleValue(3);
+		}
+		else
+		{
+			setting->SetPostProcessingQuality(1);
+			setting->SetShadowQuality(1);
+			setting->SetGlobalIlluminationQuality(1);
+			setting->SetReflectionQuality(2);
+			setting->SetVisualEffectQuality(2);
+			setting->SetTextureQuality(0);
+			setting->SetFoliageQuality(0);
+			setting->SetShadingQuality(0);
+			setting->SetViewDistanceQuality(0);
+			setting->SetAntiAliasingQuality(1);
+			setting->SetResolutionScaleValue(0);
+		}
+
+		setting->ApplySettings(true);
 	}
 }
 
