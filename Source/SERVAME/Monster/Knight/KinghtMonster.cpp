@@ -587,7 +587,8 @@ void AKinghtMonster::OnGrabCollisionOverlapBegin(UPrimitiveComponent* Overlapped
 void AKinghtMonster::StartAttackTrigger(KnightAnimationType AttackAnimType)
 {
 	TracePlayer = false;
-	if (StateType == KnightStateType::CANTACT || GetMesh()->GetCollisionProfileName() == "Ragdoll")return;
+	if (StateType == KnightStateType::CANTACT || GetMesh()->GetCollisionProfileName() == "Ragdoll")
+		return;
 	AttackAnimationType = AttackAnimType;
 	if (ActionType != KnightActionType::ATTACK)
 	{
