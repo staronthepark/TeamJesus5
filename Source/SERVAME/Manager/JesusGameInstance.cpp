@@ -7,13 +7,14 @@
 #include "SoundManager.h"
 #include "Kismet/GameplayStatics.h"
 
+#define LOW 0
+#define MIDDLE 1
+#define HIGH 2
+#define VERYHIGH 3
+
 UJesusGameInstance::UJesusGameInstance()
 {
-
-
 	static ConstructorHelpers::FClassFinder<UDebugLogWidget> DLW(TEXT("/Game/02_Resource/04_UI/01_WBP/99_Debug/WBP_DebugLog"));
-
-
 	static ConstructorHelpers::FClassFinder<UMainMenuUI> ASD(TEXT("/Game/02_Resource/04_UI/01_WBP/00_MainMenu/WBP_MainMenu"));
 
 	if (DLW.Succeeded())
@@ -78,17 +79,17 @@ void UJesusGameInstance::Init()
 
 		if (GPU > 580)
 		{
-			setting->SetPostProcessingQuality(3);
-			setting->SetShadowQuality(3);
-			setting->SetGlobalIlluminationQuality(3);
-			setting->SetReflectionQuality(3);
-			setting->SetVisualEffectQuality(3);
-			setting->SetTextureQuality(3);
-			setting->SetFoliageQuality(3);
-			setting->SetShadingQuality(3);
-			setting->SetViewDistanceQuality(3);
-			setting->SetAntiAliasingQuality(3);
-			setting->SetResolutionScaleValue(3);
+			setting->SetPostProcessingQuality(HIGH);
+			setting->SetShadowQuality(HIGH);
+			setting->SetGlobalIlluminationQuality(HIGH);
+			setting->SetReflectionQuality(HIGH);
+			setting->SetVisualEffectQuality(HIGH);
+			setting->SetTextureQuality(HIGH);
+			setting->SetFoliageQuality(HIGH);
+			setting->SetShadingQuality(HIGH);
+			setting->SetViewDistanceQuality(HIGH);
+			setting->SetAntiAliasingQuality(HIGH);
+			setting->SetResolutionScaleValue(HIGH);
 		}
 		else if(GPU <= 290)
 		{
