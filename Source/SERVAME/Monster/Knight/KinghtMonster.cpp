@@ -436,16 +436,7 @@ void AKinghtMonster::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	fDeltaTime = DeltaTime;
-
-	if (IsCaught)
-	{
-		if (PlayerCharacter)
-		{
-			GetMesh()->SetWorldLocation(PlayerCharacter->GetActorLocation());
-			return;
-		}
-	}
-
+	
 	CheckDIstanceMap[IsDetect]();
 	MonsterTickEventMap[ActionType]();
 
@@ -618,57 +609,12 @@ void AKinghtMonster::Rotate()
 	SetActorRotation(FMath::Lerp(GetActorRotation(), YawRotation, KnightDataStruct.RotateSpeed * fDeltaTime));
 }
 
-void AKinghtMonster::CatchByPlayer()
-{
-	IsCaught = true;
-	SetActorTickEnabled(false);
-	AnimInstance->StopAllMontages(0.25f);
-	UCombatManager::GetInstance().HitMonsterInfoArray.Remove(this);
-	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
-	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	CapsuleComp->SetCollisionResponseToAllChannels(ECR_Ignore);
-	DetachFromControllerPendingDestroy();
-	ChangeMontageAnimation(KnightAnimationType::IDLE);
-	StateType = KnightStateType::CANTACT;
-	GrabShieldCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-}
-
-void AKinghtMonster::LaunchCharacter(FVector Dir, float Power)
-{
-	GrabCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	DeactivateHitCollision();
-	HitCollision->SetCollisionResponseToAllChannels(ECR_Ignore);
-	DeactivateSMOverlap();
-	DeactivateRightWeapon();
-	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
-	GetMesh()->SetAllBodiesSimulatePhysics(true);
-	GetMesh()->SetSimulatePhysics(true);
-	GetMesh()->WakeAllRigidBodies();
-	GetMesh()->bBlendPhysics = true;
-	GetMesh()->SetAllBodiesPhysicsBlendWeight(.5f);
-
-	GetMesh()->AddImpulseToAllBodiesBelow(Dir * Power, NAME_None, true);
-
-	GetMovementComponent()->StopMovementImmediately();
-	GetMovementComponent()->SetComponentTickEnabled(false);
-}
-
 float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	
 	if (Imotal)
 	{
-		if (IsCaught)
-		{
-			CameraShake(PlayerCameraShake);
-			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
-		}
 		return 0;
 	}
 

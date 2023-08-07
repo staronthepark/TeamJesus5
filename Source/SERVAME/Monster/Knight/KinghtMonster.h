@@ -139,7 +139,6 @@ public:
 	bool IsDetect;
 	bool CanAttack;
 	bool TracePlayer;
-	bool IsCaught;
 
 private:
 	TMap<KnightAnimationType, KnightStateType> AnimTypeToStateType;
@@ -183,9 +182,6 @@ public:
 	void EndAttackTrigger(KnightAnimationType AttackAnimType);
 
 	void Rotate();
-
-	virtual void CatchByPlayer() override;
-	virtual void LaunchCharacter(FVector Dir, float Power) override;
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	virtual void CheckMontageEndNotify() override;
