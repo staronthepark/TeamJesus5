@@ -73,6 +73,9 @@ enum class AnimationType : uint8
 	GAMESTART,
 
 	EXECUTIONBOSS,
+
+	SHIELDATTACKLOOP,
+	SHIELDATTACKEND,
 };
 
 UCLASS()

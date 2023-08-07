@@ -131,6 +131,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", Meta = (AllowPrivateAccess = true))
 	UCameraComponent* FollowCamera;
 
+
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
+//		UNiagara* ShieldMeshComp;
+
 	FVector CamExecutionDirection;
 
 	int32 CurRotateIndex;
@@ -169,8 +173,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraSpringArm")
 		USpringArmComponent* CameraBoom1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UBoxComponent* GrabPosition;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
+		UStaticMeshComponent* ShieldMeshComp;
 
 	UPROPERTY()
 		UBoxComponent* CameraOverlapComp;
@@ -367,6 +372,9 @@ public:
 
 	void SetSpeed(float speed);
 
+	void ShieldOff();
+	void ShieldOn();
+
 	void ChangeMontageAnimation(AnimationType type);
 
 	void ChangeActionType(ActionType type);
@@ -429,7 +437,8 @@ public:
 	UFUNCTION()
 		void OnParryingOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	void SetCameraLocation(FVector Location);
+	UFUNCTION()
+		void OnShieldOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	void PlayerDead(bool IsFly);
 

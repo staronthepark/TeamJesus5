@@ -195,7 +195,21 @@ void AJesusPlayerController::UnPressSprint()
 
 void AJesusPlayerController::PressGrab()
 {
-
+	if (!character->IsGrab)
+	{
+		character->IsGrab = true;
+		character->ShieldOn();
+		character->CameraBoom1->CameraLagSpeed = 30.0f;
+		character->SetCameraTarget(character->GrabSocketOffset, character->GrabCameraLength);
+	}
+	else
+	{
+		character->ChangeActionType(ActionType::MOVE);
+		character->ChangeMontageAnimation(AnimationType::SHIELDATTACKLOOP);
+		character->ShoulderView(character->IsShoulderView);
+		character->IsGrab = false;
+		character->CameraShake(character->PlayerCameraShake);
+	}
 }
 
 void AJesusPlayerController::ViewLog()
