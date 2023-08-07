@@ -342,6 +342,7 @@ void AKinghtMonster::BeginPlay()
 
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 
+	auto test = GetMesh()->GetAnimInstance();
 	AnimInstance = Cast<UKnightAnimInstance>(GetMesh()->GetAnimInstance());
 
 	ChangeActionType(KnightActionType::NONE);
