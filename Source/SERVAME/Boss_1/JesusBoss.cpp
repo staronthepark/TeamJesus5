@@ -827,6 +827,11 @@ AJesusBoss::AJesusBoss()
 			FollowUpPercentageVec.push_back(Temp->Percentage);
 		}));
 
+	AddArrMap.Add(STEP, TFunction<void(BossActionTemp*)>([=](BossActionTemp* Temp)
+		{
+			StepArr.Add(*Temp);
+		}));
+
 	//====================================확률 변경============================================
 
 	ChangePercentageMap.Add(MELEE, TFunction<void(BossActionTemp*)>([=](BossActionTemp* Temp)
@@ -1272,15 +1277,19 @@ void AJesusBoss::DoRandomStep()
 	fDeltaTime = 0.f;
 	srand(time(NULL));
 
+	//todo : 스텝 두개를 패턴화 시켜서 히트 캔슬 막아주기
+
 	switch (rand() % 2)
 	{
 	case 0:
 		DoStep = true;
+		CurrentActionTemp = StepArr[1];
 		BossAnimInstance->PlayMontage(BossMontageMap[BossAnimationType::RIGHTSTEP]);
 		break;
 
 	case 1:
 		DoStep = true;
+		CurrentActionTemp = StepArr[0];
 		BossAnimInstance->PlayMontage(BossMontageMap[BossAnimationType::LEFTSTEP]);
 		break;
 	}
@@ -1356,6 +1365,7 @@ float AJesusBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 	DeactivateHitCollision();
 
 	bool IsAnimTest = AIController->GetBlackboardComponent()->GetValueAsBool("IsAnimTest");
+	
 	if (IsAnimTest)
 		return DamageAmount;
 
@@ -1379,7 +1389,9 @@ float AJesusBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 		BossAnimInstance->PlayGroggyMontage(BossAnimationType::STUN);
 	}
 	else if (!StartEnd.Get<0>() && CurrentActionTemp.HitCancel)
+	{
 		HitMap[PlayerCharacter->PlayerAttackType]();
+	}
 
 	return DamageAmount;
 }
@@ -1694,6 +1706,8 @@ BossAnimationType AJesusBoss::GetTypeFromMetaData(UAnimMontage* Montage)
 void AJesusBoss::GetEndedMontage(UAnimMontage* Montage, bool bInterrupted)
 {
 	IsStart.Exchange(false);
+	StartEnd.Key = false;
+	StartEnd.Value = true;
 	auto Type = GetTypeFromMetaData(Montage);
 
 	if (Type == BossAnimationType::RUN || Type == BossAnimationType::RUN_L || Type == BossAnimationType::RUN_R || Type == BossAnimationType::SPRINT)
@@ -1961,7 +1975,7 @@ void AJesusBoss::OnStart()
 		StartEnd.Value = false;
 		
 		StartMontage = GetCurrentMontage();
-		//UE_LOG(LogTemp, Warning, TEXT("Start : %s"), *StartMontage->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Start : %s"), *StartMontage->GetName());
 		MontageStartMap[GetTypeFromMetaData(StartMontage)](this);
 	}
 }

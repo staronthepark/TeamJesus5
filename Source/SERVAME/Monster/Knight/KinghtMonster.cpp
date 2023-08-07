@@ -642,10 +642,10 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 		return DamageAmount;
 	}
 
-	if (ArmorType == EArmorType::HIGH)
-	{
-		return DamageAmount;
-	}
+	//if (ArmorType == EArmorType::HIGH)
+	//{
+	//	return DamageAmount;
+	//}
 
 	if (DamageAmount >= 30)
 	{
@@ -657,16 +657,16 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 		ChangeActionType(KnightActionType::NONE);
 		ChangeMontageAnimation(KnightAnimationType::HIT);
 	}
-	else if (ArmorType == EArmorType::LOW)
-	{
-		KnightController->StopMovement();
-		AnimInstance->StopMontage(MontageMap[AnimationType]);
-		if (MontageEndEventMap.Contains(AnimationType))
-			MontageEndEventMap[AnimationType]();
+	//else if (ArmorType == EArmorType::LOW)
+	//{
+	//	KnightController->StopMovement();
+	//	AnimInstance->StopMontage(MontageMap[AnimationType]);
+	//	if (MontageEndEventMap.Contains(AnimationType))
+	//		MontageEndEventMap[AnimationType]();
 
-		ChangeActionType(KnightActionType::NONE);
-		ChangeMontageAnimation(KnightAnimationType::HIT);
-	}
+	//	ChangeActionType(KnightActionType::NONE);
+	//	ChangeMontageAnimation(KnightAnimationType::HIT);
+	//}
 
 	return DamageAmount;
 }
