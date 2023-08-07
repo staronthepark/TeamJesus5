@@ -117,8 +117,6 @@ public:
 	virtual void PostInitializeComponents();	
 	virtual void PlayExecutionAnimation() {}
 	virtual void ActivateLockOnImage(bool value){}
-	virtual void CatchByPlayer() {}
-	virtual void LaunchCharacter(FVector Dir, float Power) {}
 
 	virtual void Tick(float DeltaTime);
 

@@ -315,6 +315,7 @@ AEnemyMonster::AEnemyMonster()
 			ParryingCollision1->Activate();
 			ActivateSMOverlap();
 			ActivateRightWeapon();
+			AObjectPool& objectpool = AObjectPool::GetInstance();
 			objectpool.SpawnObject(objectpool.ObjectArray[24].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 
 		});

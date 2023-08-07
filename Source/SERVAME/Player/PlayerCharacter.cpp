@@ -1756,6 +1756,7 @@ void APlayerCharacter::BeforeAttackNotify(bool value)
 	}
 	else
 	{
+		AObjectPool& objectpool = AObjectPool::GetInstance();
 		if (PlayerAttackType == ActionType::ATTACK)
 			objectpool.SpawnObject(objectpool.ObjectArray[24].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 		else
@@ -1910,6 +1911,7 @@ void APlayerCharacter::Parring()
 {
 	if (UseStamina(PlayerUseStaminaMap[ActionType::PARRING]))
 	{
+		AObjectPool& objectpool = AObjectPool::GetInstance();
 		objectpool.SpawnObject(objectpool.ObjectArray[24].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 		ChangeActionType(ActionType::PARRING);
 		ChangeMontageAnimation(AnimationType::PARRING);
