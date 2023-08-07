@@ -13,6 +13,7 @@ enum class KnightAnimationType : uint8
 	IDLE,
 	ATTACK1,
 	POWERATTACK1,
+	DASHATTACK1,
 
 	FORWARDMOVE,
 	LEFTMOVE,

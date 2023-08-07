@@ -38,14 +38,6 @@ AKinghtMonster::AKinghtMonster()
 	WeaponOverlapStaticMeshCollision->SetupAttachment(GetMesh(), FName("Weapon_Bone"));
 	WeaponOverlapStaticMeshCollision->SetCollisionProfileName("Weapon");
 
-	GrabCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Grab Damage"));
-	GrabCollision->SetupAttachment(GetMesh());
-	GrabCollision->SetCollisionProfileName("Grab Damage");
-
-	GrabShieldCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Grab Guard"));
-	GrabShieldCollision->SetupAttachment(GetMesh());
-	GrabShieldCollision->SetCollisionProfileName("Grab Guard");
-
 	AnimTypeToStateType.Add(KnightAnimationType::FORWARDMOVE, KnightStateType::NONE);
 	AnimTypeToStateType.Add(KnightAnimationType::LEFTMOVE, KnightStateType::NONE);
 	AnimTypeToStateType.Add(KnightAnimationType::RIGHTMOVE, KnightStateType::NONE);
@@ -99,63 +91,7 @@ AKinghtMonster::AKinghtMonster()
 			CurrentDistance = FVector::Distance(GetActorLocation(), PlayerCharacter->GetActorLocation());
 		});
 
-	MonsterActionEventMap.Add(KnightStateType::NONE, TMap<KnightActionType, TFunction<void()>>());
-	MonsterActionEventMap[KnightStateType::NONE].Add(KnightActionType::NONE, [&]()
-		{
-			ChangeMontageAnimation(KnightAnimationType::IDLE);
-		});
-	MonsterActionEventMap[KnightStateType::NONE].Add(KnightActionType::DODGE, [&]()
-		{
-
-		});
-	MonsterActionEventMap[KnightStateType::NONE].Add(KnightActionType::ATTACK, [&]()
-		{
-			ChangeActionType(KnightActionType::ATTACK);
-			ChangeMontageAnimation(AttackAnimationType);
-		});
-	MonsterActionEventMap[KnightStateType::NONE].Add(KnightActionType::POWERATTACK, [&]()
-		{
-
-		});
-	MonsterActionEventMap[KnightStateType::NONE].Add(KnightActionType::MOVE, [&]()
-		{
-			ChangeActionType(KnightActionType::MOVE);
-			ChangeMontageAnimation(KnightAnimationType::FORWARDMOVE);
-		});
-	MonsterActionEventMap[KnightStateType::NONE].Add(KnightActionType::HIT, [&]()
-		{
-
-		});
-	MonsterActionEventMap[KnightStateType::NONE].Add(KnightActionType::DEAD, [&]() {});
-
-	MonsterActionEventMap.Add(KnightStateType::BEFOREATTACK, TMap<KnightActionType, TFunction<void()>>());
-	MonsterActionEventMap[KnightStateType::BEFOREATTACK].Add(KnightActionType::NONE, [&]() {});
-	MonsterActionEventMap[KnightStateType::BEFOREATTACK].Add(KnightActionType::DODGE, [&]() {});
-	MonsterActionEventMap[KnightStateType::BEFOREATTACK].Add(KnightActionType::ATTACK, [&]() {});
-	MonsterActionEventMap[KnightStateType::BEFOREATTACK].Add(KnightActionType::POWERATTACK, [&]() {});
-	MonsterActionEventMap[KnightStateType::BEFOREATTACK].Add(KnightActionType::MOVE, [&]() {});
-	MonsterActionEventMap[KnightStateType::BEFOREATTACK].Add(KnightActionType::HIT, [&]() {});
-	MonsterActionEventMap[KnightStateType::BEFOREATTACK].Add(KnightActionType::DEAD, [&]() {});
-
-	MonsterActionEventMap.Add(KnightStateType::AFTERATTACK, TMap<KnightActionType, TFunction<void()>>());
-	MonsterActionEventMap[KnightStateType::AFTERATTACK].Add(KnightActionType::NONE, [&]() {});
-	MonsterActionEventMap[KnightStateType::AFTERATTACK].Add(KnightActionType::DODGE, [&]() {});
-	MonsterActionEventMap[KnightStateType::AFTERATTACK].Add(KnightActionType::ATTACK, [&]() {});
-	MonsterActionEventMap[KnightStateType::AFTERATTACK].Add(KnightActionType::POWERATTACK, [&]() {});
-	MonsterActionEventMap[KnightStateType::AFTERATTACK].Add(KnightActionType::MOVE, [&]() {});
-	MonsterActionEventMap[KnightStateType::AFTERATTACK].Add(KnightActionType::HIT, [&]() {});
-	MonsterActionEventMap[KnightStateType::AFTERATTACK].Add(KnightActionType::DEAD, [&]() {});
-
-	MonsterActionEventMap.Add(KnightStateType::CANTACT, TMap<KnightActionType, TFunction<void()>>());
-	MonsterActionEventMap[KnightStateType::CANTACT].Add(KnightActionType::NONE, [&]() {});
-	MonsterActionEventMap[KnightStateType::CANTACT].Add(KnightActionType::DODGE, [&]() {});
-	MonsterActionEventMap[KnightStateType::CANTACT].Add(KnightActionType::ATTACK, [&]() {});
-	MonsterActionEventMap[KnightStateType::CANTACT].Add(KnightActionType::POWERATTACK, [&]() {});
-	MonsterActionEventMap[KnightStateType::CANTACT].Add(KnightActionType::MOVE, [&]() {});
-	MonsterActionEventMap[KnightStateType::CANTACT].Add(KnightActionType::HIT, [&]() {});
-	MonsterActionEventMap[KnightStateType::CANTACT].Add(KnightActionType::DEAD, [&]() {});
-
-	MonsterTickEventMap.Add(KnightActionType::NONE, [&]()
+		MonsterTickEventMap.Add(KnightActionType::NONE, [&]()
 		{
 			//test
 			RotateMap[PlayerCharacter != nullptr]();
@@ -189,28 +125,23 @@ AKinghtMonster::AKinghtMonster()
 
 	MonsterTickEventMap.Add(KnightActionType::DEAD, [&]()
 		{
-			SkeletalMeshComp->SetScalarParameterValueOnMaterials("Opacity", MeshOpacity -= fDeltaTime * 0.25f);
-			SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity -= fDeltaTime * 0.25f);
-			if (WeaponOpacity < 0.0f)
-			{
-				SetActorHiddenInGame(true);
-				SetActorEnableCollision(false);
-				SetActorTickEnabled(false);
+			SetActorHiddenInGame(true);
+			SetActorEnableCollision(false);
+			SetActorTickEnabled(false);
 
-				if (PlayerCharacter != nullptr)
+			if (PlayerCharacter != nullptr)
+			{
+				if (PlayerCharacter->IsLockOn)
 				{
-					if (PlayerCharacter->IsLockOn)
+					PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
+					PlayerCharacter->GetFirstTarget();
+					if (PlayerCharacter->TargetComp == nullptr)
 					{
-						PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
-						PlayerCharacter->GetFirstTarget();
-						if (PlayerCharacter->TargetComp == nullptr)
-						{
-							PlayerCharacter->LockOn();
-						}
-						else
-						{
-							Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true);
-						}
+						PlayerCharacter->LockOn();
+					}
+					else
+					{
+						Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true);
 					}
 				}
 			}
@@ -312,6 +243,10 @@ AKinghtMonster::AKinghtMonster()
 	NotifyBeginEndEventMap[KnightAnimationType::POWERATTACK1].Add(true, NotifyBeginEndEventMap[KnightAnimationType::ATTACK1][true]);
 	NotifyBeginEndEventMap[KnightAnimationType::POWERATTACK1].Add(false, NotifyBeginEndEventMap[KnightAnimationType::ATTACK1][false]);
 
+	NotifyBeginEndEventMap.Add(KnightAnimationType::DASHATTACK1, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[KnightAnimationType::DASHATTACK1].Add(true, NotifyBeginEndEventMap[KnightAnimationType::ATTACK1][true]);
+	NotifyBeginEndEventMap[KnightAnimationType::DASHATTACK1].Add(false, NotifyBeginEndEventMap[KnightAnimationType::ATTACK1][false]);
+
 	NotifyBeginEndEventMap.Add(KnightAnimationType::EXECUTION, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[KnightAnimationType::EXECUTION].Add(true, [&]()
 		{
@@ -336,27 +271,38 @@ AKinghtMonster::AKinghtMonster()
 
 	TargetDetectEventMap.Add(KnightAttackType::MELEE, [&]()
 		{
-			MonsterActionEventMap[KnightStateType::NONE][KnightActionType::MOVE]();
+
+			ChangeActionType(KnightActionType::MOVE);
+			ChangeMontageAnimation(KnightAnimationType::FORWARDMOVE);
 		});
 	TargetDetectEventMap.Add(KnightAttackType::RANGE, [&]()
 		{
-			MonsterActionEventMap[KnightStateType::NONE][KnightActionType::MOVE]();
+
+			ChangeActionType(KnightActionType::MOVE);
+			ChangeMontageAnimation(KnightAnimationType::FORWARDMOVE);
 		});
 
 	SetActionByRandomMap.Add(KnightAnimationType::ATTACK1, [&](float percent)
 		{
 			if (percent >= 0.5)
 			{
-				PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::dodge, true);
 				ChangeActionType(KnightActionType::ATTACK);
 				ChangeMontageAnimation(KnightAnimationType::ATTACK1);
 			}
 			else if (percent < 0.5f)
 			{
 				//UGameplayStatics::SetGlobalTimeDilation(monster, 0.1f);
-				PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::parrying, true);
 				ChangeActionType(KnightActionType::ATTACK);
 				ChangeMontageAnimation(KnightAnimationType::POWERATTACK1);
+			}
+		});
+
+	SetActionByRandomMap.Add(KnightAnimationType::DASHATTACK1, [&](float percent)
+		{
+			if (percent >= 0)
+			{
+				ChangeActionType(KnightActionType::ATTACK);
+				ChangeMontageAnimation(KnightAnimationType::DASHATTACK1);
 			}
 		});
 
@@ -400,9 +346,8 @@ void AKinghtMonster::BeginPlay()
 
 	AnimInstance = Cast<UKnightAnimInstance>(GetMesh()->GetAnimInstance());
 
-	AnimationType = KnightAnimationType::IDLE;
 	ChangeActionType(KnightActionType::NONE);
-	MonsterActionEventMap[KnightStateType::NONE][KnightActionType::NONE]();
+	ChangeMontageAnimation(KnightAnimationType::IDLE);
 
 	SkeletalMeshComp = GetMesh();
 	SwordMeshComp = Cast<UStaticMeshComponent>(GetComponentByClass(UStaticMeshComponent::StaticClass()));
@@ -415,9 +360,6 @@ void AKinghtMonster::BeginPlay()
 	WeaponOpacity = 0.171653f;
 	MeshOpacity = 0.171653f;
 
-	GrabShieldCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	GrabCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
 	DeactivateHpBar();
 
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &AKinghtMonster::OnTargetDetectionBeginOverlap);
@@ -428,7 +370,6 @@ void AKinghtMonster::BeginPlay()
 	WeaponOverlapStaticMeshCollision->OnComponentEndOverlap.AddDynamic(this, &AKinghtMonster::OnSMOverlapEnd);
 
 	ParryingCollision1->OnComponentBeginOverlap.AddDynamic(this, &AKinghtMonster::OnParryingOverlap);
-	GrabCollision->OnComponentBeginOverlap.AddDynamic(this, &AKinghtMonster::OnGrabCollisionOverlapBegin);
 }
 
 void AKinghtMonster::Tick(float DeltaTime)
@@ -499,7 +440,6 @@ void AKinghtMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* Overlapp
 	{
 		PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
 		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
-		PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::camera, true);
 	}
 	TracePlayer = true;
 	MonsterMoveEventIndex = 1;
@@ -546,7 +486,6 @@ void AKinghtMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent,
 	MonsterHPWidget->DecreaseHPGradual(this, KnightDataStruct.CharacterHp / KnightDataStruct.CharacterMaxHp);
 
 	//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
-	PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
 
 	DeactivateSMOverlap();
 	DeactivateRightWeapon();
@@ -559,20 +498,6 @@ void AKinghtMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent,
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[7].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[7].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
-}
-
-void AKinghtMonster::OnGrabCollisionOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if (OtherActor->TakeDamage(10.0f, CharacterDamageEvent, nullptr, this))
-	{
-		//UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(Cast<ABaseCharacter>(OtherActor));
-
-		VibrateGamePad(0.4f, 0.4f);
-
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
-	}
 }
 
 void AKinghtMonster::StartAttackTrigger(KnightAnimationType AttackAnimType)
@@ -637,15 +562,9 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 		ParryingCollision1->Deactivate();
 		DeactivateRightWeapon();
 		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
-		PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
 		ChangeMontageAnimation(KnightAnimationType::DEAD);
 		return DamageAmount;
 	}
-
-	//if (ArmorType == EArmorType::HIGH)
-	//{
-	//	return DamageAmount;
-	//}
 
 	if (DamageAmount >= 30)
 	{
@@ -657,46 +576,8 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 		ChangeActionType(KnightActionType::NONE);
 		ChangeMontageAnimation(KnightAnimationType::HIT);
 	}
-	//else if (ArmorType == EArmorType::LOW)
-	//{
-	//	KnightController->StopMovement();
-	//	AnimInstance->StopMontage(MontageMap[AnimationType]);
-	//	if (MontageEndEventMap.Contains(AnimationType))
-	//		MontageEndEventMap[AnimationType]();
-
-	//	ChangeActionType(KnightActionType::NONE);
-	//	ChangeMontageAnimation(KnightAnimationType::HIT);
-	//}
 
 	return DamageAmount;
-}
-
-void AKinghtMonster::CheckMontageEndNotify()
-{
-	if (MontageEndEventMap.Contains(AnimationType))
-	{
-		MontageEndEventMap[AnimationType]();
-	}
-}
-
-void AKinghtMonster::BeforeAttackNotify(bool value)
-{
-	if (value == true)
-	{
-
-	}
-	else
-	{
-
-	}
-}
-
-void AKinghtMonster::AfterAttackNotify(bool value)
-{
-	if (value == true)
-	{
-
-	}
 }
 
 void AKinghtMonster::IsNotifyActive(bool value)
@@ -704,6 +585,14 @@ void AKinghtMonster::IsNotifyActive(bool value)
 	if (NotifyBeginEndEventMap.Contains(AnimationType))
 	{
 		NotifyBeginEndEventMap[AnimationType][value]();
+	}
+}
+
+void AKinghtMonster::CheckMontageEndNotify()
+{
+	if (MontageEndEventMap.Contains(AnimationType))
+	{
+		MontageEndEventMap[AnimationType]();
 	}
 }
 
