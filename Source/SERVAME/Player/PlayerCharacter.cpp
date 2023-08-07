@@ -2158,6 +2158,9 @@ void APlayerCharacter::ComboAttackEnd()
 
 void APlayerCharacter::ComboAttackStart()
 {	
+	if (IsGrab)
+		return;
+
 	ChangeActionType(ActionType::ROTATE);
 
 	if (PlayerCurAttackIndex >= PlayerMaxAttackIndex[PlayerAttackType])
@@ -2172,10 +2175,7 @@ void APlayerCharacter::ComboAttackStart()
 			PlayerCurAttackIndex = 0;
 		}		
 	}
-	if(!IsGrab)
 	ChangeMontageAnimation(IntToEnumMap[PlayerAttackType][PlayerCurAttackIndex++]);
-	else
-		ChangeMontageAnimation(AnimationType::DODGEATTACK);
 }
 
 void APlayerCharacter::ChangeMontageAnimation(AnimationType type)

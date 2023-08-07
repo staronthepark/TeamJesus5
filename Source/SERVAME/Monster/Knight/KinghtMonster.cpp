@@ -642,10 +642,10 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 		return DamageAmount;
 	}
 
-	if (ArmorType == EArmorType::HIGH)
-	{
-		return DamageAmount;
-	}
+	//if (MyArmorType == EKnightArmorType::HIGH)
+	//{
+	//	return DamageAmount;
+	//}
 
 	//if (DamageAmount >= 30)
 	//{

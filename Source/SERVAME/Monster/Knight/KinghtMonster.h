@@ -40,6 +40,7 @@ enum class KnightActionType : uint8
 	DEAD,
 };
 
+
 USTRUCT(BlueprintType)
 struct FKnightSkillInfo
 {
@@ -139,6 +140,7 @@ public:
 	bool IsDetect;
 	bool CanAttack;
 	bool TracePlayer;
+
 
 private:
 	TMap<KnightAnimationType, KnightStateType> AnimTypeToStateType;
