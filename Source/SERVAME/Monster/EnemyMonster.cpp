@@ -315,7 +315,7 @@ AEnemyMonster::AEnemyMonster()
 			ParryingCollision1->Activate();
 			ActivateSMOverlap();
 			ActivateRightWeapon();
-			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[24].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+			objectpool.SpawnObject(objectpool.ObjectArray[24].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1].Add(false, [&]()
@@ -529,9 +529,10 @@ void AEnemyMonster::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedComponen
 
 		VibrateGamePad(0.4f, 0.4f);
 
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
+		AObjectPool& objectpool = AObjectPool::GetInstance();
+		objectpool.SpawnObject(objectpool.ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 	}	
 }
 
@@ -562,10 +563,11 @@ void AEnemyMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, 
 	ChangeMontageAnimation(MonsterAnimationType::DEAD);
 
 	VibrateGamePad(1.0f, 0.4);
-	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[6].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
-	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[7].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
-	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[7].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
-	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+	objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
+	objectpool.SpawnObject(objectpool.ObjectArray[7].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
+	objectpool.SpawnObject(objectpool.ObjectArray[7].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
+	objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
 }
 
 void AEnemyMonster::OnGrabCollisionOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -576,9 +578,10 @@ void AEnemyMonster::OnGrabCollisionOverlapBegin(UPrimitiveComponent* OverlappedC
 
 		VibrateGamePad(0.4f, 0.4f);
 
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
+		AObjectPool& objectpool = AObjectPool::GetInstance();
+		objectpool.SpawnObject(objectpool.ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 	}
 }
 
@@ -620,57 +623,11 @@ void AEnemyMonster::Rotate()
 	SetActorRotation(FMath::Lerp(GetActorRotation(), YawRotation, MonsterDataStruct.RotateSpeed * fDeltaTime));
 }
 
-void AEnemyMonster::CatchByPlayer()
-{
-	IsCaught = true;
-	SetActorTickEnabled(false);
-	AnimInstance->StopAllMontages(0.25f);
-	UCombatManager::GetInstance().HitMonsterInfoArray.Remove(this);
-	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
-	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	CapsuleComp->SetCollisionResponseToAllChannels(ECR_Ignore);
-	DetachFromControllerPendingDestroy();
-	ChangeMontageAnimation(MonsterAnimationType::IDLE);
-	StateType = MonsterStateType::CANTACT;
-	GrabShieldCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-}
-
-void AEnemyMonster::LaunchCharacter(FVector Dir, float Power)
-{	
-	GrabCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	DeactivateHitCollision();
-	HitCollision->SetCollisionResponseToAllChannels(ECR_Ignore);
-	DeactivateSMOverlap();
-	DeactivateRightWeapon();
-	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
-	GetMesh()->SetAllBodiesSimulatePhysics(true);
-	GetMesh()->SetSimulatePhysics(true);
-	GetMesh()->WakeAllRigidBodies();
-	GetMesh()->bBlendPhysics = true;
-	GetMesh()->SetAllBodiesPhysicsBlendWeight(.5f);
-
-	GetMesh()->AddImpulseToAllBodiesBelow(Dir * Power, NAME_None, true);
-
-	GetMovementComponent()->StopMovementImmediately();
-	GetMovementComponent()->SetComponentTickEnabled(false);
-}
-
 float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	if (Imotal)
 	{
-		if (IsCaught)
-		{
-			CameraShake(PlayerCameraShake);
-			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
-		}
 		return 0;
 	}
 	
@@ -746,15 +703,6 @@ void AEnemyMonster::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	fDeltaTime = DeltaTime;
-
-	if (IsCaught)
-	{
-		if (PlayerCharacter)
-		{
-			GetMesh()->SetWorldLocation(PlayerCharacter->GetActorLocation());
-			return;
-		}
-	}
 
 	CheckDIstanceMap[IsDetect]();
 	MonsterTickEventMap[ActionType]();	

@@ -195,28 +195,7 @@ void AJesusPlayerController::UnPressSprint()
 
 void AJesusPlayerController::PressGrab()
 {
-	if (!character->IsGrab)
-	{
-		if (character->ExecutionCharacter)
-		{
-			character->ExecutionCharacter->CatchByPlayer();
-			character->IsGrab = true;
-			character->CameraBoom1->CameraLagSpeed = 30.0f;
-			character->SetCameraTarget(character->GrabSocketOffset, character->GrabCameraLength);
-			if (character->IsLockOn)
-			{
-				character->LockOn();
-			}
-		}
-	}
-	else
-	{
-		character->ShoulderView(character->IsShoulderView);
-		character->ExecutionCharacter->LaunchCharacter(character->GetActorRotation().Vector(),
-			character->PlayerDataStruct.LaunchCharacterPower);
-		character->IsGrab = false;
-		character->CameraShake(character->PlayerCameraShake);
-	}
+
 }
 
 void AJesusPlayerController::ViewLog()

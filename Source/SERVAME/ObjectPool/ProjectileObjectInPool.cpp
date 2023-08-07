@@ -31,6 +31,7 @@ void AProjectileObjectInPool::BeginPlay()
 
 void AProjectileObjectInPool::ReturnObject()
 {
+	SetActorTickEnabled(false);
 	Super::ReturnObject();	
 }
 
@@ -49,15 +50,14 @@ void AProjectileObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* Overl
 	FRotator Rotation = HitDir.Rotation();
 	if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
 	{		
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[20].ObjClass, OtherActor->GetActorLocation(), Rotation);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[21].ObjClass, OtherActor->GetActorLocation(), Rotation);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[22].ObjClass, OtherActor->GetActorLocation(), Rotation);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[0].ObjClass, OtherActor->GetActorLocation(), Rotation);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[1].ObjClass, OtherActor->GetActorLocation(), Rotation);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[3].ObjClass, OtherActor->GetActorLocation(), Rotation);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[1].ObjClass, OtherActor->GetActorLocation(), Rotation);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[5].ObjClass, OverlappedComponent->GetComponentLocation(), Rotation);
+		AObjectPool & objectpool = AObjectPool::GetInstance();
+
+		objectpool.SpawnObject(objectpool.ObjectArray[20].ObjClass, OtherActor->GetActorLocation(), Rotation);
+		objectpool.SpawnObject(objectpool.ObjectArray[22].ObjClass, OtherActor->GetActorLocation(), Rotation);
+		objectpool.SpawnObject(objectpool.ObjectArray[0].ObjClass, OtherActor->GetActorLocation(), Rotation);
+		objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OtherActor->GetActorLocation(), Rotation);
+		objectpool.SpawnObject(objectpool.ObjectArray[5].ObjClass, OverlappedComponent->GetComponentLocation(), Rotation);
+		objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 	}
 }
 

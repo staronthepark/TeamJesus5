@@ -71,8 +71,9 @@ void ASavePointInteraction::EnableEvent()
 	}
 	else
 	{
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[3].ObjClass,  GetActorLocation() + FVector(0, 0, 150.0f), FRotator::ZeroRotator);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[23].ObjClass, GetActorLocation() + FVector(0, 0, 200.0f), FRotator::ZeroRotator);
+		AObjectPool& objectpool = AObjectPool::GetInstance();
+		objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass,  GetActorLocation() + FVector(0, 0, 150.0f), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[23].ObjClass, GetActorLocation() + FVector(0, 0, 200.0f), FRotator::ZeroRotator);
 		IsActive = true;
 
 		for (int32 i = 0; i < ParticleCompArray.Num(); i++)
