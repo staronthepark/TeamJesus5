@@ -1295,6 +1295,8 @@ void APlayerCharacter::BeginPlay()
 	DebugMode = false;
 	LocketSKMesh->SetVisibility(true);
 
+	IsCollisionCamera = false;
+
 	TArray<UActorComponent*> asd = GetComponentsByTag(UActorSequenceComponent::StaticClass(), FName("BossExecution"));
 	
 	BossExecutionSequence = Cast<UActorSequenceComponent>(asd[0]);
@@ -1378,6 +1380,7 @@ void APlayerCharacter::BeginPlay()
 	GameStartSequncePlayer->Pause();
 
 	CameraOverlapComp->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnCamOverlapBegin);
+	CameraOverlapComp->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnCamOverlapEnd);
 	CameraOverlapComp->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnCamOverlapEnd);
 	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnWeaponOverlapBegin);
 	ExecutionTrigger->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnExecutionOverlapBegin);
@@ -1834,6 +1837,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 	{
 		ExecutionCharacter->SetActorLocation(GrabPosition->GetComponentLocation());
 	}
+
+	if (IsCollisionCamera)
+	{
+		CameraDistanceToCollision = FVector::Distance(FollowCamera->GetComponentLocation(), CameraCollisionActor->GetActorLocation());
+		UE_LOG(LogTemp, Warning, TEXT("%f"), CameraDistanceToCollision);
+	}
 }
 
 void APlayerCharacter::RespawnCharacter()
@@ -1979,14 +1988,15 @@ void APlayerCharacter::OnExecutionOverlapEnd(UPrimitiveComponent* OverlappedComp
 
 void APlayerCharacter::OnCamOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	SetActorHiddenInGame(true);
-	UE_LOG(LogTemp, Warning, TEXT("!@#!@#"));
+	IsCollisionCamera = true;
+	CameraCollisionActor = OtherActor;
 }
 
 void APlayerCharacter::OnCamOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	SetActorHiddenInGame(false);
-	UE_LOG(LogTemp, Warning, TEXT("!@#!@#2"));
+	IsCollisionCamera = false;
+	if (CameraCollisionActor == OtherActor)
+		CameraCollisionActor = nullptr;
 }
 
 

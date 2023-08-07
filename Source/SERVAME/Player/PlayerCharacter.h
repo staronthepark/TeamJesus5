@@ -138,6 +138,11 @@ private:
 	float DiagonalSpeed;
 	float RotSpeed;
 
+	bool IsCollisionCamera;
+	float CameraDistanceToCollision;
+	AActor* CameraCollisionActor;
+
+
 	FVector PlayerForwardDirection;
 	FVector PlayerRightDirection;
 

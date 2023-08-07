@@ -698,31 +698,31 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 		return DamageAmount;
 	}
 
-	if (ArmorType == EArmorType::HIGH)
-	{
-		return DamageAmount;
-	}
-
-	if (DamageAmount >= 30)
-	{
-		MonsterController->StopMovement();
-		AnimInstance->StopMontage(MontageMap[AnimationType]);
-		if (MontageEndEventMap.Contains(AnimationType))
-			MontageEndEventMap[AnimationType]();
-
-		ChangeActionType(MonsterActionType::NONE);
-		ChangeMontageAnimation(MonsterAnimationType::HIT);
-	}
-	else if(ArmorType == EArmorType::LOW)
-	{
-		MonsterController->StopMovement();
-		AnimInstance->StopMontage(MontageMap[AnimationType]);
-		if (MontageEndEventMap.Contains(AnimationType))
-			MontageEndEventMap[AnimationType]();
-
-		ChangeActionType(MonsterActionType::NONE);
-		ChangeMontageAnimation(MonsterAnimationType::HIT);
-	}
+	//if (ArmorType == EArmorType::HIGH)
+	//{
+	//	return DamageAmount;
+	//}
+	//
+	//if (DamageAmount >= 30)
+	//{
+	//	MonsterController->StopMovement();
+	//	AnimInstance->StopMontage(MontageMap[AnimationType]);
+	//	if (MontageEndEventMap.Contains(AnimationType))
+	//		MontageEndEventMap[AnimationType]();
+	//
+	//	ChangeActionType(MonsterActionType::NONE);
+	//	ChangeMontageAnimation(MonsterAnimationType::HIT);
+	//}
+	//else if(ArmorType == EArmorType::LOW)
+	//{
+	//	MonsterController->StopMovement();
+	//	AnimInstance->StopMontage(MontageMap[AnimationType]);
+	//	if (MontageEndEventMap.Contains(AnimationType))
+	//		MontageEndEventMap[AnimationType]();
+	//
+	//	ChangeActionType(MonsterActionType::NONE);
+	//	ChangeMontageAnimation(MonsterAnimationType::HIT);
+	//}
 	return DamageAmount;
 }
 
