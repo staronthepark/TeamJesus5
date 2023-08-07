@@ -204,6 +204,7 @@ void AJesusPlayerController::PressGrab()
 	}
 	else
 	{
+		character->ShieldMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		character->ChangeActionType(ActionType::MOVE);
 		character->ChangeMontageAnimation(AnimationType::SHIELDATTACKLOOP);
 		character->ShoulderView(character->IsShoulderView);

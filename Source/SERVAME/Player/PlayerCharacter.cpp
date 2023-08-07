@@ -546,8 +546,10 @@ APlayerCharacter::APlayerCharacter()
 	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::MOVE, [&]()
 		{
 			AxisY = 0;
+			AxisX = 1;
 			SetSpeed(SpeedMap[true][true]);
 			SetPlayerForwardRotAndDir();
+			SetPlayerRightRotAndDir();
 			PlayerMovement();
 		});
 	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::ROTATE, [&]()
@@ -884,6 +886,7 @@ APlayerCharacter::APlayerCharacter()
 		{
 			ChangeActionType(ActionType::DEAD);
 			ChangeMontageAnimation(AnimationType::SHIELDATTACKEND);
+			ShieldMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		});
 	MontageEndEventMap.Add(AnimationType::SHIELDATTACKEND, [&]()
 		{
@@ -1787,13 +1790,13 @@ void APlayerCharacter::SetSpeed(float speed)
 void APlayerCharacter::ShieldOff()
 {
 	ShieldMeshComp->SetVisibility(false);
-
+	ShieldMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void APlayerCharacter::ShieldOn()
 {
 	ShieldMeshComp->SetVisibility(true);
-
+	ShieldMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 void APlayerCharacter::BeforeAttackNotify(bool value)
@@ -2066,6 +2069,7 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 {
 	ChangeActionType(ActionType::DEAD);
 	ChangeMontageAnimation(AnimationType::SHIELDATTACKEND);
+	ShieldMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void APlayerCharacter::ActivateRightWeapon()
@@ -2272,6 +2276,8 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		ChangeMontageAnimation(AnimationType::SUPERHIT);
 		Imotal = true;
 		ShieldOff();
+		ShoulderView(IsShoulderView);
+		IsGrab = false;
 		DeactivateRightWeapon();
 		DeactivateSMOverlap();
 		ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
