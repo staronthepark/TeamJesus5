@@ -271,13 +271,11 @@ AKinghtMonster::AKinghtMonster()
 
 	TargetDetectEventMap.Add(KnightAttackType::MELEE, [&]()
 		{
-
 			ChangeActionType(KnightActionType::MOVE);
 			ChangeMontageAnimation(KnightAnimationType::FORWARDMOVE);
 		});
 	TargetDetectEventMap.Add(KnightAttackType::RANGE, [&]()
 		{
-
 			ChangeActionType(KnightActionType::MOVE);
 			ChangeMontageAnimation(KnightAnimationType::FORWARDMOVE);
 		});
