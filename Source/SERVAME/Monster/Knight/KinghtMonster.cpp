@@ -229,7 +229,6 @@ AKinghtMonster::AKinghtMonster()
 			ActivateSMOverlap();
 			ActivateRightWeapon();
 			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[24].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-
 		});
 	NotifyBeginEndEventMap[KnightAnimationType::ATTACK1].Add(false, [&]()
 		{
@@ -259,7 +258,6 @@ AKinghtMonster::AKinghtMonster()
 		{
 
 		});
-
 	RotateMap.Add(true, [&]()
 		{
 			if (PlayerCharacter != nullptr)
