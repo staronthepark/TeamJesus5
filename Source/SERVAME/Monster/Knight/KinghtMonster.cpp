@@ -47,6 +47,7 @@ AKinghtMonster::AKinghtMonster()
 
 	AnimTypeToStateType.Add(KnightAnimationType::ATTACK1, KnightStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(KnightAnimationType::POWERATTACK1, KnightStateType::BEFOREATTACK);
+	AnimTypeToStateType.Add(KnightAnimationType::DASHATTACK1, KnightStateType::BEFOREATTACK);
 
 	AnimTypeToStateType.Add(KnightAnimationType::HIT, KnightStateType::CANTACT);
 	AnimTypeToStateType.Add(KnightAnimationType::DEAD, KnightStateType::CANTACT);
@@ -91,11 +92,9 @@ AKinghtMonster::AKinghtMonster()
 			CurrentDistance = FVector::Distance(GetActorLocation(), PlayerCharacter->GetActorLocation());
 		});
 
-		MonsterTickEventMap.Add(KnightActionType::NONE, [&]()
-		{
-			//test
-			RotateMap[PlayerCharacter != nullptr]();
-		});
+	MonsterTickEventMap.Add(KnightActionType::NONE, [&]()
+	{
+	});
 
 	MonsterTickEventMap.Add(KnightActionType::DODGE, [&]()
 		{
@@ -192,6 +191,7 @@ AKinghtMonster::AKinghtMonster()
 		});
 
 	MontageEndEventMap.Add(KnightAnimationType::POWERATTACK1, MontageEndEventMap[KnightAnimationType::ATTACK1]);
+	MontageEndEventMap.Add(KnightAnimationType::DASHATTACK1, MontageEndEventMap[KnightAnimationType::ATTACK1]);
 
 	MontageEndEventMap.Add(KnightAnimationType::HIT, [&]()
 		{
@@ -344,10 +344,10 @@ void AKinghtMonster::BeginPlay()
 
 	AnimInstance = Cast<UKnightAnimInstance>(GetMesh()->GetAnimInstance());
 
+	AnimationType = KnightAnimationType::IDLE;
 	ChangeActionType(KnightActionType::NONE);
 	ChangeMontageAnimation(KnightAnimationType::IDLE);
 
-	SkeletalMeshComp = GetMesh();
 	SwordMeshComp = Cast<UStaticMeshComponent>(GetComponentByClass(UStaticMeshComponent::StaticClass()));
 
 	DeactivateSMOverlap();
@@ -414,10 +414,17 @@ void AKinghtMonster::HitStop()
 
 void AKinghtMonster::ChangeMontageAnimation(KnightAnimationType type)
 {
-	AnimInstance->StopMontage(MontageMap[AnimationType]);
-	AnimationType = type;
-	StateType = AnimTypeToStateType[type];
-	AnimInstance->PlayMontage(MontageMap[type]);
+	if (AnimInstance == nullptr)
+	{
+		AnimInstance = Cast<UKnightAnimInstance>(GetMesh()->GetAnimInstance());
+	}
+	else
+	{
+		AnimInstance->StopMontage(MontageMap[AnimationType]);
+		AnimationType = type;
+		StateType = AnimTypeToStateType[type];
+		AnimInstance->PlayMontage(MontageMap[type]);
+	}
 }
 
 void AKinghtMonster::ChangeActionType(KnightActionType type)

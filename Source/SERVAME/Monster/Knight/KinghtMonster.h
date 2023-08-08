@@ -118,21 +118,18 @@ public:
 	KnightAnimationType AnimationType;
 	KnightAnimationType AttackAnimationType;
 
-	USkeletalMeshComponent* SkeletalMeshComp;
 	UStaticMeshComponent* SwordMeshComp;
 
 	float WeaponOpacity;
 	float MeshOpacity;
 
-	float CurrentDistance;
-	float DiagonalSpeed;
+	float CurrentDistance = 0.f;
+	float DiagonalSpeed = 0.f;
 
 	int32 MonsterMoveEventIndex;
 	int32 MonsterRandomMove;
 
-	bool PlayerHit;
 	bool IsDetect;
-	bool CanAttack;
 	bool TracePlayer;
 
 

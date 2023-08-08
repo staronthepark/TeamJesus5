@@ -32,5 +32,5 @@ class SERVAME_API UKnightAnimInstance : public UBaseAnimInstance
 {
 	GENERATED_BODY()
 public:
-	UKnightAnimInstance() {};
+	UKnightAnimInstance();
 };

@@ -3,3 +3,7 @@
 
 #include "KnightAnimInstance.h"
 
+UKnightAnimInstance::UKnightAnimInstance()
+{
+
+}
