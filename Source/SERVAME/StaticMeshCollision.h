@@ -30,7 +30,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		EMaterialType MaterialType;
-
+	
 	FTimerHandle TimeHandle;
 
 	TArray<UPrimitiveComponent*>CompArray;

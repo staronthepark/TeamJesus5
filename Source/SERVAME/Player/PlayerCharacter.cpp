@@ -1325,6 +1325,7 @@ APlayerCharacter::~APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	PlayerSKMesh = GetMesh();
 
 	DebugMode = false;
 	LocketSKMesh->SetVisibility(true);
@@ -1882,12 +1883,20 @@ void APlayerCharacter::Tick(float DeltaTime)
 	CameraBoom1->TargetArmLength = FMath::Lerp(CameraBoom1->TargetArmLength, TargetCameraBoomLength, DeltaTime * 2.0f);
 	CameraBoom1->SocketOffset = FMath::Lerp(CameraBoom1->SocketOffset, TargetSocketOffset, DeltaTime * 2.0f);
 
-	if (IsCollisionCamera)
+	//if (IsCollisionCamera)
 	{
-		CameraDistanceToCollision = FVector::Distance(FollowCamera->GetComponentLocation(), CameraCollisionActor->GetActorLocation());
-		UE_LOG(LogTemp, Warning, TEXT("%f"), CameraDistanceToCollision);
+		CameraDistanceToPlayer = FVector::Distance(FollowCamera->GetComponentLocation(), GetActorLocation());
+		CameraDistanceToPlayer = FMath::Clamp(CameraDistanceToPlayer, 40, 300);
+		PlayerSKMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 300));
 	}
+
 }
+
+float APlayerCharacter::GetPercent(float value, float min, float max)
+{
+	return (value - min) / (max - min);
+}
+
 
 void APlayerCharacter::RespawnCharacter()
 {
@@ -2035,14 +2044,12 @@ void APlayerCharacter::OnExecutionOverlapEnd(UPrimitiveComponent* OverlappedComp
 void APlayerCharacter::OnCamOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	IsCollisionCamera = true;
-	CameraCollisionActor = OtherActor;
 }
 
 void APlayerCharacter::OnCamOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	IsCollisionCamera = false;
-	if (CameraCollisionActor == OtherActor)
-		CameraCollisionActor = nullptr;
+	PlayerSKMesh->SetScalarParameterValueOnMaterials("Dither", 1.0f);
 }
 
 
