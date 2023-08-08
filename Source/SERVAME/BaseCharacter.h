@@ -138,7 +138,7 @@ public:
 	virtual void ResumeMontage(){ HitStopTimer(); }
 
 	virtual void HitStop(){ HitStopTimer(); }
-
+	virtual void Stun(){}
 	void HitStopTimer();
 
 	void SwordVFXSpawn();

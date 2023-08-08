@@ -545,12 +545,6 @@ APlayerCharacter::APlayerCharacter()
 	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::INTERACTION, [&]() {});
 	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::MOVE, [&]()
 		{
-			AxisY = 0;
-			AxisX = 1;
-			SetSpeed(SpeedMap[true][true]);
-			SetPlayerForwardRotAndDir();
-			SetPlayerRightRotAndDir();
-			PlayerMovement();
 		});
 	PlayerActionTickMap[PlayerAction::CANTACT].Add(ActionType::ROTATE, [&]()
 		{
@@ -890,7 +884,6 @@ APlayerCharacter::APlayerCharacter()
 		});
 	MontageEndEventMap.Add(AnimationType::SHIELDATTACKEND, [&]()
 		{
-			AxisY = 1;
 			CheckInputKey();
 			ShieldOff();
 		});
@@ -1312,7 +1305,6 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEventFuncMap[AnimationType::EXECUTIONBOSS].Add(true, [&]()
 		{
 			ComboAttackEnd();
-			HitStop();
 			ExecutionCharacter->TakeDamage(PlayerDataStruct.PlayerExecutionFirstDamage, CharacterDamageEvent, nullptr, this);
 			VibrateGamePad(0.4f, 0.4f);
 			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
@@ -1320,7 +1312,6 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEventFuncMap[AnimationType::EXECUTIONBOSS].Add(false, [&]()
 		{
 			UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(ExecutionCharacter);
-			HitStop();
 			ExecutionCharacter->TakeDamage(PlayerDataStruct.PlayerExecutionSecondDamage, CharacterDamageEvent, nullptr, this);
 			VibrateGamePad(0.4f, 0.4f);
 			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
@@ -1337,7 +1328,7 @@ void APlayerCharacter::BeginPlay()
 
 	DebugMode = false;
 	LocketSKMesh->SetVisibility(true);
-	ShieldMeshComp->SetVisibility(false);
+	ShieldOff();
 	IsCollisionCamera = false;
 	ChangeActionType(ActionType::DEAD);
 
@@ -2071,9 +2062,11 @@ void APlayerCharacter::OnParryingOverlapBegin(UPrimitiveComponent* OverlappedCom
 
 void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ChangeActionType(ActionType::DEAD);
-	ChangeMontageAnimation(AnimationType::SHIELDATTACKEND);
-	ShieldMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ChangeActionType(ActionType::DEAD);	
+	ShieldOff();
+	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
+	ExecutionCharacter->Stun();
+	PlayExecutionAnimation();
 }
 
 void APlayerCharacter::ActivateRightWeapon()
@@ -2211,6 +2204,14 @@ void APlayerCharacter::SetSprint()
 	{
 		Sprint();
 	}
+}
+
+void APlayerCharacter::PlayerShieldDashMovement()
+{
+	FRotator ControllerRotation = Controller->GetControlRotation();
+	FRotator Rotation = FRotator(0, ControllerRotation.Yaw, 0);
+	FVector Direction = FRotationMatrix(Rotation).GetUnitAxis(EAxis::X);
+	LaunchCharacter(Direction * PlayerDataStruct.ShieldDashMoveDistance, false, false);
 }
 
 void APlayerCharacter::FadeOut()

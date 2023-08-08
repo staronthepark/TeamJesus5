@@ -103,8 +103,14 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PlayerExecutionSecondDamage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float LaunchCharacterPower;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shield")
+		float ShieldLifeTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shield")
+		float ShieldAddLifeTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shield")
+		float ShieldDashMoveDistance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shield")
+		float ShieldHp;
 };
 
 UCLASS()
@@ -169,6 +175,8 @@ private:
 public:
 	bool DebugMode;
 	bool CanExecution;
+
+	float ShieldDashSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraSpringArm")
 		USpringArmComponent* CameraBoom1;
@@ -382,6 +390,8 @@ public:
 	void ChangePlayerAction(PlayerAction action);
 	
 	void SetSprint();
+
+	void PlayerShieldDashMovement();
 
 	void FadeOut();
 
