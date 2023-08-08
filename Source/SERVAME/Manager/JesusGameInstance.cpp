@@ -68,45 +68,44 @@ void UJesusGameInstance::Init()
 	UGameUserSettings* setting = GEngine->GetGameUserSettings();
 	if (setting)
 	{
-		setting->RunHardwareBenchmark();
-
-		float GPU = setting->GetLastGPUBenchmarkResult();
-
-		UE_LOG(LogTemp, Error, TEXT("%f"), GPU);
-
-		setting->SetFrameRateLimit(60);
-		setting->SetVSyncEnabled(false);
-
-		if (GPU > 580)
-		{
-			setting->SetPostProcessingQuality(HIGH);
-			setting->SetShadowQuality(HIGH);
-			setting->SetGlobalIlluminationQuality(HIGH);
-			setting->SetReflectionQuality(HIGH);
-			setting->SetVisualEffectQuality(HIGH);
-			setting->SetTextureQuality(HIGH);
-			setting->SetFoliageQuality(HIGH);
-			setting->SetShadingQuality(HIGH);
-			setting->SetViewDistanceQuality(HIGH);
-			setting->SetAntiAliasingQuality(HIGH);
-			setting->SetResolutionScaleValue(HIGH);
-		}
-		else if(GPU <= 290)
-		{
-			setting->SetPostProcessingQuality(1);
-			setting->SetShadowQuality(1);
-			setting->SetGlobalIlluminationQuality(1);
-			setting->SetReflectionQuality(2);
-			setting->SetVisualEffectQuality(2);
-			setting->SetTextureQuality(0);
-			setting->SetFoliageQuality(0);
-			setting->SetShadingQuality(0);
-			setting->SetViewDistanceQuality(0);
-			setting->SetAntiAliasingQuality(1);
-			setting->SetResolutionScaleValue(0);
-		}
-
-		setting->ApplySettings(true);
+		//setting->RunHardwareBenchmark();
+		//
+		//float GPU = setting->GetLastGPUBenchmarkResult();
+		//
+		//UE_LOG(LogTemp, Error, TEXT("%f"), GPU);
+		//
+		//setting->SetFrameRateLimit(60);
+		//setting->SetVSyncEnabled(false);
+		//
+		//setting->SetResolutionScaleValue(100);
+		//if (GPU > 580)
+		//{
+		//	setting->SetPostProcessingQuality(VERYHIGH);
+		//	setting->SetShadowQuality(VERYHIGH);
+		//	setting->SetGlobalIlluminationQuality(VERYHIGH);
+		//	setting->SetReflectionQuality(VERYHIGH);
+		//	setting->SetVisualEffectQuality(VERYHIGH);
+		//	setting->SetTextureQuality(VERYHIGH);
+		//	setting->SetFoliageQuality(VERYHIGH);
+		//	setting->SetShadingQuality(VERYHIGH);
+		//	setting->SetViewDistanceQuality(VERYHIGH);
+		//	setting->SetAntiAliasingQuality(VERYHIGH);
+		//}
+		//else if(GPU <= 290)
+		//{
+		//	setting->SetPostProcessingQuality(1);
+		//	setting->SetShadowQuality(1);
+		//	setting->SetGlobalIlluminationQuality(1);
+		//	setting->SetReflectionQuality(2);
+		//	setting->SetVisualEffectQuality(2);
+		//	setting->SetTextureQuality(0);
+		//	setting->SetFoliageQuality(0);
+		//	setting->SetShadingQuality(0);
+		//	setting->SetViewDistanceQuality(0);
+		//	setting->SetAntiAliasingQuality(1);
+		//}
+		//
+		//setting->ApplySettings(true);
 	}
 }
 
