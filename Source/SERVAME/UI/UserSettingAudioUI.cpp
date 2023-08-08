@@ -74,6 +74,7 @@ void UUserSettingAudioUI::SetVoiceVolume(float value)
 void UUserSettingAudioUI::ChangeLanguage()
 {
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
 	if (GameInstance->language == Language::ENG)
 	{
 		TitleAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::title)->EngTexture, true);

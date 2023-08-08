@@ -6,7 +6,6 @@
 #include "Blueprint/UserWidget.h"
 #include "SliderUI.h"
 #include <Components/Image.h>
-
 #include "UserSettingLightUI.generated.h"
 
 /**

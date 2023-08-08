@@ -6,7 +6,6 @@
 #include "Blueprint/UserWidget.h"
 #include <Components/Image.h>
 #include <Components/Button.h>
-
 #include "SelectTextUI.generated.h"
 
 /**
