@@ -1322,7 +1322,8 @@ void APlayerCharacter::BeginPlay()
 	GameInstance->InitInstance();
 	GameInstance->InitDefaultSetting();
 	GameInstance->MainMenuWidget->StartButton->OnClicked.AddDynamic(this, &APlayerCharacter::PlayStartAnimation);
-	
+	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
+
 	GameInstance->MainMenuWidget->AddToViewport();
 
 	TargetSocketOffset = CameraBoom1->SocketOffset;
