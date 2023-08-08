@@ -60,13 +60,12 @@ APlayerCharacter::APlayerCharacter()
 	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlayerWeaponMesh"));
 	WeaponMesh->SetupAttachment(GetMesh(), FName("Weapon_bone"));
 
+	ShieldMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Shield Mesh"));
+	ShieldMeshComp->SetupAttachment(GetMesh());
+
 	ExecutionTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("Execution Trigger"));
 	ExecutionTrigger->SetupAttachment(RootComponent);
 	ExecutionTrigger->SetCollisionProfileName("Execution Trigger");
-
-	GrabPosition = CreateDefaultSubobject<UBoxComponent>(TEXT("Grab Position"));
-	GrabPosition->SetupAttachment(RootComponent);
-	GrabPosition->SetCollisionProfileName("Grab Position");
 
 	WeaponCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Right Weapon Box"));
 	WeaponCollision->SetupAttachment(WeaponMesh);
@@ -172,6 +171,8 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEnumToAnimTypeMap.Add(AnimationType::BASICDODGE, PlayerAction::CANTACT);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::BACKSTEP, PlayerAction::CANTACT);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::PARRING, PlayerAction::CANTACT);
+	PlayerEnumToAnimTypeMap.Add(AnimationType::SHIELDATTACKLOOP, PlayerAction::CANTACT);
+	PlayerEnumToAnimTypeMap.Add(AnimationType::SHIELDATTACKEND, PlayerAction::CANTACT);
 
 
 	PlayerEnumToAnimTypeMap.Add(AnimationType::HITFRONTLEFT, PlayerAction::CANTACT);
@@ -356,6 +357,26 @@ APlayerCharacter::APlayerCharacter()
 	NotifyBeginEndEventMap[AnimationType::HIT].Add(false, [&]()
 		{
 
+		});
+
+	NotifyBeginEndEventMap.Add(AnimationType::SHIELDATTACKLOOP, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::SHIELDATTACKLOOP].Add(true, [&]()
+		{
+			CameraShake(PlayerCameraShake);
+		});
+	NotifyBeginEndEventMap[AnimationType::SHIELDATTACKLOOP].Add(false, [&]()
+		{
+			CameraShake(PlayerCameraShake);
+		});
+
+	NotifyBeginEndEventMap.Add(AnimationType::SHIELDATTACKEND, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::SHIELDATTACKEND].Add(true, [&]()
+		{
+			CameraShake(PlayerCameraShake);
+		});
+	NotifyBeginEndEventMap[AnimationType::SHIELDATTACKEND].Add(false, [&]()
+		{
+			CameraShake(PlayerCameraShake);
 		});
 
 	NotifyBeginEndEventMap.Add(AnimationType::HITFRONTLEFT, TMap<bool, TFunction<void()>>());
@@ -855,6 +876,17 @@ APlayerCharacter::APlayerCharacter()
 		{
 			ChangeMontageAnimation(AnimationType::BACKRIGHTWALK);
 		});
+	MontageEndEventMap.Add(AnimationType::SHIELDATTACKLOOP, [&]()
+		{
+			ChangeActionType(ActionType::DEAD);
+			ChangeMontageAnimation(AnimationType::SHIELDATTACKEND);
+			ShieldMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		});
+	MontageEndEventMap.Add(AnimationType::SHIELDATTACKEND, [&]()
+		{
+			CheckInputKey();
+			ShieldOff();
+		});
 
 	DodgeAnimationMap.Add(false, [&]()->AnimationType
 		{
@@ -946,6 +978,7 @@ APlayerCharacter::APlayerCharacter()
 
 	InputEventMap[PlayerAction::NONE][ActionType::MOVE].Add(true, [&]()
 		{
+
 			ChangeActionType(ActionType::MOVE);
 			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
 		});
@@ -1037,6 +1070,9 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::RUN][ActionType::PARRING].Add(false, InputEventMap[PlayerAction::NONE][ActionType::PARRING][false]);
 	InputEventMap[PlayerAction::RUN][ActionType::MOVE].Add(true, [&]()
 		{
+
+			if (!IsLockOn && AnimInstance->PlayerAnimationType == AnimationType::FORWARDWALK)
+				return;
 			ChangeActionType(ActionType::MOVE);
 			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
 		});
@@ -1269,7 +1305,6 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEventFuncMap[AnimationType::EXECUTIONBOSS].Add(true, [&]()
 		{
 			ComboAttackEnd();
-			HitStop();
 			ExecutionCharacter->TakeDamage(PlayerDataStruct.PlayerExecutionFirstDamage, CharacterDamageEvent, nullptr, this);
 			VibrateGamePad(0.4f, 0.4f);
 			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
@@ -1277,7 +1312,6 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEventFuncMap[AnimationType::EXECUTIONBOSS].Add(false, [&]()
 		{
 			UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(ExecutionCharacter);
-			HitStop();
 			ExecutionCharacter->TakeDamage(PlayerDataStruct.PlayerExecutionSecondDamage, CharacterDamageEvent, nullptr, this);
 			VibrateGamePad(0.4f, 0.4f);
 			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
@@ -1294,8 +1328,9 @@ void APlayerCharacter::BeginPlay()
 
 	DebugMode = false;
 	LocketSKMesh->SetVisibility(true);
-
+	ShieldOff();
 	IsCollisionCamera = false;
+	ChangeActionType(ActionType::DEAD);
 
 	TArray<UActorComponent*> asd = GetComponentsByTag(UActorSequenceComponent::StaticClass(), FName("BossExecution"));
 	
@@ -1390,6 +1425,7 @@ void APlayerCharacter::BeginPlay()
 	WeaponOverlapStaticMeshCollision->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnSMOverlapEnd);
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnEnemyDetectionBeginOverlap);
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnEnemyDetectionEndOverlap);
+	ShieldMeshComp->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnShieldOverlapBegin);
 
 	ShoulderView(IsShoulderView);
 }
@@ -1746,6 +1782,18 @@ void APlayerCharacter::SetSpeed(float speed)
 	GetCharacterMovement()->MaxWalkSpeed = speed;
 }
 
+void APlayerCharacter::ShieldOff()
+{
+	ShieldMeshComp->SetVisibility(false);
+	ShieldMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void APlayerCharacter::ShieldOn()
+{
+	ShieldMeshComp->SetVisibility(true);
+	ShieldMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
+
 void APlayerCharacter::BeforeAttackNotify(bool value)
 {
 	if(value)
@@ -1833,11 +1881,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 	FollowCamera->SetWorldRotation(FRotator(FollowCamera->GetComponentRotation().Pitch, FollowCamera->GetComponentRotation().Yaw, 0));
 	CameraBoom1->TargetArmLength = FMath::Lerp(CameraBoom1->TargetArmLength, TargetCameraBoomLength, DeltaTime * 2.0f);
 	CameraBoom1->SocketOffset = FMath::Lerp(CameraBoom1->SocketOffset, TargetSocketOffset, DeltaTime * 2.0f);
-
-	if (ExecutionCharacter && IsGrab)
-	{
-		ExecutionCharacter->SetActorLocation(GrabPosition->GetComponentLocation());
-	}
 
 	if (IsCollisionCamera)
 	{
@@ -2017,10 +2060,14 @@ void APlayerCharacter::OnParryingOverlapBegin(UPrimitiveComponent* OverlappedCom
 	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
-void APlayerCharacter::SetCameraLocation(FVector Location)
+void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	ChangeActionType(ActionType::DEAD);	
+	ShieldOff();
+	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
+	ExecutionCharacter->Stun();
+	PlayExecutionAnimation();
 }
-
 
 void APlayerCharacter::ActivateRightWeapon()
 {
@@ -2108,6 +2155,9 @@ void APlayerCharacter::ComboAttackEnd()
 
 void APlayerCharacter::ComboAttackStart()
 {	
+	if (IsGrab)
+		return;
+
 	ChangeActionType(ActionType::ROTATE);
 
 	if (PlayerCurAttackIndex >= PlayerMaxAttackIndex[PlayerAttackType])
@@ -2122,10 +2172,7 @@ void APlayerCharacter::ComboAttackStart()
 			PlayerCurAttackIndex = 0;
 		}		
 	}
-	if(!IsGrab)
 	ChangeMontageAnimation(IntToEnumMap[PlayerAttackType][PlayerCurAttackIndex++]);
-	else
-		ChangeMontageAnimation(AnimationType::DODGEATTACK);
 }
 
 void APlayerCharacter::ChangeMontageAnimation(AnimationType type)
@@ -2157,6 +2204,14 @@ void APlayerCharacter::SetSprint()
 	{
 		Sprint();
 	}
+}
+
+void APlayerCharacter::PlayerShieldDashMovement()
+{
+	FRotator ControllerRotation = Controller->GetControlRotation();
+	FRotator Rotation = FRotator(0, ControllerRotation.Yaw, 0);
+	FVector Direction = FRotationMatrix(Rotation).GetUnitAxis(EAxis::X);
+	LaunchCharacter(Direction * PlayerDataStruct.ShieldDashMoveDistance, false, false);
 }
 
 void APlayerCharacter::FadeOut()
@@ -2225,6 +2280,9 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		YawRotation = HitDir.Rotation();
 		ChangeMontageAnimation(AnimationType::SUPERHIT);
 		Imotal = true;
+		ShieldOff();
+		ShoulderView(IsShoulderView);
+		IsGrab = false;
 		DeactivateRightWeapon();
 		DeactivateSMOverlap();
 		ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);

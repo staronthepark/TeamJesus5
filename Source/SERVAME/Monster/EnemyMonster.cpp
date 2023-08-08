@@ -525,6 +525,7 @@ void AEnemyMonster::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedComponen
 	DeactivateRightWeapon();
 	if (OtherActor->TakeDamage(SkillInfoMap[AttackAnimationType].Damage, CharacterDamageEvent, nullptr, this))
 	{
+		if(!IsStun)
 		HitStop();
 		CameraShake(PlayerCameraShake);
 
@@ -624,6 +625,15 @@ void AEnemyMonster::Rotate()
 	SetActorRotation(FMath::Lerp(GetActorRotation(), YawRotation, MonsterDataStruct.RotateSpeed * fDeltaTime));
 }
 
+void AEnemyMonster::Stun()
+{
+	MonsterController->StopMovement();
+	DeactivateSMOverlap();
+	ParryingCollision1->Deactivate();
+	DeactivateRightWeapon();
+	ChangeMontageAnimation(MonsterAnimationType::DEAD);
+}
+
 float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
@@ -646,13 +656,8 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	if (MonsterDataStruct.CharacterHp <= 0)
 	{
 		Imotal = true;
-		MonsterController->StopMovement();
-		DeactivateSMOverlap();
-		ParryingCollision1->Deactivate();
-		DeactivateRightWeapon();
 		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
 		PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
-		ChangeMontageAnimation(MonsterAnimationType::DEAD);
 		return DamageAmount;
 	}
 

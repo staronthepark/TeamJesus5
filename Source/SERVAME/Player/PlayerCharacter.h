@@ -103,8 +103,14 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PlayerExecutionSecondDamage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float LaunchCharacterPower;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shield")
+		float ShieldLifeTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shield")
+		float ShieldAddLifeTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shield")
+		float ShieldDashMoveDistance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shield")
+		float ShieldHp;
 };
 
 UCLASS()
@@ -130,6 +136,10 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", Meta = (AllowPrivateAccess = true))
 	UCameraComponent* FollowCamera;
+
+
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
+//		UNiagara* ShieldMeshComp;
 
 	FVector CamExecutionDirection;
 
@@ -166,11 +176,14 @@ public:
 	bool DebugMode;
 	bool CanExecution;
 
+	float ShieldDashSpeed;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraSpringArm")
 		USpringArmComponent* CameraBoom1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UBoxComponent* GrabPosition;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
+		UStaticMeshComponent* ShieldMeshComp;
 
 	UPROPERTY()
 		UBoxComponent* CameraOverlapComp;
@@ -367,6 +380,9 @@ public:
 
 	void SetSpeed(float speed);
 
+	void ShieldOff();
+	void ShieldOn();
+
 	void ChangeMontageAnimation(AnimationType type);
 
 	void ChangeActionType(ActionType type);
@@ -374,6 +390,8 @@ public:
 	void ChangePlayerAction(PlayerAction action);
 	
 	void SetSprint();
+
+	void PlayerShieldDashMovement();
 
 	void FadeOut();
 
@@ -429,7 +447,8 @@ public:
 	UFUNCTION()
 		void OnParryingOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	void SetCameraLocation(FVector Location);
+	UFUNCTION()
+		void OnShieldOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	void PlayerDead(bool IsFly);
 
