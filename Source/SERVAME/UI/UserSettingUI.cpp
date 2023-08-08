@@ -85,10 +85,12 @@ void UUserSettingUI::UnselectAllButton()
 
 void UUserSettingUI::ChangeLanguage()
 {
+	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
 	WBP_UserSetting_SelectUI->ChangeLanguage();
 	WBP_UserSetting_AudioUI->ChangeLanguage();
-	UMG_GameExit->ChangeLanguage();
 	WBP_UserSetting_LightUI->ChangeLanguage();
+	UMG_GameExit->ChangeLanguage();
 }
 
 

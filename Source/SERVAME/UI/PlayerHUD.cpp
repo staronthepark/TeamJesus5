@@ -9,7 +9,6 @@ void UPlayerHUD::NativeOnInitialized()
 	Super::NativeOnInitialized();
 	GuideAnimationFunction.Add(EGuides::keyguide, [&](bool value)
 		{
-			currentLanguage = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->language;
 			PlayKeyGuideAnimation(value);
 		});
 	GuideAnimationFunction.Add(EGuides::dodge, [&](bool value)
@@ -116,6 +115,23 @@ void UPlayerHUD::PlayGuidesAnimation(EGuides type, bool IsOpen)
 
 void UPlayerHUD::PlayKeyGuideAnimation(bool IsOpen)
 {
+	currentLanguage = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->language;
+
+	if (isGamePad == Gamepad)
+	{
+		if (currentLanguage == Language::ENG)
+			PlayerControlGuid->SetBrushFromTexture(ControlGuideTextures.Find(Gamepad)->EngTextures[0]);
+		else if (currentLanguage == Language::KOR)
+			PlayerControlGuid->SetBrushFromTexture(ControlGuideTextures.Find(Gamepad)->KorTextures[0]);
+	}
+	else 
+	{
+		if (currentLanguage == Language::ENG)
+			PlayerControlGuid->SetBrushFromTexture(ControlGuideTextures.Find(Keyboard)->EngTextures[0]);
+		else if (currentLanguage == Language::KOR)
+			PlayerControlGuid->SetBrushFromTexture(ControlGuideTextures.Find(Keyboard)->KorTextures[0]);
+	}
+
 	IsOpen ? PlayAnimation(GuidOpenAnimation) : PlayAnimation(GuidCloseAnimation);
 }
 

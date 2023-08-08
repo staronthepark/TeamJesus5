@@ -29,7 +29,7 @@ void UGameExitUI::ChangeLanguage()
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (GameInstance->language == Language::ENG)
 	{
-		PanelBackground->SetBrushFromTexture(ImageTextures.Find(EExitSettings::title)->EngTexture);
+		PanelBackground->SetBrushFromTexture(ImageTextures.Find(EExitSettings::title)->EngTexture,true);
 		YesButton->WidgetStyle.Normal.SetResourceObject(ImageTextures.Find(EExitSettings::yesnormal)->EngTexture);
 		YesButton->WidgetStyle.Normal.ImageSize = FVector2D(45, 22);
 		YesButton->WidgetStyle.Hovered.SetResourceObject(ImageTextures.Find(EExitSettings::yeshovered)->EngTexture);
@@ -45,7 +45,7 @@ void UGameExitUI::ChangeLanguage()
 	}
 	else if (GameInstance->language == Language::KOR)
 	{
-		PanelBackground->SetBrushFromTexture(ImageTextures.Find(EExitSettings::title)->KorTexture);
+		PanelBackground->SetBrushFromTexture(ImageTextures.Find(EExitSettings::title)->KorTexture,true);
 		YesButton->WidgetStyle.Normal.SetResourceObject(ImageTextures.Find(EExitSettings::yesnormal)->KorTexture);
 		YesButton->WidgetStyle.Normal.ImageSize = FVector2D(93, 24);
 		YesButton->WidgetStyle.Hovered.SetResourceObject(ImageTextures.Find(EExitSettings::yeshovered)->KorTexture);

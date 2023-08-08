@@ -102,6 +102,9 @@ class SERVAME_API UPlayerHUD : public UUserWidget
 
 	//	TMap<int, TFunction<void(bool)>> TriggerMap;
 
+	UPROPERTY(EditAnywhere)
+	TMap<int, FInteractionTextures> ControlGuideTextures;
+
 	TMap <EGuides, TFunction<void(bool)>> GuideAnimationFunction;
 
 
