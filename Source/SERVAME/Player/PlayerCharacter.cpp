@@ -2150,6 +2150,7 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 {
 	if (IsGrab)return;
 	CanExecution = true;
+	Imotal = true;
 	ChangeActionType(ActionType::DEAD);	
 	ShieldOff();
 	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);

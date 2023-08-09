@@ -210,6 +210,8 @@ AEnemyMonster::AEnemyMonster()
 				{
 					if (PlayerCharacter->IsLockOn)
 					{
+						SetActorTickEnabled(false);
+						PlayerCharacter->TargetComp = nullptr;
 						PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
 						PlayerCharacter->GetFirstTarget();
 						if (PlayerCharacter->TargetComp == nullptr)
@@ -601,7 +603,7 @@ void AEnemyMonster::OnGrabCollisionOverlapBegin(UPrimitiveComponent* OverlappedC
 void AEnemyMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
 	TracePlayer = false;
-	if (StateType == MonsterStateType::CANTACT || GetMesh()->GetCollisionProfileName() == "Ragdoll")return;
+	if (StateType == MonsterStateType::CANTACT)return;
 	AttackAnimationType = AttackAnimType;
 	if (ActionType != MonsterActionType::ATTACK)
 	{
@@ -637,6 +639,7 @@ void AEnemyMonster::Rotate()
 
 void AEnemyMonster::Stun()
 {
+	AnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
 	DeactivateSMOverlap();
 	ParryingCollision1->Deactivate();
@@ -668,6 +671,7 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 		Imotal = true;
 		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
 		//ChangeMontageAnimation(MonsterAnimationType::DEAD);
+		AnimInstance->StopMontage(MontageMap[AnimationType]);
 		ChangeActionType(MonsterActionType::DEAD);
 		StateType = MonsterStateType::CANTACT;
 		//PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
