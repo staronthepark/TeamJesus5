@@ -41,7 +41,7 @@ void APlaySequenceTriggerActor::EnableEvent()
 {
 	Super::EnableEvent();
 
-	Boss->BossAnimInstance->StopAllMontages(0.f);
+	//Boss->BossAnimInstance->StopAllMontages(0.f);
 
 	SequncePlayer->Play();
 	
@@ -57,8 +57,8 @@ void APlaySequenceTriggerActor::EnableEvent()
 
 void APlaySequenceTriggerActor::EndSequence()
 {
-	Boss->BossAnimInstance->IsSequenceEnd = true;
-	Boss->BossAnimInstance->ResumeMontage(Boss->GetCurrentMontage());
+	//Boss->BossAnimInstance->IsSequenceEnd = true;
+	//Boss->BossAnimInstance->ResumeMontage(Boss->GetCurrentMontage());
 	GetWorld()->GetFirstPlayerController()->SetViewTarget(Character);
 	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 	Character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);

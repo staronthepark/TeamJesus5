@@ -436,10 +436,10 @@ void AEnemyMonster::BeginPlay()
 
 	MonsterController = Cast<AMonsterController>(GetController());
 
-	UCombatManager::GetInstance().MonsterInfoArray.Add(this);
+	UCombatManager::GetInstance().MonsterInfoArray.AddUnique(this);
 
 	//test
-	UCombatManager::GetInstance().HitMonsterInfoArray.Add(this);
+	UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(this);
 		
 	PlayerCharacter = nullptr;
 	
@@ -523,6 +523,17 @@ void AEnemyMonster::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedComponen
 {
 	ParryingCollision1->Deactivate();
 	DeactivateRightWeapon();
+
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+	if (OtherComp->GetName() == "ShieldCollision")
+	{
+		PlayerCharacter->SetShieldHP(-SkillInfoMap[AttackAnimationType].Damage);
+		CameraShake(PlayerCameraShake);
+		VibrateGamePad(0.4f, 0.4f);
+		objectpool.SpawnObject(objectpool.ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		return;
+	}
 	if (OtherActor->TakeDamage(SkillInfoMap[AttackAnimationType].Damage, CharacterDamageEvent, nullptr, this))
 	{
 		if(!IsStun)
@@ -531,7 +542,6 @@ void AEnemyMonster::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedComponen
 
 		VibrateGamePad(0.4f, 0.4f);
 
-		AObjectPool& objectpool = AObjectPool::GetInstance();
 		objectpool.SpawnObject(objectpool.ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 		objectpool.SpawnObject(objectpool.ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 		objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
@@ -657,6 +667,7 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	{
 		Imotal = true;
 		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
+		ChangeMontageAnimation(MonsterAnimationType::DEAD);
 		PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
 		return DamageAmount;
 	}
