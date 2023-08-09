@@ -1373,22 +1373,23 @@ float AJesusBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 	IsStartBoneRot = true;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AJesusBoss::ReSetBoneRot, Time, false);
 	
-	if (BossDataStruct.CharacterHp <= 2000 && IsExecution == false && IsHitStun == false)
-	{
-		if (GetTypeFromMetaData(StartMontage) == BossAnimationType::DARKEXPLOSION ||
-			GetTypeFromMetaData(StartMontage) == BossAnimationType::GROUNDEXPLOSION)
-			return DamageAmount;
+	//if (BossDataStruct.CharacterHp <= 2000 && IsExecution == false && IsHitStun == false)
+	//{
+	//	if (GetTypeFromMetaData(StartMontage) == BossAnimationType::DARKEXPLOSION ||
+	//		GetTypeFromMetaData(StartMontage) == BossAnimationType::GROUNDEXPLOSION)
+	//		return DamageAmount;
 
-		IsStun = true;
-		IsLockOn = false;
-		AttackLockOn = false;
-		IsParriged = true;
-		IsFirstExecution = true;
-		IsHitStun = true;
-		BossDataStruct.CurrentGrrogyGauge = 0;
-		BossAnimInstance->PlayGroggyMontage(BossAnimationType::STUN);
-	}
-	else if (!StartEnd.Get<0>() && CurrentActionTemp.HitCancel)
+	//	IsStun = true;
+	//	IsLockOn = false;
+	//	AttackLockOn = false;
+	//	IsParriged = true;
+	//	IsFirstExecution = true;
+	//	IsHitStun = true;
+	//	BossDataStruct.CurrentGrrogyGauge = 0;
+	//	BossAnimInstance->PlayGroggyMontage(BossAnimationType::STUN);
+	//}
+
+	if (!StartEnd.Get<0>() && CurrentActionTemp.HitCancel)
 	{
 		HitMap[PlayerCharacter->PlayerAttackType]();
 	}
