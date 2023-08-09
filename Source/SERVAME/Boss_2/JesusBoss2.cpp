@@ -61,7 +61,6 @@ AJesusBoss2::AJesusBoss2()
 	JumpExplosonCollider->SetupAttachment(GetMesh());
 	JumpExplosonCollider->SetCollisionProfileName("AIWeapon");
 
-
 	MontageStartMap.Add(Boss2AnimationType::NONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 		}));

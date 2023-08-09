@@ -28,6 +28,8 @@ enum class KnightAnimationType : uint8
 
 DECLARE_MULTICAST_DELEGATE(FOnInterpStart);
 DECLARE_MULTICAST_DELEGATE(FOnInterpEnd);
+DECLARE_MULTICAST_DELEGATE(FOnKnockBackStart);
+DECLARE_MULTICAST_DELEGATE(FOnKnockBackEnd);
 
 UCLASS()
 class SERVAME_API UKnightAnimInstance : public UBaseAnimInstance
@@ -40,9 +42,17 @@ class SERVAME_API UKnightAnimInstance : public UBaseAnimInstance
 	UFUNCTION()
 	void AnimNotify_InterpEnd();
 
-public:
-	UKnightAnimInstance();
+	UFUNCTION()
+	void AnimNotify_KnockBackStart();
+		
+	UFUNCTION()
+	void AnimNotify_KnockBackEnd();
 
+public:
+	UKnightAnimInstance();	
+	
 	FOnInterpStart InterpStart;
 	FOnInterpEnd InterpEnd;
+	FOnKnockBackStart KnockBackStart;
+	FOnKnockBackEnd KnockBackEnd;
 };

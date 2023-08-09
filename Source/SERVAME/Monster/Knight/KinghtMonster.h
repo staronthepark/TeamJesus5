@@ -101,11 +101,19 @@ public:
 	UPROPERTY()
 	UMonsterWidget* MonsterLockOnWidget;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UKnightAttackTriggerComp* AttackTrigger;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UKnightAttackTriggerComp* DashAttackTrigger;
+
 	FTimerHandle HpTimer;
 
 	TArray<UBoxComponent*> AttackOverlapArray;
 
 	AKnightController* KnightController;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	APlayerCharacter* PlayerCharacter;
 
 	FVector PatrolLocation;
@@ -119,6 +127,11 @@ public:
 	KnightAnimationType AttackAnimationType;
 
 	UStaticMeshComponent* SwordMeshComp;
+
+	UPROPERTY(EditAnyWhere,Category = "KnockBackTime")
+	float KnockBackTime = 0.2f;
+	UPROPERTY(EditAnyWhere, Category = "KnockBackDelayTime")
+	float KnockBackDelayTime = 1.f;
 
 	float WeaponOpacity;
 	float MeshOpacity;
@@ -134,6 +147,9 @@ public:
 
 	bool IsInterpStart;
 
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	bool IsKnockBack = false;
+
 private:
 	TMap<KnightAnimationType, KnightStateType> AnimTypeToStateType;
 	TMap<KnightStateType, TMap<KnightActionType, TFunction<void()>>> MonsterActionEventMap;
@@ -145,9 +161,14 @@ private:
 	TMap<KnightAnimationType, TFunction<void()>>MontageEndEventMap;
 	TMap<KnightAttackType, TFunction<void()>>TargetDetectEventMap;
 
+	FTimerHandle KnockBackTimerHandle;
+	FTimerHandle KnockBackDelayTimerHandle;
+
 	//Notify
 	void InterpStart();
 	void InterpEnd();
+	void KnockBackStart();
+	void KnockBackEmd();
 
 public:
 	void ChangeMontageAnimation(KnightAnimationType type);
@@ -156,6 +177,9 @@ public:
 	void InterpMove();
 
 	void DeactivateHpBar();
+
+	void ActivateAttackTrigger();
+	void DeactivateAttackTrigger();
 
 	UFUNCTION()
 	void OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

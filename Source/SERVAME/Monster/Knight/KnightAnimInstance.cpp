@@ -11,3 +11,7 @@ void UKnightAnimInstance::AnimNotify_InterpStart() { InterpStart.Broadcast(); }
 
 void UKnightAnimInstance::AnimNotify_InterpEnd() { InterpEnd.Broadcast(); }
 
+void UKnightAnimInstance::AnimNotify_KnockBackStart() { KnockBackStart.Broadcast(); }
+
+void UKnightAnimInstance::AnimNotify_KnockBackEnd() { KnockBackEnd.Broadcast(); }
+

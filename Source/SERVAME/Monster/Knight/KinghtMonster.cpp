@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "KinghtMonster.h"
 #include "Kismet/GameplayStatics.h"
@@ -6,6 +5,7 @@
 #include "Math/RandomStream.h"
 #include "KnightAttackTriggerComp.h"
 #include "..\..\Manager\CombatManager.h"
+#include "KnightAttackTriggerComp.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 AKinghtMonster::AKinghtMonster()
@@ -37,6 +37,12 @@ AKinghtMonster::AKinghtMonster()
 	WeaponOverlapStaticMeshCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Right Box"));
 	WeaponOverlapStaticMeshCollision->SetupAttachment(GetMesh(), FName("Weapon_Bone"));
 	WeaponOverlapStaticMeshCollision->SetCollisionProfileName("Weapon");
+
+	AttackTrigger = CreateDefaultSubobject<UKnightAttackTriggerComp>(TEXT("AttackTriggerCollision"));
+	AttackTrigger->SetupAttachment(GetMesh());
+
+	DashAttackTrigger = CreateDefaultSubobject<UKnightAttackTriggerComp>(TEXT("DashAttackTriggerCollision"));
+	DashAttackTrigger->SetupAttachment(GetMesh());
 
 	AnimTypeToStateType.Add(KnightAnimationType::FORWARDMOVE, KnightStateType::NONE);
 	AnimTypeToStateType.Add(KnightAnimationType::LEFTMOVE, KnightStateType::NONE);
@@ -119,7 +125,6 @@ AKinghtMonster::AKinghtMonster()
 
 	MonsterTickEventMap.Add(KnightActionType::HIT, [&]()
 		{
-
 		});
 
 	MonsterTickEventMap.Add(KnightActionType::DEAD, [&]()
@@ -177,6 +182,8 @@ AKinghtMonster::AKinghtMonster()
 
 	MontageEndEventMap.Add(KnightAnimationType::ATTACK1, [&]()
 		{
+			IsInterpStart = false;
+
 			if (TracePlayer)
 			{
 				MonsterMoveEventIndex = 1;
@@ -319,8 +326,7 @@ AKinghtMonster::AKinghtMonster()
 
 void AKinghtMonster::BeginPlay()
 {
-	Super::BeginPlay();
-
+	Super::BeginPlay(); 
 	GetCharacterMovement()->MaxWalkSpeed = KnightDataStruct.CharacterOriginSpeed;
 	YawRotation = GetActorRotation();
 
@@ -372,6 +378,8 @@ void AKinghtMonster::BeginPlay()
 	{
 		AnimInstance->InterpStart.AddUObject(this, &AKinghtMonster::InterpStart);
 		AnimInstance->InterpEnd.AddUObject(this, &AKinghtMonster::InterpEnd);
+		AnimInstance->KnockBackStart.AddUObject(this, &AKinghtMonster::KnockBackStart);
+		AnimInstance->KnockBackEnd.AddUObject(this, &AKinghtMonster::KnockBackEmd);
 	}
 }
 
@@ -424,6 +432,31 @@ void AKinghtMonster::InterpStart() { IsInterpStart = true; }
 
 void AKinghtMonster::InterpEnd() { IsInterpStart = false; }
 
+void AKinghtMonster::KnockBackStart()
+{
+	GetWorld()->GetTimerManager().SetTimer(KnockBackTimerHandle, FTimerDelegate::CreateLambda([=]()
+		{
+			IsKnockBack = false;
+			GetWorld()->GetTimerManager().ClearTimer(KnockBackTimerHandle);
+		}), KnockBackTime, false);
+
+	GetWorld()->GetTimerManager().SetTimer(KnockBackDelayTimerHandle, FTimerDelegate::CreateLambda([=]()
+		{
+			ActivateAttackTrigger();
+			MontageEndEventMap[KnightAnimationType::HIT]();
+			GetWorld()->GetTimerManager().ClearTimer(KnockBackDelayTimerHandle);
+		}), KnockBackDelayTime, false);
+
+	StopAnimMontage(MontageMap[AnimationType]); 
+	DeactivateAttackTrigger();
+	IsKnockBack = true; 
+}
+
+void AKinghtMonster::KnockBackEmd() 
+{ 
+	IsKnockBack = false; 
+}
+
 void AKinghtMonster::ChangeMontageAnimation(KnightAnimationType type)
 {
 	if (AnimInstance == nullptr)
@@ -455,8 +488,23 @@ void AKinghtMonster::DeactivateHpBar()
 	MonsterHPWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
+void AKinghtMonster::ActivateAttackTrigger()
+{
+	AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	DashAttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
+
+void AKinghtMonster::DeactivateAttackTrigger()
+{
+	AttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	DashAttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
 void AKinghtMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	//TODO : 
+	//소환되자 마자 플레이어 추격 하도록 변경?
+
 	if (ActionType == KnightActionType::DEAD)
 		return;
 	if (PlayerCharacter == nullptr)
@@ -526,13 +574,14 @@ void AKinghtMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent,
 void AKinghtMonster::StartAttackTrigger(KnightAnimationType AttackAnimType)
 {
 	TracePlayer = false;
-	if (StateType == KnightStateType::CANTACT || GetMesh()->GetCollisionProfileName() == "Ragdoll")
+	if (StateType == KnightStateType::CANTACT || GetMesh()->GetCollisionProfileName() == "Ragdoll" || IsKnockBack == true)
 		return;
 	AttackAnimationType = AttackAnimType;
 	if (ActionType != KnightActionType::ATTACK)
 	{
 		KnightController->StopMovement();
 		AnimInstance->StopMontage(MontageMap[AnimationType]);
+
 		float RandomValue = FMath::RandRange(0, 100) * 0.01f;
 		if (SetActionByRandomMap.Contains(AttackAnimType))
 		{
@@ -566,8 +615,6 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 		return 0;
 	}
 
-	//MonsterHpWidget->Hp->SetVisibility(ESlateVisibility::Visible);
-	//MonsterHpWidget->HpBG->SetVisibility(ESlateVisibility::Visible);
 	GetWorldTimerManager().SetTimer(HpTimer, this, &AKinghtMonster::DeactivateHpBar, 3.0f);
 
 	DeactivateHitCollision();
@@ -575,7 +622,6 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
 	KnightDataStruct.CharacterHp -= DamageAmount;
 	MonsterHPWidget->DecreaseHPGradual(this, KnightDataStruct.CharacterHp / KnightDataStruct.CharacterMaxHp);
-
 
 	if (KnightDataStruct.CharacterHp <= 0)
 	{
@@ -595,8 +641,8 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 		AnimInstance->StopMontage(MontageMap[AnimationType]);
 		if (MontageEndEventMap.Contains(AnimationType))
 			MontageEndEventMap[AnimationType]();
-
-		ChangeActionType(KnightActionType::NONE);
+		
+		ChangeActionType(KnightActionType::HIT);
 		ChangeMontageAnimation(KnightAnimationType::HIT);
 	}
 
