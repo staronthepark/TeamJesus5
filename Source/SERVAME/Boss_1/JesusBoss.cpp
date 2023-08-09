@@ -18,7 +18,6 @@ AJesusBoss::AJesusBoss()
 	PrimaryActorTick.bCanEverTick = true;
 	AIControllerClass = AAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	BossAIController = Cast<AAIController>(AIControllerClass->GetDefaultObject());
 
 	BossWeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BossWeaponMesh"));
 	BossWeaponMesh->SetupAttachment(GetMesh(), FName("Weapon_Bone"));
@@ -1034,7 +1033,6 @@ void AJesusBoss::BeginPlay()
 
 	BossActionEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("BossActionType"), true);
 
-	BossAI = Cast<ABossAIController>(GetController());
 	AIController = Cast<ABossAIController>(GetController());
 
 	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss::AttackHit);
@@ -1261,7 +1259,7 @@ void AJesusBoss::CheckDealTime()
 
 void AJesusBoss::SetBTAction(BossActionTemp Temp)
 {
-	BossAI->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("BossActionType")), Temp.ActionType);
+	AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("BossActionType")), Temp.ActionType);
 }
 
 int AJesusBoss::GetRandomNum(int Min, int Max)
