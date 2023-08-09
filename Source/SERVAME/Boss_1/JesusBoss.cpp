@@ -18,7 +18,6 @@ AJesusBoss::AJesusBoss()
 	PrimaryActorTick.bCanEverTick = true;
 	AIControllerClass = AAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	BossAIController = Cast<AAIController>(AIControllerClass->GetDefaultObject());
 
 	BossWeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BossWeaponMesh"));
 	BossWeaponMesh->SetupAttachment(GetMesh(), FName("Weapon_Bone"));
@@ -1034,7 +1033,6 @@ void AJesusBoss::BeginPlay()
 
 	BossActionEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("BossActionType"), true);
 
-	BossAI = Cast<ABossAIController>(GetController());
 	AIController = Cast<ABossAIController>(GetController());
 
 	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss::AttackHit);
@@ -1261,7 +1259,7 @@ void AJesusBoss::CheckDealTime()
 
 void AJesusBoss::SetBTAction(BossActionTemp Temp)
 {
-	BossAI->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("BossActionType")), Temp.ActionType);
+	AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("BossActionType")), Temp.ActionType);
 }
 
 int AJesusBoss::GetRandomNum(int Min, int Max)
@@ -1373,22 +1371,23 @@ float AJesusBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 	IsStartBoneRot = true;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AJesusBoss::ReSetBoneRot, Time, false);
 	
-	if (BossDataStruct.CharacterHp <= 2000 && IsExecution == false && IsHitStun == false)
-	{
-		if (GetTypeFromMetaData(StartMontage) == BossAnimationType::DARKEXPLOSION ||
-			GetTypeFromMetaData(StartMontage) == BossAnimationType::GROUNDEXPLOSION)
-			return DamageAmount;
+	//if (BossDataStruct.CharacterHp <= 2000 && IsExecution == false && IsHitStun == false)
+	//{
+	//	if (GetTypeFromMetaData(StartMontage) == BossAnimationType::DARKEXPLOSION ||
+	//		GetTypeFromMetaData(StartMontage) == BossAnimationType::GROUNDEXPLOSION)
+	//		return DamageAmount;
 
-		IsStun = true;
-		IsLockOn = false;
-		AttackLockOn = false;
-		IsParriged = true;
-		IsFirstExecution = true;
-		IsHitStun = true;
-		BossDataStruct.CurrentGrrogyGauge = 0;
-		BossAnimInstance->PlayGroggyMontage(BossAnimationType::STUN);
-	}
-	else if (!StartEnd.Get<0>() && CurrentActionTemp.HitCancel)
+	//	IsStun = true;
+	//	IsLockOn = false;
+	//	AttackLockOn = false;
+	//	IsParriged = true;
+	//	IsFirstExecution = true;
+	//	IsHitStun = true;
+	//	BossDataStruct.CurrentGrrogyGauge = 0;
+	//	BossAnimInstance->PlayGroggyMontage(BossAnimationType::STUN);
+	//}
+
+	if (!StartEnd.Get<0>() && CurrentActionTemp.HitCancel)
 	{
 		HitMap[PlayerCharacter->PlayerAttackType]();
 	}
@@ -1448,6 +1447,14 @@ void AJesusBoss::PlayExecutionAnimation()
 void AJesusBoss::ActivateLockOnImage(bool value)
 {
 	value ? MonsterLockOnWidget->SetVisibility(ESlateVisibility::HitTestInvisible) : MonsterLockOnWidget->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void AJesusBoss::Stun()
+{	
+	IsParriged = true;
+	AttackLockOn = false;
+	BossDataStruct.CurrentGrrogyGauge = 0;
+	BossAnimInstance->PlayGroggyMontage(BossAnimationType::STUN);
 }
 
 void AJesusBoss::SpawnInit()
@@ -1740,7 +1747,12 @@ void AJesusBoss::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	AObjectPool& objectpool = AObjectPool::GetInstance();
 	if (OtherComp->GetName() == "ShieldCollision")
 	{
-		
+		Player->SetShieldHP(-BossDataStruct.DamageList[Type]);
+		CameraShake(PlayerCameraShake);
+		VibrateGamePad(0.4f, 0.4f);
+		objectpool.SpawnObject(objectpool.ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		return;
 	}
 
 	if (!Player->Imotal)

@@ -224,9 +224,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* BossWeaponMesh;
 
-	UPROPERTY(VisibleAnywhere, Category = AI)
-	AAIController* BossAIController;
-
 	UPROPERTY(EditAnyWhere, Category = "BossMontageMap")
 	TMap<BossAnimationType, UAnimMontage*> BossMontageMap;
 
@@ -345,7 +342,6 @@ public:
 	TAtomic<bool>IsEnd = false;
 	TAtomic<bool>CheckAttack2 = false;
 
-	ABossAIController* BossAI;
 	ABossAIController* AIController;
 	APlayerCharacter* PlayerCharacter;
 
@@ -468,6 +464,7 @@ public:
 	virtual void IsNotifyActive(bool value) override;
 	virtual void PlayExecutionAnimation() override;
 	virtual void ActivateLockOnImage(bool value)override;
+	virtual void Stun()override;
 
 protected:
 	virtual void BeginPlay() override;

@@ -13,29 +13,35 @@ void ABossAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AJesusBoss* BossPawn = Cast<AJesusBoss>(GetPawn());
-	if (BossPawn)
-	{
-		Boss = BossPawn;
-	}
+	//AJesusBoss* BossPawn = Cast<AJesusBoss>(GetPawn());
+	//if (BossPawn)
+	//{
+	//	Boss = BossPawn;
+	//}
 
-	GetBlackboardComponent()->SetValueAsBool(FName(TEXT("IsDead")), false);
-	GetBlackboardComponent()->SetValueAsBool(FName(TEXT("IsPlayerAlive")), true);
-	GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("IsStep")), false);
-	Boss->IsLockOn = true;
+	//auto BlackboardComponent = GetBlackboardComponent();
+	//if (BlackboardComponent != nullptr)
+	//{
+	//	BlackboardComponent->SetValueAsBool(FName(TEXT("IsDead")), false);
+	//	BlackboardComponent->SetValueAsBool(FName(TEXT("IsPlayerAlive")), true);
+	//	BlackboardComponent->SetValueAsEnum(FName(TEXT("IsStep")), false);
+	//}
 
-	// UI
-	if (IsValid(BossUIClass))
-	{
-		BossUI = Cast<UBossUI>(CreateWidget(GetWorld(), BossUIClass));
+	//if (Boss != nullptr)
+	//	Boss->IsLockOn = true;
 
-		//if (IsValid(BossUI))
-		//{
-		//	BossUI->AddToViewport();
-		//}
-	}
-	//GameInstance->PlayerHUDWidget->PB_BossHP->SetPercent((float)BossDataStruct.CharacterHp / (float)BossDataStruct.CharacterMaxHp);
-	BossUI->SetHP(1);
+	//// UI
+	//if (IsValid(BossUIClass))
+	//{
+	//	BossUI = Cast<UBossUI>(CreateWidget(GetWorld(), BossUIClass));
+
+	//	//if (IsValid(BossUI))
+	//	//{
+	//	//	BossUI->AddToViewport();
+	//	//}
+	//}
+	////GameInstance->PlayerHUDWidget->PB_BossHP->SetPercent((float)BossDataStruct.CharacterHp / (float)BossDataStruct.CharacterMaxHp);
+	//BossUI->SetHP(1);
 }
 
 void ABossAIController::Tick(float DeltaTime)
@@ -138,6 +144,37 @@ void ABossAIController::OnPossess(APawn* InPawn)
 	}
 	
 	AIPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ABossAIController::OnPerception);
+
+
+	AJesusBoss* BossPawn = Cast<AJesusBoss>(GetPawn());
+	if (BossPawn)
+	{
+		Boss = BossPawn;
+	}
+
+	auto BlackboardComponent = GetBlackboardComponent();
+	if (BlackboardComponent != nullptr)
+	{
+		BlackboardComponent->SetValueAsBool(FName(TEXT("IsDead")), false);
+		BlackboardComponent->SetValueAsBool(FName(TEXT("IsPlayerAlive")), true);
+		BlackboardComponent->SetValueAsEnum(FName(TEXT("IsStep")), false);
+	}
+
+	if (Boss != nullptr)
+		Boss->IsLockOn = true;
+
+	// UI
+	if (IsValid(BossUIClass))
+	{
+		BossUI = Cast<UBossUI>(CreateWidget(GetWorld(), BossUIClass));
+
+		//if (IsValid(BossUI))
+		//{
+		//	BossUI->AddToViewport();
+		//}
+	}
+	//GameInstance->PlayerHUDWidget->PB_BossHP->SetPercent((float)BossDataStruct.CharacterHp / (float)BossDataStruct.CharacterMaxHp);
+	BossUI->SetHP(1);
 }
 
 void ABossAIController::OnUnPossess()
