@@ -1451,6 +1451,14 @@ void AJesusBoss::ActivateLockOnImage(bool value)
 	value ? MonsterLockOnWidget->SetVisibility(ESlateVisibility::HitTestInvisible) : MonsterLockOnWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
+void AJesusBoss::Stun()
+{	
+	IsParriged = true;
+	AttackLockOn = false;
+	BossDataStruct.CurrentGrrogyGauge = 0;
+	BossAnimInstance->PlayGroggyMontage(BossAnimationType::STUN);
+}
+
 void AJesusBoss::SpawnInit()
 {
 	//½ºÅÝ
