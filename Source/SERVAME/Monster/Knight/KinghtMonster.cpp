@@ -366,6 +366,13 @@ void AKinghtMonster::BeginPlay()
 	WeaponOverlapStaticMeshCollision->OnComponentEndOverlap.AddDynamic(this, &AKinghtMonster::OnSMOverlapEnd);
 
 	ParryingCollision1->OnComponentBeginOverlap.AddDynamic(this, &AKinghtMonster::OnParryingOverlap);
+
+
+	if (AnimInstance != nullptr)
+	{
+		AnimInstance->InterpStart.AddUObject(this, &AKinghtMonster::InterpStart);
+		AnimInstance->InterpEnd.AddUObject(this, &AKinghtMonster::InterpEnd);
+	}
 }
 
 void AKinghtMonster::Tick(float DeltaTime)
@@ -378,6 +385,9 @@ void AKinghtMonster::Tick(float DeltaTime)
 	MonsterTickEventMap[ActionType]();
 
 	Rotate();
+
+	if (IsInterpStart)
+		InterpMove();
 }
 
 void AKinghtMonster::ActivateLockOnImage(bool value)
@@ -410,6 +420,10 @@ void AKinghtMonster::HitStop()
 		AnimInstance->PauseAnimation(MontageMap[AnimationType]);
 }
 
+void AKinghtMonster::InterpStart() { IsInterpStart = true; }
+
+void AKinghtMonster::InterpEnd() { IsInterpStart = false; }
+
 void AKinghtMonster::ChangeMontageAnimation(KnightAnimationType type)
 {
 	if (AnimInstance == nullptr)
@@ -428,6 +442,12 @@ void AKinghtMonster::ChangeMontageAnimation(KnightAnimationType type)
 void AKinghtMonster::ChangeActionType(KnightActionType type)
 {
 	ActionType = type;
+}
+
+void AKinghtMonster::InterpMove()
+{
+	auto NewLoc = FMath::Lerp(GetActorLocation(), PlayerCharacter->GetActorLocation(), 0.1f);
+	SetActorLocation(NewLoc);
 }
 
 void AKinghtMonster::DeactivateHpBar()

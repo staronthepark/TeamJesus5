@@ -7,3 +7,7 @@ UKnightAnimInstance::UKnightAnimInstance()
 {
 
 }
+void UKnightAnimInstance::AnimNotify_InterpStart() { InterpStart.Broadcast(); }
+
+void UKnightAnimInstance::AnimNotify_InterpEnd() { InterpEnd.Broadcast(); }
+

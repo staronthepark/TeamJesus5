@@ -132,6 +132,7 @@ public:
 	bool IsDetect;
 	bool TracePlayer;
 
+	bool IsInterpStart;
 
 private:
 	TMap<KnightAnimationType, KnightStateType> AnimTypeToStateType;
@@ -144,9 +145,15 @@ private:
 	TMap<KnightAnimationType, TFunction<void()>>MontageEndEventMap;
 	TMap<KnightAttackType, TFunction<void()>>TargetDetectEventMap;
 
+	//Notify
+	void InterpStart();
+	void InterpEnd();
+
 public:
 	void ChangeMontageAnimation(KnightAnimationType type);
 	void ChangeActionType(KnightActionType type);
+
+	void InterpMove();
 
 	void DeactivateHpBar();
 
