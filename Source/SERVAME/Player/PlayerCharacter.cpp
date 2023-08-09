@@ -2117,16 +2117,17 @@ void APlayerCharacter::OnSMOverlapEnd(UPrimitiveComponent* OverlappedComponent, 
 
 void APlayerCharacter::OnExecutionOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//if (!IsGrab)
-	//{
-	//	CanExecution = true;
-	//	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
-	//}
+	if (!IsGrab)
+	{
+		CanExecution = true;
+		ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
+	}
 }
 
 void APlayerCharacter::OnExecutionOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	//CanExecution = false;
+	if (!IsGrab)
+		CanExecution = false;
 }
 
 void APlayerCharacter::OnParryingOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

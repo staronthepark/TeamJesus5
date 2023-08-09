@@ -667,6 +667,7 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	{
 		Imotal = true;
 		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
+		ChangeMontageAnimation(MonsterAnimationType::DEAD);
 		PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
 		return DamageAmount;
 	}
