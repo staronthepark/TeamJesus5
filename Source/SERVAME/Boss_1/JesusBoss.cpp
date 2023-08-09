@@ -1737,6 +1737,12 @@ void AJesusBoss::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	
 	auto Type = GetTypeFromMetaData(StartMontage);
 	
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+	if (OtherComp->GetName() == "ShieldCollision")
+	{
+		
+	}
+
 	if (!Player->Imotal)
 	{
 		if (BossDataStruct.DamageList.Contains(Type))
