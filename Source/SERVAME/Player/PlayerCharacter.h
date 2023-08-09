@@ -44,6 +44,7 @@ enum class ActionType : uint8
 	HIT,
 	INTERACTION,
 	DEAD,
+	SHIELD,
 };
 
 UENUM(BlueprintType)

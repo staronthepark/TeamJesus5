@@ -195,24 +195,14 @@ void AJesusPlayerController::UnPressSprint()
 
 void AJesusPlayerController::PressGrab()
 {
-	if (!character->IsGrab)
-	{
-		character->IsGrab = true;
-		character->ShieldOn();
-		character->ShieldMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		character->CameraBoom1->CameraLagSpeed = 30.0f;
-		character->SetCameraTarget(character->GrabSocketOffset, character->GrabCameraLength);
-	}
-	else
-	{
-		character->PlayerShieldDashMovement();
-		character->ShieldMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-		character->ChangeActionType(ActionType::MOVE);
-		character->ChangeMontageAnimation(AnimationType::SHIELDATTACKLOOP);
-		character->ShoulderView(character->IsShoulderView);
-		character->IsGrab = false;
-		character->CameraShake(character->PlayerCameraShake);
-	}
+	character->InputEventMap[character->PlayerCurAction][ActionType::SHIELD][true]();
+}
+
+void AJesusPlayerController::UnPressGrab()
+{
+	if(character->IsGrab)
+	character->InputEventMap[character->PlayerCurAction][ActionType::SHIELD][false]();
+
 }
 
 void AJesusPlayerController::ViewLog()
@@ -469,5 +459,6 @@ void AJesusPlayerController::SetupInputComponent()
 	InputComponent->BindAction("Sprint", IE_Released, this, &AJesusPlayerController::UnPressSprint).bExecuteWhenPaused = true;
 
 	InputComponent->BindAction("Grab", IE_Pressed, this, &AJesusPlayerController::PressGrab);
+	InputComponent->BindAction("Grab", IE_Released, this, &AJesusPlayerController::UnPressGrab);
 
 }
