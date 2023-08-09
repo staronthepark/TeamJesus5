@@ -1798,7 +1798,9 @@ void APlayerCharacter::SetShieldHP(float HP)
 	PlayerDataStruct.ShieldHP = FMath::Clamp(PlayerDataStruct.ShieldHP += HP, 0, PlayerDataStruct.MaxShieldHP);
 	if (PlayerDataStruct.ShieldHP <= 0)
 	{
+		IsGrab = false;
 		ShieldOff();
+		ShoulderView(IsShoulderView);
 		AnimInstance->BodyBlendAlpha = 1.0f;
 		ChangeActionType(ActionType::HIT);
 		ChangeMontageAnimation(AnimationType::HITBACKRIGHT);
