@@ -104,14 +104,16 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PlayerExecutionSecondDamage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shield")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float ShieldLifeTime;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shield")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float ShieldAddLifeTime;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shield")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float ShieldDashMoveDistance;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shield")
-		float ShieldHp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float ShieldHP;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float MaxShieldHP;
 };
 
 UCLASS()
@@ -187,7 +189,7 @@ public:
 		UStaticMeshComponent* ShieldMeshComp;
 
 	UPROPERTY()
-		UBoxComponent* CameraOverlapComp;
+		UBoxComponent* ShieldOverlapComp;
 
 	UPROPERTY()
 		TSubclassOf<UPlayerHUD> PlayerUIClass;
@@ -303,6 +305,8 @@ public:
 
 	TMap<bool, TFunction<void( )>> LockOnCameraSettingMap;
 
+
+
 	UPROPERTY()
 		TArray<UBoxComponent*> ForwardOverlap;
 
@@ -368,6 +372,7 @@ public:
 
 	void Sprint();
 	void Run();
+	void SetShieldHP(float HP);
 
 	void RecoverStamina();
 
@@ -438,12 +443,6 @@ public:
 
 	UFUNCTION()
 		void OnExecutionOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-	UFUNCTION()
-		void OnCamOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	UFUNCTION()
-		void OnCamOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UFUNCTION()
 		void OnParryingOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
