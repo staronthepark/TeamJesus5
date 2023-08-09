@@ -211,17 +211,7 @@ AEnemyMonster::AEnemyMonster()
 					if (PlayerCharacter->IsLockOn)
 					{
 						SetActorTickEnabled(false);
-						PlayerCharacter->TargetComp = nullptr;
-						PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
-						PlayerCharacter->GetFirstTarget();
-						if (PlayerCharacter->TargetComp == nullptr)
-						{
-							PlayerCharacter->LockOn();
-						}
-						else
-						{
-							Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true);
-						}
+						PlayerCharacter->LockOn();
 					}
 				}
 			}

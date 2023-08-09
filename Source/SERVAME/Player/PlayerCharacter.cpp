@@ -1621,6 +1621,7 @@ void APlayerCharacter::RestoreStat()
 	PlayerDataStruct.PlayerStamina = PlayerDataStruct.MaxStamina;
 	PlayerHUD->SetStamina(PlayerDataStruct.PlayerStamina / PlayerDataStruct.MaxStamina);
 	PlayerDataStruct.CharacterHp = PlayerDataStruct.CharacterMaxHp;
+	PlayerDataStruct.ShieldHP = PlayerDataStruct.MaxShieldHP;
 	PlayerHUD->SetHP(PlayerDataStruct.CharacterHp / PlayerDataStruct.CharacterMaxHp);
 	CurHealCount = PlayerDataStruct.MaxHealCount;
 	PlayerHUD->ChangeHealCount(CurHealCount);
@@ -1650,7 +1651,7 @@ void APlayerCharacter::LockOn()
 
 		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true);
 
-		if (AnimInstance->PlayerAnimationType != AnimationType::HEAL)
+		if (AnimInstance->PlayerAnimationType != AnimationType::HEAL && !IsGrab)
 		{
 			SetSpeed(SpeedMap[IsLockOn || IsGrab][IsSprint]);
 		}
@@ -1662,13 +1663,13 @@ void APlayerCharacter::LockOn()
 		if(TargetComp != nullptr)
 		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false);
 		TargetComp = nullptr;
-		if (AnimInstance->PlayerAnimationType != AnimationType::HEAL)
+		if (AnimInstance->PlayerAnimationType != AnimationType::HEAL && !IsGrab)
 			SetSpeed(SpeedMap[IsLockOn || IsGrab][IsSprint]);
 		CurRotateIndex = 0;
 	}
 
 	if (CurActionType == ActionType::MOVE && AnimInstance->PlayerAnimationType != AnimationType::ENDOFSPRINT && 
-		AnimInstance->PlayerAnimationType != AnimationType::HEAL)
+		AnimInstance->PlayerAnimationType != AnimationType::HEAL && !IsGrab)
 	{
 		CheckInputKey();
 	}
@@ -1688,7 +1689,6 @@ void APlayerCharacter::GetFirstTarget()
 		if (Distance < ClosestDistance)
 		{
 			ClosestDistance = Distance;
-			if(TargetCompInScreenArray[i]->GetOwner()->IsActorTickEnabled() || TargetCompInScreenArray[i]->GetOwner()->ActorHasTag("Static"))
 			TargetComp = TargetCompInScreenArray[i];
 		}
 	}
