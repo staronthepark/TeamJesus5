@@ -66,7 +66,6 @@ struct FKnightDataStruct : public FCharacterBaseDataStruct
 	float LockOnWalkSpeed;
 };
 
-
 UCLASS()
 class SERVAME_API AKinghtMonster : public ABaseCharacter
 {
