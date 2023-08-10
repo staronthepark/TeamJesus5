@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
+#include "BaseCharacter.h"
 #include "LevelStreamerActor.generated.h"
 
 UCLASS()
@@ -17,6 +18,9 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
+
+	UPROPERTY(EditAnywhere)
+		TArray<ABaseCharacter*> MonsterList;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		UBoxComponent* OverlapVolume;

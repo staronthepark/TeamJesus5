@@ -105,6 +105,7 @@ public:
 
 	UPROPERTY()
 	UJesusGameInstance* GameInstance;
+	USphereComponent* LockOnComp;
 
 private:
 	UPROPERTY()
@@ -117,6 +118,7 @@ public:
 	virtual void PostInitializeComponents();	
 	virtual void PlayExecutionAnimation() {}
 	virtual void ActivateLockOnImage(bool value){}
+	virtual void SetActive(bool active);
 
 	virtual void Tick(float DeltaTime);
 

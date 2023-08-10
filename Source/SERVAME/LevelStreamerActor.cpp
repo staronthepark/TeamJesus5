@@ -30,6 +30,11 @@ void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent
 	{
 		FLatentActionInfo LatentInfo;
 		UGameplayStatics::LoadStreamLevel(this, LevelToLoad, true, true, LatentInfo);
+
+		for (int32 i = 0; i < MonsterList.Num(); i++)
+		{
+			MonsterList[i]->SetActive(true);
+		}
 	}
 }
 
@@ -39,5 +44,10 @@ void ALevelStreamerActor::OverlapEnds(UPrimitiveComponent* OverlappedComponent, 
 	{
 		FLatentActionInfo LatentInfo;
 		UGameplayStatics::UnloadStreamLevel(this, LevelToLoad, LatentInfo, false);
+
+		for (int32 i = 0; i < MonsterList.Num(); i++)
+		{
+			MonsterList[i]->SetActive(false);
+		}
 	}
 }
