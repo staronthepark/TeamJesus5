@@ -185,12 +185,14 @@ void AJesusPlayerController::UnPressUseItem()
 
 void AJesusPlayerController::PressSprint()
 {
+	if(!character->IsGrab)
 	character->SetSprint();
 }
 
 void AJesusPlayerController::UnPressSprint()
 {
-	character->InputEventMap[PlayerAction::SPRINT][ActionType::DODGE][false]();
+	if (!character->IsGrab)
+		character->InputEventMap[PlayerAction::SPRINT][ActionType::DODGE][false]();
 }
 
 void AJesusPlayerController::PressGrab()

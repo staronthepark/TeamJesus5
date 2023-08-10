@@ -158,6 +158,13 @@ AEnemyMonster::AEnemyMonster()
 						PlayerCharacter->TargetComp = nullptr;
 						PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
 						PlayerCharacter->GetFirstTarget();
+
+						AObjectPool& objectpool =  AObjectPool::GetInstance();
+						for (int32 i = 0; i < MonsterDataStruct.DropSoulCount; i++)
+						{
+							objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+						}
+
 						if (PlayerCharacter->TargetComp == nullptr)
 						{
 							PlayerCharacter->LockOn();
