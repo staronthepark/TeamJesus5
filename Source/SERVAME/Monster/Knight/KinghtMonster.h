@@ -70,6 +70,8 @@ public:
 
 	virtual void Stun() override;
 
+	virtual void HitStop() override;
+
 	virtual void ChangeMontageAnimation(MonsterAnimationType type) override;
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;

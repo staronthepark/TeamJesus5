@@ -140,6 +140,12 @@ void AKinghtMonster::InterpMove()
 	SetActorLocation(NewLoc);
 }
 
+void AKinghtMonster::HitStop()
+{
+	Super::HitStop();
+	if (MontageMap.Contains(AnimationType))
+		KnightAnimInstance->PauseAnimation(MontageMap[AnimationType]);
+}
 void AKinghtMonster::ActivateAttackTrigger()
 {
 	AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -164,9 +170,6 @@ void AKinghtMonster::OnKnightTargetDetectionBeginOverlap(UPrimitiveComponent* Ov
 		PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
 		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
 	}
-	TracePlayer = true;
-	MonsterMoveEventIndex = 1;
-	TargetDetectEventMap[AttackType]();
 }
 
 void AKinghtMonster::OnKnightTargetDetectionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)

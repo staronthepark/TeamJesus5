@@ -48,6 +48,7 @@ enum class MonsterType : uint8
 	ELETEMELEE,
 	ELETERANGE,
 	BOSS,
+	TUTORIAL,
 };
 
 USTRUCT(BlueprintType)

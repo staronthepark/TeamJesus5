@@ -458,7 +458,8 @@ void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* Overlappe
 	{
 		PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
 		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
-		PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::camera, true);
+		if (MonsterType == MonsterType::TUTORIAL)
+			PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::camera, true);
 	}
 	TracePlayer = true;
 	MonsterMoveEventIndex = 1;
@@ -517,7 +518,8 @@ void AEnemyMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, 
 	MonsterHPWidget->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
 
 	//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
-	PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
+	if (MonsterType == MonsterType::TUTORIAL)
+		PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
 
 	DeactivateSMOverlap();
 	DeactivateRightWeapon();
