@@ -39,7 +39,7 @@ void AStoneObjectInPool::SetActive(bool active)
 
 	auto Player = Cast<APlayerCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), APlayerCharacter::StaticClass()));
 
-	MoveDir = Player->GetActorLocation() - GetActorLocation();
+	MoveDir = FVector::ZeroVector;
 
 	if (LifeTime > 0 && active)
 	{

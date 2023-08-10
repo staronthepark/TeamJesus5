@@ -1555,6 +1555,7 @@ void AJesusBoss2::ThrowStone()
 {
 	if (StonePoolObj != nullptr)
 	{
+		StonePoolObj->MoveDir = PlayerCharacter->GetActorLocation() - StonePoolObj->GetActorLocation();
 		StonePoolObj->SceneComp->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 		StonePoolObj->SetActorTickEnabled(true);
 	}
