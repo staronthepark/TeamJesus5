@@ -218,6 +218,10 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SAVEEND, PlayerAction::CANTACT);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::ACTIVESAVEPOINT, PlayerAction::CANTACT);
 
+	StatCurrentIdxMap.Add(EPlayerStatType::STRENGTH, 0);
+	StatCurrentIdxMap.Add(EPlayerStatType::HP, 0);
+	StatCurrentIdxMap.Add(EPlayerStatType::STAMINA, 0);
+
 	NotifyBeginEndEventMap.Add(AnimationType::NONE, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap.Add(AnimationType::IDLE, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap.Add(AnimationType::FORWARDWALK, TMap<bool, TFunction<void()>>());
@@ -1412,7 +1416,8 @@ APlayerCharacter::APlayerCharacter()
 			ExecutionCharacter->TakeDamage(PlayerDataStruct.PlayerExecutionSecondDamage, CharacterDamageEvent, nullptr, this);
 			VibrateGamePad(0.4f, 0.4f);
 			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
-		});}
+		});
+}
 
 APlayerCharacter::~APlayerCharacter()
 {

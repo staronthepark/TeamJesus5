@@ -331,14 +331,16 @@ AEnemyMonster::AEnemyMonster()
 		{
 			if (percent >= 0.5)
 			{
-				PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::dodge, true);
+				if (MyMonsterType == MonsterType::TUTORIAL)
+					PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::dodge, true);
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
 			}
 			else if (percent < 0.5f)
 			{
 				//UGameplayStatics::SetGlobalTimeDilation(monster, 0.1f);
-				PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::parrying, true);
+				if (MyMonsterType == MonsterType::TUTORIAL)
+					PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::parrying, true);
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::POWERATTACK1);
 			}
@@ -462,7 +464,7 @@ void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* Overlappe
 	{
 		PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
 		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
-		if (MonsterType == MonsterType::TUTORIAL)
+		if (MyMonsterType == MonsterType::TUTORIAL)
 			PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::camera, true);
 	}
 	TracePlayer = true;
@@ -523,7 +525,7 @@ void AEnemyMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, 
 	MonsterHPWidget->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
 
 	//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
-	if (MonsterType == MonsterType::TUTORIAL)
+	if (MyMonsterType == MonsterType::TUTORIAL)
 		PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
 
 	DeactivateSMOverlap();

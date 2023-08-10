@@ -287,6 +287,8 @@ public:
 	UPROPERTY(EditAnyWhere, Category = "MontageMap")
 	TMap<AnimationType,UAnimMontage*> MontageMap;
 
+	TMap<EPlayerStatType, int32> StatCurrentIdxMap;
+
 	UPROPERTY(EditAnyWhere, Category = "StaminaMap")
 	TMap<ActionType, float>PlayerUseStaminaMap;
 

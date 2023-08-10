@@ -87,7 +87,7 @@ public:
 	AEnemyMonster();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	MonsterType MonsterType;
+	MonsterType MyMonsterType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	MonsterAttackType AttackType;
 
