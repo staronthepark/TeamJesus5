@@ -1,16 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "MoveToLocationComp.h"
 
-// Sets default values for this component's properties
 UMoveToLocationComp::UMoveToLocationComp()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
 }
 
 
@@ -18,9 +11,8 @@ UMoveToLocationComp::UMoveToLocationComp()
 void UMoveToLocationComp::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
+	Owner = GetOwner();
+	SetComponentTickEnabled(false);
 }
 
 
@@ -29,6 +21,16 @@ void UMoveToLocationComp::TickComponent(float DeltaTime, ELevelTick TickType, FA
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	FVector OwnerLocation = Owner->GetActorLocation();
+	Owner->SetActorLocation(FMath::Lerp(OwnerLocation, TargetLocation, DeltaTime * MoveSpeed));
+	if (FVector::Distance(OwnerLocation, TargetLocation) < 10.0f)
+	{
+		SetComponentTickEnabled(false);
+	}
 }
 
+
+void UMoveToLocationComp::SetTargetLocation(FVector Location)
+{
+	TargetLocation = Location;
+}

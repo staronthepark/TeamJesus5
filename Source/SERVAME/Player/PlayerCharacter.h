@@ -80,7 +80,7 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 MaxHealCount;
-
+	int32 SoulCount;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MaxStamina;  
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

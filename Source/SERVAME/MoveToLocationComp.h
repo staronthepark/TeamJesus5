@@ -13,16 +13,19 @@ class SERVAME_API UMoveToLocationComp : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UMoveToLocationComp();
 
-protected:
-	// Called when the game starts
+	UPROPERTY(Editanywhere)
+		float MoveSpeed;
+
+	void SetTargetLocation(FVector Location);
+
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+private:
+
+	AActor* Owner;
+	FVector TargetLocation;
 };

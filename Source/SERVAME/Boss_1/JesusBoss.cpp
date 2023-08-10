@@ -1082,6 +1082,10 @@ void AJesusBoss::BeginPlay()
 	ParringTrailComp->Deactivate();
 	CurrentAnimType = BossAnimationType::NONE;
 
+	TArray<UActorComponent*>ActorCompArray;
+	ActorCompArray = GetComponentsByTag(USphereComponent::StaticClass(), FName("LockOnTarget"));
+	LockOnComp = Cast<USphereComponent>(ActorCompArray[0]);
+
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
 	SetActive(false);
