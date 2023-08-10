@@ -170,7 +170,6 @@ AEnemyMonster::AEnemyMonster()
 			}
 		});	
 
-
 	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
 		{
 			ChangeMontageAnimation(MonsterAnimationType::DEADLOOP);
@@ -446,6 +445,11 @@ void AEnemyMonster::DeactivateHpBar()
 	MonsterHPWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
+void AEnemyMonster::ActivateHpBar()
+{
+	MonsterHPWidget->SetVisibility(ESlateVisibility::Visible);
+}
+
 void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (ActionType == MonsterActionType::DEAD)return;
@@ -596,6 +600,8 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	MonsterDataStruct.CharacterHp -= DamageAmount;
 	MonsterHPWidget->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
 
+	UE_LOG(LogTemp, Warning, TEXT("%f,%f"), DamageAmount, MonsterDataStruct.CharacterHp);
+
 	Die(DamageAmount);
 
 	//if (DamageAmount >= 30)
@@ -634,6 +640,8 @@ float AEnemyMonster::Die(float Dm)
 		//PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
 		return Dm;
 	}
+
+	return Dm;
 }
 
 void AEnemyMonster::CheckMontageEndNotify()

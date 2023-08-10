@@ -161,6 +161,7 @@ void AKinghtMonster::OnKnightTargetDetectionBeginOverlap(UPrimitiveComponent* Ov
 {
 	//TODO : 
 	//소환되자 마자 플레이어 추격 하도록 변경?
+	ActivateHpBar();
 
 	if (ActionType == MonsterActionType::DEAD)
 		return;
@@ -224,10 +225,17 @@ float AKinghtMonster::Die(float Dm)
 		ChangeMontageAnimation(MonsterAnimationType::DEAD);
 		return Dm;
 	}
+
+	return Dm;
 }
 
 float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (AnimationType == MonsterAnimationType::EXECUTION)
+		return 0.f;
+
 	if (DamageAmount >= 30 && MonsterDataStruct.CharacterHp > 0)
 	{
 		MonsterController->StopMovement();

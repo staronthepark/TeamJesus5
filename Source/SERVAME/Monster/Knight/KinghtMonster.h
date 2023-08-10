@@ -79,7 +79,7 @@ public:
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	virtual void CheckMontageEndNotify() override;
 
-	virtual void PlayExecutionAnimation();
+	virtual void PlayExecutionAnimation() override;
 
 	virtual void BeginPlay() override;
 
