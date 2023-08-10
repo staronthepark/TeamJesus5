@@ -55,7 +55,7 @@ void AVomitObjectInPool::Tick(float DeltaTime)
 void AVomitObjectInPool::SetActive(bool active)
 {
 	Super::SetActive(active);
-
+	
 	if (active && LifeTime > 0)
 	{
 		SpawnEffect->Activate();
