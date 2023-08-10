@@ -36,6 +36,8 @@ void AKinghtMonster::BeginPlay()
 {
 	Super::BeginPlay(); 
 
+	SetActive(true);
+
 	PlayerCharacter = nullptr;
 
 	KnightAnimInstance = Cast<UKnightAnimInstance>(GetMesh()->GetAnimInstance());
