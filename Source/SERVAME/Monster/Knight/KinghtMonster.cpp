@@ -104,6 +104,11 @@ void AKinghtMonster::KnockBackStart()
 	IsKnockBack = true; 
 }
 
+void AKinghtMonster::KnockBackEmd() 
+{ 
+	IsKnockBack = false; 
+}
+
 void AKinghtMonster::Stun()
 {
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
@@ -112,11 +117,6 @@ void AKinghtMonster::Stun()
 	ParryingCollision1->Deactivate();
 	DeactivateRightWeapon();
 	ChangeMontageAnimation(MonsterAnimationType::DEAD);
-}
-
-void AKinghtMonster::KnockBackEmd() 
-{ 
-	IsKnockBack = false; 
 }
 
 void AKinghtMonster::ChangeMontageAnimation(MonsterAnimationType type)
@@ -140,9 +140,8 @@ void AKinghtMonster::InterpMove()
 	SetActorLocation(NewLoc);
 }
 
-void AKinghtMonster::HitStop()
+void AKinghtMonster::MonsterHitStop()
 {
-	Super::HitStop();
 	if (MontageMap.Contains(AnimationType))
 		KnightAnimInstance->PauseAnimation(MontageMap[AnimationType]);
 }
@@ -212,23 +211,8 @@ void AKinghtMonster::Rotate()
 	SetActorRotation(FMath::Lerp(GetActorRotation(), YawRotation, MonsterDataStruct.RotateSpeed * fDeltaTime));
 }
 
-float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float AKinghtMonster::Die(float Dm)
 {
-	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	
-	if (Imotal)
-	{
-		return 0;
-	}
-
-	GetWorldTimerManager().SetTimer(HpTimer, this, &AKinghtMonster::DeactivateHpBar, 3.0f);
-
-	DeactivateHitCollision();
-
-	MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
-	MonsterDataStruct.CharacterHp -= DamageAmount;
-	MonsterHPWidget->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
-
 	if (MonsterDataStruct.CharacterHp <= 0)
 	{
 		Imotal = true;
@@ -238,10 +222,13 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 		DeactivateRightWeapon();
 		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
 		ChangeMontageAnimation(MonsterAnimationType::DEAD);
-		return DamageAmount;
+		return Dm;
 	}
+}
 
-	if (DamageAmount >= 30)
+float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	if (DamageAmount >= 30 && MonsterDataStruct.CharacterHp > 0)
 	{
 		MonsterController->StopMovement();
 		KnightAnimInstance->StopMontage(MontageMap[AnimationType]);

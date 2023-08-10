@@ -68,9 +68,11 @@ public:
 
 	void Rotate();
 
+	virtual float Die(float Dm) override;
+
 	virtual void Stun() override;
 
-	virtual void HitStop() override;
+	virtual void MonsterHitStop() override;
 
 	virtual void ChangeMontageAnimation(MonsterAnimationType type) override;
 
@@ -85,7 +87,6 @@ public:
 
 	virtual void IsNotifyActive(bool value) override;
 	virtual void RespawnCharacter() override;
-
 
 	virtual void ResumeMontage() override;
 };

@@ -39,14 +39,6 @@ AEnemyMonster::AEnemyMonster()
 	WeaponOverlapStaticMeshCollision->SetupAttachment(GetMesh(), FName("Weapon_Bone"));
 	WeaponOverlapStaticMeshCollision->SetCollisionProfileName("Weapon");
 
-	GrabCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Grab Damage"));
-	GrabCollision->SetupAttachment(GetMesh());
-	GrabCollision->SetCollisionProfileName("Grab Damage");
-
-	GrabShieldCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Grab Guard"));
-	GrabShieldCollision->SetupAttachment(GetMesh());
-	GrabShieldCollision->SetCollisionProfileName("Grab Guard");
-
 	AnimTypeToStateType.Add(MonsterAnimationType::FORWARDMOVE, MonsterStateType::NONE);
 	AnimTypeToStateType.Add(MonsterAnimationType::LEFTMOVE, MonsterStateType::NONE);
 	AnimTypeToStateType.Add(MonsterAnimationType::RIGHTMOVE, MonsterStateType::NONE);
@@ -422,9 +414,6 @@ void AEnemyMonster::BeginPlay()
 	MeshOpacity = 0.171653f;
 	//MonsterHpWidget = Cast<UMonsterWidget>(HpWidget->GetWidget());
 	
-	GrabShieldCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	GrabCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
 	DeactivateHpBar();
 
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &AEnemyMonster::OnTargetDetectionBeginOverlap);
@@ -435,7 +424,6 @@ void AEnemyMonster::BeginPlay()
 	WeaponOverlapStaticMeshCollision->OnComponentEndOverlap.AddDynamic(this, &AEnemyMonster::OnSMOverlapEnd);
 
 	ParryingCollision1->OnComponentBeginOverlap.AddDynamic(this, &AEnemyMonster::OnParryingOverlap);
-	GrabCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyMonster::OnGrabCollisionOverlapBegin);
 
 	SetActive(false);
 }
@@ -496,7 +484,8 @@ void AEnemyMonster::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedComponen
 	if (OtherActor->TakeDamage(SkillInfoMap[AttackAnimationType].Damage, CharacterDamageEvent, nullptr, this))
 	{
 		if(!IsStun)
-		HitStop();
+			HitStop();
+
 		CameraShake(PlayerCameraShake);
 
 		VibrateGamePad(0.4f, 0.4f);
@@ -541,22 +530,6 @@ void AEnemyMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, 
 	objectpool.SpawnObject(objectpool.ObjectArray[7].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
 	objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
 }
-
-void AEnemyMonster::OnGrabCollisionOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if (OtherActor->TakeDamage(10.0f, CharacterDamageEvent, nullptr, this))
-	{
-		//UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(Cast<ABaseCharacter>(OtherActor));
-
-		VibrateGamePad(0.4f, 0.4f);
-
-		AObjectPool& objectpool = AObjectPool::GetInstance();
-		objectpool.SpawnObject(objectpool.ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		objectpool.SpawnObject(objectpool.ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
-	}
-}
-
 
 void AEnemyMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
@@ -623,24 +596,8 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	MonsterDataStruct.CharacterHp -= DamageAmount;
 	MonsterHPWidget->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
 
+	Die(DamageAmount);
 
-	if (MonsterDataStruct.CharacterHp <= 0)
-	{
-		Imotal = true;
-		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
-		//ChangeMontageAnimation(MonsterAnimationType::DEAD);
-		AnimInstance->StopMontage(MontageMap[AnimationType]);
-		ChangeActionType(MonsterActionType::DEAD);
-		StateType = MonsterStateType::CANTACT;
-		//PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
-		return DamageAmount;
-	}
-
-	//if (ArmorType == EArmorType::HIGH)
-	//{
-	//	return DamageAmount;
-	//}
-	//
 	//if (DamageAmount >= 30)
 	//{
 	//	MonsterController->StopMovement();
@@ -662,6 +619,21 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	//	ChangeMontageAnimation(MonsterAnimationType::HIT);
 	//}
 	return DamageAmount;
+}
+
+float AEnemyMonster::Die(float Dm)
+{
+	if (MonsterDataStruct.CharacterHp <= 0)
+	{
+		Imotal = true;
+		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
+		//ChangeMontageAnimation(MonsterAnimationType::DEAD);
+		AnimInstance->StopMontage(MontageMap[AnimationType]);
+		ChangeActionType(MonsterActionType::DEAD);
+		StateType = MonsterStateType::CANTACT;
+		//PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
+		return Dm;
+	}
 }
 
 void AEnemyMonster::CheckMontageEndNotify()
@@ -753,9 +725,15 @@ void AEnemyMonster::ResumeMontage()
 		AnimInstance->ResumeMontage(MontageMap[AnimationType]);
 }
 
+void AEnemyMonster::MonsterHitStop()
+{
+	if (MontageMap.Contains(AnimationType))
+		AnimInstance->PauseAnimation(MontageMap[AnimationType]);
+}
+
 void AEnemyMonster::HitStop()
 {
 	Super::HitStop();
-	if (MontageMap.Contains(AnimationType))
-		AnimInstance->PauseAnimation(MontageMap[AnimationType]);
+
+	MonsterHitStop();
 }

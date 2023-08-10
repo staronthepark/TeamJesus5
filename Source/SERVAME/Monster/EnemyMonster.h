@@ -94,12 +94,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FMonsterDataStruct MonsterDataStruct;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		USphereComponent* GrabCollision;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		USphereComponent* GrabShieldCollision;
-
 	UPROPERTY()
 	UMonsterAnimInstance* AnimInstance;
 
@@ -193,9 +187,6 @@ public:
 	UFUNCTION()
 	void OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UFUNCTION()
-	void OnGrabCollisionOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
 	virtual void StartAttackTrigger(MonsterAnimationType AttackAnimType);
 	virtual void EndAttackTrigger(MonsterAnimationType AttackAnimType);
 
@@ -206,6 +197,8 @@ public:
 	virtual void Stun() override;
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float Die(float Dm);
+	
 	virtual void CheckMontageEndNotify() override;
 
 	virtual void PlayExecutionAnimation();
@@ -224,5 +217,6 @@ public:
 
 	virtual void ResumeMontage() override;
 
+	virtual void MonsterHitStop();
 	virtual void HitStop() override;
 };
