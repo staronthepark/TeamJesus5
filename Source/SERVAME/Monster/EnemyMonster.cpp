@@ -98,7 +98,6 @@ AEnemyMonster::AEnemyMonster()
 			RandomRotateMap[MonsterRandomMove]();
 		});
 
-
 	CheckDIstanceMap.Add(false, [&]()
 		{
 			
@@ -107,62 +106,6 @@ AEnemyMonster::AEnemyMonster()
 		{
 			CurrentDistance = FVector::Distance(GetActorLocation(), PlayerCharacter->GetActorLocation());
 		});
-
-	MonsterActionEventMap.Add(MonsterStateType::NONE, TMap<MonsterActionType, TFunction<void()>>());
-	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::NONE, [&]()
-		{
-			ChangeMontageAnimation(MonsterAnimationType::IDLE);
-		});
-	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::DODGE, [&]()
-		{
-
-		});
-	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::ATTACK, [&]()
-		{
-			ChangeActionType(MonsterActionType::ATTACK);
-			ChangeMontageAnimation(AttackAnimationType);
-		});
-	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::POWERATTACK, [&]()
-		{
-
-		});
-	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::MOVE, [&]()
-		{
-			ChangeActionType(MonsterActionType::MOVE);
-			ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
-		});
-	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::HIT, [&]()
-		{
-
-		});
-	MonsterActionEventMap[MonsterStateType::NONE].Add(MonsterActionType::DEAD, [&]() {});
-
-	MonsterActionEventMap.Add(MonsterStateType::BEFOREATTACK, TMap<MonsterActionType, TFunction<void()>>());
-	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::NONE, [&]() {});
-	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::DODGE, [&]() {});
-	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::ATTACK, [&]() {});
-	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::POWERATTACK, [&]() {});
-	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::MOVE, [&]() {});
-	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::HIT, [&]() {});
-	MonsterActionEventMap[MonsterStateType::BEFOREATTACK].Add(MonsterActionType::DEAD, [&]() {});
-
-	MonsterActionEventMap.Add(MonsterStateType::AFTERATTACK, TMap<MonsterActionType, TFunction<void()>>());
-	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::NONE, [&]() {});
-	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::DODGE, [&]() {});
-	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::ATTACK, [&]() {});
-	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::POWERATTACK, [&]() {});
-	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::MOVE, [&]() {});
-	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::HIT, [&]() {});
-	MonsterActionEventMap[MonsterStateType::AFTERATTACK].Add(MonsterActionType::DEAD, [&]() {});
-
-	MonsterActionEventMap.Add(MonsterStateType::CANTACT, TMap<MonsterActionType, TFunction<void()>>());
-	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::NONE, [&]() {});
-	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::DODGE, [&]() {});
-	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::ATTACK, [&]() {});
-	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::POWERATTACK, [&]() {});
-	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::MOVE, [&]() {});
-	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::HIT, [&]() {});
-	MonsterActionEventMap[MonsterStateType::CANTACT].Add(MonsterActionType::DEAD, [&]() {});
 
 	MonsterTickEventMap.Add(MonsterActionType::NONE, [&]()
 		{
@@ -284,7 +227,6 @@ AEnemyMonster::AEnemyMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::HIT, [&]()
 		{
-			UE_LOG(LogTemp, Warning, TEXT("!@#!@#"));
 			if (TracePlayer)
 			{
 				MonsterMoveEventIndex = 1;
@@ -373,11 +315,13 @@ AEnemyMonster::AEnemyMonster()
 
 	TargetDetectEventMap.Add(MonsterAttackType::MELEE, [&]()
 		{
-			MonsterActionEventMap[MonsterStateType::NONE][MonsterActionType::MOVE]();
+			ChangeActionType(MonsterActionType::MOVE);
+			ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 		});
 	TargetDetectEventMap.Add(MonsterAttackType::RANGE, [&]()
 		{
-			MonsterActionEventMap[MonsterStateType::NONE][MonsterActionType::MOVE]();
+			ChangeActionType(MonsterActionType::MOVE);
+			ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 		});
 
 	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
@@ -458,8 +402,7 @@ void AEnemyMonster::BeginPlay()
 
 	AnimationType = MonsterAnimationType::IDLE;
 	ChangeActionType(MonsterActionType::NONE);
-	MonsterActionEventMap[MonsterStateType::NONE][MonsterActionType::NONE]();
-	//ChangeMontageAnimation(MonsterAnimationType::IDLE);
+	ChangeMontageAnimation(MonsterAnimationType::IDLE);
 
 	SkeletalMeshComp = GetMesh();
 	SwordMeshComp = Cast<UStaticMeshComponent>(GetComponentByClass(UStaticMeshComponent::StaticClass()));

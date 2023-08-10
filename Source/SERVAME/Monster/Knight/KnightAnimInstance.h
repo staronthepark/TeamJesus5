@@ -6,26 +6,6 @@
 #include "..\..\BaseAnimInstance.h"
 #include "KnightAnimInstance.generated.h"
 
-UENUM(BlueprintType)
-enum class KnightAnimationType : uint8
-{
-	NONE,
-	IDLE,
-	ATTACK1,
-	POWERATTACK1,
-	DASHATTACK1,
-
-	FORWARDMOVE,
-	LEFTMOVE,
-	RIGHTMOVE,
-	BACKMOVE,
-
-	HIT,
-	DEAD,
-	DEADLOOP,
-	EXECUTION,
-};
-
 DECLARE_MULTICAST_DELEGATE(FOnInterpStart);
 DECLARE_MULTICAST_DELEGATE(FOnInterpEnd);
 DECLARE_MULTICAST_DELEGATE(FOnKnockBackStart);
