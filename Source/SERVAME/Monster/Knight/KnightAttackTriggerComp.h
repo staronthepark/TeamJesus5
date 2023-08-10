@@ -18,7 +18,7 @@ public:
 	UKnightAttackTriggerComp();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	KnightAnimationType AttackAnimType;
+	MonsterAnimationType AttackAnimType;
 
 private:
 	AKinghtMonster* Owner;

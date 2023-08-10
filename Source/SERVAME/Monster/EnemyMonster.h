@@ -48,6 +48,7 @@ enum class MonsterType : uint8
 	ELETEMELEE,
 	ELETERANGE,
 	BOSS,
+	TUTORIAL,
 };
 
 USTRUCT(BlueprintType)
@@ -92,12 +93,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FMonsterDataStruct MonsterDataStruct;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		USphereComponent* GrabCollision;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		USphereComponent* GrabShieldCollision;
 
 	UPROPERTY()
 	UMonsterAnimInstance* AnimInstance;
@@ -157,24 +152,24 @@ public:
 	bool CanAttack;
 	bool TracePlayer;
 
-private:
-
+protected:
+	TMap<int, TFunction<void()>> MonsterMoveMap;
+	TMap<MonsterAnimationType, TFunction<void()>>MontageEndEventMap;
 	TMap<MonsterAnimationType, MonsterStateType> AnimTypeToStateType;
-	TMap<MonsterStateType, TMap<MonsterActionType, TFunction<void()>>> MonsterActionEventMap;
 	TMap<MonsterAnimationType, TMap<bool, TFunction<void()>>> NotifyBeginEndEventMap;
 	TMap<MonsterActionType, TFunction<void()>> MonsterTickEventMap;
-	TMap<int, TFunction<void()>> MonsterMoveMap;
 	TMap<bool, TFunction<void()>> CheckDIstanceMap;
 	TMap<MonsterAnimationType, TFunction<void(float percent)>> SetActionByRandomMap;
-	TMap<MonsterAnimationType, TFunction<void()>>MontageEndEventMap;
 	TMap<MonsterAttackType, TFunction<void()>>TargetDetectEventMap;
 
 public:
 
-	void ChangeMontageAnimation(MonsterAnimationType type);
+	virtual void ChangeMontageAnimation(MonsterAnimationType type);
 	void ChangeActionType(MonsterActionType type);
 
 	void DeactivateHpBar();
+
+	void ActivateHpBar();
 
 	UFUNCTION()
 	void OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -192,13 +187,10 @@ public:
 	void OnSMOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UFUNCTION()
-		void OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UFUNCTION()
-		void OnGrabCollisionOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	void StartAttackTrigger(MonsterAnimationType AttackAnimType);
-	void EndAttackTrigger(MonsterAnimationType AttackAnimType);
+	virtual void StartAttackTrigger(MonsterAnimationType AttackAnimType);
+	virtual void EndAttackTrigger(MonsterAnimationType AttackAnimType);
 
 	void ShotProjectile();
 
@@ -207,9 +199,11 @@ public:
 	virtual void Stun() override;
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float Die(float Dm);
+	
 	virtual void CheckMontageEndNotify() override;
 
-	virtual void PlayExecutionAnimation();
+	virtual void PlayExecutionAnimation() override;
 
 	virtual void BeginPlay() override;
 
@@ -225,5 +219,6 @@ public:
 
 	virtual void ResumeMontage() override;
 
+	virtual void MonsterHitStop();
 	virtual void HitStop() override;
 };
