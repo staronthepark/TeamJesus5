@@ -36,8 +36,6 @@ void AKinghtMonster::BeginPlay()
 {
 	Super::BeginPlay(); 
 
-	UCombatManager::GetInstance().MonsterInfoArray.Add(this);
-
 	PlayerCharacter = nullptr;
 
 	KnightAnimInstance = Cast<UKnightAnimInstance>(GetMesh()->GetAnimInstance());
@@ -102,6 +100,16 @@ void AKinghtMonster::KnockBackStart()
 	StopAnimMontage(MontageMap[AnimationType]); 
 	DeactivateAttackTrigger();
 	IsKnockBack = true; 
+}
+
+void AKinghtMonster::Stun()
+{
+	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
+	MonsterController->StopMovement();
+	DeactivateSMOverlap();
+	ParryingCollision1->Deactivate();
+	DeactivateRightWeapon();
+	ChangeMontageAnimation(MonsterAnimationType::DEAD);
 }
 
 void AKinghtMonster::KnockBackEmd() 

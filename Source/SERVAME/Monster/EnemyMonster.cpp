@@ -396,7 +396,6 @@ void AEnemyMonster::BeginPlay()
 	PlayerCharacter = nullptr;
 	
 	GetCharacterMovement()->bOrientRotationToMovement = false;
-	
 
 	AnimInstance = Cast<UMonsterAnimInstance>(GetMesh()->GetAnimInstance());
 
@@ -433,7 +432,6 @@ void AEnemyMonster::BeginPlay()
 
 	SetActive(false);
 }
-
 
 void AEnemyMonster::ChangeMontageAnimation(MonsterAnimationType type)
 {

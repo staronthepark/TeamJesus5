@@ -169,7 +169,7 @@ protected:
 
 public:
 
-	void ChangeMontageAnimation(MonsterAnimationType type);
+	virtual void ChangeMontageAnimation(MonsterAnimationType type);
 	void ChangeActionType(MonsterActionType type);
 
 	void DeactivateHpBar();

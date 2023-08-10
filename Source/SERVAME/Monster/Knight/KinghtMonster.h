@@ -52,8 +52,6 @@ private:
 	void KnockBackEmd();
 
 public:
-	void ChangeMontageAnimation(MonsterAnimationType type);
-
 	void InterpMove();
 
 	void ActivateAttackTrigger();
@@ -69,6 +67,10 @@ public:
 	virtual void EndAttackTrigger(MonsterAnimationType AttackAnimType) override;
 
 	void Rotate();
+
+	virtual void Stun() override;
+
+	virtual void ChangeMontageAnimation(MonsterAnimationType type) override;
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	virtual void CheckMontageEndNotify() override;
