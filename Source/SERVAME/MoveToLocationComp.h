@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "./Player/PlayerCharacter.h"
 #include "MoveToLocationComp.generated.h"
 
 
@@ -19,7 +18,7 @@ public:
 	UPROPERTY(Editanywhere)
 		float MoveSpeed;
 
-	void SetTargetLocation(FVector Location);
+	void SetTargetLocation(AActor* actor);
 
 	virtual void BeginPlay() override;
 
@@ -27,7 +26,6 @@ public:
 
 private:
 
-	APlayerCharacter* Player;
 	AActor* Owner;
-	FVector TargetLocation;
+	AActor* TargetActor;
 };

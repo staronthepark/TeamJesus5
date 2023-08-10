@@ -205,7 +205,6 @@ AEnemyMonster::AEnemyMonster()
 				SetActorHiddenInGame(true);
 				SetActorEnableCollision(false);
 				SetActorTickEnabled(false);
-				PlayerCharacter->SetShieldHP(PlayerCharacter->PlayerDataStruct.MaxShieldHP);
 				if (PlayerCharacter != nullptr)
 				{
 					if (PlayerCharacter->IsLockOn)
@@ -219,7 +218,13 @@ AEnemyMonster::AEnemyMonster()
 						AObjectPool& objectpool =  AObjectPool::GetInstance();
 						for (int32 i = 0; i < MonsterDataStruct.DropSoulCount; i++)
 						{
-							objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+							float x = FMath::RandRange(-30.0f, 30.0f);
+							float y = FMath::RandRange(-30.0f, 30.0f);
+							float z = FMath::RandRange(-30.0f, 30.0f);
+
+							FVector location = GetActorLocation() + FVector(x, y, z);
+
+							objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, FRotator::ZeroRotator);
 						}
 
 						if (PlayerCharacter->TargetComp == nullptr)

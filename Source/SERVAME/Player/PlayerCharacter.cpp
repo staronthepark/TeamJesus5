@@ -213,9 +213,9 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEnumToAnimTypeMap.Add(AnimationType::RUNPOWERATTACK, PlayerAction::BEFOREATTACK);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::DODGEATTACK, PlayerAction::BEFOREATTACK);
 
-	PlayerEnumToAnimTypeMap.Add(AnimationType::SAVESTART, PlayerAction::CANWALK);
-	PlayerEnumToAnimTypeMap.Add(AnimationType::SAVELOOP, PlayerAction::CANWALK);
-	PlayerEnumToAnimTypeMap.Add(AnimationType::SAVEEND, PlayerAction::CANWALK);
+	PlayerEnumToAnimTypeMap.Add(AnimationType::SAVESTART, PlayerAction::CANTACT);
+	PlayerEnumToAnimTypeMap.Add(AnimationType::SAVELOOP, PlayerAction::CANTACT);
+	PlayerEnumToAnimTypeMap.Add(AnimationType::SAVEEND, PlayerAction::CANTACT);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::ACTIVESAVEPOINT, PlayerAction::CANTACT);
 
 	NotifyBeginEndEventMap.Add(AnimationType::NONE, TMap<bool, TFunction<void()>>());
@@ -2345,6 +2345,11 @@ void APlayerCharacter::ShieldAttack()
 		AnimInstance->BodyBlendAlpha = 1.0f;
 		IsGrab = false;
 	}
+}
+
+void APlayerCharacter::SetSoul(int32 value)
+{
+	PlayerDataStruct.SoulCount += value;
 }
 
 void APlayerCharacter::PlayStartAnimation()

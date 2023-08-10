@@ -399,6 +399,8 @@ public:
 
 	void ShieldAttack();
 
+	void SetSoul(int32 value);
+
 	UFUNCTION()
 		void PlayStartAnimation();
 

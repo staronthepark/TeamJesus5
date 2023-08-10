@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "BaseObjectInPool.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Components/BoxComponent.h"
+#include "../Player/PlayerCharacter.h"
 #include "../MoveToLocationComp.h"
 #include "ParticleObjectInPool.generated.h"
 
@@ -24,11 +26,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Particle)
 		bool IsMove = false;
 
+	APlayerCharacter* Player;
+
+	UPROPERTY(Editanywhere)
+		UBoxComponent* OverlapComp;
+
 	UPROPERTY(EditAnywhere)
 		UMoveToLocationComp* MoveComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Particle)
 	UParticleSystemComponent* ParticleSystem;
 
+	UFUNCTION()
+		void OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 	virtual void SetActive(bool active) override;
+	virtual void BeginPlay() override;
 };
