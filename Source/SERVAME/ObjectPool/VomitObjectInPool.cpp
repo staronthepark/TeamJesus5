@@ -22,6 +22,12 @@ AVomitObjectInPool::AVomitObjectInPool()
 
 	BurstEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Vomit Burst Effect"));
 	BurstEffect->SetupAttachment(SphereCollision);
+
+	SpawnEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Vomit Spawn Effect"));
+	SpawnEffect->SetupAttachment(SphereCollision);
+
+	DispersionEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Vomit Dispersion Effect"));
+	DispersionEffect->SetupAttachment(SphereCollision);
 }
 
 void AVomitObjectInPool::BeginPlay()
@@ -29,7 +35,13 @@ void AVomitObjectInPool::BeginPlay()
 	Super::BeginPlay();
 
 	SetActorTickEnabled(false);
+
 	ProjectileEffect->Deactivate();
+	BurstEffect->Deactivate();
+	DispersionEffect->Deactivate();
+	SpawnEffect->Deactivate();
+	DispersionEffect->Deactivate();
+
 	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AVomitObjectInPool::OnCollisionBeginOverlap);
 	SphereCollision->SetEnableGravity(false);
 	GroundHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AVomitObjectInPool::OnGroundOverlap);
@@ -43,11 +55,12 @@ void AVomitObjectInPool::Tick(float DeltaTime)
 void AVomitObjectInPool::SetActive(bool active)
 {
 	Super::SetActive(active);
-
-	BurstEffect->Deactivate();
-
+	
 	if (active && LifeTime > 0)
 	{
+		SpawnEffect->Activate();
+		ProjectileEffect->Activate();
+
 		SphereCollision->SetEnableGravity(true);
 		GetWorldTimerManager().SetTimer(LifeTimer, this, &AVomitObjectInPool::ReturnObject, LifeTime);
 	}
@@ -96,8 +109,10 @@ void AVomitObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* Overlapped
 
 void AVomitObjectInPool::OnGroundOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ProjectileEffect->Deactivate();
 	BurstEffect->Activate();
+	ProjectileEffect->Deactivate();
+	SpawnEffect->Deactivate();
+	DispersionEffect->Deactivate();
 
 	IsHitGround = true;
 	SetActorTickEnabled(false);

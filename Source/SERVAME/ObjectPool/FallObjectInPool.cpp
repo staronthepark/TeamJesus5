@@ -81,8 +81,10 @@ void AFallObjectInPool::OnGroundOverlap(UPrimitiveComponent* OverlappedComponent
 {
 	IsHitGround = true;
 	SetActorTickEnabled(false);
-	HitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	CrossBurstEffect->Activate();
 	DustEffect->Activate();
+
+	HitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GroundHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }

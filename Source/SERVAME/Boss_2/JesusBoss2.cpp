@@ -1473,7 +1473,8 @@ void AJesusBoss2::OnVomitFall()
 			HeadAtkCollision->GetComponentLocation(),FRotator::ZeroRotator);
 		auto CastObject = Cast<AVomitObjectInPool>(PoolObject);
 		CastObject->SphereCollision->AddImpulse(FVector(0, 0, 1200));
-		CastObject->ProjectileEffect->Activate();
+		//CastObject->SpawnEffect->Activate();
+		//CastObject->ProjectileEffect->Activate();
 		VomitArr.Add(CastObject);
 	}
 
@@ -1485,6 +1486,9 @@ void AJesusBoss2::OnVomitFall()
 			{
 				if (NavSystem->GetRandomPointInNavigableRadius(PlayerCharacter->GetActorLocation(), VomitMaxRange, RandomLocation))
 				{
+					VomitArr[i]->DispersionEffect->Activate();
+					VomitArr[i]->SpawnEffect->Deactivate();
+
 					VomitArr[i]->arcValue = 0.5f;
 					VomitArr[i]->ShootProjectile(RandomLocation.Location);
 				}
@@ -1555,6 +1559,7 @@ void AJesusBoss2::ThrowStone()
 {
 	if (StonePoolObj != nullptr)
 	{
+		StonePoolObj->MoveDir = PlayerCharacter->GetActorLocation() - StonePoolObj->GetActorLocation();
 		StonePoolObj->SceneComp->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 		StonePoolObj->SetActorTickEnabled(true);
 	}
