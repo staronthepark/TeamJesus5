@@ -1166,8 +1166,10 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::RUN][ActionType::INTERACTION].Add(false, InputEventMap[PlayerAction::NONE][ActionType::INTERACTION][false]);
 	InputEventMap[PlayerAction::RUN][ActionType::SHIELD].Add(true, [&]()
 		{
-			AnimInstance->BodyBlendAlpha = 0.0f;
 			InputEventMap[PlayerAction::NONE][ActionType::SHIELD][true]();
+			if(IsGrab)
+			AnimInstance->BodyBlendAlpha = 0.0f;
+
 		});
 	InputEventMap[PlayerAction::RUN][ActionType::SHIELD].Add(false, [&]()
 		{
@@ -1987,7 +1989,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	CameraBoom1->TargetArmLength = FMath::Lerp(CameraBoom1->TargetArmLength, TargetCameraBoomLength, DeltaTime * 2.0f);
 	CameraBoom1->SocketOffset = FMath::Lerp(CameraBoom1->SocketOffset, TargetSocketOffset, DeltaTime * 2.0f);
 
-	if (IsCollisionCamera)
+	if (IsCollisionCamera && !IsGrab)
 	{
 		CameraDistanceToPlayer = FVector::Distance(FollowCamera->GetComponentLocation(), GetActorLocation());
 		CameraDistanceToPlayer = FMath::Clamp(CameraDistanceToPlayer, 40, 300);
@@ -2340,6 +2342,8 @@ void APlayerCharacter::ShieldAttack()
 {
 	if (UseStamina(PlayerUseStaminaMap[ActionType::SHIELD]))
 	{
+		AObjectPool& objectpool = AObjectPool::GetInstance();
+		objectpool.SpawnObject(objectpool.ObjectArray[24].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 		PlayerShieldDashMovement();
 		ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		ShieldMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);

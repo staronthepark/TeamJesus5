@@ -73,7 +73,7 @@ void UBossUI::OnAnimationEnd()
 	//FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 	//FTimerHandle OpenLevelTimer;
 	//TimerManager.SetTimer(OpenLevelTimer, [&]() {
-	UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/00_Maps/01_Art/00_Modeller/KimMinYeongMap_Boss2")));
+	UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/00_Maps/01_Art/00_Modeller/InGameMap/Boss2PhaseMap")));
 		//}, 20.0f, false);
 }
 

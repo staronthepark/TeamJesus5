@@ -43,6 +43,7 @@ void AProjectileObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* Overl
 	if (ReturnWhenHit)
 	{
 		ReturnObject();
+		GetWorldTimerManager().ClearTimer(LifeTimer);
 		SetActorTickEnabled(false);
 	}
 
@@ -53,6 +54,7 @@ void AProjectileObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* Overl
 		AObjectPool & objectpool = AObjectPool::GetInstance();
 
 		objectpool.SpawnObject(objectpool.ObjectArray[20].ObjClass, OtherActor->GetActorLocation(), Rotation);
+		objectpool.SpawnObject(objectpool.ObjectArray[21].ObjClass, OtherActor->GetActorLocation(), Rotation);
 		objectpool.SpawnObject(objectpool.ObjectArray[22].ObjClass, OtherActor->GetActorLocation(), Rotation);
 		objectpool.SpawnObject(objectpool.ObjectArray[0].ObjClass, OtherActor->GetActorLocation(), Rotation);
 		objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OtherActor->GetActorLocation(), Rotation);
