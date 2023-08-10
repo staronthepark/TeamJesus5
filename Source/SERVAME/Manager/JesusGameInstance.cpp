@@ -93,16 +93,16 @@ void UJesusGameInstance::Init()
 		}
 		else if(GPU <= 290)
 		{
-			setting->SetPostProcessingQuality(1);
-			setting->SetShadowQuality(1);
-			setting->SetGlobalIlluminationQuality(1);
-			setting->SetReflectionQuality(2);
-			setting->SetVisualEffectQuality(2);
-			setting->SetTextureQuality(0);
-			setting->SetFoliageQuality(0);
-			setting->SetShadingQuality(0);
-			setting->SetViewDistanceQuality(0);
-			setting->SetAntiAliasingQuality(1);
+			setting->SetPostProcessingQuality(HIGH);
+			setting->SetShadowQuality(HIGH);
+			setting->SetGlobalIlluminationQuality(HIGH);
+			setting->SetReflectionQuality(HIGH);
+			setting->SetVisualEffectQuality(HIGH);
+			setting->SetTextureQuality(MIDDLE);
+			setting->SetFoliageQuality(MIDDLE);
+			setting->SetShadingQuality(MIDDLE);
+			setting->SetViewDistanceQuality(MIDDLE);
+			setting->SetAntiAliasingQuality(MIDDLE);
 		}
 		
 		setting->ApplySettings(true);
