@@ -22,10 +22,6 @@ void AParticleObjectInPool::SetActive(bool active)
 	if (active && LifeTime > 0)
 	{
 		GetWorldTimerManager().SetTimer(LifeTimer, this, &AParticleObjectInPool::ReturnObject, LifeTime);
-		if (IsMove)
-		{
-			MoveComp->SetComponentTickEnabled(true);
-			//MoveComp->SetTargetLocation();
-		}
 	}
+	MoveComp->SetComponentTickEnabled(IsMove);
 }

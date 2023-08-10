@@ -9,7 +9,6 @@ void AMonsterController::BeginPlay()
 {
 	Super::BeginPlay();
 
-
 	//AJesusBoss* boss;
 	//boss = Cast<AJesusBoss>(UGameplayStatics::GetActorOfClass(GetWorld(), AJesusBoss::StaticClass()));
 	//

@@ -563,13 +563,8 @@ APlayerCharacter::APlayerCharacter()
 	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::NONE, [&]()
 		{
 			LockOnCameraSettingMap[IsGrab]();
-		});
-	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::DODGE, [&]() {});
-	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::PARRING, [&]() {});
-	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::DEAD, [&]() {});
-	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::INTERACTION, [&]() {});
-	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::MOVE, [&]()
-		{
+
+			if (!IsGrab)return;
 			PlayerDataStruct.PlayerStamina = FMath::Clamp(PlayerDataStruct.PlayerStamina -= PlayerDataStruct.DeployShieldStaminaReduce * fDeltaTime, 0.0f, 100.0f);
 			PlayerHUD->DecreaseStaminaGradual(this, PlayerDataStruct.PlayerStamina / PlayerDataStruct.MaxStamina);
 			if (PlayerDataStruct.PlayerStamina <= 0)
@@ -582,10 +577,32 @@ APlayerCharacter::APlayerCharacter()
 				CheckInputKey();
 				ShoulderView(IsShoulderView);
 			}
+		});
+	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::DODGE, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::PARRING, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::DEAD, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::INTERACTION, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::MOVE, [&]()
+		{			
 			LockOnCameraSettingMap[IsGrab]();
 			SetPlayerForwardRotAndDir();
 			SetPlayerRightRotAndDir();
 			PlayerMovement();
+
+			if (!IsGrab)return;
+			PlayerDataStruct.PlayerStamina = FMath::Clamp(PlayerDataStruct.PlayerStamina -= PlayerDataStruct.DeployShieldStaminaReduce * fDeltaTime, 0.0f, 100.0f);
+			PlayerHUD->DecreaseStaminaGradual(this, PlayerDataStruct.PlayerStamina / PlayerDataStruct.MaxStamina);
+			if (PlayerDataStruct.PlayerStamina <= 0)
+			{
+				ChangeMontageAnimation(AnimationType::SHIELDEND);
+				IsGrab = false;
+				SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
+				AnimInstance->BodyBlendAlpha = 1.0f;
+				ShieldOff();
+				CheckInputKey();
+				ShoulderView(IsShoulderView);
+			}
+
 		});
 
 	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::HIT, [&](){});

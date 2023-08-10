@@ -1,4 +1,5 @@
 #include "MoveToLocationComp.h"
+#include "Kismet/GameplayStatics.h"
 
 UMoveToLocationComp::UMoveToLocationComp()
 {
@@ -13,6 +14,7 @@ void UMoveToLocationComp::BeginPlay()
 	Super::BeginPlay();
 	Owner = GetOwner();
 	SetComponentTickEnabled(false);
+	Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
 }
 
 
@@ -22,8 +24,8 @@ void UMoveToLocationComp::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	FVector OwnerLocation = Owner->GetActorLocation();
-	Owner->SetActorLocation(FMath::Lerp(OwnerLocation, TargetLocation, DeltaTime * MoveSpeed));
-	if (FVector::Distance(OwnerLocation, TargetLocation) < 10.0f)
+	Owner->SetActorLocation(FMath::Lerp(OwnerLocation, Player->GetActorLocation(), DeltaTime * MoveSpeed));
+	if (FVector::Distance(OwnerLocation, Player->GetActorLocation()) < 10.0f)
 	{
 		SetComponentTickEnabled(false);
 	}

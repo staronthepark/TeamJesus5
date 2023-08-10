@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "./Player/PlayerCharacter.h"
 #include "MoveToLocationComp.generated.h"
 
 
@@ -26,6 +27,7 @@ public:
 
 private:
 
+	APlayerCharacter* Player;
 	AActor* Owner;
 	FVector TargetLocation;
 };
