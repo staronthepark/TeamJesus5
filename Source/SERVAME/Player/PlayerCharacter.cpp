@@ -2032,7 +2032,6 @@ void APlayerCharacter::PlayExecutionAnimation()
 	//ExecuteLocation = GetActorLocation() - ExecuteDirection * 50.0f;
 	//SetActorLocation(ExecuteLocation);
 	CanExecution = false;
-	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 	ExecutionCharacter->PlayExecutionAnimation();
 	DeactivateRightWeapon();
 	DeactivateSMOverlap();
