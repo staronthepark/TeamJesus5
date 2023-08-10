@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "..\..\BaseCharacter.h"
+#include "..\EnemyMonster.h"
 #include "..\..\Player\PlayerCharacter.h"
 #include "..\..\UI\MonsterHPUI.h"
 #include "..\..\UI\MonsterWidget.h"
