@@ -149,9 +149,9 @@ private:
 	float RotSpeed;
 
 	bool IsCollisionCamera;
-	float CameraDistanceToCollision;
-	AActor* CameraCollisionActor;
+	float CameraDistanceToPlayer;
 
+	USkeletalMeshComponent* PlayerSKMesh;
 
 	FVector PlayerForwardDirection;
 	FVector PlayerRightDirection;
@@ -451,6 +451,8 @@ public:
 		void OnShieldOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	void PlayerDead(bool IsFly);
+
+	float GetPercent(float value, float min, float max);
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)override;
 

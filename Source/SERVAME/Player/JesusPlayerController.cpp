@@ -199,6 +199,7 @@ void AJesusPlayerController::PressGrab()
 	{
 		character->IsGrab = true;
 		character->ShieldOn();
+		character->ShieldMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		character->CameraBoom1->CameraLagSpeed = 30.0f;
 		character->SetCameraTarget(character->GrabSocketOffset, character->GrabCameraLength);
 	}

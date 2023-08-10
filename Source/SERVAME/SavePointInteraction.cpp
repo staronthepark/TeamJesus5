@@ -26,6 +26,7 @@ void ASavePointInteraction::BeginPlay()
 	}
 	
 	array = GetComponentsByClass(UParticleSystemComponent::StaticClass());
+
 	for (int32 i = 0; i < array.Num(); i++)
 	{
 		ParticleCompArray.Add(Cast<UParticleSystemComponent>(array[i]));
