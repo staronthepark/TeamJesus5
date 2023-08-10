@@ -73,6 +73,8 @@ struct FMonsterDataStruct : public FCharacterBaseDataStruct
 		float RotateSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float LockOnWalkSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 DropSoulCount;
 };
 
 UCLASS()
