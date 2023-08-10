@@ -349,6 +349,13 @@ AJesusBoss2::AJesusBoss2()
 			else
 				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
 
+			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
+			{
+				CurrentActionTemp = MeleeActionArr.Last();
+				SetBTAction(CurrentActionTemp);
+				return;
+			}
+
 			if (Type == Boss2AnimationType::DOWNSMASH || Type == Boss2AnimationType::SLASH)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("get follow up attack"));
@@ -372,6 +379,13 @@ AJesusBoss2::AJesusBoss2()
 			else
 				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
 
+			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
+			{
+				CurrentActionTemp = MeleeActionArr.Last();
+				SetBTAction(CurrentActionTemp);
+				return;
+			}
+
 			SetBTAction(GetRandomPattern(Dist));
 
 			IsAttackMontageEnd = true;
@@ -386,6 +400,13 @@ AJesusBoss2::AJesusBoss2()
 				InitPercentageMap[CurrentActionTemp.AttackType]();
 			else
 				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
+
+			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
+			{
+				CurrentActionTemp = MeleeActionArr.Last();
+				SetBTAction(CurrentActionTemp);
+				return;
+			}
 
 			SetBTAction(GetRandomPattern(Dist));
 			IsAttackMontageEnd = true;
@@ -561,6 +582,12 @@ AJesusBoss2::AJesusBoss2()
 
 			for (int i = 0; i < MeleeActionArr.Num(); i++)
 			{
+				if (MeleeActionArr[i].ActionType == Boss2ActionType::B2_FALLTHECROSS)
+				{
+					MeleePercentageVec.push_back(MeleeActionArr[i].Percentage);
+					continue;
+				}
+
 				if (MeleeActionArr[i].ActionType == Temp->ActionType)
 				{
 					MeleeActionArr[i].Percentage -= DecreasePercentageVal;
@@ -569,7 +596,8 @@ AJesusBoss2::AJesusBoss2()
 				}
 
 				MeleeActionArr[i].IsAddPercentage = true;
-				MeleeActionArr[i].Percentage += DecreasePercentageVal / (MeleeActionArr.Num() - 1);
+				//0퍼센트 패턴이 있기 때문에 -2
+				MeleeActionArr[i].Percentage += DecreasePercentageVal / (MeleeActionArr.Num() - 2);
 				MeleePercentageVec.push_back(MeleeActionArr[i].Percentage);
 			}
 		}));
@@ -945,9 +973,6 @@ void AJesusBoss2::Tick(float DeltaTime)
 
 	if (JumpMoveStart)
 		JumpMove();
-
-	if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
-		OnCrossFall();
 
 	PlayMoveMontage();
 
