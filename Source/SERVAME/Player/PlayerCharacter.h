@@ -98,16 +98,11 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PlayerRunStamina;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int32 MaxBulletCount;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PlayerExecutionFirstDamage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PlayerExecutionSecondDamage;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float ShieldLifeTime;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float ShieldAddLifeTime;
+		float DeployShieldStaminaReduce;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float ShieldDashMoveDistance;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -240,7 +235,6 @@ public:
 	FVector ExecuteDirection;
 	FVector ExecuteLocation;
 
-	int32 CurBulletCount;
 	int32 CurHealCount;
 
 	float ChangeTargetTime;	
@@ -403,6 +397,7 @@ public:
 
 	void SetCameraTarget(FVector Offset, float Length);
 
+	void ShieldAttack();
 
 	UFUNCTION()
 		void PlayStartAnimation();

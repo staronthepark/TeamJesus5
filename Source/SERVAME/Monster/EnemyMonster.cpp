@@ -205,12 +205,13 @@ AEnemyMonster::AEnemyMonster()
 				SetActorHiddenInGame(true);
 				SetActorEnableCollision(false);
 				SetActorTickEnabled(false);
-
+				PlayerCharacter->SetShieldHP(PlayerCharacter->PlayerDataStruct.MaxShieldHP);
 				if (PlayerCharacter != nullptr)
 				{
 					if (PlayerCharacter->IsLockOn)
 					{
 						SetActorTickEnabled(false);
+						//PlayerCharacter->TargetCompArray.Remove(this);
 						PlayerCharacter->TargetComp = nullptr;
 						PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
 						PlayerCharacter->GetFirstTarget();
@@ -442,6 +443,11 @@ void AEnemyMonster::BeginPlay()
 
 	//test
 	UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(this);
+
+	TArray<UActorComponent*>ActorCompArray;
+	ActorCompArray = GetComponentsByTag(USphereComponent::StaticClass(), FName("LockOnTarget"));
+	LockOnComp = Cast<USphereComponent>(ActorCompArray[0]);
+
 		
 	PlayerCharacter = nullptr;
 	
@@ -481,6 +487,8 @@ void AEnemyMonster::BeginPlay()
 
 	ParryingCollision1->OnComponentBeginOverlap.AddDynamic(this, &AEnemyMonster::OnParryingOverlap);
 	GrabCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyMonster::OnGrabCollisionOverlapBegin);
+
+	SetActive(false);
 }
 
 

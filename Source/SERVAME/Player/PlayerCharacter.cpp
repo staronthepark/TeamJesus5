@@ -570,6 +570,18 @@ APlayerCharacter::APlayerCharacter()
 	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::INTERACTION, [&]() {});
 	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::MOVE, [&]()
 		{
+			PlayerDataStruct.PlayerStamina = FMath::Clamp(PlayerDataStruct.PlayerStamina -= PlayerDataStruct.DeployShieldStaminaReduce * fDeltaTime, 0.0f, 100.0f);
+			PlayerHUD->DecreaseStaminaGradual(this, PlayerDataStruct.PlayerStamina / PlayerDataStruct.MaxStamina);
+			if (PlayerDataStruct.PlayerStamina <= 0)
+			{
+				ChangeMontageAnimation(AnimationType::SHIELDEND);
+				IsGrab = false;
+				SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
+				AnimInstance->BodyBlendAlpha = 1.0f;
+				ShieldOff();
+				CheckInputKey();
+				ShoulderView(IsShoulderView);
+			}
 			LockOnCameraSettingMap[IsGrab]();
 			SetPlayerForwardRotAndDir();
 			SetPlayerRightRotAndDir();
@@ -592,7 +604,6 @@ APlayerCharacter::APlayerCharacter()
 		{
 			PlayerDataStruct.PlayerStamina = FMath::Clamp(PlayerDataStruct.PlayerStamina -= PlayerDataStruct.PlayerRunStamina * fDeltaTime, 0.0f, 100.0f);
 			PlayerHUD->DecreaseStaminaGradual(this, PlayerDataStruct.PlayerStamina / PlayerDataStruct.MaxStamina);
-			GameInstance->DebugLogWidget->T_PlayerStamina->SetText(FText::AsNumber(PlayerDataStruct.PlayerStamina));
 			if (PlayerDataStruct.PlayerStamina <= 0)
 			{
 				ChangeMontageAnimation(MovementAnimMap[IsLockOn]());
@@ -891,8 +902,6 @@ APlayerCharacter::APlayerCharacter()
 			ShoulderView(IsShoulderView);
 			IsGrab = false;
 			CheckInputKey();
-			if(CanExecution)
-			PlayExecutionAnimation();
 		});
 	MontageEndEventMap.Add(AnimationType::SHIELDMOVE, [&]()
 		{
@@ -1189,16 +1198,8 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANWALK][ActionType::DODGE].Add(false, [&]() {});
 	InputEventMap[PlayerAction::CANWALK][ActionType::ATTACK].Add(true, [&]()
 		{
-			if (!IsGrab)return;
-			PlayerShieldDashMovement();
-			ShieldMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-			ChangeActionType(ActionType::MOVE);
-			ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			ChangeMontageAnimation(AnimationType::SHIELDATTACK);
-			ShoulderView(IsShoulderView);
-			CameraShake(PlayerCameraShake);
-			AnimInstance->BodyBlendAlpha = 1.0f;
-			IsGrab = false;
+			if (IsGrab)
+			ShieldAttack();
 		});
 	InputEventMap[PlayerAction::CANWALK][ActionType::ATTACK].Add(false, [&]() {});
 	InputEventMap[PlayerAction::CANWALK][ActionType::POWERATTACK].Add(true, [&]() {});
@@ -1476,8 +1477,6 @@ void APlayerCharacter::BeginPlay()
 	AnimInstance->PlayerAnimationType = AnimationType::IDLE;
 	ChangeMontageAnimation(AnimationType::GAMESTARTLOOP);
 
-	CurBulletCount = PlayerDataStruct.MaxBulletCount;
-
 	LockOnCameraSettingMap[true]();
 
 	FollowCamera = Cast<UCameraComponent>(GetComponentByClass(UCameraComponent::StaticClass()));
@@ -1622,17 +1621,12 @@ void APlayerCharacter::RestoreStat()
 	PlayerHUD->SetStamina(PlayerDataStruct.PlayerStamina / PlayerDataStruct.MaxStamina);
 	PlayerDataStruct.CharacterHp = PlayerDataStruct.CharacterMaxHp;
 	PlayerHUD->SetHP(PlayerDataStruct.CharacterHp / PlayerDataStruct.CharacterMaxHp);
-	CurHealCount = PlayerDataStruct.MaxHealCount;
-	PlayerHUD->ChangeHealCount(CurHealCount);
-
-	CurBulletCount = PlayerDataStruct.MaxBulletCount;
-	
+	//CurHealCount = PlayerDataStruct.MaxHealCount;
+	//PlayerHUD->ChangeHealCount(CurHealCount);
 }
 
 void APlayerCharacter::LockOn()
 {
-	if (AnimInstance->PlayerAnimationType == AnimationType::EXECUTIONBOSS || 
-		AnimInstance->PlayerAnimationType == AnimationType::SAVEEND)return;
 	IsLockOn = !IsLockOn;
 
 	if (IsLockOn)
@@ -1650,7 +1644,7 @@ void APlayerCharacter::LockOn()
 
 		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true);
 
-		if (AnimInstance->PlayerAnimationType != AnimationType::HEAL)
+		if (AnimInstance->PlayerAnimationType != AnimationType::HEAL && !IsGrab)
 		{
 			SetSpeed(SpeedMap[IsLockOn || IsGrab][IsSprint]);
 		}
@@ -1662,13 +1656,13 @@ void APlayerCharacter::LockOn()
 		if(TargetComp != nullptr)
 		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false);
 		TargetComp = nullptr;
-		if (AnimInstance->PlayerAnimationType != AnimationType::HEAL)
+		if (AnimInstance->PlayerAnimationType != AnimationType::HEAL && !IsGrab)
 			SetSpeed(SpeedMap[IsLockOn || IsGrab][IsSprint]);
 		CurRotateIndex = 0;
 	}
 
 	if (CurActionType == ActionType::MOVE && AnimInstance->PlayerAnimationType != AnimationType::ENDOFSPRINT && 
-		AnimInstance->PlayerAnimationType != AnimationType::HEAL)
+		AnimInstance->PlayerAnimationType != AnimationType::HEAL && !IsGrab)
 	{
 		CheckInputKey();
 	}
@@ -1688,7 +1682,6 @@ void APlayerCharacter::GetFirstTarget()
 		if (Distance < ClosestDistance)
 		{
 			ClosestDistance = Distance;
-			if(TargetCompInScreenArray[i]->GetOwner()->IsActorTickEnabled() || TargetCompInScreenArray[i]->GetOwner()->ActorHasTag("Static"))
 			TargetComp = TargetCompInScreenArray[i];
 		}
 	}
@@ -1816,7 +1809,6 @@ void APlayerCharacter::RecoverStamina()
 
 bool APlayerCharacter::UseStamina(float value)
 {
-	if (DebugMode == true)return true;
 	if (PlayerDataStruct.PlayerStamina > 0)
 	{
 		PlayerDataStruct.PlayerStamina = FMath::Clamp(PlayerDataStruct.PlayerStamina -= value, 0.0f, 100.0f);
@@ -2023,9 +2015,14 @@ void APlayerCharacter::EventNotify(bool value)
 
 void APlayerCharacter::PlayExecutionAnimation()
 {
+	if (TargetComp)
+	{
+		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false);
+	}
+	TargetComp = ExecutionCharacter->LockOnComp;
+	Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true);
 	if (!IsLockOn)
 	{
-		//TargetComp = ExecutionCharacter->
 		LockOn();
 	}
 
@@ -2119,17 +2116,12 @@ void APlayerCharacter::OnSMOverlapEnd(UPrimitiveComponent* OverlappedComponent, 
 
 void APlayerCharacter::OnExecutionOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!IsGrab)
-	{
-		CanExecution = true;
-		ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
-	}
+
 }
 
 void APlayerCharacter::OnExecutionOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (!IsGrab)
-		CanExecution = false;
+
 }
 
 void APlayerCharacter::OnParryingOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -2149,12 +2141,14 @@ void APlayerCharacter::OnParryingOverlapBegin(UPrimitiveComponent* OverlappedCom
 void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (IsGrab)return;
+	PlayerDataStruct.ShieldHP = 0;
 	CanExecution = true;
 	Imotal = true;
 	ChangeActionType(ActionType::DEAD);	
 	ShieldOff();
 	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
 	ExecutionCharacter->Stun();
+	PlayExecutionAnimation();
 }
 
 void APlayerCharacter::ActivateRightWeapon()
@@ -2209,13 +2203,7 @@ void APlayerCharacter::BasicAttack()
 	}
 	else
 	{
-		PlayerShieldDashMovement();
-		ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		ShieldMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-		ChangeActionType(ActionType::MOVE);
-		ChangeMontageAnimation(AnimationType::SHIELDATTACK);
-		ShoulderView(IsShoulderView);
-		CameraShake(PlayerCameraShake);
+		ShieldAttack();
 	}
 }
 
@@ -2325,6 +2313,22 @@ void APlayerCharacter::SetCameraTarget(FVector Offset, float Length)
 {
 	TargetSocketOffset = Offset;
 	TargetCameraBoomLength = Length;
+}
+
+void APlayerCharacter::ShieldAttack()
+{
+	if (UseStamina(PlayerUseStaminaMap[ActionType::SHIELD]))
+	{
+		PlayerShieldDashMovement();
+		ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		ShieldMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		ChangeActionType(ActionType::MOVE);
+		ChangeMontageAnimation(AnimationType::SHIELDATTACK);
+		ShoulderView(IsShoulderView);
+		CameraShake(PlayerCameraShake);
+		AnimInstance->BodyBlendAlpha = 1.0f;
+		IsGrab = false;
+	}
 }
 
 void APlayerCharacter::PlayStartAnimation()
