@@ -40,10 +40,22 @@ public:
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool IsKnockBack = false;
 
+	TArray<FVector> CirclePoints;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	int NumSegments = 16;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	float Radius = 700.f;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	float CircleWalkMinTime = 3.f;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	bool DrawDebugCircle = false;
+	bool CircleWalkEnd = false;
+
 private:
 
 	FTimerHandle KnockBackTimerHandle;
 	FTimerHandle KnockBackDelayTimerHandle;
+	FTimerHandle CircleWalkTimerHandle;
 
 	//Notify
 	void InterpStart();
@@ -56,7 +68,7 @@ public:
 	void ActivateAttackTrigger();
 	void DeactivateAttackTrigger();
 	void Rotate();
-
+	void DrawCircle(FVector Center);
 
 
 	UFUNCTION()

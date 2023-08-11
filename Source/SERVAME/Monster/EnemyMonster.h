@@ -146,6 +146,7 @@ public:
 
 	int32 MonsterMoveEventIndex;
 	int32 MonsterRandomMove;
+	int CircleIndexCount = 1;
 
 	bool PlayerHit;
 	bool IsDetect;

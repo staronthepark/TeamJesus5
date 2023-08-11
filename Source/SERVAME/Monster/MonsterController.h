@@ -17,7 +17,11 @@ public:
 
 	virtual void BeginPlay();
 
-	void Movement(FVector Location);
+	bool IsArrived = false;
 
+	void Movement(FVector Location);
+	void MoveWhenArrived(FVector Location);
+
+	class AEnemyMonster* Monster;
 private:
 };
