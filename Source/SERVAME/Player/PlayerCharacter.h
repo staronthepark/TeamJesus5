@@ -266,6 +266,7 @@ public:
 	bool IsInteraction;
 	bool IsDead;
 	bool IsGrab;
+	bool IsInputPad;
 	
 	float TargetOpacity;
 

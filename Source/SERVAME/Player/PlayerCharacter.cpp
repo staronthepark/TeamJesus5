@@ -1796,6 +1796,7 @@ void APlayerCharacter::ShoulderView(bool Value)
 void APlayerCharacter::SetInputType(bool IsPad)
 {
 	PlayerHUD->SetGamepad(IsPad);
+	IsInputPad = IsPad;
 }
 
 void APlayerCharacter::Sprint()
@@ -1816,6 +1817,7 @@ void APlayerCharacter::SetShieldHP(float HP)
 	if (PlayerDataStruct.ShieldHP <= 0)
 	{
 		IsGrab = false;
+		VibrateGamePad(0.4f, 0.4f);
 		ShieldOff();
 		ShoulderView(IsShoulderView);
 		AnimInstance->BodyBlendAlpha = 1.0f;
@@ -2164,6 +2166,7 @@ void APlayerCharacter::OnParryingOverlapBegin(UPrimitiveComponent* OverlappedCom
 void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (IsGrab)return;
+	VibrateGamePad(0.4f, 0.4f);
 	PlayerDataStruct.ShieldHP = 0;
 	CanExecution = true;
 	Imotal = true;
