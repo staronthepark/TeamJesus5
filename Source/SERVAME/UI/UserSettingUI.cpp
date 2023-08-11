@@ -3,9 +3,12 @@
 
 #include "UserSettingUI.h"
 #include "..\Manager\SoundManager.h"
+#include <SERVAME/Manager/JesusGameInstance.h>
 
 #define Game 0
 #define Audio 1
+#define Graphics 2
+#define Quit 3
 
 
 void UUserSettingUI::NativeOnInitialized()
@@ -14,14 +17,17 @@ void UUserSettingUI::NativeOnInitialized()
 	//GameExitUI = Cast<UGameExitUI>(CreateWidget(GetWorld(), GameExitUIClass));
 	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Camera); //0
 	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Audio); //1
-	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Quit); //2
+	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Graphics); //2
+	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Quit); //3
 
 	SubUserSettingArray.Add(WBP_UserSetting_GameUI); // 0
 	SubUserSettingArray.Add(WBP_UserSetting_AudioUI); // 1
+	SubUserSettingArray.Add(WBP_UserSetting_GraphicsUI); //2
 
-	SelectSettingArray[0]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickGameSettingButton);
-	SelectSettingArray[1]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickAudioSettingButton);
-	SelectSettingArray[2]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickQuitSettingButton);
+	SelectSettingArray[Game]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickGameSettingButton);
+	SelectSettingArray[Audio]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickAudioSettingButton);
+	SelectSettingArray[Graphics]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickGraphicsSettingButton);
+	SelectSettingArray[Quit]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickQuitSettingButton);
 
 	WBP_UserSetting_GameUI->LightSettingButton->OnClicked.AddDynamic(this, &UUserSettingUI::ClickLightSettingButton);
 
@@ -58,6 +64,14 @@ void UUserSettingUI::ClickAudioSettingButton()
 	WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Audio->Select();
 }
 
+void UUserSettingUI::ClickGraphicsSettingButton()
+{
+	UnselectAllButton();
+	SubUserSettingArray[Graphics]->SetVisibility(ESlateVisibility::Visible);
+	PlayAnimation(OpenGraphicsSettingAnimation);
+	WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Graphics->Select();
+}
+
 void UUserSettingUI::ClickQuitSettingButton()
 {
 	UMG_GameExit->SetVisibility(ESlateVisibility::Visible);
@@ -90,6 +104,7 @@ void UUserSettingUI::ChangeLanguage()
 	WBP_UserSetting_SelectUI->ChangeLanguage();
 	WBP_UserSetting_AudioUI->ChangeLanguage();
 	WBP_UserSetting_LightUI->ChangeLanguage();
+	WBP_UserSetting_GraphicsUI->ChangeLanguage();
 	UMG_GameExit->ChangeLanguage();
 }
 

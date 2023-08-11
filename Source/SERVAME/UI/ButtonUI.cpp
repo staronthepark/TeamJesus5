@@ -41,10 +41,13 @@ void UButtonUI::ChangeLanguage()
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (GameInstance->language == Language::ENG)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("%d"), index);
 		OnOffImage->SetBrushFromTexture(OnOffImages.Find(index)->EngTexture, true);
 	}
 	else if (GameInstance->language == Language::KOR)
 	{
+
+		UE_LOG(LogTemp, Warning, TEXT("%d"), index);
 		OnOffImage->SetBrushFromTexture(OnOffImages.Find(index)->KorTexture, true);
 	}
 }
