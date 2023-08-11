@@ -1105,7 +1105,7 @@ void AJesusBoss::BeginPlay()
 
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
-	//SetActive(false);
+	SetActive(false);
 }
 
 void AJesusBoss::Tick(float DeltaTime)
