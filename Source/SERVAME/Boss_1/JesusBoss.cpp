@@ -749,6 +749,51 @@ AJesusBoss::AJesusBoss()
 				IsAttackMontageEnd = true;
 			}));
 
+	ActionEndMap.Add(BossAttackType::STEP, TFunction<void(float, float, UAnimMontage*)>
+		([=](float Dist, float Time, UAnimMontage* Montage)
+			{
+				BossActionTemp ActionTemp{};
+
+				auto Type = GetTypeFromMetaData(Montage);
+
+				if (Type == BossAnimationType::BACKSTEP || Type == BossAnimationType::LEFTSTEP || Type == BossAnimationType::RIGHTSTEP)
+					return;
+
+				if (Type != BossAnimationType::THIRDJUMP)
+				{
+					if (CurrentActionTemp.IsAddPercentage)
+						InitPercentageMap[CurrentActionTemp.AttackType]();
+					else
+						ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
+				}
+
+				if (PlayerDirection == BACK)
+				{
+					//CurrentActionTemp
+					Attack(BossAnimationType::BackSwing);
+					return;
+				}
+
+				if (IsHalfHp && !IsShowHalfHp)
+				{
+					IsShowHalfHp = true;
+					CurrentActionTemp = MeleeActionArr.Last();
+					SetBTAction(CurrentActionTemp);
+					IsActionEnd = true;
+					return;
+				}
+
+				if (Dist >= RangeAtk)
+					CurrentActionTemp = GetRandomPatternMap[BossAttackType::RANGE]();
+				else
+					CurrentActionTemp = GetRandomPatternMap[BossAttackType::MELEE]();
+
+				SetBTAction(CurrentActionTemp);
+				IsActionEnd = true;
+				IsAttackMontageEnd = true;
+			}));
+
+
 	//======================================확률에 의한 랜덤 패턴 가져오기========================================
 
 	GetRandomPatternMap.Add(BossAttackType::MELEE, TFunction<BossActionTemp()>([=]()

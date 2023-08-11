@@ -53,9 +53,11 @@ private:
 
 public:
 	void InterpMove();
-
 	void ActivateAttackTrigger();
 	void DeactivateAttackTrigger();
+	void Rotate();
+
+
 
 	UFUNCTION()
 	void OnKnightTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -65,8 +67,6 @@ public:
 
 	virtual void StartAttackTrigger(MonsterAnimationType AttackAnimType) override;
 	virtual void EndAttackTrigger(MonsterAnimationType AttackAnimType) override;
-
-	void Rotate();
 
 	virtual float Die(float Dm) override;
 
