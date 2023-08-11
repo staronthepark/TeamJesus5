@@ -758,39 +758,6 @@ AJesusBoss::AJesusBoss()
 
 				if (Type == BossAnimationType::BACKSTEP || Type == BossAnimationType::LEFTSTEP || Type == BossAnimationType::RIGHTSTEP)
 					return;
-
-				if (Type != BossAnimationType::THIRDJUMP)
-				{
-					if (CurrentActionTemp.IsAddPercentage)
-						InitPercentageMap[CurrentActionTemp.AttackType]();
-					else
-						ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
-				}
-
-				if (PlayerDirection == BACK)
-				{
-					//CurrentActionTemp
-					Attack(BossAnimationType::BackSwing);
-					return;
-				}
-
-				if (IsHalfHp && !IsShowHalfHp)
-				{
-					IsShowHalfHp = true;
-					CurrentActionTemp = MeleeActionArr.Last();
-					SetBTAction(CurrentActionTemp);
-					IsActionEnd = true;
-					return;
-				}
-
-				if (Dist >= RangeAtk)
-					CurrentActionTemp = GetRandomPatternMap[BossAttackType::RANGE]();
-				else
-					CurrentActionTemp = GetRandomPatternMap[BossAttackType::MELEE]();
-
-				SetBTAction(CurrentActionTemp);
-				IsActionEnd = true;
-				IsAttackMontageEnd = true;
 			}));
 
 
@@ -941,6 +908,11 @@ AJesusBoss::AJesusBoss()
 				FollowUpActionArr[i].Percentage += DecreasePercentageVal / (FollowUpActionArr.Num() - 2);
 				FollowUpPercentageVec.push_back(FollowUpActionArr[i].Percentage);
 			}
+		}));
+
+	ChangePercentageMap.Add(STEP, TFunction<void(BossActionTemp*)>([=](BossActionTemp* Temp)
+		{
+
 		}));
 
 	//===============================È®·ü ÃÊ±âÈ­========================================
@@ -1133,7 +1105,7 @@ void AJesusBoss::BeginPlay()
 
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
-	SetActive(false);
+	//SetActive(false);
 }
 
 void AJesusBoss::Tick(float DeltaTime)
