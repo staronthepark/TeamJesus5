@@ -70,7 +70,7 @@ void UJesusGameInstance::Init()
 	{
 		setting->RunHardwareBenchmark();
 		
-		float GPU = setting->GetLastGPUBenchmarkResult();
+		float GPU = setting->GetLastGPUBenchmarkResult() / 190;
 		
 		UE_LOG(LogTemp, Error, TEXT("%f"), GPU);
 		
@@ -78,32 +78,46 @@ void UJesusGameInstance::Init()
 		setting->SetVSyncEnabled(false);
 		
 		setting->SetResolutionScaleValue(100);
-		if (GPU > 580)
+
+		if (GPU >= 3)
 		{
-			setting->SetPostProcessingQuality(VERYHIGH);
-			setting->SetShadowQuality(VERYHIGH);
-			setting->SetGlobalIlluminationQuality(VERYHIGH);
-			setting->SetReflectionQuality(VERYHIGH);
-			setting->SetVisualEffectQuality(VERYHIGH);
-			setting->SetTextureQuality(VERYHIGH);
-			setting->SetFoliageQuality(VERYHIGH);
-			setting->SetShadingQuality(VERYHIGH);
-			setting->SetViewDistanceQuality(VERYHIGH);
-			setting->SetAntiAliasingQuality(VERYHIGH);
+			setting->SetPostProcessingQuality(GPU);
+			setting->SetShadowQuality(GPU);
+			setting->SetGlobalIlluminationQuality(GPU);
+			setting->SetReflectionQuality(GPU);
+			setting->SetVisualEffectQuality(GPU);
+			setting->SetTextureQuality(GPU);
+			setting->SetFoliageQuality(GPU);
+			setting->SetShadingQuality(GPU);
+			setting->SetViewDistanceQuality(GPU);
+			setting->SetAntiAliasingQuality(GPU);
 		}
-		else if(GPU <= 290)
+		else
 		{
-			setting->SetPostProcessingQuality(HIGH);
-			setting->SetShadowQuality(HIGH);
-			setting->SetGlobalIlluminationQuality(HIGH);
-			setting->SetReflectionQuality(HIGH);
-			setting->SetVisualEffectQuality(HIGH);
+			setting->SetPostProcessingQuality(GPU);
+			setting->SetShadowQuality(GPU);
+			setting->SetGlobalIlluminationQuality(GPU);
+			setting->SetReflectionQuality(GPU);
+			setting->SetVisualEffectQuality(GPU);
 			setting->SetTextureQuality(MIDDLE);
 			setting->SetFoliageQuality(MIDDLE);
 			setting->SetShadingQuality(MIDDLE);
 			setting->SetViewDistanceQuality(MIDDLE);
 			setting->SetAntiAliasingQuality(MIDDLE);
 		}
+		//else if(GPU <= 290)
+		//{
+		//	setting->SetPostProcessingQuality(HIGH);
+		//	setting->SetShadowQuality(HIGH);
+		//	setting->SetGlobalIlluminationQuality(HIGH);
+		//	setting->SetReflectionQuality(HIGH);
+		//	setting->SetVisualEffectQuality(HIGH);
+		//	setting->SetTextureQuality(MIDDLE);
+		//	setting->SetFoliageQuality(MIDDLE);
+		//	setting->SetShadingQuality(MIDDLE);
+		//	setting->SetViewDistanceQuality(MIDDLE);
+		//	setting->SetAntiAliasingQuality(MIDDLE);
+		//}
 		
 		setting->ApplySettings(true);
 	}
