@@ -46,7 +46,7 @@ AKinghtMonster::AKinghtMonster()
 						ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 
 						DashAttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-						GetWorldTimerManager().ClearTimer(CircleWalkTimerHandle);
+						//GetWorldTimerManager().ClearTimer(CircleWalkTimerHandle);
 					}), CircleWalkMinTime, false);
 
 				ChangeActionType(MonsterActionType::MOVE);
