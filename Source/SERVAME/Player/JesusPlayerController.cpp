@@ -29,7 +29,8 @@ void AJesusPlayerController::BeginPlay()
 		});
 	CameraYawRotateEventMap.Add(true, [&](float Val)
 		{
-			ChangeTargetEventMap[FMath::Abs(Val) > ChangeTargetMouseValue && character->ChangeTargetTime >= 0.5f][Val < 0]();
+			float MouseValue = character->IsInputPad ? 1.0f : ChangeTargetMouseValue;
+			ChangeTargetEventMap[FMath::Abs(Val) > MouseValue && character->ChangeTargetTime >= 0.5f][Val < 0]();
 		});
 
 	ChangeTargetEventMap.Add(false, TMap<bool, TFunction<void()>>());
