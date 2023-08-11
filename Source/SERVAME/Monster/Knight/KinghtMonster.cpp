@@ -191,7 +191,6 @@ void AKinghtMonster::OnKnightTargetDetectionBeginOverlap(UPrimitiveComponent* Ov
 	if (PlayerCharacter == nullptr)
 	{
 		PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
-		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
 	}
 }
 

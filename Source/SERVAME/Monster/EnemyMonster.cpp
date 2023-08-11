@@ -377,7 +377,6 @@ void AEnemyMonster::BeginPlay()
 {
 	Super::BeginPlay();
 
-
 	GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.CharacterOriginSpeed;
 	YawRotation = GetActorRotation();
 
@@ -457,12 +456,20 @@ void AEnemyMonster::ActivateHpBar()
 	MonsterHPWidget->SetVisibility(ESlateVisibility::Visible);
 }
 
-void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AEnemyMonster::TickOverlap()
 {
-	if (ActionType == MonsterActionType::DEAD)return;
-	if (PlayerCharacter == nullptr)
+	if (MyMonsterType == MonsterType::KNIGHT)
 	{
-		PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
+		if (!MonsterController->FindPlayer)
+			return;
+	}
+
+	IsOverlap = false;
+
+	if (ActionType == MonsterActionType::DEAD)return;
+	if (PlayerCharacter == nullptr && otherActor != nullptr)
+	{
+		PlayerCharacter = Cast<APlayerCharacter>(otherActor);
 		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
 		if (MyMonsterType == MonsterType::TUTORIAL)
 			PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::camera, true);
@@ -472,8 +479,15 @@ void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* Overlappe
 	TargetDetectEventMap[AttackType]();
 }
 
+void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	otherActor = OtherActor;
+	IsOverlap = true;
+}
+
 void AEnemyMonster::OnTargetDetectionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	IsOverlap = false;
 	AttackAnimationType = MonsterAnimationType::NONE;
 }
 
@@ -677,6 +691,9 @@ void AEnemyMonster::Tick(float DeltaTime)
 	MonsterTickEventMap[ActionType]();	
 
 	Rotate();
+
+	if (IsOverlap)
+		TickOverlap();
 }
 
 void AEnemyMonster::ActivateLockOnImage(bool value)
