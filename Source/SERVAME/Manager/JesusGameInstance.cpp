@@ -94,11 +94,11 @@ void UJesusGameInstance::Init()
 		}
 		else
 		{
-			setting->SetPostProcessingQuality(GPU);
-			setting->SetShadowQuality(GPU);
-			setting->SetGlobalIlluminationQuality(GPU);
-			setting->SetReflectionQuality(GPU);
-			setting->SetVisualEffectQuality(GPU);
+			setting->SetPostProcessingQuality(HIGH);
+			setting->SetShadowQuality(HIGH);
+			setting->SetGlobalIlluminationQuality(HIGH);
+			setting->SetReflectionQuality(HIGH);
+			setting->SetVisualEffectQuality(HIGH);
 			setting->SetTextureQuality(MIDDLE);
 			setting->SetFoliageQuality(MIDDLE);
 			setting->SetShadingQuality(MIDDLE);
