@@ -466,7 +466,8 @@ void AEnemyMonster::TickOverlap()
 
 	IsOverlap = false;
 
-	if (ActionType == MonsterActionType::DEAD)return;
+	if (ActionType == MonsterActionType::DEAD)
+		return;
 	if (PlayerCharacter == nullptr && otherActor != nullptr)
 	{
 		PlayerCharacter = Cast<APlayerCharacter>(otherActor);
@@ -699,26 +700,6 @@ void AEnemyMonster::Tick(float DeltaTime)
 void AEnemyMonster::ActivateLockOnImage(bool value)
 {
 	value ? MonsterLockOnWidget->SetVisibility(ESlateVisibility::HitTestInvisible) : MonsterLockOnWidget->SetVisibility(ESlateVisibility::Collapsed);
-}
-
-void AEnemyMonster::BeforeAttackNotify(bool value)
-{
-	if (value == true)
-	{
-
-	}
-	else
-	{
-
-	}
-}
-
-void AEnemyMonster::AfterAttackNotify(bool value)
-{
-	if (value == true)
-	{
-
-	}
 }
 
 void AEnemyMonster::IsNotifyActive(bool value)

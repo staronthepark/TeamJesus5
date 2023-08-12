@@ -24,28 +24,29 @@ AKinghtMonster::AKinghtMonster()
 
 	SetActionByRandomMap.Add(MonsterAnimationType::DASHATTACK1, [&](float percent)
 		{
-			if (percent <= 0.3f)
+			if (percent <= 0.45f)
 			{
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::DASHATTACK1);
 			}
 			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("CIRCLE"));
 				DrawCircle(PlayerCharacter->GetActorLocation());
 				CircleWalkEnd = false;
 				MonsterMoveEventIndex = 3;
 				DashAttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			
 				GetWorldTimerManager().SetTimer(CircleWalkTimerHandle, FTimerDelegate::CreateLambda([=]()
-					{
-						UE_LOG(LogTemp, Warning, TEXT("CIRCLE_END"));
-						CircleWalkEnd = true;
-						MonsterMoveEventIndex = 1;
-						ChangeActionType(MonsterActionType::MOVE);
-						ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+					{					
+						if (MonsterDataStruct.CharacterHp > 0)
+						{
+							CircleWalkEnd = true;
+							MonsterMoveEventIndex = 1;
+							ChangeActionType(MonsterActionType::MOVE);
+							ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 
-						DashAttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+							DashAttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+						}
 						//GetWorldTimerManager().ClearTimer(CircleWalkTimerHandle);
 					}), CircleWalkMinTime, false);
 
@@ -287,6 +288,11 @@ float AKinghtMonster::Die(float Dm)
 	if (MonsterDataStruct.CharacterHp <= 0)
 	{
 		Imotal = true;
+
+		KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
+		ChangeActionType(MonsterActionType::DEAD);
+		StateType = MonsterStateType::CANTACT;
+
 		MonsterController->StopMovement();
 		DeactivateSMOverlap();
 		ParryingCollision1->Deactivate();
@@ -302,6 +308,8 @@ float AKinghtMonster::Die(float Dm)
 float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	IsInterpStart = false;
 
 	if (AnimationType == MonsterAnimationType::EXECUTION)
 		return 0.f;

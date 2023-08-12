@@ -149,9 +149,7 @@ public:
 	int32 MonsterRandomMove;
 	int CircleIndexCount = 1;
 
-	bool PlayerHit;
 	bool IsDetect;
-	bool CanAttack;
 	bool TracePlayer;
 	bool IsOverlap = false;
 
@@ -218,8 +216,6 @@ public:
 
 	virtual void ActivateLockOnImage(bool value) override;
 
-	virtual void BeforeAttackNotify(bool value)override;
-	virtual void AfterAttackNotify(bool value) override;
 	virtual void IsNotifyActive(bool value) override;
 	virtual void RespawnCharacter() override;
 
