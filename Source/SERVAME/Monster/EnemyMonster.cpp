@@ -113,6 +113,9 @@ AEnemyMonster::AEnemyMonster()
 
 	MonsterTickEventMap.Add(MonsterActionType::ATTACK, [&]()
 		{
+			if (MonsterController->FindPlayer == false)
+				MonsterController->FindPlayer = true;
+
 			RotateMap[true]();
 		});
 
@@ -126,6 +129,7 @@ AEnemyMonster::AEnemyMonster()
 			if (MonsterController->FindPlayer == false)
 			{
 				MonsterController->StopMovement();
+				ChangeActionType(MonsterActionType::MOVE);
 			}
 			else
 			{
@@ -466,6 +470,14 @@ void AEnemyMonster::ActivateHpBar()
 
 void AEnemyMonster::TickOverlap()
 {
+	if (PlayerCharacter == nullptr && otherActor != nullptr)
+	{
+		PlayerCharacter = Cast<APlayerCharacter>(otherActor);
+		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
+		if (MyMonsterType == MonsterType::TUTORIAL)
+			PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::camera, true);
+	}
+
 	if (MyMonsterType == MonsterType::KNIGHT)
 	{
 		if (!MonsterController->FindPlayer)
@@ -476,15 +488,12 @@ void AEnemyMonster::TickOverlap()
 
 	if (ActionType == MonsterActionType::DEAD)
 		return;
-	if (PlayerCharacter == nullptr && otherActor != nullptr)
-	{
-		PlayerCharacter = Cast<APlayerCharacter>(otherActor);
-		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
-		if (MyMonsterType == MonsterType::TUTORIAL)
-			PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::camera, true);
-	}
+	if (ActionType == MonsterActionType::ATTACK)
+		return;
+
 	TracePlayer = true;
 	MonsterMoveEventIndex = 1;
+
 	TargetDetectEventMap[AttackType]();
 }
 

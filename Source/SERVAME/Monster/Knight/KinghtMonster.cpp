@@ -38,7 +38,7 @@ AKinghtMonster::AKinghtMonster()
 			
 				GetWorldTimerManager().SetTimer(CircleWalkTimerHandle, FTimerDelegate::CreateLambda([=]()
 					{					
-						if (MonsterDataStruct.CharacterHp > 0)
+						if (MonsterDataStruct.CharacterHp > 0 && MonsterController->FindPlayer)
 						{
 							CircleWalkEnd = true;
 							MonsterMoveEventIndex = 1;
