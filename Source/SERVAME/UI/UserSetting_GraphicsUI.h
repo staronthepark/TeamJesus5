@@ -50,16 +50,16 @@ class SERVAME_API UUserSetting_GraphicsUI : public USubUserSettingUI
 		UImage* EffectImage;
 
 	UPROPERTY(meta = (BindWidget))
-	USliderUI* WBP_Volumetric_Button;	
+	UButtonUI* WBP_Volumetric_Button;	
 	
 	UPROPERTY(meta = (BindWidget))
-	USliderUI* WBP_Shadow_Button;	
+	UButtonUI* WBP_Shadow_Button;
 	
 	UPROPERTY(meta = (BindWidget))
-	USliderUI* WBP_GI_Button;	
+	UButtonUI* WBP_GI_Button;
 	
 	UPROPERTY(meta = (BindWidget))
-	USliderUI* WBP_Effect_Button;
+	UButtonUI* WBP_Effect_Button;
 
 	UPROPERTY(EditAnywhere)
 	TMap<EGraphicsSettings, FGraphicsTextures> ImageTextures;

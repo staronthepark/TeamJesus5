@@ -2168,6 +2168,8 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 {
 	if (IsGrab)return;
 	VibrateGamePad(0.4f, 0.4f);
+	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[38].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(90, 180, 0));
+	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[39].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(90, 180, 0));
 	PlayerDataStruct.ShieldHP = 0;
 	CanExecution = true;
 	Imotal = true;
