@@ -82,11 +82,21 @@ void AMonsterController::OnTargetPerceptionUpdated_Delegate(AActor* Actor, FAISt
 	switch (Stimulus.Type)
 	{
 	case 0:
-		if (GetTeamAttitudeTowards(*Actor) == ETeamAttitude::Hostile)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("FindPlayer"));
-			FindPlayer = true;
-		}
+		//auto Dist = FVector::Distance(Player->GetActorLocation(), Monster->GetActorLocation());
+		//
+		//if (Dist <= 1400)
+		//{
+		//	if (GetTeamAttitudeTowards(*Actor) == ETeamAttitude::Hostile)
+		//	{
+		//		UE_LOG(LogTemp, Warning, TEXT("FindPlayer"));
+		//		FindPlayer = true;
+		//	}
+		//}
+		//else
+		//{
+		//	UE_LOG(LogTemp, Warning, TEXT("LostPlayer"));
+		//	FindPlayer = false;
+		//}
 		break;
 
 	default:
@@ -103,6 +113,23 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 
 	UE_LOG(LogTemp, Log, TEXT("OnPerception"));
 	SetFocus(Stimulus.WasSuccessfullySensed() ? Player : nullptr);
+
+	auto Dist = FVector::Distance(Player->GetActorLocation(), Monster->GetActorLocation());
+
+	if (Dist <= 1400)
+	{
+		if (GetTeamAttitudeTowards(*Actor) == ETeamAttitude::Hostile)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("FindPlayer"));
+			FindPlayer = true;
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("LostPlayer"));
+		Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		FindPlayer = false;
+	}
 }
 
 void AMonsterController::OnPossess(APawn* InPawn)

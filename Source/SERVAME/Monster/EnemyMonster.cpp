@@ -102,7 +102,8 @@ AEnemyMonster::AEnemyMonster()
 	MonsterTickEventMap.Add(MonsterActionType::NONE, [&]()
 		{
 			//test
-			RotateMap[PlayerCharacter != nullptr]();
+			if (MonsterController->FindPlayer)
+				RotateMap[PlayerCharacter != nullptr]();
 		});
 
 	MonsterTickEventMap.Add(MonsterActionType::DODGE, [&]()
@@ -122,8 +123,15 @@ AEnemyMonster::AEnemyMonster()
 
 	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
 		{
-			RotateMap[PlayerCharacter != nullptr]();
-			MonsterMoveMap[MonsterMoveEventIndex]();
+			if (MonsterController->FindPlayer == false)
+			{
+				MonsterController->StopMovement();
+			}
+			else
+			{
+				RotateMap[PlayerCharacter != nullptr]();
+				MonsterMoveMap[MonsterMoveEventIndex]();
+			}
 		});
 
 	MonsterTickEventMap.Add(MonsterActionType::HIT, [&]()
