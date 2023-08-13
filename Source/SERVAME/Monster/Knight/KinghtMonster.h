@@ -9,6 +9,7 @@
 #include "..\..\UI\MonsterWidget.h"
 #include "Components/WidgetComponent.h"
 #include "KnightAnimInstance.h"
+#include "KnightArmorCollider.h"
 #include "KinghtMonster.generated.h"
 
 UCLASS()
@@ -26,6 +27,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UKnightAttackTriggerComp* DashAttackTrigger;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UKnightArmorCollider* ArmorCollider;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	APlayerCharacter* PlayerCharacter;

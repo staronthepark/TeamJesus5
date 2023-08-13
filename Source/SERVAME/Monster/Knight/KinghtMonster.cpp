@@ -16,6 +16,9 @@ AKinghtMonster::AKinghtMonster()
 	DashAttackTrigger = CreateDefaultSubobject<UKnightAttackTriggerComp>(TEXT("DashAttackTriggerCollision"));
 	DashAttackTrigger->SetupAttachment(GetMesh());
 
+	ArmorCollider = CreateDefaultSubobject<UKnightArmorCollider>(TEXT("ArmorCollider"));
+	ArmorCollider->SetupAttachment(GetMesh(), "Bip001-Spine2");
+
 	MonsterMoveMap.Add(3, [&]()
 		{
 			if (CircleWalkEnd == false)
