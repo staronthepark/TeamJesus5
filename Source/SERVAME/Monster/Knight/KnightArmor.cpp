@@ -18,5 +18,10 @@ void AKnightArmor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (ArmorDataStruct.ArmorHp <= 0)
+	{
+		IsBroke = true;
+		SetActorHiddenInGame(true);
+	}
 }
 

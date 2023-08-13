@@ -119,6 +119,9 @@ void AKinghtMonster::InterpEnd() { IsInterpStart = false; }
 
 void AKinghtMonster::KnockBackStart()
 {
+	if (!KnightArmor->IsBroke)
+		return;
+
 	GetWorld()->GetTimerManager().SetTimer(KnockBackTimerHandle, FTimerDelegate::CreateLambda([=]()
 		{
 			IsKnockBack = false;
@@ -309,8 +312,6 @@ float AKinghtMonster::Die(float Dm)
 		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
 		ChangeMontageAnimation(MonsterAnimationType::DEAD);
 
-		KnightArmor->SetActorHiddenInGame(true);
-
 		return Dm;
 	}
 
@@ -326,7 +327,11 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	if (AnimationType == MonsterAnimationType::EXECUTION)
 		return 0.f;
 
-	if (DamageAmount >= 30 && MonsterDataStruct.CharacterHp > 0)
+	if (!KnightArmor->IsBroke)
+	{
+		KnightArmor->ArmorDataStruct.ArmorHp -= DamageAmount;
+	}
+	else if (DamageAmount >= 30 && MonsterDataStruct.CharacterHp > 0)
 	{
 		MonsterController->StopMovement();
 		KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
@@ -336,6 +341,7 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 		ChangeActionType(MonsterActionType::HIT);
 		ChangeMontageAnimation(MonsterAnimationType::HIT);
 	}
+
 
 	return DamageAmount;
 }
