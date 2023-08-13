@@ -7,6 +7,10 @@ ALevelStreamerActor::ALevelStreamerActor()
 	OverlapVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("OverlapVolume"));
 	RootComponent = OverlapVolume;
 
+	for (int32 i = 0; i < MonsterList.Num(); i++)
+	{
+		MonsterList[i]->SetActive(false);
+	}
 }
 
 void ALevelStreamerActor::BeginPlay()
