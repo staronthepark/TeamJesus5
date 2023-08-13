@@ -9,6 +9,7 @@
 #include "..\..\UI\MonsterWidget.h"
 #include "Components/WidgetComponent.h"
 #include "KnightAnimInstance.h"
+#include "KnightArmorCollider.h"
 #include "KinghtMonster.generated.h"
 
 UCLASS()
@@ -27,6 +28,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UKnightAttackTriggerComp* DashAttackTrigger;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UKnightArmorCollider* ArmorCollider;
+
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	APlayerCharacter* PlayerCharacter;
 
@@ -40,10 +44,22 @@ public:
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool IsKnockBack = false;
 
+	TArray<FVector> CirclePoints;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	int NumSegments = 16;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	float Radius = 700.f;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	float CircleWalkMinTime = 3.f;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	bool DrawDebugCircle = false;
+	bool CircleWalkEnd = false;
+
 private:
 
 	FTimerHandle KnockBackTimerHandle;
 	FTimerHandle KnockBackDelayTimerHandle;
+	FTimerHandle CircleWalkTimerHandle;
 
 	//Notify
 	void InterpStart();
@@ -53,9 +69,11 @@ private:
 
 public:
 	void InterpMove();
-
 	void ActivateAttackTrigger();
 	void DeactivateAttackTrigger();
+	void Rotate();
+	void DrawCircle(FVector Center);
+
 
 	UFUNCTION()
 	void OnKnightTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -65,8 +83,6 @@ public:
 
 	virtual void StartAttackTrigger(MonsterAnimationType AttackAnimType) override;
 	virtual void EndAttackTrigger(MonsterAnimationType AttackAnimType) override;
-
-	void Rotate();
 
 	virtual float Die(float Dm) override;
 

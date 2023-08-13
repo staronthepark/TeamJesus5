@@ -1431,6 +1431,7 @@ APlayerCharacter::~APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
 	PlayerSKMesh = GetMesh();
 	IsCollisionCamera = false;
 	DebugMode = false;

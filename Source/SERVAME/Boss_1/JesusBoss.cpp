@@ -749,6 +749,18 @@ AJesusBoss::AJesusBoss()
 				IsAttackMontageEnd = true;
 			}));
 
+	ActionEndMap.Add(BossAttackType::STEP, TFunction<void(float, float, UAnimMontage*)>
+		([=](float Dist, float Time, UAnimMontage* Montage)
+			{
+				BossActionTemp ActionTemp{};
+
+				auto Type = GetTypeFromMetaData(Montage);
+
+				if (Type == BossAnimationType::BACKSTEP || Type == BossAnimationType::LEFTSTEP || Type == BossAnimationType::RIGHTSTEP)
+					return;
+			}));
+
+
 	//======================================확률에 의한 랜덤 패턴 가져오기========================================
 
 	GetRandomPatternMap.Add(BossAttackType::MELEE, TFunction<BossActionTemp()>([=]()
@@ -896,6 +908,11 @@ AJesusBoss::AJesusBoss()
 				FollowUpActionArr[i].Percentage += DecreasePercentageVal / (FollowUpActionArr.Num() - 2);
 				FollowUpPercentageVec.push_back(FollowUpActionArr[i].Percentage);
 			}
+		}));
+
+	ChangePercentageMap.Add(STEP, TFunction<void(BossActionTemp*)>([=](BossActionTemp* Temp)
+		{
+
 		}));
 
 	//===============================확률 초기화========================================

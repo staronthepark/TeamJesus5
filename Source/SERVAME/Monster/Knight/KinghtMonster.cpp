@@ -16,18 +16,45 @@ AKinghtMonster::AKinghtMonster()
 	DashAttackTrigger = CreateDefaultSubobject<UKnightAttackTriggerComp>(TEXT("DashAttackTriggerCollision"));
 	DashAttackTrigger->SetupAttachment(GetMesh());
 
-	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
+	ArmorCollider = CreateDefaultSubobject<UKnightArmorCollider>(TEXT("ArmorCollider"));
+	ArmorCollider->SetupAttachment(GetMesh(), "Bip001-Spine2");
+
+	MonsterMoveMap.Add(3, [&]()
 		{
-			if (percent >= 0.5)
+			if (CircleWalkEnd == false)
+				MonsterController->MoveWhenArrived(CirclePoints[CircleIndexCount]);
+		});
+
+	SetActionByRandomMap.Add(MonsterAnimationType::DASHATTACK1, [&](float percent)
+		{
+			if (percent <= 0.45f)
 			{
 				ChangeActionType(MonsterActionType::ATTACK);
-				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
+				ChangeMontageAnimation(MonsterAnimationType::DASHATTACK1);
 			}
-			else if (percent < 0.5f)
+			else
 			{
-				//UGameplayStatics::SetGlobalTimeDilation(monster, 0.1f);
-				ChangeActionType(MonsterActionType::ATTACK);
-				ChangeMontageAnimation(MonsterAnimationType::POWERATTACK1);
+				DrawCircle(PlayerCharacter->GetActorLocation());
+				CircleWalkEnd = false;
+				MonsterMoveEventIndex = 3;
+				DashAttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			
+				GetWorldTimerManager().SetTimer(CircleWalkTimerHandle, FTimerDelegate::CreateLambda([=]()
+					{					
+						if (MonsterDataStruct.CharacterHp > 0 && MonsterController->FindPlayer)
+						{
+							CircleWalkEnd = true;
+							MonsterMoveEventIndex = 1;
+							ChangeActionType(MonsterActionType::MOVE);
+							ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+
+							DashAttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+						}
+						//GetWorldTimerManager().ClearTimer(CircleWalkTimerHandle);
+					}), CircleWalkMinTime, false);
+
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::LEFTMOVE);
 			}
 		});
 }
@@ -168,7 +195,6 @@ void AKinghtMonster::OnKnightTargetDetectionBeginOverlap(UPrimitiveComponent* Ov
 	if (PlayerCharacter == nullptr)
 	{
 		PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
-		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
 	}
 }
 
@@ -212,11 +238,64 @@ void AKinghtMonster::Rotate()
 	SetActorRotation(FMath::Lerp(GetActorRotation(), YawRotation, MonsterDataStruct.RotateSpeed * fDeltaTime));
 }
 
+void AKinghtMonster::DrawCircle(FVector Center)
+{
+	CirclePoints.SetNum(NumSegments);
+
+	const float AngleBetweenSegments = 2 * PI / NumSegments;
+
+	// 원을 구성하는 점들 계산
+	int ClosestPointIndex = 0;
+	float MinDistance = FLT_MAX;
+
+	for (int i = 1; i < NumSegments; ++i)
+	{
+		float Angle = i * AngleBetweenSegments;
+		float X = Center.X + Radius * FMath::Cos(Angle);
+		float Y = Center.Y + Radius * FMath::Sin(Angle);
+		FVector Point(X, Y, Center.Z);
+		CirclePoints[i] = Point;
+
+		float Distance = FVector::Dist(Point, GetActorLocation());
+		if (Distance < MinDistance)
+		{
+			MinDistance = Distance;
+			ClosestPointIndex = i;
+		}
+	}
+
+	// ClosestPointIndex부터 시작하여 원의 점들 재배열
+	TArray<FVector> TempArray;
+	TempArray.Append(CirclePoints.GetData() + ClosestPointIndex, CirclePoints.Num() - ClosestPointIndex);
+	TempArray.Append(CirclePoints.GetData() + 1, ClosestPointIndex);
+	CirclePoints = TempArray;
+
+	if (DrawDebugCircle)
+	{
+		// 점들을 이어서 원 그리기
+		for (int32 i = 0; i < NumSegments; ++i)
+		{
+			FVector Start = CirclePoints[i];
+			FVector End = CirclePoints[(i + 1) % NumSegments];
+
+			if (i == 0)
+				DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1.0f, 0, 5.0f);
+			else
+				DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 1.0f, 0, 5.0f);
+		}
+	}
+}
+
 float AKinghtMonster::Die(float Dm)
 {
 	if (MonsterDataStruct.CharacterHp <= 0)
 	{
 		Imotal = true;
+
+		KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
+		ChangeActionType(MonsterActionType::DEAD);
+		StateType = MonsterStateType::CANTACT;
+
 		MonsterController->StopMovement();
 		DeactivateSMOverlap();
 		ParryingCollision1->Deactivate();
@@ -232,6 +311,8 @@ float AKinghtMonster::Die(float Dm)
 float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	IsInterpStart = false;
 
 	if (AnimationType == MonsterAnimationType::EXECUTION)
 		return 0.f;

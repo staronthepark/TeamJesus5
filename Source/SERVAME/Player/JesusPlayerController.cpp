@@ -6,6 +6,7 @@
 void AJesusPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
 	bAutoManageActiveCameraTarget = false;
 
 	bShowMouseCursor = true;

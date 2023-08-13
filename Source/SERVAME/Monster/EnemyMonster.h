@@ -49,6 +49,7 @@ enum class MonsterType : uint8
 	ELETERANGE,
 	BOSS,
 	TUTORIAL,
+	KNIGHT,
 };
 
 USTRUCT(BlueprintType)
@@ -146,11 +147,13 @@ public:
 
 	int32 MonsterMoveEventIndex;
 	int32 MonsterRandomMove;
+	int CircleIndexCount = 1;
 
-	bool PlayerHit;
 	bool IsDetect;
-	bool CanAttack;
 	bool TracePlayer;
+	bool IsOverlap = false;
+
+	AActor* otherActor;
 
 protected:
 	TMap<int, TFunction<void()>> MonsterMoveMap;
@@ -170,6 +173,8 @@ public:
 	void DeactivateHpBar();
 
 	void ActivateHpBar();
+
+	void TickOverlap();
 
 	UFUNCTION()
 	void OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -211,8 +216,6 @@ public:
 
 	virtual void ActivateLockOnImage(bool value) override;
 
-	virtual void BeforeAttackNotify(bool value)override;
-	virtual void AfterAttackNotify(bool value) override;
 	virtual void IsNotifyActive(bool value) override;
 	virtual void RespawnCharacter() override;
 

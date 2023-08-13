@@ -102,7 +102,8 @@ AEnemyMonster::AEnemyMonster()
 	MonsterTickEventMap.Add(MonsterActionType::NONE, [&]()
 		{
 			//test
-			RotateMap[PlayerCharacter != nullptr]();
+			if (MonsterController->FindPlayer)
+				RotateMap[PlayerCharacter != nullptr]();
 		});
 
 	MonsterTickEventMap.Add(MonsterActionType::DODGE, [&]()
@@ -112,6 +113,9 @@ AEnemyMonster::AEnemyMonster()
 
 	MonsterTickEventMap.Add(MonsterActionType::ATTACK, [&]()
 		{
+			if (MonsterController->FindPlayer == false)
+				MonsterController->FindPlayer = true;
+
 			RotateMap[true]();
 		});
 
@@ -122,8 +126,16 @@ AEnemyMonster::AEnemyMonster()
 
 	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
 		{
-			RotateMap[PlayerCharacter != nullptr]();
-			MonsterMoveMap[MonsterMoveEventIndex]();
+			if (MonsterController->FindPlayer == false)
+			{
+				MonsterController->StopMovement();
+				ChangeActionType(MonsterActionType::MOVE);
+			}
+			else
+			{
+				RotateMap[PlayerCharacter != nullptr]();
+				MonsterMoveMap[MonsterMoveEventIndex]();
+			}
 		});
 
 	MonsterTickEventMap.Add(MonsterActionType::HIT, [&]()
@@ -377,7 +389,6 @@ void AEnemyMonster::BeginPlay()
 {
 	Super::BeginPlay();
 
-
 	GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.CharacterOriginSpeed;
 	YawRotation = GetActorRotation();
 
@@ -457,23 +468,44 @@ void AEnemyMonster::ActivateHpBar()
 	MonsterHPWidget->SetVisibility(ESlateVisibility::Visible);
 }
 
-void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AEnemyMonster::TickOverlap()
 {
-	if (ActionType == MonsterActionType::DEAD)return;
-	if (PlayerCharacter == nullptr)
+	if (PlayerCharacter == nullptr && otherActor != nullptr)
 	{
-		PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
+		PlayerCharacter = Cast<APlayerCharacter>(otherActor);
 		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
 		if (MyMonsterType == MonsterType::TUTORIAL)
 			PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::camera, true);
 	}
+
+	if (MyMonsterType == MonsterType::KNIGHT)
+	{
+		if (!MonsterController->FindPlayer)
+			return;
+	}
+
+	IsOverlap = false;
+
+	if (ActionType == MonsterActionType::DEAD)
+		return;
+	if (ActionType == MonsterActionType::ATTACK)
+		return;
+
 	TracePlayer = true;
 	MonsterMoveEventIndex = 1;
+
 	TargetDetectEventMap[AttackType]();
+}
+
+void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	otherActor = OtherActor;
+	IsOverlap = true;
 }
 
 void AEnemyMonster::OnTargetDetectionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	IsOverlap = false;
 	AttackAnimationType = MonsterAnimationType::NONE;
 }
 
@@ -677,31 +709,14 @@ void AEnemyMonster::Tick(float DeltaTime)
 	MonsterTickEventMap[ActionType]();	
 
 	Rotate();
+
+	if (IsOverlap)
+		TickOverlap();
 }
 
 void AEnemyMonster::ActivateLockOnImage(bool value)
 {
 	value ? MonsterLockOnWidget->SetVisibility(ESlateVisibility::HitTestInvisible) : MonsterLockOnWidget->SetVisibility(ESlateVisibility::Collapsed);
-}
-
-void AEnemyMonster::BeforeAttackNotify(bool value)
-{
-	if (value == true)
-	{
-
-	}
-	else
-	{
-
-	}
-}
-
-void AEnemyMonster::AfterAttackNotify(bool value)
-{
-	if (value == true)
-	{
-
-	}
 }
 
 void AEnemyMonster::IsNotifyActive(bool value)
