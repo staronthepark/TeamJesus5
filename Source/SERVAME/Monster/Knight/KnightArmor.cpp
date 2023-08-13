@@ -3,25 +3,25 @@
 
 #include "KnightArmor.h"
 
-// Sets default values
 AKnightArmor::AKnightArmor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
-// Called when the game starts or when spawned
 void AKnightArmor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
-// Called every frame
 void AKnightArmor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (ArmorDataStruct.ArmorHp <= 0)
+	{
+		IsBroke = true;
+		SetActorHiddenInGame(true);
+	}
 }
 

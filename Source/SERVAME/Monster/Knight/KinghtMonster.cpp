@@ -16,9 +16,6 @@ AKinghtMonster::AKinghtMonster()
 	DashAttackTrigger = CreateDefaultSubobject<UKnightAttackTriggerComp>(TEXT("DashAttackTriggerCollision"));
 	DashAttackTrigger->SetupAttachment(GetMesh());
 
-	ArmorCollider = CreateDefaultSubobject<UKnightArmorCollider>(TEXT("ArmorCollider"));
-	ArmorCollider->SetupAttachment(GetMesh(), "Bip001-Spine2");
-
 	MonsterMoveMap.Add(3, [&]()
 		{
 			if (CircleWalkEnd == false)
@@ -62,6 +59,15 @@ AKinghtMonster::AKinghtMonster()
 void AKinghtMonster::BeginPlay()
 {
 	Super::BeginPlay(); 
+
+	const FTransform socket = GetMesh()->GetSocketTransform("Bip001-Spine2", ERelativeTransformSpace::RTS_World);
+	auto Armor = GetWorld()->SpawnActor(ArmorClass, &socket);
+
+	if (Armor != nullptr)
+	{
+		Armor->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "Bip001-Spine2");
+		KnightArmor = Cast<AKnightArmor>(Armor);
+	}
 
 	SetActive(true);
 
@@ -113,6 +119,9 @@ void AKinghtMonster::InterpEnd() { IsInterpStart = false; }
 
 void AKinghtMonster::KnockBackStart()
 {
+	if (!KnightArmor->IsBroke)
+		return;
+
 	GetWorld()->GetTimerManager().SetTimer(KnockBackTimerHandle, FTimerDelegate::CreateLambda([=]()
 		{
 			IsKnockBack = false;
@@ -302,6 +311,7 @@ float AKinghtMonster::Die(float Dm)
 		DeactivateRightWeapon();
 		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
 		ChangeMontageAnimation(MonsterAnimationType::DEAD);
+
 		return Dm;
 	}
 
@@ -310,14 +320,23 @@ float AKinghtMonster::Die(float Dm)
 
 float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	if (KnightArmor->IsBroke)
+		Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	IsInterpStart = false;
+	DeactivateHitCollision();
 
 	if (AnimationType == MonsterAnimationType::EXECUTION)
 		return 0.f;
 
-	if (DamageAmount >= 30 && MonsterDataStruct.CharacterHp > 0)
+	if (!KnightArmor->IsBroke)
+	{
+		KnightArmor->ArmorDataStruct.ArmorHp -= DamageAmount;
+		AObjectPool& objectpool = AObjectPool::GetInstance();
+		objectpool.SpawnObject(objectpool.ObjectArray[38].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[39].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	}
+	else if (DamageAmount >= 30 && MonsterDataStruct.CharacterHp > 0)
 	{
 		MonsterController->StopMovement();
 		KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
@@ -327,6 +346,8 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 		ChangeActionType(MonsterActionType::HIT);
 		ChangeMontageAnimation(MonsterAnimationType::HIT);
 	}
+
+	
 
 	return DamageAmount;
 }

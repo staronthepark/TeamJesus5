@@ -233,7 +233,7 @@ AEnemyMonster::AEnemyMonster()
 			{
 				ChangeActionType(MonsterActionType::NONE);
 				ChangeMontageAnimation(MonsterAnimationType::IDLE);
-			}				
+			}
 		});
 	
 	MontageEndEventMap.Add(MonsterAnimationType::POWERATTACK1, MontageEndEventMap[MonsterAnimationType::ATTACK1]);
@@ -476,11 +476,8 @@ void AEnemyMonster::TickOverlap()
 			PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::camera, true);
 	}
 
-	if (MyMonsterType == MonsterType::KNIGHT)
-	{
-		if (!MonsterController->FindPlayer)
-			return;
-	}
+	if (!MonsterController->FindPlayer)
+		return;
 
 	IsOverlap = false;
 
@@ -627,7 +624,7 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	{
 		return 0;
 	}
-	
+
 	//MonsterHpWidget->Hp->SetVisibility(ESlateVisibility::Visible);
 	//MonsterHpWidget->HpBG->SetVisibility(ESlateVisibility::Visible);
 	GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
@@ -707,6 +704,12 @@ void AEnemyMonster::Tick(float DeltaTime)
 	MonsterTickEventMap[ActionType]();	
 
 	Rotate();
+
+	if (MonsterDataStruct.CharacterHp <= 0)
+	{
+		ChangeActionType(MonsterActionType::DEAD);
+		StateType = MonsterStateType::CANTACT;
+	}
 
 	if (IsOverlap)
 		TickOverlap();

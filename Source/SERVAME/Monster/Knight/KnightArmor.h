@@ -6,21 +6,29 @@
 #include "GameFramework/Actor.h"
 #include "KnightArmor.generated.h"
 
+USTRUCT(BlueprintType)
+struct FArmorDataStruct
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ArmorHp;
+};
+
 UCLASS()
 class SERVAME_API AKnightArmor : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AKnightArmor();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FArmorDataStruct ArmorDataStruct;
+
+	bool IsBroke = false;
+
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 };
