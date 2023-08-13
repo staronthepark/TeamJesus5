@@ -717,6 +717,13 @@ void AEnemyMonster::ActivateLockOnImage(bool value)
 	value ? MonsterLockOnWidget->SetVisibility(ESlateVisibility::HitTestInvisible) : MonsterLockOnWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
+bool AEnemyMonster::IsAlive()
+{
+	if(MonsterDataStruct.CharacterHp > 0)
+	return true;
+	return false;
+}
+
 void AEnemyMonster::IsNotifyActive(bool value)
 {
 	if (NotifyBeginEndEventMap.Contains(AnimationType))
@@ -736,16 +743,17 @@ void AEnemyMonster::RespawnCharacter()
 	MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
 	MonsterHPWidget->SetHP(1.0f);
 
-	//Imotal = false;
+	Imotal = false;
 	//PlayerCharacter = nullptr;
 	//YawRotation = GetActorRotation();
+	LockOnWidget->SetVisibility(false);
 
-	//SetActorHiddenInGame(false);
-	//SetActorEnableCollision(true);
-	//SetActorTickEnabled(true);
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+	SetActorTickEnabled(true);
 
-	//ChangeActionType(MonsterActionType::NONE);
-	//ChangeMontageAnimation(MonsterAnimationType::IDLE);
+	ChangeActionType(MonsterActionType::NONE);
+	ChangeMontageAnimation(MonsterAnimationType::IDLE);
 }
 
 void AEnemyMonster::ResumeMontage()

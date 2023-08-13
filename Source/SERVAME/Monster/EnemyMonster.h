@@ -215,6 +215,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void ActivateLockOnImage(bool value) override;
+	virtual bool IsAlive()override;
 
 	virtual void IsNotifyActive(bool value) override;
 	virtual void RespawnCharacter() override;

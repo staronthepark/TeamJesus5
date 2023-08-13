@@ -8,6 +8,14 @@
 #include "BaseCharacter.h"
 #include "LevelStreamerActor.generated.h"
 
+UENUM(BlueprintType)
+enum class ELoadType : uint8
+{
+	ONLYLOAD,
+	ONLYUNLOAD,
+	BOTH,
+};
+
 UCLASS()
 class SERVAME_API ALevelStreamerActor : public AActor
 {
@@ -15,9 +23,8 @@ class SERVAME_API ALevelStreamerActor : public AActor
 	
 public:	
 	ALevelStreamerActor();
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
 
+	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
 		TArray<ABaseCharacter*> MonsterList;
@@ -27,6 +34,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		FName LevelToLoad;
+
+	UPROPERTY(EditAnywhere)
+		ELoadType LoadType;
 
 	UFUNCTION()
 		void OverlapBegins(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

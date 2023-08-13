@@ -21,15 +21,9 @@ void ALevelStreamerActor::BeginPlay()
 	OverlapVolume->OnComponentEndOverlap.AddUniqueDynamic(this, &ALevelStreamerActor::OverlapEnds);
 }
 
-void ALevelStreamerActor::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("!@#!@#"));
+	if (LoadType == ELoadType::ONLYUNLOAD)return;
 	if (LevelToLoad != "")
 	{
 		FLatentActionInfo LatentInfo;
@@ -37,6 +31,7 @@ void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent
 
 		for (int32 i = 0; i < MonsterList.Num(); i++)
 		{
+			if(MonsterList[i]->IsAlive())
 			MonsterList[i]->SetActive(true);
 		}
 	}
@@ -44,6 +39,7 @@ void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent
 
 void ALevelStreamerActor::OverlapEnds(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	if (LoadType == ELoadType::ONLYLOAD)return;
 	if (LevelToLoad != "")
 	{
 		FLatentActionInfo LatentInfo;

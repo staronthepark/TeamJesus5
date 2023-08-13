@@ -145,6 +145,8 @@ public:
 
 	void SwordVFXSpawn();
 
+	virtual bool IsAlive() { return 0; }
+
 	void CameraShake(TSubclassOf< UCameraShakeBase> Shake);
 
 	void VibrateGamePad(float Intensity, float time);
