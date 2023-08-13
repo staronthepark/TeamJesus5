@@ -233,7 +233,7 @@ AEnemyMonster::AEnemyMonster()
 			{
 				ChangeActionType(MonsterActionType::NONE);
 				ChangeMontageAnimation(MonsterAnimationType::IDLE);
-			}				
+			}
 		});
 	
 	MontageEndEventMap.Add(MonsterAnimationType::POWERATTACK1, MontageEndEventMap[MonsterAnimationType::ATTACK1]);
@@ -476,11 +476,8 @@ void AEnemyMonster::TickOverlap()
 			PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::camera, true);
 	}
 
-	if (MyMonsterType == MonsterType::KNIGHT)
-	{
-		if (!MonsterController->FindPlayer)
-			return;
-	}
+	if (!MonsterController->FindPlayer)
+		return;
 
 	IsOverlap = false;
 
