@@ -441,8 +441,6 @@ void AEnemyMonster::BeginPlay()
 	WeaponOverlapStaticMeshCollision->OnComponentEndOverlap.AddDynamic(this, &AEnemyMonster::OnSMOverlapEnd);
 
 	ParryingCollision1->OnComponentBeginOverlap.AddDynamic(this, &AEnemyMonster::OnParryingOverlap);
-
-	SetActive(false);
 }
 
 void AEnemyMonster::ChangeMontageAnimation(MonsterAnimationType type)
