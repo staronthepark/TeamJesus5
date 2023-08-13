@@ -91,8 +91,6 @@ void AKinghtMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	UE_LOG(LogTemp, Warning, TEXT("%d"), ActionType);
-
 	if (IsInterpStart)
 		InterpMove();
 }
