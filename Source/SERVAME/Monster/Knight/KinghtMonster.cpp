@@ -16,9 +16,6 @@ AKinghtMonster::AKinghtMonster()
 	DashAttackTrigger = CreateDefaultSubobject<UKnightAttackTriggerComp>(TEXT("DashAttackTriggerCollision"));
 	DashAttackTrigger->SetupAttachment(GetMesh());
 
-	ArmorCollider = CreateDefaultSubobject<UKnightArmorCollider>(TEXT("ArmorCollider"));
-	ArmorCollider->SetupAttachment(GetMesh(), "Bip001-Spine2");
-
 	MonsterMoveMap.Add(3, [&]()
 		{
 			if (CircleWalkEnd == false)
@@ -62,6 +59,15 @@ AKinghtMonster::AKinghtMonster()
 void AKinghtMonster::BeginPlay()
 {
 	Super::BeginPlay(); 
+
+	const FTransform socket = GetMesh()->GetSocketTransform("Bip001-Spine2", ERelativeTransformSpace::RTS_World);
+	auto Armor = GetWorld()->SpawnActor(ArmorClass, &socket);
+
+	if (Armor != nullptr)
+	{
+		Armor->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "Bip001-Spine2");
+		KnightArmor = Cast<AKnightArmor>(Armor);
+	}
 
 	SetActive(true);
 
@@ -302,6 +308,9 @@ float AKinghtMonster::Die(float Dm)
 		DeactivateRightWeapon();
 		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
 		ChangeMontageAnimation(MonsterAnimationType::DEAD);
+
+		KnightArmor->SetActorHiddenInGame(true);
+
 		return Dm;
 	}
 

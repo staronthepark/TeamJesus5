@@ -9,7 +9,7 @@
 #include "..\..\UI\MonsterWidget.h"
 #include "Components/WidgetComponent.h"
 #include "KnightAnimInstance.h"
-#include "KnightArmorCollider.h"
+#include "KnightArmor.h"
 #include "KinghtMonster.generated.h"
 
 UCLASS()
@@ -18,7 +18,12 @@ class SERVAME_API AKinghtMonster : public AEnemyMonster
 	GENERATED_BODY()
 public:
 	AKinghtMonster();
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Armor")
+	TSubclassOf<AKnightArmor> ArmorClass;
+
+	AKnightArmor* KnightArmor;
+
 	UPROPERTY()
 	UKnightAnimInstance* KnightAnimInstance;
 
@@ -27,9 +32,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UKnightAttackTriggerComp* DashAttackTrigger;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UKnightArmorCollider* ArmorCollider;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	APlayerCharacter* PlayerCharacter;
