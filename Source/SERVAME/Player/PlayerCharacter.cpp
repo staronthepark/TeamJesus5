@@ -919,6 +919,7 @@ APlayerCharacter::APlayerCharacter()
 		});
 	MontageEndEventMap.Add(AnimationType::SHIELDATTACK, [&]()
 		{
+			IsCollisionCamera = true;
 			ShieldOff();
 			ShoulderView(IsShoulderView);
 			IsGrab = false;
@@ -1065,6 +1066,7 @@ APlayerCharacter::APlayerCharacter()
 			if (PlayerDataStruct.ShieldHP <= 0)return;
 			AxisY != 1 || AxisX != 1 ? ChangeActionType(ActionType::MOVE) : ChangeActionType(ActionType::NONE);
 
+			IsCollisionCamera = false;
 			ComboAttackEnd();
 			SetSpeed(PlayerDataStruct.PlayerWalkSpeed);
 			ChangeMontageAnimation(AnimationType::SHIELDSTART);
@@ -1433,7 +1435,6 @@ void APlayerCharacter::BeginPlay()
 	IsCollisionCamera = false;
 	DebugMode = false;
 	LocketSKMesh->SetVisibility(true);
-	IsCollisionCamera = false;
 	ChangeActionType(ActionType::DEAD);
 
 	TArray<UActorComponent*> asd = GetComponentsByTag(UActorSequenceComponent::StaticClass(), FName("BossExecution"));
@@ -1991,7 +1992,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	CameraBoom1->TargetArmLength = FMath::Lerp(CameraBoom1->TargetArmLength, TargetCameraBoomLength, DeltaTime * 2.0f);
 	CameraBoom1->SocketOffset = FMath::Lerp(CameraBoom1->SocketOffset, TargetSocketOffset, DeltaTime * 2.0f);
 
-	if (IsCollisionCamera && !IsGrab)
+	if (IsCollisionCamera)
 	{
 		CameraDistanceToPlayer = FVector::Distance(FollowCamera->GetComponentLocation(), GetActorLocation());
 		CameraDistanceToPlayer = FMath::Clamp(CameraDistanceToPlayer, 40, 300);
@@ -2171,6 +2172,7 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[39].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(90, 180, 0));
 	PlayerDataStruct.ShieldHP = 0;
 	CanExecution = true;
+	IsCollisionCamera = true;
 	Imotal = true;
 	ChangeActionType(ActionType::DEAD);	
 	ShieldOff();
