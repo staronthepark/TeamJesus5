@@ -627,7 +627,7 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	{
 		return 0;
 	}
-	
+
 	//MonsterHpWidget->Hp->SetVisibility(ESlateVisibility::Visible);
 	//MonsterHpWidget->HpBG->SetVisibility(ESlateVisibility::Visible);
 	GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
@@ -707,6 +707,12 @@ void AEnemyMonster::Tick(float DeltaTime)
 	MonsterTickEventMap[ActionType]();	
 
 	Rotate();
+
+	if (MonsterDataStruct.CharacterHp <= 0)
+	{
+		ChangeActionType(MonsterActionType::DEAD);
+		StateType = MonsterStateType::CANTACT;
+	}
 
 	if (IsOverlap)
 		TickOverlap();

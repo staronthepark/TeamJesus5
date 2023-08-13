@@ -320,9 +320,11 @@ float AKinghtMonster::Die(float Dm)
 
 float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	if (KnightArmor->IsBroke)
+		Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	IsInterpStart = false;
+	DeactivateHitCollision();
 
 	if (AnimationType == MonsterAnimationType::EXECUTION)
 		return 0.f;
@@ -330,6 +332,11 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	if (!KnightArmor->IsBroke)
 	{
 		KnightArmor->ArmorDataStruct.ArmorHp -= DamageAmount;
+		int value = FMath::RandRange(16, 17);
+		AObjectPool& objectpool = AObjectPool::GetInstance();
+		objectpool.SpawnObject(objectpool.ObjectArray[value].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[18].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 	}
 	else if (DamageAmount >= 30 && MonsterDataStruct.CharacterHp > 0)
 	{
@@ -342,6 +349,7 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 		ChangeMontageAnimation(MonsterAnimationType::HIT);
 	}
 
+	
 
 	return DamageAmount;
 }
