@@ -263,6 +263,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USphereComponent* JumpExplosonCollider;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraComponent> LeftHandTrail1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraComponent> LeftHandTrail2;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraComponent> LeftHandTrail3;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraComponent> RightHandTrail1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraComponent> RightHandTrail2;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraComponent> RightHandTrail3;
+
 	Boss2BaseAction Boss2SuperAction;
 	Boss2DirectionType PlayerDirection;
 	Boss2ActionType CurrentAction;
@@ -400,6 +414,8 @@ public:
 	void JumpMove();
 	void JumpExplosionCheck();
 	void CheckBossDie();
+	void ActivateTrail();
+	void DeactivateTrail();
 
 	/*======================
 	*		UFUNCTION

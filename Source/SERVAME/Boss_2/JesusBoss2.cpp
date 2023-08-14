@@ -61,6 +61,20 @@ AJesusBoss2::AJesusBoss2()
 	JumpExplosonCollider->SetupAttachment(GetMesh());
 	JumpExplosonCollider->SetCollisionProfileName("AIWeapon");
 
+	LeftHandTrail1 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("L1 Trail"));
+	LeftHandTrail1->SetupAttachment(GetMesh(), FName("Bip001-L-Finger13"));
+	LeftHandTrail2 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("L2 Trail"));
+	LeftHandTrail2->SetupAttachment(GetMesh(), FName("Bip001-L-Finger23"));
+	LeftHandTrail3 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("L3 Trail"));
+	LeftHandTrail3->SetupAttachment(GetMesh(), FName("Bip001-L-Finger33"));
+
+	RightHandTrail1 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("R1 Trail"));
+	RightHandTrail1->SetupAttachment(GetMesh(), FName("Bip001-R-Finger13"));
+	RightHandTrail2 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("R2 Trail"));
+	RightHandTrail2->SetupAttachment(GetMesh(), FName("Bip001-R-Finger23"));
+	RightHandTrail3 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("R3 Trail"));
+	RightHandTrail3->SetupAttachment(GetMesh(), FName("Bip001-R-Finger33"));
+
 	MontageStartMap.Add(Boss2AnimationType::NONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 		}));
@@ -912,6 +926,8 @@ void AJesusBoss2::BeginPlay()
 {
 	Super::BeginPlay();
 
+	DeactivateTrail();
+
 	SetMetaData();
 	AIController = Cast<ABoss2AIController>(GetController());
 	Boss2ActionEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("Boss2ActionType"), true);
@@ -1367,6 +1383,28 @@ void AJesusBoss2::CheckBossDie()
 			iter.Value() = 0;
 		}
 	}
+}
+
+void AJesusBoss2::ActivateTrail()
+{
+	LeftHandTrail1->Activate();
+	LeftHandTrail2->Activate();
+	LeftHandTrail3->Activate();
+
+	RightHandTrail1->Activate();
+	RightHandTrail2->Activate();
+	RightHandTrail3->Activate();
+}
+
+void AJesusBoss2::DeactivateTrail()
+{
+	LeftHandTrail1->Deactivate();
+	LeftHandTrail2->Deactivate();
+	LeftHandTrail3->Deactivate();
+
+	RightHandTrail1->Deactivate();
+	RightHandTrail2->Deactivate();
+	RightHandTrail3->Deactivate();
 }
 
 void AJesusBoss2::SetBoneHead(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
