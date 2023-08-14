@@ -1819,6 +1819,8 @@ void APlayerCharacter::Run()
 void APlayerCharacter::SetShieldHP(float HP)
 {
 	PlayerDataStruct.ShieldHP = FMath::Clamp(PlayerDataStruct.ShieldHP += HP, 0, PlayerDataStruct.MaxShieldHP);
+	if (HP < 0)
+		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 	if (PlayerDataStruct.ShieldHP <= 0)
 	{
 		IsGrab = false;
@@ -1900,7 +1902,7 @@ void APlayerCharacter::SetSpeed(float speed)
 void APlayerCharacter::ShieldOff()
 {
 	ShieldMeshComp->SetVisibility(false);
-	ShieldAttackOverlap->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ShieldAttackOverlap->SetRelativeLocation(FVector(10000, 10000, 10000));
 	ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 }
@@ -2357,17 +2359,17 @@ void APlayerCharacter::ShieldAttack()
 {
 	if (UseStamina(PlayerUseStaminaMap[ActionType::SHIELD]))
 	{
+		IsGrab = false;
 		AObjectPool& objectpool = AObjectPool::GetInstance();
 		objectpool.SpawnObject(objectpool.ObjectArray[24].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 		PlayerShieldDashMovement();
-		ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		ShieldAttackOverlap->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		ChangeActionType(ActionType::MOVE);
 		ChangeMontageAnimation(AnimationType::SHIELDATTACK);
 		ShoulderView(IsShoulderView);
 		CameraShake(PlayerCameraShake);
 		AnimInstance->BodyBlendAlpha = 1.0f;
-		IsGrab = false;
+		ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		ShieldAttackOverlap->SetRelativeLocation(FVector(0, 0, 0));
 	}
 }
 
