@@ -61,7 +61,7 @@ APlayerCharacter::APlayerCharacter()
 	WeaponMesh->SetupAttachment(GetMesh(), FName("Weapon_bone"));
 
 	ShieldMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Shield Mesh"));
-	ShieldMeshComp->SetupAttachment(GetMesh(), FName("Ref_Bip001-L-Hand"));
+	ShieldMeshComp->SetupAttachment(GetMesh(), FName("POINT_SHIELD"));
 
 	ExecutionTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("Execution Trigger"));
 	ExecutionTrigger->SetupAttachment(RootComponent);
