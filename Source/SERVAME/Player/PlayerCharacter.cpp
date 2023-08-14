@@ -2328,10 +2328,10 @@ void APlayerCharacter::SetSprint()
 
 void APlayerCharacter::PlayerShieldDashMovement()
 {
-	FRotator ControllerRotation = Controller->GetControlRotation();
-	FRotator Rotation = FRotator(0, ControllerRotation.Yaw, 0);
-	FVector Direction = FRotationMatrix(Rotation).GetUnitAxis(EAxis::X);
-	LaunchCharacter(Direction * PlayerDataStruct.ShieldDashMoveDistance, false, false);
+	//FRotator ControllerRotation = Controller->GetControlRotation();
+	//FRotator Rotation = FRotator(0, ControllerRotation.Yaw, 0);
+	//FVector Direction = FRotationMatrix(Rotation).GetUnitAxis(EAxis::X);
+	//LaunchCharacter(Direction * PlayerDataStruct.ShieldDashMoveDistance, false, false);
 }
 
 void APlayerCharacter::FadeOut()
