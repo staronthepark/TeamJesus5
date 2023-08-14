@@ -1407,6 +1407,54 @@ void AJesusBoss2::DeactivateTrail()
 	RightHandTrail3->Deactivate();
 }
 
+void AJesusBoss2::DrawCircle(FVector Center)
+{
+	CirclePoints.SetNum(NumSegments);
+
+	const float AngleBetweenSegments = 2 * PI / NumSegments;
+
+	// 원을 구성하는 점들 계산
+	int ClosestPointIndex = 0;
+	float MinDistance = FLT_MAX;
+
+	for (int i = 1; i < NumSegments; ++i)
+	{
+		float Angle = i * AngleBetweenSegments;
+		float X = Center.X + Radius * FMath::Cos(Angle);
+		float Y = Center.Y + Radius * FMath::Sin(Angle);
+		FVector Point(X, Y, Center.Z);
+		CirclePoints[i] = Point;
+
+		float Distance = FVector::Dist(Point, GetActorLocation());
+		if (Distance < MinDistance)
+		{
+			MinDistance = Distance;
+			ClosestPointIndex = i;
+		}
+	}
+
+	// ClosestPointIndex부터 시작하여 원의 점들 재배열
+	TArray<FVector> TempArray;
+	TempArray.Append(CirclePoints.GetData() + ClosestPointIndex, CirclePoints.Num() - ClosestPointIndex);
+	TempArray.Append(CirclePoints.GetData() + 1, ClosestPointIndex);
+	CirclePoints = TempArray;
+
+	if (DrawDebugCircle)
+	{
+		// 점들을 이어서 원 그리기
+		for (int32 i = 0; i < NumSegments; ++i)
+		{
+			FVector Start = CirclePoints[i];
+			FVector End = CirclePoints[(i + 1) % NumSegments];
+
+			if (i == 0)
+				DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1.0f, 0, 5.0f);
+			else
+				DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 1.0f, 0, 5.0f);
+		}
+	}
+}
+
 void AJesusBoss2::SetBoneHead(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	Boss2AnimInstance->CurrentBoneType = Boss2BoneRotateType::HEAD;

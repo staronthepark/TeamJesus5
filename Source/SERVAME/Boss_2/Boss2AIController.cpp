@@ -138,4 +138,17 @@ void ABoss2AIController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 	SetFocus(Stimulus.WasSuccessfullySensed() ? Player : nullptr);
 }
 
+void ABoss2AIController::MoveWhenArrived(FVector Location)
+{
+	IsArrived = false;
+
+	auto type = MoveToLocation(Location);
+
+	if (type == EPathFollowingRequestResult::AlreadyAtGoal)
+	{
+		IsArrived = true;
+		Boss2->CircleIndexCount++;
+	}
+}
+
 

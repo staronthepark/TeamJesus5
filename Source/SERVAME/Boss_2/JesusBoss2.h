@@ -223,6 +223,18 @@ public:
 	float VomitMaxRange;
 	FTimerHandle VomitTimerHandle;
 
+	TArray<FVector> CirclePoints;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	int NumSegments = 16;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	float Radius = 700.f;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	float CircleWalkMinTime = 3.f;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	bool DrawDebugCircle = false;
+	bool CircleWalkEnd = false;
+	int CircleIndexCount = 1;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss2Data")
 	FBoss2DataStruct BossDataStruct;
 
@@ -416,6 +428,7 @@ public:
 	void CheckBossDie();
 	void ActivateTrail();
 	void DeactivateTrail();
+	void DrawCircle(FVector Center);
 
 	/*======================
 	*		UFUNCTION
