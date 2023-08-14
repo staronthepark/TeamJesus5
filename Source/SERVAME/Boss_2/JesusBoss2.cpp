@@ -111,9 +111,31 @@ AJesusBoss2::AJesusBoss2()
 
 	MontageStartMap.Add(Boss2AnimationType::LEFTWALK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
+			if (!Boss2->CircleWalkEnd)
+				return;
+
+			Boss2->CanMove = true;
+			Boss2->DrawCircle(Boss2->PlayerCharacter->GetActorLocation());
+			Boss2->CircleWalkEnd = false;
+			Boss2->Boss2SuperAction = B2_SUPER_MOVE;
+			Boss2->AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("Boss2BaseAction")), B2_SUPER_MOVE);
+
+			Boss2->GetWorldTimerManager().SetTimer(Boss2->CircleWalkTimerHandle, FTimerDelegate::CreateLambda([=]()
+				{
+					if (Boss2->BossDataStruct.CharacterHp > 0 && Boss2->Boss2SuperAction == B2_SUPER_MOVE)
+					{
+						Boss2->Boss2SuperAction = B2_SUPER_ATTACK;
+						Boss2->AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("Boss2BaseAction")), B2_SUPER_ATTACK);
+						Boss2->CircleWalkEnd = true;
+						Boss2->AIController->StopMovement();
+						Boss2->OnEnd();
+					}
+					//GetWorldTimerManager().ClearTimer(CircleWalkTimerHandle);
+				}), Boss2->CircleWalkMaxTime, false);
 		}));
 	MontageEndMap.Add(Boss2AnimationType::LEFTWALK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
+			Boss2->ChangeMontageAnimation(Boss2AnimationType::LEFTWALK);
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::SLASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -322,7 +344,12 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::HEADING, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
 		}));
-	//
+
+	BossAttackMap.Add(Boss2ActionType::B2_LEFTWALK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::LEFTWALK, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
+		}));
+
 	BossAttackMap.Add(Boss2ActionType::B2_VOMITFALL, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::VOMITFALL, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
@@ -998,6 +1025,9 @@ void AJesusBoss2::Tick(float DeltaTime)
 
 	//본 회전시키는 코드
 	BoneMap[Boss2AnimInstance->CurrentBoneType]();
+
+	if (CircleWalkEnd == false)
+		AIController->MoveWhenArrived(CirclePoints[CircleIndexCount]);
 }
 
 /*=====================
@@ -1621,7 +1651,7 @@ void AJesusBoss2::OnEnd()
 	if (!IsEnd.Exchange(true))
 		MontageEndMap[Type](this);
 
-	if (!IsDead)
+	if (!IsDead && CircleWalkEnd)
 		ActionEndMap[CurrentActionTemp.AttackType](Dist, fDeltaTime, StartMontage);
 
 	IsEnd.Exchange(false);

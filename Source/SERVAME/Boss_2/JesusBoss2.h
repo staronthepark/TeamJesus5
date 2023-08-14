@@ -52,6 +52,7 @@ enum Boss2ActionType
 	B2_HUNTJUMP UMETA(DisplayNAme = "B2_HUNTJUMP"),
 	B2_JUMPEXPLOSION UMETA(DisplayNAme = "B2_JUMPEXPLOSION"),
 	B2_THROWSTONE UMETA(DisplayNAme = "B2_THROWSTONE"),
+	B2_LEFTWALK UMETA(DisplayNAme = "B2_LEFTWALK"),
 	B2_ENUMEND,
 };
 
@@ -229,11 +230,12 @@ public:
 	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
 	float Radius = 700.f;
 	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
-	float CircleWalkMinTime = 3.f;
+	float CircleWalkMaxTime = 3.f;
 	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
 	bool DrawDebugCircle = false;
-	bool CircleWalkEnd = false;
-	int CircleIndexCount = 1;
+	bool CircleWalkEnd = true;
+	int CircleIndexCount = 1;	
+	FTimerHandle CircleWalkTimerHandle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss2Data")
 	FBoss2DataStruct BossDataStruct;
