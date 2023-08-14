@@ -47,7 +47,7 @@ void ABoss2AIController::BeginPlay()
 void ABoss2AIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	Boss2->GetCharacterMovement()->bUseControllerDesiredRotation = true;
+	//Boss2->GetCharacterMovement()->bUseControllerDesiredRotation = true;
 
 	if (Boss2->IsLockOn)
 	{

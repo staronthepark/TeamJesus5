@@ -114,16 +114,17 @@ AJesusBoss2::AJesusBoss2()
 			if (!Boss2->CircleWalkEnd)
 				return;
 
+			UE_LOG(LogTemp, Warning, TEXT("Timer SET"));
 			Boss2->CanMove = true;
+			Boss2->IsLockOn = true;
 			Boss2->DrawCircle(Boss2->PlayerCharacter->GetActorLocation());
 			Boss2->CircleWalkEnd = false;
-			Boss2->Boss2SuperAction = B2_SUPER_MOVE;
-			Boss2->AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("Boss2BaseAction")), B2_SUPER_MOVE);
 
 			Boss2->GetWorldTimerManager().SetTimer(Boss2->CircleWalkTimerHandle, FTimerDelegate::CreateLambda([=]()
 				{
-					if (Boss2->BossDataStruct.CharacterHp > 0 && Boss2->Boss2SuperAction == B2_SUPER_MOVE)
+					if (Boss2->BossDataStruct.CharacterHp > 0)
 					{
+						UE_LOG(LogTemp, Warning, TEXT("Timer END"));
 						Boss2->Boss2SuperAction = B2_SUPER_ATTACK;
 						Boss2->AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("Boss2BaseAction")), B2_SUPER_ATTACK);
 						Boss2->CircleWalkEnd = true;
@@ -135,7 +136,8 @@ AJesusBoss2::AJesusBoss2()
 		}));
 	MontageEndMap.Add(Boss2AnimationType::LEFTWALK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->ChangeMontageAnimation(Boss2AnimationType::LEFTWALK);
+			if (Boss2->CircleWalkEnd == false)
+				Boss2->ChangeMontageAnimation(Boss2AnimationType::LEFTWALK);
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::SLASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -347,7 +349,7 @@ AJesusBoss2::AJesusBoss2()
 
 	BossAttackMap.Add(Boss2ActionType::B2_LEFTWALK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::LEFTWALK, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, true, Boss2AnimationType::LEFTWALK, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
 		}));
 
 	BossAttackMap.Add(Boss2ActionType::B2_VOMITFALL, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -1027,7 +1029,10 @@ void AJesusBoss2::Tick(float DeltaTime)
 	BoneMap[Boss2AnimInstance->CurrentBoneType]();
 
 	if (CircleWalkEnd == false)
+	{
 		AIController->MoveWhenArrived(CirclePoints[CircleIndexCount]);
+		RotateToPlayerInterp();
+	}
 }
 
 /*=====================
@@ -1146,7 +1151,8 @@ void AJesusBoss2::DoTypeAttack(float MinRange, float MaxRange, float Dist, bool 
 				}));
 		}
 
-		Boss2->CanMove = false;
+		if (Type != Boss2AnimationType::LEFTWALK)
+			Boss2->CanMove = false;
 		Boss2->GetCharacterMovement()->MaxWalkSpeed = CurrentActionTemp.Speed;
 		Boss2->PlayAttackAnim(Type);
 		Boss2->IsLockOn = LockOn;

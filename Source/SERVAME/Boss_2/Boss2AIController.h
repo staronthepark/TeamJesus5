@@ -25,7 +25,6 @@ public:
 	UPROPERTY()
 	UBossUI* BossUI;
 
-
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
 

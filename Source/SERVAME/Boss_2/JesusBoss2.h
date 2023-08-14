@@ -234,7 +234,7 @@ public:
 	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
 	bool DrawDebugCircle = false;
 	bool CircleWalkEnd = true;
-	int CircleIndexCount = 1;	
+	int CircleIndexCount = 2;	
 	FTimerHandle CircleWalkTimerHandle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss2Data")
