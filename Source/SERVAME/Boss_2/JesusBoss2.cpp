@@ -61,6 +61,20 @@ AJesusBoss2::AJesusBoss2()
 	JumpExplosonCollider->SetupAttachment(GetMesh());
 	JumpExplosonCollider->SetCollisionProfileName("AIWeapon");
 
+	LeftHandTrail1 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("L1 Trail"));
+	LeftHandTrail1->SetupAttachment(GetMesh(), FName("Bip001-L-Finger13"));
+	LeftHandTrail2 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("L2 Trail"));
+	LeftHandTrail2->SetupAttachment(GetMesh(), FName("Bip001-L-Finger23"));
+	LeftHandTrail3 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("L3 Trail"));
+	LeftHandTrail3->SetupAttachment(GetMesh(), FName("Bip001-L-Finger33"));
+
+	RightHandTrail1 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("R1 Trail"));
+	RightHandTrail1->SetupAttachment(GetMesh(), FName("Bip001-R-Finger13"));
+	RightHandTrail2 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("R2 Trail"));
+	RightHandTrail2->SetupAttachment(GetMesh(), FName("Bip001-R-Finger23"));
+	RightHandTrail3 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("R3 Trail"));
+	RightHandTrail3->SetupAttachment(GetMesh(), FName("Bip001-R-Finger33"));
+
 	MontageStartMap.Add(Boss2AnimationType::NONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 		}));
@@ -97,9 +111,33 @@ AJesusBoss2::AJesusBoss2()
 
 	MontageStartMap.Add(Boss2AnimationType::LEFTWALK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
+			if (!Boss2->CircleWalkEnd)
+				return;
+
+			UE_LOG(LogTemp, Warning, TEXT("Timer SET"));
+			Boss2->CanMove = true;
+			Boss2->IsLockOn = true;
+			Boss2->DrawCircle(Boss2->PlayerCharacter->GetActorLocation());
+			Boss2->CircleWalkEnd = false;
+
+			Boss2->GetWorldTimerManager().SetTimer(Boss2->CircleWalkTimerHandle, FTimerDelegate::CreateLambda([=]()
+				{
+					if (Boss2->BossDataStruct.CharacterHp > 0)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Timer END"));
+						Boss2->Boss2SuperAction = B2_SUPER_ATTACK;
+						Boss2->AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("Boss2BaseAction")), B2_SUPER_ATTACK);
+						Boss2->CircleWalkEnd = true;
+						Boss2->AIController->StopMovement();
+						Boss2->OnEnd();
+					}
+					//GetWorldTimerManager().ClearTimer(CircleWalkTimerHandle);
+				}), Boss2->CircleWalkMaxTime, false);
 		}));
 	MontageEndMap.Add(Boss2AnimationType::LEFTWALK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
+			if (Boss2->CircleWalkEnd == false)
+				Boss2->ChangeMontageAnimation(Boss2AnimationType::LEFTWALK);
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::SLASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -308,7 +346,12 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::HEADING, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
 		}));
-	//
+
+	BossAttackMap.Add(Boss2ActionType::B2_LEFTWALK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, true, Boss2AnimationType::LEFTWALK, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
+		}));
+
 	BossAttackMap.Add(Boss2ActionType::B2_VOMITFALL, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::VOMITFALL, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
@@ -912,6 +955,8 @@ void AJesusBoss2::BeginPlay()
 {
 	Super::BeginPlay();
 
+	DeactivateTrail();
+
 	SetMetaData();
 	AIController = Cast<ABoss2AIController>(GetController());
 	Boss2ActionEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("Boss2ActionType"), true);
@@ -982,6 +1027,12 @@ void AJesusBoss2::Tick(float DeltaTime)
 
 	//본 회전시키는 코드
 	BoneMap[Boss2AnimInstance->CurrentBoneType]();
+
+	if (CircleWalkEnd == false)
+	{
+		AIController->MoveWhenArrived(CirclePoints[CircleIndexCount]);
+		RotateToPlayerInterp();
+	}
 }
 
 /*=====================
@@ -1100,7 +1151,8 @@ void AJesusBoss2::DoTypeAttack(float MinRange, float MaxRange, float Dist, bool 
 				}));
 		}
 
-		Boss2->CanMove = false;
+		if (Type != Boss2AnimationType::LEFTWALK)
+			Boss2->CanMove = false;
 		Boss2->GetCharacterMovement()->MaxWalkSpeed = CurrentActionTemp.Speed;
 		Boss2->PlayAttackAnim(Type);
 		Boss2->IsLockOn = LockOn;
@@ -1369,6 +1421,76 @@ void AJesusBoss2::CheckBossDie()
 	}
 }
 
+void AJesusBoss2::ActivateTrail()
+{
+	LeftHandTrail1->Activate();
+	LeftHandTrail2->Activate();
+	LeftHandTrail3->Activate();
+
+	RightHandTrail1->Activate();
+	RightHandTrail2->Activate();
+	RightHandTrail3->Activate();
+}
+
+void AJesusBoss2::DeactivateTrail()
+{
+	LeftHandTrail1->Deactivate();
+	LeftHandTrail2->Deactivate();
+	LeftHandTrail3->Deactivate();
+
+	RightHandTrail1->Deactivate();
+	RightHandTrail2->Deactivate();
+	RightHandTrail3->Deactivate();
+}
+
+void AJesusBoss2::DrawCircle(FVector Center)
+{
+	CirclePoints.SetNum(NumSegments);
+
+	const float AngleBetweenSegments = 2 * PI / NumSegments;
+
+	// 원을 구성하는 점들 계산
+	int ClosestPointIndex = 0;
+	float MinDistance = FLT_MAX;
+
+	for (int i = 1; i < NumSegments; ++i)
+	{
+		float Angle = i * AngleBetweenSegments;
+		float X = Center.X + Radius * FMath::Cos(Angle);
+		float Y = Center.Y + Radius * FMath::Sin(Angle);
+		FVector Point(X, Y, Center.Z);
+		CirclePoints[i] = Point;
+
+		float Distance = FVector::Dist(Point, GetActorLocation());
+		if (Distance < MinDistance)
+		{
+			MinDistance = Distance;
+			ClosestPointIndex = i;
+		}
+	}
+
+	// ClosestPointIndex부터 시작하여 원의 점들 재배열
+	TArray<FVector> TempArray;
+	TempArray.Append(CirclePoints.GetData() + ClosestPointIndex, CirclePoints.Num() - ClosestPointIndex);
+	TempArray.Append(CirclePoints.GetData() + 1, ClosestPointIndex);
+	CirclePoints = TempArray;
+
+	if (DrawDebugCircle)
+	{
+		// 점들을 이어서 원 그리기
+		for (int32 i = 0; i < NumSegments; ++i)
+		{
+			FVector Start = CirclePoints[i];
+			FVector End = CirclePoints[(i + 1) % NumSegments];
+
+			if (i == 0)
+				DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1.0f, 0, 5.0f);
+			else
+				DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 1.0f, 0, 5.0f);
+		}
+	}
+}
+
 void AJesusBoss2::SetBoneHead(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	Boss2AnimInstance->CurrentBoneType = Boss2BoneRotateType::HEAD;
@@ -1473,8 +1595,8 @@ void AJesusBoss2::OnVomitFall()
 			HeadAtkCollision->GetComponentLocation(),FRotator::ZeroRotator);
 		auto CastObject = Cast<AVomitObjectInPool>(PoolObject);
 		CastObject->SphereCollision->AddImpulse(FVector(0, 0, 1200));
-		//CastObject->SpawnEffect->Activate();
-		//CastObject->ProjectileEffect->Activate();
+		CastObject->SpawnEffect->Activate();
+		CastObject->ProjectileEffect->Activate();
 		VomitArr.Add(CastObject);
 	}
 
@@ -1535,7 +1657,7 @@ void AJesusBoss2::OnEnd()
 	if (!IsEnd.Exchange(true))
 		MontageEndMap[Type](this);
 
-	if (!IsDead)
+	if (!IsDead && CircleWalkEnd)
 		ActionEndMap[CurrentActionTemp.AttackType](Dist, fDeltaTime, StartMontage);
 
 	IsEnd.Exchange(false);

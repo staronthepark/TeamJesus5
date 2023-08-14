@@ -25,9 +25,10 @@ public:
 	UPROPERTY()
 	UBossUI* BossUI;
 
-
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
+
+	void MoveWhenArrived(FVector Location);
 
 	UFUNCTION()
 	void OnPerception(AActor* Actor, FAIStimulus Stimulus);
@@ -44,6 +45,8 @@ public:
 
 	//애니메이션 테스트 용 나중에 지우기.
 	bool TestBool = false;
+
+	bool IsArrived = false;
 
 protected:
 	virtual void BeginPlay() override;

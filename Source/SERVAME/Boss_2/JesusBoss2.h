@@ -52,6 +52,7 @@ enum Boss2ActionType
 	B2_HUNTJUMP UMETA(DisplayNAme = "B2_HUNTJUMP"),
 	B2_JUMPEXPLOSION UMETA(DisplayNAme = "B2_JUMPEXPLOSION"),
 	B2_THROWSTONE UMETA(DisplayNAme = "B2_THROWSTONE"),
+	B2_LEFTWALK UMETA(DisplayNAme = "B2_LEFTWALK"),
 	B2_ENUMEND,
 };
 
@@ -223,6 +224,19 @@ public:
 	float VomitMaxRange;
 	FTimerHandle VomitTimerHandle;
 
+	TArray<FVector> CirclePoints;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	int NumSegments = 16;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	float Radius = 700.f;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	float CircleWalkMaxTime = 3.f;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	bool DrawDebugCircle = false;
+	bool CircleWalkEnd = true;
+	int CircleIndexCount = 2;	
+	FTimerHandle CircleWalkTimerHandle;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss2Data")
 	FBoss2DataStruct BossDataStruct;
 
@@ -262,6 +276,20 @@ public:
 	TObjectPtr<UCapsuleComponent> LeftArmHitCollision;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USphereComponent* JumpExplosonCollider;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraComponent> LeftHandTrail1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraComponent> LeftHandTrail2;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraComponent> LeftHandTrail3;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraComponent> RightHandTrail1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraComponent> RightHandTrail2;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraComponent> RightHandTrail3;
 
 	Boss2BaseAction Boss2SuperAction;
 	Boss2DirectionType PlayerDirection;
@@ -400,6 +428,9 @@ public:
 	void JumpMove();
 	void JumpExplosionCheck();
 	void CheckBossDie();
+	void ActivateTrail();
+	void DeactivateTrail();
+	void DrawCircle(FVector Center);
 
 	/*======================
 	*		UFUNCTION

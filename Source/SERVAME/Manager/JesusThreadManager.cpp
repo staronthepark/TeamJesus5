@@ -9,7 +9,7 @@ JesusThreadManager::JesusThreadManager() : StopAllThread(false)
 	Threads.Reserve(threadNum);
 	for (int i = 0; i < threadNum; i++)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ThreadCreate"));
+		//UE_LOG(LogTemp, Warning, TEXT("ThreadCreate"));
 		Thread = FRunnableThread::Create(this, TEXT("JesusWorkerThread"));
 		Threads.Push(Thread);
 	}
@@ -27,20 +27,20 @@ JesusThreadManager::~JesusThreadManager()
 
 bool JesusThreadManager::Init()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Thread Init"));
+	//UE_LOG(LogTemp, Warning, TEXT("Thread Init"));
 	return true;
 }
 
 uint32 JesusThreadManager::Run()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Thread Run"));
+	//UE_LOG(LogTemp, Warning, TEXT("Thread Run"));
 	Work();
 	return 0;
 }
 
 void JesusThreadManager::Exit()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Thread Exit"));
+	//UE_LOG(LogTemp, Warning, TEXT("Thread Exit"));
 }
 
 void JesusThreadManager::Work()
@@ -59,7 +59,7 @@ void JesusThreadManager::Work()
 
 		Job.Dequeue(CallBack);
 
-		UE_LOG(LogTemp, Warning, TEXT("Thread Work"));
+		//UE_LOG(LogTemp, Warning, TEXT("Thread Work"));
 		CallBack();
 		lock.unlock();
 	}
