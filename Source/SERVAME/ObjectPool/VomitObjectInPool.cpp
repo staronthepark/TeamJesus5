@@ -58,9 +58,6 @@ void AVomitObjectInPool::SetActive(bool active)
 	
 	if (active && LifeTime > 0)
 	{
-		SpawnEffect->Activate();
-		ProjectileEffect->Activate();
-
 		SphereCollision->SetEnableGravity(true);
 		GetWorldTimerManager().SetTimer(LifeTimer, this, &AVomitObjectInPool::ReturnObject, LifeTime);
 	}
