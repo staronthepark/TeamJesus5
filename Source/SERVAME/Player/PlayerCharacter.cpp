@@ -1828,6 +1828,7 @@ void APlayerCharacter::SetShieldHP(float HP)
 		AnimInstance->BodyBlendAlpha = 1.0f;
 		ChangeActionType(ActionType::HIT);
 		ChangeMontageAnimation(AnimationType::HITBACKRIGHT);
+		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[38].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[39].ObjClass, ShieldMeshComp->GetComponentLocation(), GetActorRotation() + FRotator(0, 90, 0));
 		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 	}
