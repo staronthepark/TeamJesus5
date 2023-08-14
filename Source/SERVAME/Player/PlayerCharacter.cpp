@@ -63,6 +63,9 @@ APlayerCharacter::APlayerCharacter()
 	ShieldMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Shield Mesh"));
 	ShieldMeshComp->SetupAttachment(GetMesh(), FName("POINT_SHIELD"));
 
+	ShieldAttackOverlap = CreateDefaultSubobject<UBoxComponent>(TEXT("Shield Attack Overlap"));
+	ShieldAttackOverlap->SetupAttachment(GetMesh(), FName("POINT_SHIELD"));
+
 	ExecutionTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("Execution Trigger"));
 	ExecutionTrigger->SetupAttachment(RootComponent);
 	ExecutionTrigger->SetCollisionProfileName("Execution Trigger");
@@ -1525,7 +1528,7 @@ void APlayerCharacter::BeginPlay()
 	WeaponOverlapStaticMeshCollision->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnSMOverlapEnd);
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnEnemyDetectionBeginOverlap);
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnEnemyDetectionEndOverlap);
-	ShieldMeshComp->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnShieldOverlapBegin);
+	ShieldAttackOverlap->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnShieldOverlapBegin);
 
 	ShoulderView(IsShoulderView);
 }
@@ -1894,7 +1897,7 @@ void APlayerCharacter::SetSpeed(float speed)
 void APlayerCharacter::ShieldOff()
 {
 	ShieldMeshComp->SetVisibility(false);
-	ShieldMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ShieldAttackOverlap->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 }
@@ -2169,8 +2172,8 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 {
 	if (IsGrab)return;
 	VibrateGamePad(0.4f, 0.4f);
-	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[38].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(90, 180, 0));
-	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[39].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(90, 180, 0));
+	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[38].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
+	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[39].ObjClass, ShieldMeshComp->GetComponentLocation(), GetActorRotation() + FRotator(0, 90, 0));
 	PlayerDataStruct.ShieldHP = 0;
 	CanExecution = true;
 	IsCollisionCamera = true;
@@ -2354,7 +2357,7 @@ void APlayerCharacter::ShieldAttack()
 		objectpool.SpawnObject(objectpool.ObjectArray[24].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 		PlayerShieldDashMovement();
 		ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		ShieldMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		ShieldAttackOverlap->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		ChangeActionType(ActionType::MOVE);
 		ChangeMontageAnimation(AnimationType::SHIELDATTACK);
 		ShoulderView(IsShoulderView);

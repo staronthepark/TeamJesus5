@@ -210,6 +210,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UBoxComponent* ExecutionTrigger;
 
+	UPROPERTY(EditAnywhere)
+		UBoxComponent* ShieldAttackOverlap;
+
 	UPROPERTY()
 		UCanvasPanelSlot* LockOnImageSlot;
 
