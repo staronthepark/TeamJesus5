@@ -1650,8 +1650,8 @@ void APlayerCharacter::RestoreStat()
 	PlayerHUD->SetStamina(PlayerDataStruct.PlayerStamina / PlayerDataStruct.MaxStamina);
 	PlayerDataStruct.CharacterHp = PlayerDataStruct.CharacterMaxHp;
 	PlayerHUD->SetHP(PlayerDataStruct.CharacterHp / PlayerDataStruct.CharacterMaxHp);
-	//CurHealCount = PlayerDataStruct.MaxHealCount;
-	//PlayerHUD->ChangeHealCount(CurHealCount);
+	CurHealCount = PlayerDataStruct.MaxHealCount;
+	PlayerHUD->ChangeHealCount(CurHealCount);
 }
 
 void APlayerCharacter::LockOn()
