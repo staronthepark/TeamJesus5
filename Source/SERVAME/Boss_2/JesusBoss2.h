@@ -342,16 +342,24 @@ public:
 	UPROPERTY()
 	UMonsterWidget* HeadLockOnWidget;
 	UPROPERTY()
-		UMonsterWidget* LeftArmLockOnWidget;
+	UMonsterWidget* LeftArmLockOnWidget;
 	UPROPERTY()
-		UMonsterWidget* RightArmLockOnWidget;
+	UMonsterWidget* RightArmLockOnWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UWidgetComponent* HeadLockOnWidgetComp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UWidgetComponent* LeftArmLockOnWidgetComp;
+	UWidgetComponent* LeftArmLockOnWidgetComp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UWidgetComponent* RightLockOnWidgetComp;
+	UWidgetComponent* RightLockOnWidgetComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USphereComponent> LockOnTargetHead;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USphereComponent> LockOnTargetLArm;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USphereComponent> LockOnTargetRArm;
+
 
 	TObjectPtr<APlayerCharacter> PlayerCharacter;
 
@@ -372,7 +380,7 @@ public:
 	TMap<Boss2AttackType, TFunction<void(Boss2ActionTemp* Temp)>> ChangePercentageMap;
 	TMap<Boss2AttackType, TFunction<void()>> InitPercentageMap;
 	TMap<Boss2CollisionType, TFunction<void(bool OnOff)>> CollisionMap;
-	TMap<UPrimitiveComponent*, UMonsterWidget> LockonWidgetMap;
+	TMap<UPrimitiveComponent*, TFunction<UMonsterWidget*()>> LockonWidgetMap;
 
 	TArray<Boss2ActionTemp> MeleeActionArr;
 	TArray<Boss2ActionTemp> MeleeTempArr;

@@ -79,6 +79,18 @@ AJesusBoss2::AJesusBoss2()
 	RightHandTrail3 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("R3 Trail"));
 	RightHandTrail3->SetupAttachment(GetMesh(), FName("Bip001-R-Finger33"));
 
+	LockOnTargetHead = CreateDefaultSubobject<USphereComponent>(TEXT("LockOnHead"));
+	LockOnTargetHead->SetupAttachment(HeadLockOnWidgetComp);
+	LockOnTargetHead->SetCollisionProfileName("LockOnTarget");
+
+	LockOnTargetLArm = CreateDefaultSubobject<USphereComponent>(TEXT("LockOnLArm"));
+	LockOnTargetLArm->SetupAttachment(LeftArmLockOnWidgetComp);
+	LockOnTargetLArm->SetCollisionProfileName("LockOnTarget");
+
+	LockOnTargetRArm = CreateDefaultSubobject<USphereComponent>(TEXT("LockOnRArm"));
+	LockOnTargetRArm->SetupAttachment(RightLockOnWidgetComp);
+	LockOnTargetRArm->SetCollisionProfileName("LockOnTarget");
+
 	MontageStartMap.Add(Boss2AnimationType::NONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 		}));
@@ -910,6 +922,20 @@ AJesusBoss2::AJesusBoss2()
 				Damage = 0;
 			}
 		}));
+
+	//=======================================보스 부위별 락온 UI 표시=========================================
+	LockonWidgetMap.Add(LockOnTargetHead, TFunction<UMonsterWidget*()>([=]()
+		{
+			return HeadLockOnWidget;
+		}));
+	LockonWidgetMap.Add(LockOnTargetLArm, TFunction<UMonsterWidget*()>([=]()
+		{
+			return LeftArmLockOnWidget;
+		}));
+	LockonWidgetMap.Add(LockOnTargetRArm, TFunction<UMonsterWidget* ()>([=]()
+		{
+			return RightArmLockOnWidget;
+		}));
 }
 
 AJesusBoss2::~AJesusBoss2()
@@ -966,9 +992,14 @@ void AJesusBoss2::BeginPlay()
 	Boss2ActionEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("Boss2ActionType"), true);
 	Boss2AnimationEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("Boss2AnimationType"), true);
 	GetCharacterMovement()->MaxWalkSpeed = BossDataStruct.CharacterOriginSpeed;
+
 	HeadLockOnWidget = Cast<UMonsterWidget>(HeadLockOnWidgetComp->GetWidget());
 	HeadLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Collapsed);
-	
+	LeftArmLockOnWidget = Cast<UMonsterWidget>(LeftArmLockOnWidgetComp->GetWidget());
+	LeftArmLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Collapsed);
+	RightArmLockOnWidget = Cast<UMonsterWidget>(RightLockOnWidgetComp->GetWidget());
+	RightArmLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Collapsed);
+
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
 	LeftAtkCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::AttackHit);
@@ -1287,7 +1318,12 @@ void AJesusBoss2::PlayExecutionAnimation()
 
 void AJesusBoss2::ActivateLockOnImage(bool value, UPrimitiveComponent* comp)
 {
-	//value ? MonsterLockOnWidget->SetVisibility(ESlateVisibility::HitTestInvisible) : MonsterLockOnWidget->SetVisibility(ESlateVisibility::Collapsed);
+	UMonsterWidget* Widget = LockonWidgetMap[comp]();
+
+	if (Widget == nullptr)
+		return;
+
+	value ? Widget->SetVisibility(ESlateVisibility::HitTestInvisible) : Widget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 FVector AJesusBoss2::Lerp(const FVector& start, const FVector& end, const float t)
