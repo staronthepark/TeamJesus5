@@ -2447,10 +2447,6 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	GameInstance->DebugLogWidget->T_PlayerHP->SetText(FText::AsNumber(PlayerDataStruct.CharacterHp));
 	VibrateGamePad(0.2f, 0.2f);
 	CameraShake(PlayerCameraShake);
-	AnimInstance->BodyBlendAlpha = 1.0f;
-	ShieldOff();
-	ShoulderView(IsShoulderView);
-	IsGrab = false;
 
 
 	FVector HitDir = DamageCauser->GetActorLocation() - GetActorLocation();
@@ -2468,11 +2464,23 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		if (PlayerDataStruct.CharacterHp <= 0)
 			ASoundManager::GetInstance().PlaySoundWithCymbalSound(3);
 
+
+		AnimInstance->BodyBlendAlpha = 1.0f;
+		ShieldOff();
+		ShoulderView(IsShoulderView);
+		IsGrab = false;
+
 		return DamageAmount;
 	}
 
 	if (DamageAmount > 10)
 	{
+
+		AnimInstance->BodyBlendAlpha = 1.0f;
+		ShieldOff();
+		ShoulderView(IsShoulderView);
+		IsGrab = false;
+
 		UCombatManager::GetInstance().ActivateCollider();
 
 		AnimInstance->StopMontage(MontageMap[AnimInstance->PlayerAnimationType]);
