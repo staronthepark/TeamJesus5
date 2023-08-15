@@ -147,6 +147,9 @@ void AKinghtMonster::KnockBackEmd()
 
 void AKinghtMonster::Stun()
 {
+	if (!KnightArmor->IsBroke)
+		return;
+
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
 	DeactivateSMOverlap();
@@ -215,7 +218,7 @@ void AKinghtMonster::OnKnightTargetDetectionEndOverlap(UPrimitiveComponent* Over
 void AKinghtMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
 	TracePlayer = false;
-	if (StateType == MonsterStateType::CANTACT || GetMesh()->GetCollisionProfileName() == "Ragdoll" || IsKnockBack == true)
+	if (StateType == MonsterStateType::CANTACT || IsKnockBack == true)
 		return;
 	AttackAnimationType = AttackAnimType;
 	if (ActionType != MonsterActionType::ATTACK)
