@@ -38,7 +38,8 @@ AKinghtMonster::AKinghtMonster()
 			
 				GetWorldTimerManager().SetTimer(CircleWalkTimerHandle, FTimerDelegate::CreateLambda([=]()
 					{					
-						if (MonsterDataStruct.CharacterHp > 0 && MonsterController->FindPlayer)
+						if (MonsterDataStruct.CharacterHp > 0 && MonsterController->FindPlayer
+							&& AnimationType != MonsterAnimationType::EXECUTION)
 						{
 							CircleWalkEnd = true;
 							MonsterMoveEventIndex = 1;
@@ -147,9 +148,9 @@ void AKinghtMonster::KnockBackEmd()
 
 void AKinghtMonster::Stun()
 {
-	if (!KnightArmor->IsBroke)
-		return;
-
+	//if (!KnightArmor->IsBroke)
+	//	return;
+	KnightArmor->ArmorDataStruct.ArmorHp = -1;
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
 	DeactivateSMOverlap();
