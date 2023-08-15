@@ -13,6 +13,7 @@ ANiagaraObjectInPool::ANiagaraObjectInPool()
 
 void ANiagaraObjectInPool::StartMove()
 {
+	MoveComp->SetTargetLocation(Player);
 	MoveComp->SetComponentTickEnabled(true);
 	ParticleSystem->SetActive(true, false);
 }
@@ -37,8 +38,7 @@ void ANiagaraObjectInPool::SetActive(bool active)
 
 		if (IsMove)
 		{
-			GetWorldTimerManager().SetTimer(MoveStartTimer, this, &ANiagaraObjectInPool::StartMove, 1.0f);
-			MoveComp->SetTargetLocation(Player);
+			GetWorldTimerManager().SetTimer(MoveStartTimer, this, &ANiagaraObjectInPool::StartMove, 0.2f);
 		}
 		else
 		{
