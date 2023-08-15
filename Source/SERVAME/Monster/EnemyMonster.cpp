@@ -445,6 +445,7 @@ void AEnemyMonster::BeginPlay()
 
 void AEnemyMonster::ChangeMontageAnimation(MonsterAnimationType type)
 {
+	DeactivateRightWeapon();
 	AnimInstance->StopMontage(MontageMap[AnimationType]);
 	AnimationType = type;
 	StateType = AnimTypeToStateType[type];
