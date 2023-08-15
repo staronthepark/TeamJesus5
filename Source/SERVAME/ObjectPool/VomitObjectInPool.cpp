@@ -40,7 +40,6 @@ void AVomitObjectInPool::BeginPlay()
 	BurstEffect->Deactivate();
 	DispersionEffect->Deactivate();
 	SpawnEffect->Deactivate();
-	DispersionEffect->Deactivate();
 
 	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AVomitObjectInPool::OnCollisionBeginOverlap);
 	SphereCollision->SetEnableGravity(false);
