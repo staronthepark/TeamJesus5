@@ -11,6 +11,12 @@ ANiagaraObjectInPool::ANiagaraObjectInPool()
 	PrimaryActorTick.bCanEverTick = false;
 }
 
+void ANiagaraObjectInPool::StartMove()
+{
+	MoveComp->SetComponentTickEnabled(true);
+	ParticleSystem->SetActive(true, false);
+}
+
 void ANiagaraObjectInPool::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	AObjectPool& objectpool = AObjectPool::GetInstance();
@@ -24,15 +30,23 @@ void ANiagaraObjectInPool::OverlapBegin(UPrimitiveComponent* OverlappedComponent
 void ANiagaraObjectInPool::SetActive(bool active)
 {
 	Super::SetActive(active);
-	ParticleSystem->SetActive(active, false);
 	if (active)
 	{
 		if (LifeTime > 0)
 			GetWorldTimerManager().SetTimer(LifeTimer, this, &ANiagaraObjectInPool::ReturnObject, LifeTime);
 
-		MoveComp->SetComponentTickEnabled(IsMove);
-		MoveComp->SetTargetLocation(Player);
+		if (IsMove)
+		{
+			GetWorldTimerManager().SetTimer(MoveStartTimer, this, &ANiagaraObjectInPool::StartMove, 1.0f);
+			MoveComp->SetTargetLocation(Player);
+		}
+		else
+		{
+			ParticleSystem->SetActive(true, false);
+		}
+		return;
 	}
+	ParticleSystem->SetActive(active, false);
 }
 
 void ANiagaraObjectInPool::BeginPlay()

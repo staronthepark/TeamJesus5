@@ -1656,6 +1656,12 @@ void APlayerCharacter::RestoreStat()
 	PlayerHUD->ChangeHealCount(CurHealCount);
 }
 
+void APlayerCharacter::MoveSpawnLocation(FVector Location)
+{
+	SetActorLocation(Location);
+	SpawnLocation = Location;
+}
+
 void APlayerCharacter::LockOn()
 {
 	IsLockOn = !IsLockOn;

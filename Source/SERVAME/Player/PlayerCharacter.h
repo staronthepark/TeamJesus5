@@ -368,6 +368,8 @@ public:
 
 	void RestoreStat();
 
+	void MoveSpawnLocation(FVector Location);
+
 	void LockOn();
 
 	void Sprint();
