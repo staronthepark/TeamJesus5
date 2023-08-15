@@ -848,6 +848,7 @@ APlayerCharacter::APlayerCharacter()
 		});
 	MontageEndEventMap.Add(AnimationType::EXECUTIONBOSS, [&]()
 		{
+			IsExecute = false;			
 			GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 			CheckInputKey();
 			Imotal = false;
@@ -2070,7 +2071,7 @@ void APlayerCharacter::PlayExecutionAnimation()
 	{
 		LockOn();
 	}
-
+	IsExecute = true;
 	//ExecuteDirection = ExecutionGetActorLocation() - GetActorLocation();
 	//ExecuteDirection.Normalize();
 
@@ -2160,12 +2161,21 @@ void APlayerCharacter::OnSMOverlapEnd(UPrimitiveComponent* OverlappedComponent, 
 
 void APlayerCharacter::OnExecutionOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (!IsExecute && !CanExecution)
+	{
+		ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
+		CanExecution = true;
+	}
 
 }
 
 void APlayerCharacter::OnExecutionOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-
+	if (!IsExecute && !CanExecution)
+	{
+		ExecutionCharacter = nullptr;
+		CanExecution = false;
+	}
 }
 
 void APlayerCharacter::OnParryingOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

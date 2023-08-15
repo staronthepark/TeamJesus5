@@ -264,6 +264,7 @@ public:
 	int32 AxisX;
 	int32 AxisY;
 	
+	bool IsExecute;
 	bool CanNextAttack;
 	bool IsSprint;
 	bool IsInteraction;
