@@ -465,6 +465,7 @@ public:
 	virtual void PlayExecutionAnimation() override;
 	virtual void ActivateLockOnImage(bool value, UPrimitiveComponent* comp) override;
 	virtual void Stun()override;
+	virtual bool IsAlive()override;
 
 protected:
 	virtual void BeginPlay() override;

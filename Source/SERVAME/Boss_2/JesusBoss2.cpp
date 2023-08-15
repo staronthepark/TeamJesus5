@@ -1727,6 +1727,15 @@ void AJesusBoss2::ThrowStone()
 	}
 }
 
+
+bool AJesusBoss2::IsAlive()
+{
+	if (BossDataStruct.CharacterHp > 0)
+		return true;
+	return false;
+}
+
+
 void AJesusBoss2::IsNotifyActive(bool value)
 {
 }
