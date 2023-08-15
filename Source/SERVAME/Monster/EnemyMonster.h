@@ -152,6 +152,7 @@ public:
 	bool IsDetect;
 	bool TracePlayer;
 	bool IsOverlap = false;
+	bool IsAttacking = false;
 
 	AActor* otherActor;
 
