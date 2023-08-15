@@ -1323,7 +1323,7 @@ void AJesusBoss2::ActivateLockOnImage(bool value, UPrimitiveComponent* comp)
 	if (Widget == nullptr)
 		return;
 
-	value ? Widget->SetVisibility(ESlateVisibility::HitTestInvisible) : Widget->SetVisibility(ESlateVisibility::Collapsed);
+	value ? Widget->LockOnImage->SetVisibility(ESlateVisibility::HitTestInvisible) : Widget->LockOnImage->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 FVector AJesusBoss2::Lerp(const FVector& start, const FVector& end, const float t)
