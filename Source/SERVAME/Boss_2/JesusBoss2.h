@@ -479,6 +479,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void PostInitializeComponents() override;
+	virtual bool IsAlive()override;
 
 public:	
 
