@@ -1673,7 +1673,7 @@ void APlayerCharacter::LockOn()
 			}
 		}
 
-		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true);
+		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true, TargetComp);
 
 		if (AnimInstance->PlayerAnimationType != AnimationType::HEAL && !IsGrab)
 		{
@@ -1685,7 +1685,7 @@ void APlayerCharacter::LockOn()
 	else
 	{
 		if(TargetComp != nullptr)
-		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false);
+		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false, TargetComp);
 		TargetComp = nullptr;
 		if (AnimInstance->PlayerAnimationType != AnimationType::HEAL && !IsGrab)
 			SetSpeed(SpeedMap[IsLockOn || IsGrab][IsSprint]);
@@ -1777,9 +1777,9 @@ void APlayerCharacter::ChangeTarget(CameraDirection CamDirection)
 			TargetIdx = i;
 	}
 
-	Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false);
+	Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false, TargetComp);
 	TargetComp = TargetArray[TargetIdx];
-	Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true);
+	Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true, TargetComp);
 
 	TargetArray.Empty();
 }
@@ -2056,10 +2056,10 @@ void APlayerCharacter::PlayExecutionAnimation()
 {
 	if (TargetComp)
 	{
-		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false);
+		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false, TargetComp);
 	}
 	TargetComp = ExecutionCharacter->LockOnComp;
-	Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true);
+	Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true, TargetComp);
 	if (!IsLockOn)
 	{
 		LockOn();
@@ -2401,7 +2401,7 @@ void APlayerCharacter::PlayerDead(bool IsFly)
 	}
 	if (TargetComp)
 	{
-		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false);
+		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false, TargetComp);
 	}
 	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 	Imotal = true;

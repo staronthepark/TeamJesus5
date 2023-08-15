@@ -214,7 +214,7 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void ActivateLockOnImage(bool value) override;
+	virtual void ActivateLockOnImage(bool value, UPrimitiveComponent* comp) override;
 	virtual bool IsAlive()override;
 
 	virtual void IsNotifyActive(bool value) override;

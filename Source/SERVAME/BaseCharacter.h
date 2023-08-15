@@ -117,7 +117,7 @@ public:
 	virtual void BeginPlay();
 	virtual void PostInitializeComponents();	
 	virtual void PlayExecutionAnimation() {}
-	virtual void ActivateLockOnImage(bool value){}
+	virtual void ActivateLockOnImage(bool value, UPrimitiveComponent* comp) {}
 	virtual void SetActive(bool active);
 
 	virtual void Tick(float DeltaTime);

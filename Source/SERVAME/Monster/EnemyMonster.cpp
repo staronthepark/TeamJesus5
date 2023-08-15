@@ -180,7 +180,7 @@ AEnemyMonster::AEnemyMonster()
 						}
 						else
 						{
-							Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true);
+							Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true, PlayerCharacter->TargetComp);
 						}
 					}
 				}
@@ -715,7 +715,7 @@ void AEnemyMonster::Tick(float DeltaTime)
 		TickOverlap();
 }
 
-void AEnemyMonster::ActivateLockOnImage(bool value)
+void AEnemyMonster::ActivateLockOnImage(bool value, UPrimitiveComponent* comp)
 {
 	value ? MonsterLockOnWidget->SetVisibility(ESlateVisibility::HitTestInvisible) : MonsterLockOnWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
@@ -752,7 +752,7 @@ void AEnemyMonster::RespawnCharacter()
 	//PlayerCharacter = nullptr;
 	YawRotation = GetActorRotation();
 
-	ActivateLockOnImage(false);
+	ActivateLockOnImage(false, nullptr);
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
 	SetActorTickEnabled(true);

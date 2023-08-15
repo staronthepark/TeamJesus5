@@ -22,8 +22,12 @@ AJesusBoss2::AJesusBoss2()
 	Boss2HitCollision->SetupAttachment(GetMesh(), FName("LockOn_Bone"));
 	Boss2HitCollision->SetCollisionProfileName("AIHit");
 
-	LockOnWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget"));
-	LockOnWidget->SetupAttachment(GetMesh(), FName("Bip001-Head"));
+	HeadLockOnWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget"));
+	HeadLockOnWidgetComp->SetupAttachment(GetMesh(), FName("Bip001-Head"));
+	LeftArmLockOnWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget2"));
+	LeftArmLockOnWidgetComp->SetupAttachment(GetMesh(), FName("Bip001-L-UpperArm"));
+	RightLockOnWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget3"));
+	RightLockOnWidgetComp->SetupAttachment(GetMesh(), FName("Bip001-R-UpperArm"));
 	
 	LeftAtkCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Boss Left Hand"));
 	LeftAtkCollision->SetupAttachment(GetMesh(),FName("LHand"));
@@ -962,8 +966,8 @@ void AJesusBoss2::BeginPlay()
 	Boss2ActionEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("Boss2ActionType"), true);
 	Boss2AnimationEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("Boss2AnimationType"), true);
 	GetCharacterMovement()->MaxWalkSpeed = BossDataStruct.CharacterOriginSpeed;
-	MonsterLockOnWidget = Cast<UMonsterWidget>(LockOnWidget->GetWidget());
-	MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
+	HeadLockOnWidget = Cast<UMonsterWidget>(HeadLockOnWidgetComp->GetWidget());
+	HeadLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Collapsed);
 	
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
@@ -997,11 +1001,11 @@ void AJesusBoss2::Tick(float DeltaTime)
 	{
 		if (PlayerCharacter->TargetComp->GetOwner() == this)
 		{
-			MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Visible);
+			//MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Visible);
 		}
 		else
 		{
-			MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
+			//MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
 
@@ -1281,9 +1285,9 @@ void AJesusBoss2::PlayExecutionAnimation()
 {
 }
 
-void AJesusBoss2::ActivateLockOnImage(bool value)
+void AJesusBoss2::ActivateLockOnImage(bool value, UPrimitiveComponent* comp)
 {
-	value ? MonsterLockOnWidget->SetVisibility(ESlateVisibility::HitTestInvisible) : MonsterLockOnWidget->SetVisibility(ESlateVisibility::Collapsed);
+	//value ? MonsterLockOnWidget->SetVisibility(ESlateVisibility::HitTestInvisible) : MonsterLockOnWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 FVector AJesusBoss2::Lerp(const FVector& start, const FVector& end, const float t)

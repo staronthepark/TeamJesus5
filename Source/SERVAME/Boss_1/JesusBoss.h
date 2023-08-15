@@ -463,7 +463,7 @@ public:
 	virtual void RespawnCharacter() override;
 	virtual void IsNotifyActive(bool value) override;
 	virtual void PlayExecutionAnimation() override;
-	virtual void ActivateLockOnImage(bool value)override;
+	virtual void ActivateLockOnImage(bool value, UPrimitiveComponent* comp) override;
 	virtual void Stun()override;
 
 protected:
