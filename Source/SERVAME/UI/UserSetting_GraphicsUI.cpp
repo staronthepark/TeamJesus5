@@ -49,7 +49,7 @@ void UUserSetting_GraphicsUI::SetGI()
 
 void UUserSetting_GraphicsUI::SetEffect()
 {
-	Setting->SetVisualEffectQuality(WBP_Effect_Button->index);
+	Setting->SetVisualEffectQuality(WBP_Effect_Button->index + 2);
 	Setting->ApplySettings(true);
 }
 
