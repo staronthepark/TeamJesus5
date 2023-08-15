@@ -340,10 +340,18 @@ public:
 	const UEnum* Boss2AnimationEnum;
 
 	UPROPERTY()
-	UMonsterWidget* MonsterLockOnWidget;
+	UMonsterWidget* HeadLockOnWidget;
+	UPROPERTY()
+		UMonsterWidget* LeftArmLockOnWidget;
+	UPROPERTY()
+		UMonsterWidget* RightArmLockOnWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UWidgetComponent* LockOnWidget;
+	UWidgetComponent* HeadLockOnWidgetComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UWidgetComponent* LeftArmLockOnWidgetComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UWidgetComponent* RightLockOnWidgetComp;
 
 	TObjectPtr<APlayerCharacter> PlayerCharacter;
 
@@ -364,6 +372,7 @@ public:
 	TMap<Boss2AttackType, TFunction<void(Boss2ActionTemp* Temp)>> ChangePercentageMap;
 	TMap<Boss2AttackType, TFunction<void()>> InitPercentageMap;
 	TMap<Boss2CollisionType, TFunction<void(bool OnOff)>> CollisionMap;
+	TMap<UPrimitiveComponent*, UMonsterWidget> LockonWidgetMap;
 
 	TArray<Boss2ActionTemp> MeleeActionArr;
 	TArray<Boss2ActionTemp> MeleeTempArr;
@@ -398,7 +407,7 @@ public:
 	virtual void RespawnCharacter() override;
 	virtual void IsNotifyActive(bool value) override;
 	virtual void PlayExecutionAnimation() override;
-	virtual void ActivateLockOnImage(bool value) override;
+	virtual void ActivateLockOnImage(bool value, UPrimitiveComponent* comp) override;
 	virtual void ActivateHitCollision() override;
 
 	/*=====================

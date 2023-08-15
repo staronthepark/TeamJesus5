@@ -1465,7 +1465,7 @@ void AJesusBoss::PlayExecutionAnimation()
 	ChangeMontageAnimation(BossAnimationType::EXECUTION);
 }
 
-void AJesusBoss::ActivateLockOnImage(bool value)
+void AJesusBoss::ActivateLockOnImage(bool value, UPrimitiveComponent* comp)
 {
 	value ? MonsterLockOnWidget->SetVisibility(ESlateVisibility::HitTestInvisible) : MonsterLockOnWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
