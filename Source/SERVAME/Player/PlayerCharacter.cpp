@@ -2395,6 +2395,10 @@ void APlayerCharacter::ShieldAttack()
 void APlayerCharacter::SetSoul(int32 value)
 {
 	PlayerDataStruct.SoulCount += value;
+	if (PlayerDataStruct.SoulCount % PlayerDataStruct.ShieldRecoverySoulCount == 0)
+	{
+		SetShieldHP(PlayerDataStruct.MaxShieldHP);
+	}
 }
 
 void APlayerCharacter::PlayStartAnimation()

@@ -23,7 +23,6 @@ void ANiagaraObjectInPool::OverlapBegin(UPrimitiveComponent* OverlappedComponent
 	AObjectPool& objectpool = AObjectPool::GetInstance();
 	objectpool.SpawnObject(objectpool.ObjectArray[37].ObjClass, Player->GetActorLocation() + FVector(0, 0, 30.0f), FRotator::ZeroRotator);
 	MoveComp->SetComponentTickEnabled(false);
-	Player->SetShieldHP(Player->PlayerDataStruct.MaxShieldHP);
 	Player->SetSoul(1);
 	ReturnObject();
 }
