@@ -31,25 +31,25 @@ void UUserSetting_GraphicsUI::NativeConstruct()
 
 void UUserSetting_GraphicsUI::SetVolumetic()
 {
-	Setting->SetPostProcessingQuality(WBP_Volumetric_Button->index);
+	Setting->SetPostProcessingQuality(WBP_Volumetric_Button->index + 1);
 	Setting->ApplySettings(true);
 }
 
 void UUserSetting_GraphicsUI::SetShadow()
 {
-	Setting->SetPostProcessingQuality(WBP_Shadow_Button->index);
+	Setting->SetShadowQuality(WBP_Shadow_Button->index + 1);
 	Setting->ApplySettings(true);
 }
 
 void UUserSetting_GraphicsUI::SetGI()
 {
-	Setting->SetPostProcessingQuality(WBP_GI_Button->index);
+	Setting->SetGlobalIlluminationQuality(WBP_GI_Button->index + 1);
 	Setting->ApplySettings(true);
 }
 
 void UUserSetting_GraphicsUI::SetEffect()
 {
-	Setting->SetPostProcessingQuality(WBP_Effect_Button->index);
+	Setting->SetVisualEffectQuality(WBP_Effect_Button->index);
 	Setting->ApplySettings(true);
 }
 
