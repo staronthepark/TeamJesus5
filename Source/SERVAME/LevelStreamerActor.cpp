@@ -38,7 +38,6 @@ void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent
 			if (MonsterList[i]->IsAlive())
 			{
 				MonsterList[i]->SetActive(true);
-				CombatManager.MonsterInfoArray.AddUnique(MonsterList[i]);
 			}
 		}
 	}
@@ -57,8 +56,6 @@ void ALevelStreamerActor::OverlapEnds(UPrimitiveComponent* OverlappedComponent, 
 		for (int32 i = 0; i < MonsterList.Num(); i++)
 		{
 			MonsterList[i]->SetActive(false);
-			CombatManager.MonsterInfoArray.Remove(MonsterList[i]);
-
 		}
 	}
 }

@@ -2035,9 +2035,11 @@ void APlayerCharacter::RespawnCharacter()
 
 	RestoreStat();
 
-	for (int32 i = 0; i < UCombatManager::GetInstance().MonsterInfoArray.Num(); i++)
+	UCombatManager& combatmanager = UCombatManager::GetInstance();
+
+	for (int32 i = 0; i < combatmanager.MonsterInfoArray.Num(); i++)
 	{
-		UCombatManager::GetInstance().MonsterInfoArray[i]->RespawnCharacter();
+		combatmanager.MonsterInfoArray[i]->RespawnCharacter();
 	}
 	SetSpeed(SpeedMap[false][false]);
 }
