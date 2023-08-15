@@ -741,6 +741,8 @@ void AEnemyMonster::RespawnCharacter()
 
 	WeaponOpacity = 0.171653f;
 	MeshOpacity = 0.171653f;
+	SkeletalMeshComp->SetScalarParameterValueOnMaterials("Opacity", MeshOpacity);
+	SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity);
 
 	ActivateHitCollision();
 	MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
@@ -748,9 +750,9 @@ void AEnemyMonster::RespawnCharacter()
 
 	Imotal = false;
 	//PlayerCharacter = nullptr;
-	//YawRotation = GetActorRotation();
-	LockOnWidget->SetVisibility(false);
+	YawRotation = GetActorRotation();
 
+	ActivateLockOnImage(false);
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
 	SetActorTickEnabled(true);

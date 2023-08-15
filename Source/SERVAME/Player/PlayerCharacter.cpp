@@ -64,7 +64,7 @@ APlayerCharacter::APlayerCharacter()
 	ShieldMeshComp->SetupAttachment(GetMesh(), FName("POINT_SHIELD"));
 
 	ShieldAttackOverlap = CreateDefaultSubobject<UBoxComponent>(TEXT("Shield Attack Overlap"));
-	ShieldAttackOverlap->SetupAttachment(GetMesh(), FName("POINT_SHIELD"));
+	ShieldAttackOverlap->SetupAttachment(GetMesh());
 
 	ExecutionTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("Execution Trigger"));
 	ExecutionTrigger->SetupAttachment(RootComponent);
@@ -1119,6 +1119,8 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::HEAL].Add(false, [&]() {});
 	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::INTERACTION].Add(true, [&]() {});
 	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::INTERACTION].Add(false, [&]() {});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::SHIELD].Add(true, [&]() {});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::SHIELD].Add(false, [&]() {});
 
 	InputEventMap.Add(PlayerAction::RUN, TMap<ActionType, TMap<bool, TFunction<void()>>>());
 	InputEventMap[PlayerAction::RUN].Add(ActionType::DODGE, TMap<bool, TFunction<void()>>());
@@ -1436,7 +1438,6 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	PlayerSKMesh = GetMesh();
-	IsCollisionCamera = false;
 	DebugMode = false;
 	LocketSKMesh->SetVisibility(true);
 	ChangeActionType(ActionType::DEAD);
@@ -1472,6 +1473,7 @@ void APlayerCharacter::BeginPlay()
 
 	ShieldOff();
 	TargetOpacity = 1.0f;
+	IsCollisionCamera = false;
 
 	SpeedMap.Add(false, TMap<bool, float>());
 	SpeedMap[false].Add(false, PlayerDataStruct.CharacterOriginSpeed);
@@ -1529,7 +1531,7 @@ void APlayerCharacter::BeginPlay()
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnEnemyDetectionBeginOverlap);
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnEnemyDetectionEndOverlap);
 	ShieldAttackOverlap->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnShieldOverlapBegin);
-
+	
 	ShoulderView(IsShoulderView);
 }
 
@@ -1650,8 +1652,8 @@ void APlayerCharacter::RestoreStat()
 	PlayerHUD->SetStamina(PlayerDataStruct.PlayerStamina / PlayerDataStruct.MaxStamina);
 	PlayerDataStruct.CharacterHp = PlayerDataStruct.CharacterMaxHp;
 	PlayerHUD->SetHP(PlayerDataStruct.CharacterHp / PlayerDataStruct.CharacterMaxHp);
-	//CurHealCount = PlayerDataStruct.MaxHealCount;
-	//PlayerHUD->ChangeHealCount(CurHealCount);
+	CurHealCount = PlayerDataStruct.MaxHealCount;
+	PlayerHUD->ChangeHealCount(CurHealCount);
 }
 
 void APlayerCharacter::LockOn()
@@ -1820,7 +1822,10 @@ void APlayerCharacter::SetShieldHP(float HP)
 {
 	PlayerDataStruct.ShieldHP = FMath::Clamp(PlayerDataStruct.ShieldHP += HP, 0, PlayerDataStruct.MaxShieldHP);
 	if (HP < 0)
+	{
+		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[38].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
+	}
 	if (PlayerDataStruct.ShieldHP <= 0)
 	{
 		IsGrab = false;
@@ -1830,9 +1835,7 @@ void APlayerCharacter::SetShieldHP(float HP)
 		AnimInstance->BodyBlendAlpha = 1.0f;
 		ChangeActionType(ActionType::HIT);
 		ChangeMontageAnimation(AnimationType::HITBACKRIGHT);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[38].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[39].ObjClass, ShieldMeshComp->GetComponentLocation(), GetActorRotation() + FRotator(0, 90, 0));
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 	}
 }
 
@@ -1901,6 +1904,7 @@ void APlayerCharacter::SetSpeed(float speed)
 
 void APlayerCharacter::ShieldOff()
 {
+	IsCollisionCamera = true;
 	ShieldMeshComp->SetVisibility(false);
 	ShieldAttackOverlap->SetRelativeLocation(FVector(10000, 10000, 10000));
 	ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -1909,6 +1913,7 @@ void APlayerCharacter::ShieldOff()
 
 void APlayerCharacter::ShieldOn()
 {
+	IsCollisionCamera = false;
 	ShieldMeshComp->SetVisibility(true);
 	ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
@@ -2001,18 +2006,14 @@ void APlayerCharacter::Tick(float DeltaTime)
 	CameraBoom1->TargetArmLength = FMath::Lerp(CameraBoom1->TargetArmLength, TargetCameraBoomLength, DeltaTime * 2.0f);
 	CameraBoom1->SocketOffset = FMath::Lerp(CameraBoom1->SocketOffset, TargetSocketOffset, DeltaTime * 2.0f);
 
-	if (IsCollisionCamera)
-	{
-		CameraDistanceToPlayer = FVector::Distance(FollowCamera->GetComponentLocation(), GetActorLocation());
-		CameraDistanceToPlayer = FMath::Clamp(CameraDistanceToPlayer, 40, 300);
-		PlayerSKMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 300));
-	}
-
+	CameraDistanceToPlayer = FVector::Distance(FollowCamera->GetComponentLocation(), GetActorLocation());
+	CameraDistanceToPlayer = FMath::Clamp(CameraDistanceToPlayer, 40, 300);
+	PlayerSKMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 300));
 }
 
 float APlayerCharacter::GetPercent(float value, float min, float max)
 {
-	return (value - min) / (max - min);
+	return IsCollisionCamera ? (value - min) / (max - min) : 1.0f;
 }
 
 
@@ -2034,9 +2035,11 @@ void APlayerCharacter::RespawnCharacter()
 
 	RestoreStat();
 
-	for (int32 i = 0; i < UCombatManager::GetInstance().MonsterInfoArray.Num(); i++)
+	UCombatManager& combatmanager = UCombatManager::GetInstance();
+
+	for (int32 i = 0; i < combatmanager.MonsterInfoArray.Num(); i++)
 	{
-		UCombatManager::GetInstance().MonsterInfoArray[i]->RespawnCharacter();
+		combatmanager.MonsterInfoArray[i]->RespawnCharacter();
 	}
 	SetSpeed(SpeedMap[false][false]);
 }
@@ -2369,7 +2372,7 @@ void APlayerCharacter::ShieldAttack()
 		CameraShake(PlayerCameraShake);
 		AnimInstance->BodyBlendAlpha = 1.0f;
 		ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		ShieldAttackOverlap->SetRelativeLocation(FVector(0, 0, 0));
+		ShieldAttackOverlap->SetRelativeLocation(FVector(0, 62.86, 107.34));
 	}
 }
 

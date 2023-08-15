@@ -21,7 +21,7 @@ void ABaseCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	SpawnLocation = GetActorLocation();
-	SpawnRotation = GetActorLocation().ForwardVector.Rotation();
+	SpawnRotation = GetActorRotation();
 
 	GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 

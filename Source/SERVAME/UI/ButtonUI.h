@@ -38,9 +38,9 @@ class SERVAME_API UButtonUI : public UUserWidget
 	UPROPERTY(EditAnywhere)
 		TMap<int, FButtonTextures> OnOffImages;
 
-	int index; 
 
 public:
+	int index; 
 	UPROPERTY(meta = (BindWidget))
 		UButton* LeftButton;
 	UPROPERTY(meta = (BindWidget))
