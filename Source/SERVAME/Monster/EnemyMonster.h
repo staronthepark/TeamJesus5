@@ -154,6 +154,9 @@ public:
 	bool IsOverlap = false;
 	bool IsAttacking = false;
 
+	bool asd = false;
+	bool asd2 = false;
+
 	AActor* otherActor;
 
 protected:
