@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "SelectTextUI.h"
+
 #include "UserSettingSelectUI.generated.h"
 
 /**
@@ -25,6 +26,9 @@ public:
 /*	UPROPERTY(meta = (BindWidget))
 	USelectTextUI* WBP_Setting_SelectText_Key;	*/	
 	
+	UPROPERTY(meta = (BindWidget))
+	USelectTextUI* WBP_Setting_SelectText_Graphics;
+
 	UPROPERTY(meta = (BindWidget))
 	USelectTextUI* WBP_Setting_SelectText_Quit;
 

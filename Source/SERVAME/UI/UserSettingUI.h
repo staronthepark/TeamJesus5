@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "UserSettingSelectUI.h"
 #include "UserSettingGameUI.h"
+#include "UserSetting_GraphicsUI.h"
 #include "SubUserSettingUI.h"
 #include "UserSettingAudioUI.h"
 #include "GameExitUI.h"
@@ -29,6 +30,9 @@ class SERVAME_API UUserSettingUI : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 		UUserSettingAudioUI* WBP_UserSetting_AudioUI;
 
+	UPROPERTY(meta = (BindWidget))
+		UUserSetting_GraphicsUI* WBP_UserSetting_GraphicsUI;
+
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* OpenAnimation;
 
@@ -37,6 +41,9 @@ class SERVAME_API UUserSettingUI : public UUserWidget
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* OpenAudioSettingAnimation;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		UWidgetAnimation* OpenGraphicsSettingAnimation;
 
 	TArray<USelectTextUI*> SelectSettingArray;
 	TArray<USubUserSettingUI*> SubUserSettingArray;
@@ -62,6 +69,9 @@ public:
 
 	UFUNCTION()
 	void ClickAudioSettingButton();
+
+	UFUNCTION()
+	void ClickGraphicsSettingButton();
 
 	UFUNCTION()
 	void ClickQuitSettingButton();
