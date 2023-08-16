@@ -1262,6 +1262,8 @@ void AJesusBoss::CheckBossDie()
 		AIController->BossUI->PlayBossDiedAnimtion();
 		AIController->BossUI->SetVisibility(ESlateVisibility::Hidden);
 		AIController->OnUnPossess();
+		if(PlayerCharacter->IsLockOn)
+		PlayerCharacter->LockOn();
 
 		for (auto iter = BossDataStruct.DamageList.begin(); iter != BossDataStruct.DamageList.end(); iter.operator++())
 		{
