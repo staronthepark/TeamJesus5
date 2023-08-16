@@ -1292,7 +1292,7 @@ void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 	auto Type = GetTypeFromMetaData(StartMontage);
 
 	AObjectPool& objectpool = AObjectPool::GetInstance();
-	if (OtherComp->GetName() == "ShieldCollision")
+	if (OtherComp->GetName() == "ShieldCollision" && Type != Boss2AnimationType::GROGGY)
 	{
 		Player->SetShieldHP(-BossDataStruct.DamageList[Type]);
 		CameraShake(PlayerCameraShake);
