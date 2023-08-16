@@ -61,10 +61,6 @@ AJesusBoss2::AJesusBoss2()
 	RightArmHitCollision->SetupAttachment(GetMesh(), FName("Bip001-R-UpperArm"));
 	RightArmHitCollision->SetCollisionProfileName("AIHit");
 
-	JumpExplosonCollider = CreateDefaultSubobject<USphereComponent>(TEXT("JumpExplosionCollision"));
-	JumpExplosonCollider->SetupAttachment(GetMesh());
-	JumpExplosonCollider->SetCollisionProfileName("AIWeapon");
-
 	LeftHandTrail1 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("L1 Trail"));
 	LeftHandTrail1->SetupAttachment(GetMesh(), FName("Bip001-L-Finger13"));
 	LeftHandTrail2 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("L2 Trail"));
@@ -304,7 +300,7 @@ AJesusBoss2::AJesusBoss2()
 
 	MontageStartMap.Add(Boss2AnimationType::JUMPEXPLOSION, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->GetWorldTimerManager().SetTimer(Boss2->JumpExplosionTimer, Boss2, &AJesusBoss2::JumpExplosionCheck, 1.f, true, 3.7f);
+			Boss2->GetWorldTimerManager().SetTimer(Boss2->JumpExplosionTimer, Boss2, &AJesusBoss2::JumpExplosionCheck, Boss2->DelayBetweenJumpExplosion, true, Boss2->JumpExplosionStartTime);
 			Boss2->AreaAtkPos->AttachToComponent(Boss2->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("Bip001-Neck"));
 			Boss2->IsAttackMontageEnd = false;
 			Boss2->CanMove = false;
@@ -1061,8 +1057,6 @@ void AJesusBoss2::BeginPlay()
 	HeadAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ChargeAtkCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::AttackHit);
 	ChargeAtkCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	JumpExplosonCollider->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::AttackHit);
-	JumpExplosonCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	HitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
 	HeadHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneHead);
@@ -1079,24 +1073,10 @@ void AJesusBoss2::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (PlayerCharacter->TargetComp != nullptr)
-	{
-		if (PlayerCharacter->TargetComp->GetOwner() == this)
-		{
-			//MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Visible);
-		}
-		else
-		{
-			//MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
-		}
-	}
-
-	if (JumpExplosionCnt >= 3)
+	if (JumpExplosionCnt > 3)
 	{
 		GetWorldTimerManager().ClearTimer(JumpExplosionTimer);
 		JumpExplosionCnt = 0;
-		JumpExplosonCollider->SetSphereRadius(1.f);
-		JumpExplosonCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 
 	if (AttackLockOn)
@@ -1477,17 +1457,59 @@ void AJesusBoss2::JumpMove()
 
 void AJesusBoss2::JumpExplosionCheck()
 {
-	if(JumpExplosionCnt == 0)
-		JumpExplosonCollider->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-
 	JumpExplosionCnt += 1;
 
+	float Size = 0.f;
+
 	if (JumpExplosionCnt == 1)
-		JumpExplosonCollider->SetSphereRadius(400.f);
+	{
+		Size = EXplosionSphereSize;
+		Damage = BossDataStruct.DamageList[Boss2AnimationType::JUMPEXPLOSION];
+	}
 	else if (JumpExplosionCnt == 2)
-		JumpExplosonCollider->SetSphereRadius(700.f);
+	{
+		Size = EXplosionSphereSize + 200.f;
+		Damage = BossDataStruct.DamageList[Boss2AnimationType::JUMPEXPLOSION]-10;
+	}
 	else if (JumpExplosionCnt == 3)
-		JumpExplosonCollider->SetSphereRadius(1000.f);
+	{
+		Size = EXplosionSphereSize + 600.f;
+		Damage = BossDataStruct.DamageList[Boss2AnimationType::JUMPEXPLOSION]-20;
+	}
+
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+
+	bool bResult = GetWorld()->SweepSingleByChannel(
+		OUT HitResult,
+		GetActorLocation(),
+		GetActorLocation(),
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel3,
+		FCollisionShape::MakeSphere(Size),
+		Params);
+
+	FVector Center = GetActorLocation();
+	FColor DrawColor;
+
+	if (bResult)
+		DrawColor = FColor::Green;
+	else
+		DrawColor = FColor::Red;
+
+	DrawDebugSphere(GetWorld(), Center, Size, 16, DrawColor, false, 1.f);
+
+	CameraShake(PlayerCameraShake);
+	VibrateGamePad(1.0f, 0.5f);
+
+	if (bResult && HitResult.GetActor())
+	{
+		FDamageEvent DamageEvent;
+		auto Player = Cast<APlayerCharacter>(HitResult.GetActor());
+
+		Player->TakeDamage(Damage, DamageEvent, GetController(), this);
+	}
+
 }
 
 void AJesusBoss2::CheckBossDie()

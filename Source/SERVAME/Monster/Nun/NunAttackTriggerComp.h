@@ -15,4 +15,18 @@ class SERVAME_API UNunAttackTriggerComp : public UBoxTriggerComp
 {
 	GENERATED_BODY()
 	
+public:
+	UNunAttackTriggerComp();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		MonsterAnimationType AttackAnimType;
+
+private:
+	ANunMonster* Owner;
+
+public:
+	virtual void BeginPlay() override;
+
+	virtual void BeginEvent()override;
+	virtual void EndEvent()override;
 };

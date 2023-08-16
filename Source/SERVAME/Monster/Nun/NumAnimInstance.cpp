@@ -2,3 +2,7 @@
 
 #include "NumAnimInstance.h"
 
+UNumAnimInstance::UNumAnimInstance()
+{
+
+}
