@@ -74,13 +74,15 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 {
 	GENERATED_BODY()
 
+	int32 SoulCount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TMap<AnimationType, FPlayerDamageInfo>DamageList;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 MaxHealCount;
-	int32 SoulCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 ShieldRecoverySoulCount;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MaxStamina;  
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -109,6 +111,7 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 		float ShieldHP;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MaxShieldHP;
+	
 };
 
 UCLASS()
@@ -264,6 +267,7 @@ public:
 	int32 AxisX;
 	int32 AxisY;
 	
+	bool IsExecute;
 	bool CanNextAttack;
 	bool IsSprint;
 	bool IsInteraction;
@@ -367,6 +371,8 @@ public:
 	void Dodge();
 
 	void RestoreStat();
+
+	void MoveSpawnLocation(FVector Location);
 
 	void LockOn();
 

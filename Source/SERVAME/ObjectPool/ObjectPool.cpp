@@ -1,5 +1,6 @@
 #include "ObjectPool.h"
 #include "Engine/World.h"
+#include "../Manager/CombatManager.h"
 #include "UObject/ConstructorHelpers.h"
 
 AObjectPool* AObjectPool::Instance = nullptr;

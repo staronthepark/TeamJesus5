@@ -28,6 +28,8 @@ enum class Boss2AnimationType : uint8
 	HUNTJUMP,
 	JUMPEXPLOSION,
 	THROWSTONE,
+	FOLLOWUP_CHARGE,
+	FOLLOWUP_SCREAMATTACK,
 };
 
 UENUM(BlueprintType)

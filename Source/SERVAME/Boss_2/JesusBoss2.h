@@ -53,6 +53,8 @@ enum Boss2ActionType
 	B2_JUMPEXPLOSION UMETA(DisplayNAme = "B2_JUMPEXPLOSION"),
 	B2_THROWSTONE UMETA(DisplayNAme = "B2_THROWSTONE"),
 	B2_LEFTWALK UMETA(DisplayNAme = "B2_LEFTWALK"),
+	B2_FOLLOWUP_CHARGE UMETA(DisplayNAme = "B2_FOLLOWUP_CHARGE"),
+	B2_FOLLOWUP_SCREAMATTACK UMETA(DisplayNAme = "B2_FOLLOWUP_SCREAMATTACK"),
 	B2_ENUMEND,
 };
 
@@ -252,9 +254,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = Boss2)
 	float MaxAtkRange = 2500.f;
 
-	int JumpExplosionCnt = 0;
-	FTimerHandle JumpExplosionTimer;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UCapsuleComponent* Boss2HitCollision;
 
@@ -274,8 +273,6 @@ public:
 	TObjectPtr<UCapsuleComponent> RightArmHitCollision;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UCapsuleComponent> LeftArmHitCollision;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USphereComponent* JumpExplosonCollider;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UNiagaraComponent> LeftHandTrail1;
@@ -300,6 +297,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DecreasePercentageVal")
 	int DecreasePercentageVal = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JumpExplosion")
+	float JumpExplosionStartTime = 3.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JumpExplosion")
+	float DelayBetweenJumpExplosion = 1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JumpExplosion")
+	float EXplosionSphereSize = 700.f;
+	int JumpExplosionCnt = 0;
+	FTimerHandle JumpExplosionTimer;
 
 	int HitCount;
 	float Damage;
@@ -479,6 +485,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void PostInitializeComponents() override;
+	virtual bool IsAlive()override;
 
 public:	
 

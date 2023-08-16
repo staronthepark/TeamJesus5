@@ -165,13 +165,14 @@ AEnemyMonster::AEnemyMonster()
 						AObjectPool& objectpool =  AObjectPool::GetInstance();
 						for (int32 i = 0; i < MonsterDataStruct.DropSoulCount; i++)
 						{
-							float x = FMath::RandRange(-30.0f, 30.0f);
-							float y = FMath::RandRange(-30.0f, 30.0f);
-							float z = FMath::RandRange(-30.0f, 30.0f);
+							float x = FMath::RandRange(-300.0f, 300.0f);
+							float y = FMath::RandRange(-300.0f, 300.0f);
+							float z = FMath::RandRange(-300.0f, 300.0f);
 
-							FVector location = GetActorLocation() + FVector(x, y, z);
+							FVector location = GetActorLocation() + FVector(x * 0.1f, y * 0.1f, z * 0.1f);
+							FRotator rotation = GetActorRotation() + FRotator(x, y, z);
 
-							objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, FRotator::ZeroRotator);
+							objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
 						}
 
 						if (PlayerCharacter->TargetComp == nullptr)
@@ -445,6 +446,7 @@ void AEnemyMonster::BeginPlay()
 
 void AEnemyMonster::ChangeMontageAnimation(MonsterAnimationType type)
 {
+	DeactivateRightWeapon();
 	AnimInstance->StopMontage(MontageMap[AnimationType]);
 	AnimationType = type;
 	StateType = AnimTypeToStateType[type];
@@ -547,20 +549,14 @@ void AEnemyMonster::OnSMOverlapEnd(UPrimitiveComponent* OverlappedComponent, AAc
 
 void AEnemyMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	Imotal = true;
-
-	MonsterDataStruct.CharacterHp -= MonsterDataStruct.CharacterHp;
-	MonsterHPWidget->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
+	//MonsterDataStruct.CharacterHp -= MonsterDataStruct.CharacterHp;
+	//MonsterHPWidget->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
 
 	//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
 	if (MyMonsterType == MonsterType::TUTORIAL)
 		PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
 
-	DeactivateSMOverlap();
-	DeactivateRightWeapon();
-	ParryingCollision1->Deactivate();
-
-	ChangeMontageAnimation(MonsterAnimationType::DEAD);
+	Stun();
 
 	VibrateGamePad(1.0f, 0.4);
 	AObjectPool& objectpool = AObjectPool::GetInstance();
@@ -573,7 +569,8 @@ void AEnemyMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, 
 void AEnemyMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
 	TracePlayer = false;
-	if (StateType == MonsterStateType::CANTACT)return;
+	if (StateType == MonsterStateType::CANTACT)
+		return;
 	AttackAnimationType = AttackAnimType;
 	if (ActionType != MonsterActionType::ATTACK)
 	{
@@ -609,6 +606,7 @@ void AEnemyMonster::Rotate()
 
 void AEnemyMonster::Stun()
 {
+	CanExecution = true;
 	AnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
 	DeactivateSMOverlap();
@@ -669,7 +667,7 @@ float AEnemyMonster::Die(float Dm)
 		Imotal = true;
 		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
 		//ChangeMontageAnimation(MonsterAnimationType::DEAD);
-		AnimInstance->StopMontage(MontageMap[AnimationType]);
+		//AnimInstance->StopMontage(MontageMap[AnimationType]);
 		ChangeActionType(MonsterActionType::DEAD);
 		StateType = MonsterStateType::CANTACT;
 		//PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);

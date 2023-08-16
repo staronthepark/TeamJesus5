@@ -23,7 +23,6 @@ void UUDamageSphereTriggerComp::BeginPlay()
 
 void UUDamageSphereTriggerComp::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ASFDSADFASD"));
 	if (Character == nullptr)
 		Character = Cast<APlayerCharacter>(OtherActor);
 

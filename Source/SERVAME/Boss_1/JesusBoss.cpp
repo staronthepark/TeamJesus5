@@ -1478,6 +1478,13 @@ void AJesusBoss::Stun()
 	BossAnimInstance->PlayGroggyMontage(BossAnimationType::STUN);
 }
 
+bool AJesusBoss::IsAlive()
+{
+	if(BossDataStruct.CharacterHp > 0)
+	return true;
+	return false;
+}
+
 void AJesusBoss::SpawnInit()
 {
 	//½ºÅÝ

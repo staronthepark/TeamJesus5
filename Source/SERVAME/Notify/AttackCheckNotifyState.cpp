@@ -61,7 +61,7 @@ void UAttackCheckNotifyState::NotifyBegin(USkeletalMeshComponent * MeshComp, UAn
 						UE_LOG(LogTemp, Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
 						FDamageEvent DamageEvent;
 
-						val->Damage += val->BossDataStruct.DamageList[Type];
+						val->Damage = val->BossDataStruct.DamageList[Type];
 
 						Player->TakeDamage(val->Damage, DamageEvent, val->GetController(), val);
 					}

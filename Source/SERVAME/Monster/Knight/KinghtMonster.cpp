@@ -5,7 +5,6 @@
 #include "Math/RandomStream.h"
 #include "KnightAttackTriggerComp.h"
 #include "..\..\Manager\CombatManager.h"
-#include "KnightAttackTriggerComp.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 AKinghtMonster::AKinghtMonster()
@@ -38,7 +37,8 @@ AKinghtMonster::AKinghtMonster()
 			
 				GetWorldTimerManager().SetTimer(CircleWalkTimerHandle, FTimerDelegate::CreateLambda([=]()
 					{					
-						if (MonsterDataStruct.CharacterHp > 0 && MonsterController->FindPlayer)
+						if (MonsterDataStruct.CharacterHp > 0 && MonsterController->FindPlayer
+							&& AnimationType != MonsterAnimationType::EXECUTION)
 						{
 							CircleWalkEnd = true;
 							MonsterMoveEventIndex = 1;
@@ -147,6 +147,9 @@ void AKinghtMonster::KnockBackEmd()
 
 void AKinghtMonster::Stun()
 {
+	//if (!KnightArmor->IsBroke)
+	//	return;
+	KnightArmor->ArmorDataStruct.ArmorHp = -1;
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
 	DeactivateSMOverlap();
@@ -215,7 +218,7 @@ void AKinghtMonster::OnKnightTargetDetectionEndOverlap(UPrimitiveComponent* Over
 void AKinghtMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
 	TracePlayer = false;
-	if (StateType == MonsterStateType::CANTACT || GetMesh()->GetCollisionProfileName() == "Ragdoll" || IsKnockBack == true)
+	if (StateType == MonsterStateType::CANTACT || IsKnockBack == true)
 		return;
 	AttackAnimationType = AttackAnimType;
 	if (ActionType != MonsterActionType::ATTACK)
