@@ -87,8 +87,8 @@ APlayerCharacter::APlayerCharacter()
 	SwordTrailComp->SetCollisionProfileName("Sword Trail");
 
 	ShieldEffectComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Shield Effect Comp"));
-	ShieldEffectComp->SetupAttachment(GetMesh(), FName("Weapon_bone"));
-	ShieldEffectComp->SetCollisionProfileName("Sword Trail");
+	ShieldEffectComp->SetupAttachment(GetMesh(), FName("POINT_SHIELD"));
+	ShieldEffectComp->SetCollisionProfileName("Shield Effect Comp");
 
 	PlayerMaxAttackIndex.Add(ActionType::ATTACK, 4);
 	PlayerMaxAttackIndex.Add(ActionType::POWERATTACK, 3);
