@@ -175,6 +175,12 @@ void ABossAIController::OnPossess(APawn* InPawn)
 	}
 	//GameInstance->PlayerHUDWidget->PB_BossHP->SetPercent((float)BossDataStruct.CharacterHp / (float)BossDataStruct.CharacterMaxHp);
 	BossUI->SetHP(1);
+
+
+	Boss->DeactivateSMOverlap();
+	Boss->WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Boss->DarkExplosionCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Boss->DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ABossAIController::OnUnPossess()
