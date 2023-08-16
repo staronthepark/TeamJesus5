@@ -175,6 +175,9 @@ AEnemyMonster::AEnemyMonster()
 							objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
 						}
 
+						if (MyMonsterType == MonsterType::TUTORIAL)
+							PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::soul, true);
+
 						if (PlayerCharacter->TargetComp == nullptr)
 						{
 							PlayerCharacter->LockOn();
@@ -344,18 +347,35 @@ AEnemyMonster::AEnemyMonster()
 		{
 			if (percent >= 0.5)
 			{
-				if (MyMonsterType == MonsterType::TUTORIAL)
-					PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::dodge, true);
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
+
+				if (MyMonsterType == MonsterType::TUTORIAL && !asd2)
+				{
+					PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::dodge, true);
+					asd2 = true;
+					return;
+				}
+				else if (MyMonsterType == MonsterType::TUTORIAL)
+				{
+					PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::shield, true);
+				}
 			}
 			else if (percent < 0.5f)
 			{
-				//UGameplayStatics::SetGlobalTimeDilation(monster, 0.1f);
-				if (MyMonsterType == MonsterType::TUTORIAL)
-					PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::parrying, true);
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::POWERATTACK1);
+
+				if (MyMonsterType == MonsterType::TUTORIAL && !asd)
+				{
+					PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::parrying, true);
+					asd = true;
+					return;
+				}
+				else if (MyMonsterType == MonsterType::TUTORIAL)
+				{
+					PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::shieldattack, true);
+				}
 			}
 		});
 	SetActionByRandomMap.Add(MonsterAnimationType::DASHATTACK1, [&](float percent)

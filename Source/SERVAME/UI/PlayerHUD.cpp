@@ -36,6 +36,18 @@ void UPlayerHUD::NativeOnInitialized()
 			currentLanguage = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->language;
 			PlayMapUIAnimation("asd");
 		});
+	GuideAnimationFunction.Add(EGuides::shield, [&](bool value)
+		{
+			PlayGuidesAnimation(EGuides::shield, value);
+		});
+	GuideAnimationFunction.Add(EGuides::shieldattack, [&](bool value)
+		{
+			PlayGuidesAnimation(EGuides::shieldattack, value);
+		});
+	GuideAnimationFunction.Add(EGuides::soul, [&](bool value)
+		{
+			PlayGuidesAnimation(EGuides::soul, value);
+		});
 
 	isGamePad = Keyboard;
 
