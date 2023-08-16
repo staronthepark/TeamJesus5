@@ -1279,7 +1279,7 @@ void AJesusBoss::CheckBossDie()
 			{
 				AIController->BossUI->PlayFadeOutAnimation();
 				AIController->BossUI->SetVisibility(ESlateVisibility::Hidden);
-			}), 2.5f, false);
+			}), 4.f, false);
 	}
 }
 
