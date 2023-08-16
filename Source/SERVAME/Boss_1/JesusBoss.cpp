@@ -1270,7 +1270,8 @@ void AJesusBoss::CheckBossDie()
 		//¸Ê ·Îµù µÆÀ» ¶§ BossUIÀÇ PlayFadeOutAnimation È£Ãâ
 		GetWorldTimerManager().SetTimer(ChangePlayerLocTimerHandle, FTimerDelegate::CreateLambda([=]()
 			{
-				PlayerCharacter->SetActorLocation(FVector(-7207.843457, -62406.767053, 50));
+				PlayerCharacter->MoveSpawnLocation(FVector(-7207.843457, -62406.767053, 50));
+				//PlayerCharacter->SetActorLocation();
 			}), 2.f, false);
 
 		GetWorldTimerManager().SetTimer(FadeInTimerHandle, FTimerDelegate::CreateLambda([=]()
