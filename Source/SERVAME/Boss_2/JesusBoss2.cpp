@@ -1330,8 +1330,11 @@ float AJesusBoss2::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	IsStartBoneRot = true;
 	GetWorldTimerManager().SetTimer(BoneRotateTimerHandle, this, &AJesusBoss2::ReSetBoneRot, Time, false);
 		
-	AIController->BossUI->DecreaseHPGradual(this, BossDataStruct.CharacterHp / BossDataStruct.CharacterMaxHp);
-	AIController->BossUI->SetDamageText(DamageAmount);
+	if (BossDataStruct.CharacterHp > 0)
+	{
+		AIController->BossUI->DecreaseHPGradual(this, BossDataStruct.CharacterHp / BossDataStruct.CharacterMaxHp);
+		AIController->BossUI->SetDamageText(DamageAmount);
+	}
 
 	//TODO : 그로기 관련 코드
 
@@ -1536,7 +1539,6 @@ void AJesusBoss2::JumpExplosionCheck()
 
 		Player->TakeDamage(Damage, DamageEvent, GetController(), this);
 	}
-
 }
 
 void AJesusBoss2::CheckBossDie()
@@ -1558,6 +1560,12 @@ void AJesusBoss2::CheckBossDie()
 		{
 			iter.Value() = 0;
 		}
+
+		GetWorldTimerManager().SetTimer(LoadingTimerHandle, FTimerDelegate::CreateLambda([=]()
+			{		
+				AIController->BossUI->RemoveFromViewport();
+				UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/00_Maps/01_Art/00_Modeller/InGameMap/MainMap")));
+			}), 5.f, false);
 	}
 }
 

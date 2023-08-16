@@ -333,6 +333,8 @@ public:
 	
 	TTuple<bool, bool> StartEnd;
 
+	FTimerHandle LoadingTimerHandle;
+
 	ABoss2AIController* AIController;
 
 	UPROPERTY()
