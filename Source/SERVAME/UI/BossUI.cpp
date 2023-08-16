@@ -3,6 +3,7 @@
 
 #include "BossUI.h"
 #include <Kismet/GameplayStatics.h>
+#include <SERVAME/Manager/JesusGameInstance.h>
 
 
 void UBossUI::NativeOnInitialized()
@@ -10,12 +11,14 @@ void UBossUI::NativeOnInitialized()
 	Super::NativeOnInitialized();
 	EndDelegate.BindDynamic(this, &UBossUI::OnAnimationEnd);
 
-	BindToAnimationFinished(BossDiedAnimation, EndDelegate);
+	BindToAnimationFinished(FadeInAnimation, EndDelegate);
+	BindToAnimationFinished(GameClearAnimation, GameClearDelegate);
 }
 
 void UBossUI::NativeConstruct()
 {
 	Super::NativeConstruct();
+	ChangeLanguage();
 	PlayAnimation(BossHPOpenAnimation);
 }
 
@@ -45,7 +48,22 @@ void UBossUI::PlayBossHPOpenAnimation(bool IsOpen)
 
 void UBossUI::PlayBossDiedAnimtion()
 {
-	PlayAnimation(BossDiedAnimation);
+	PlayFadeInAnimation();
+}
+
+void UBossUI::PlayFadeInAnimation()
+{
+	PlayAnimation(FadeInAnimation);
+}
+
+void UBossUI::PlayFadeOutAnimation()
+{
+	PlayAnimation(FadeOutAnimation);
+}
+
+void UBossUI::PlayGameClearAnimation()
+{
+	PlayAnimation(GameClearAnimation);
 }
 
 void UBossUI::SetDamageText(float value)
@@ -66,6 +84,7 @@ void UBossUI::SetDamageText(float value)
 
 void UBossUI::OnAnimationEnd()
 {
+	UE_LOG(LogTemp, Warning, TEXT("BossDied, Delegate Proceed after FadeOut Ends"));
 	//EndingCreditImage->SetVisibility(ESlateVisibility::Visible);
 	//MediaPlayer->OpenSource(MediaSource);
 	//MediaPlayer->Play();
@@ -73,7 +92,22 @@ void UBossUI::OnAnimationEnd()
 	//FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 	//FTimerHandle OpenLevelTimer;
 	//TimerManager.SetTimer(OpenLevelTimer, [&]() {
-	UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/00_Maps/01_Art/00_Modeller/KimMinYeongMap_Boss2")));
+	//UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/00_Maps/01_Art/00_Modeller/KimMinYeongMap_Boss2")));
 		//}, 20.0f, false);
 }
+
+void UBossUI::ChangeLanguage()
+{
+	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (GameInstance->language == Language::ENG)
+	{
+		BossNameText->SetBrushFromTexture(BossNameTextures.Find(EBossSettings::phase1)->EngTexture);
+	}
+	else if (GameInstance -> language == Language::KOR)
+	{
+		BossNameText->SetBrushFromTexture(BossNameTextures.Find(EBossSettings::phase1)->KorTexture);
+	}
+}
+
+
 
