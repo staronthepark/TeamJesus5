@@ -75,6 +75,12 @@ public:
 	void PressUseItem();
 	void UnPressUseItem();
 
+	void PressSprint();
+	void UnPressSprint();
+
+	void PressGrab();
+	void UnPressGrab();
+
 	void PressPowerAttack();
 	void UnPressPowerAttack();
 

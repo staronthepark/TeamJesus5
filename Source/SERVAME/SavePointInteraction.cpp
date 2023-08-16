@@ -26,6 +26,7 @@ void ASavePointInteraction::BeginPlay()
 	}
 	
 	array = GetComponentsByClass(UParticleSystemComponent::StaticClass());
+
 	for (int32 i = 0; i < array.Num(); i++)
 	{
 		ParticleCompArray.Add(Cast<UParticleSystemComponent>(array[i]));
@@ -42,9 +43,6 @@ void ASavePointInteraction::Tick(float DeltaTime)
 	{
 		MeshCompArray[i]->SetScalarParameterValueOnMaterials("Dissolve", DissolveValue);
 	}
-
-	if(DissolveValue <= 0.0f)
-		SetActorTickEnabled(false);
 }
 
 void ASavePointInteraction::BeginTriggerEvent()
@@ -67,13 +65,16 @@ void ASavePointInteraction::EnableEvent()
 	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 	if (IsActive)
 	{
+		Character->AxisX = 1;
+		Character->AxisY = 1;
 		Character->Imotal = true;
 		Character->ChangeMontageAnimation(AnimationType::SAVESTART);
 	}
 	else
 	{
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[3].ObjClass,  GetActorLocation() + FVector(0, 0, 150.0f), FRotator::ZeroRotator);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[23].ObjClass, GetActorLocation() + FVector(0, 0, 200.0f), FRotator::ZeroRotator);
+		AObjectPool& objectpool = AObjectPool::GetInstance();
+		objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass,  GetActorLocation() + FVector(0, 0, 150.0f), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[23].ObjClass, GetActorLocation() + FVector(0, 0, 200.0f), FRotator::ZeroRotator);
 		IsActive = true;
 
 		for (int32 i = 0; i < ParticleCompArray.Num(); i++)

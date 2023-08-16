@@ -13,6 +13,7 @@
 #include "Components/WidgetComponent.h"
 #include "..\UI\MonsterWidget.h"
 #include <vector>
+#include <mutex>
 #include "JesusBoss2.generated.h"
 
 UENUM()
@@ -51,6 +52,9 @@ enum Boss2ActionType
 	B2_HUNTJUMP UMETA(DisplayNAme = "B2_HUNTJUMP"),
 	B2_JUMPEXPLOSION UMETA(DisplayNAme = "B2_JUMPEXPLOSION"),
 	B2_THROWSTONE UMETA(DisplayNAme = "B2_THROWSTONE"),
+	B2_LEFTWALK UMETA(DisplayNAme = "B2_LEFTWALK"),
+	B2_FOLLOWUP_CHARGE UMETA(DisplayNAme = "B2_FOLLOWUP_CHARGE"),
+	B2_FOLLOWUP_SCREAMATTACK UMETA(DisplayNAme = "B2_FOLLOWUP_SCREAMATTACK"),
 	B2_ENUMEND,
 };
 
@@ -166,6 +170,8 @@ public:
 	AJesusBoss2();
 	~AJesusBoss2();
 
+	std::mutex m1;
+
 	UPROPERTY()
 	UBoss2AnimInstance* Boss2AnimInstance;
 
@@ -220,6 +226,19 @@ public:
 	float VomitMaxRange;
 	FTimerHandle VomitTimerHandle;
 
+	TArray<FVector> CirclePoints;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	int NumSegments = 16;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	float Radius = 700.f;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	float CircleWalkMaxTime = 3.f;
+	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
+	bool DrawDebugCircle = false;
+	bool CircleWalkEnd = true;
+	int CircleIndexCount = 2;	
+	FTimerHandle CircleWalkTimerHandle;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss2Data")
 	FBoss2DataStruct BossDataStruct;
 
@@ -255,6 +274,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UCapsuleComponent> LeftArmHitCollision;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraComponent> LeftHandTrail1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraComponent> LeftHandTrail2;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraComponent> LeftHandTrail3;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraComponent> RightHandTrail1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraComponent> RightHandTrail2;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraComponent> RightHandTrail3;
+
 	Boss2BaseAction Boss2SuperAction;
 	Boss2DirectionType PlayerDirection;
 	Boss2ActionType CurrentAction;
@@ -264,6 +297,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DecreasePercentageVal")
 	int DecreasePercentageVal = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JumpExplosion")
+	float JumpExplosionStartTime = 3.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JumpExplosion")
+	float DelayBetweenJumpExplosion = 1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JumpExplosion")
+	float EXplosionSphereSize = 700.f;
+	int JumpExplosionCnt = 0;
+	FTimerHandle JumpExplosionTimer;
 
 	int HitCount;
 	float Damage;
@@ -282,6 +324,7 @@ public:
 	bool IsArrived;
 	bool IsStartBoneRot;
 	bool JumpMoveStart;
+	bool CrossEvent = false;
 
 	FVector LastPlayerLoc;
 
@@ -299,12 +342,30 @@ public:
 
 	UPROPERTY()
 	const UEnum* Boss2ActionEnum;
+	UPROPERTY()
+	const UEnum* Boss2AnimationEnum;
 
 	UPROPERTY()
-	UMonsterWidget* MonsterLockOnWidget;
+	UMonsterWidget* HeadLockOnWidget;
+	UPROPERTY()
+	UMonsterWidget* LeftArmLockOnWidget;
+	UPROPERTY()
+	UMonsterWidget* RightArmLockOnWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UWidgetComponent* LockOnWidget;
+	UWidgetComponent* HeadLockOnWidgetComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UWidgetComponent* LeftArmLockOnWidgetComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UWidgetComponent* RightLockOnWidgetComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USphereComponent> LockOnTargetHead;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USphereComponent> LockOnTargetLArm;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USphereComponent> LockOnTargetRArm;
+
 
 	TObjectPtr<APlayerCharacter> PlayerCharacter;
 
@@ -325,6 +386,7 @@ public:
 	TMap<Boss2AttackType, TFunction<void(Boss2ActionTemp* Temp)>> ChangePercentageMap;
 	TMap<Boss2AttackType, TFunction<void()>> InitPercentageMap;
 	TMap<Boss2CollisionType, TFunction<void(bool OnOff)>> CollisionMap;
+	TMap<UPrimitiveComponent*, TFunction<UMonsterWidget*()>> LockonWidgetMap;
 
 	TArray<Boss2ActionTemp> MeleeActionArr;
 	TArray<Boss2ActionTemp> MeleeTempArr;
@@ -359,8 +421,9 @@ public:
 	virtual void RespawnCharacter() override;
 	virtual void IsNotifyActive(bool value) override;
 	virtual void PlayExecutionAnimation() override;
-	virtual void ActivateLockOnImage(bool value) override;
+	virtual void ActivateLockOnImage(bool value, UPrimitiveComponent* comp) override;
 	virtual void ActivateHitCollision() override;
+	virtual void Stun() override;
 
 	/*=====================
 	*		Function
@@ -387,6 +450,11 @@ public:
 	void SlerpJump();
 	void SlerpJumpEnd();
 	void JumpMove();
+	void JumpExplosionCheck();
+	void CheckBossDie();
+	void ActivateTrail();
+	void DeactivateTrail();
+	void DrawCircle(FVector Center);
 
 	/*======================
 	*		UFUNCTION
@@ -401,7 +469,6 @@ public:
 	void SetBoneRArm(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	void GetEndedMontage(UAnimMontage* Montage, bool bInterrupted);
-
 
 	/*=====================
 			Notify
@@ -419,6 +486,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void PostInitializeComponents() override;
+	virtual bool IsAlive()override;
 
 public:	
 

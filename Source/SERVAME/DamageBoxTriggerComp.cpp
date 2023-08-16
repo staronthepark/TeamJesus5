@@ -49,13 +49,14 @@ void UDamageBoxTriggerComp::ActiveHit()
 		OverlapActorArray[i]->TakeDamage(Damage, DamageEvent, nullptr, GetOwner());
 
 		
+		AObjectPool& objectpool = AObjectPool::GetInstance();
 
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[0].ObjClass, OverlapActorArray[i]->GetActorLocation(), FRotator(90, 180, 180));
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[1].ObjClass, OverlapActorArray[i]->GetActorLocation(), FRotator(90, 180, 180));
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[3].ObjClass, OverlapActorArray[i]->GetActorLocation(), FRotator(90, 180, 180));
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[1].ObjClass, OverlapActorArray[i]->GetActorLocation(), FRotator(90, 180, 180));
+		objectpool.SpawnObject(objectpool.ObjectArray[0].ObjClass, OverlapActorArray[i]->GetActorLocation(), FRotator(90, 180, 180));
+		objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OverlapActorArray[i]->GetActorLocation(), FRotator(90, 180, 180));
+		objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlapActorArray[i]->GetActorLocation(), FRotator(90, 180, 180));
+		objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OverlapActorArray[i]->GetActorLocation(), FRotator(90, 180, 180));
 		
-			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[5].ObjClass, OverlapActorArray[i]->GetActorLocation(), FRotator(90, 180, 180));
+			objectpool.SpawnObject(objectpool.ObjectArray[5].ObjClass, OverlapActorArray[i]->GetActorLocation(), FRotator(90, 180, 180));
 	}
 	if (Count >= MaxCount)
 	{

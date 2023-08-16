@@ -18,7 +18,6 @@ AJesusBoss::AJesusBoss()
 	PrimaryActorTick.bCanEverTick = true;
 	AIControllerClass = AAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	BossAIController = Cast<AAIController>(AIControllerClass->GetDefaultObject());
 
 	BossWeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BossWeaponMesh"));
 	BossWeaponMesh->SetupAttachment(GetMesh(), FName("Weapon_Bone"));
@@ -94,6 +93,8 @@ AJesusBoss::AJesusBoss()
 		}));
 	MontageEndMap.Add(BossAnimationType::IDLE, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
+			Boss->IsAttackMontageEnd = true;
+			Boss->IsAttacking = false;
 			Boss->IdleMontageEndInit(BossAnimationType::IDLE);
 		}));
 
@@ -748,6 +749,18 @@ AJesusBoss::AJesusBoss()
 				IsAttackMontageEnd = true;
 			}));
 
+	ActionEndMap.Add(BossAttackType::STEP, TFunction<void(float, float, UAnimMontage*)>
+		([=](float Dist, float Time, UAnimMontage* Montage)
+			{
+				BossActionTemp ActionTemp{};
+
+				auto Type = GetTypeFromMetaData(Montage);
+
+				if (Type == BossAnimationType::BACKSTEP || Type == BossAnimationType::LEFTSTEP || Type == BossAnimationType::RIGHTSTEP)
+					return;
+			}));
+
+
 	//======================================확률에 의한 랜덤 패턴 가져오기========================================
 
 	GetRandomPatternMap.Add(BossAttackType::MELEE, TFunction<BossActionTemp()>([=]()
@@ -825,6 +838,11 @@ AJesusBoss::AJesusBoss()
 			FollowUpPercentageVec.push_back(Temp->Percentage);
 		}));
 
+	AddArrMap.Add(STEP, TFunction<void(BossActionTemp*)>([=](BossActionTemp* Temp)
+		{
+			StepArr.Add(*Temp);
+		}));
+
 	//====================================확률 변경============================================
 
 	ChangePercentageMap.Add(MELEE, TFunction<void(BossActionTemp*)>([=](BossActionTemp* Temp)
@@ -890,6 +908,11 @@ AJesusBoss::AJesusBoss()
 				FollowUpActionArr[i].Percentage += DecreasePercentageVal / (FollowUpActionArr.Num() - 2);
 				FollowUpPercentageVec.push_back(FollowUpActionArr[i].Percentage);
 			}
+		}));
+
+	ChangePercentageMap.Add(STEP, TFunction<void(BossActionTemp*)>([=](BossActionTemp* Temp)
+		{
+
 		}));
 
 	//===============================확률 초기화========================================
@@ -1027,7 +1050,6 @@ void AJesusBoss::BeginPlay()
 
 	BossActionEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("BossActionType"), true);
 
-	BossAI = Cast<ABossAIController>(GetController());
 	AIController = Cast<ABossAIController>(GetController());
 
 	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss::AttackHit);
@@ -1076,6 +1098,10 @@ void AJesusBoss::BeginPlay()
 	SwordTrailComp->Deactivate();
 	ParringTrailComp->Deactivate();
 	CurrentAnimType = BossAnimationType::NONE;
+
+	TArray<UActorComponent*>ActorCompArray;
+	ActorCompArray = GetComponentsByTag(USphereComponent::StaticClass(), FName("LockOnTarget"));
+	LockOnComp = Cast<USphereComponent>(ActorCompArray[0]);
 
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
@@ -1254,7 +1280,7 @@ void AJesusBoss::CheckDealTime()
 
 void AJesusBoss::SetBTAction(BossActionTemp Temp)
 {
-	BossAI->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("BossActionType")), Temp.ActionType);
+	AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("BossActionType")), Temp.ActionType);
 }
 
 int AJesusBoss::GetRandomNum(int Min, int Max)
@@ -1270,15 +1296,19 @@ void AJesusBoss::DoRandomStep()
 	fDeltaTime = 0.f;
 	srand(time(NULL));
 
+	//todo : 스텝 두개를 패턴화 시켜서 히트 캔슬 막아주기
+
 	switch (rand() % 2)
 	{
 	case 0:
 		DoStep = true;
+		CurrentActionTemp = StepArr[1];
 		BossAnimInstance->PlayMontage(BossMontageMap[BossAnimationType::RIGHTSTEP]);
 		break;
 
 	case 1:
 		DoStep = true;
+		CurrentActionTemp = StepArr[0];
 		BossAnimInstance->PlayMontage(BossMontageMap[BossAnimationType::LEFTSTEP]);
 		break;
 	}
@@ -1354,6 +1384,7 @@ float AJesusBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 	DeactivateHitCollision();
 
 	bool IsAnimTest = AIController->GetBlackboardComponent()->GetValueAsBool("IsAnimTest");
+	
 	if (IsAnimTest)
 		return DamageAmount;
 
@@ -1361,23 +1392,26 @@ float AJesusBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 	IsStartBoneRot = true;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AJesusBoss::ReSetBoneRot, Time, false);
 	
-	if (BossDataStruct.CharacterHp <= 2000 && IsExecution == false && IsHitStun == false)
-	{
-		if (GetTypeFromMetaData(StartMontage) == BossAnimationType::DARKEXPLOSION ||
-			GetTypeFromMetaData(StartMontage) == BossAnimationType::GROUNDEXPLOSION)
-			return DamageAmount;
+	//if (BossDataStruct.CharacterHp <= 2000 && IsExecution == false && IsHitStun == false)
+	//{
+	//	if (GetTypeFromMetaData(StartMontage) == BossAnimationType::DARKEXPLOSION ||
+	//		GetTypeFromMetaData(StartMontage) == BossAnimationType::GROUNDEXPLOSION)
+	//		return DamageAmount;
 
-		IsStun = true;
-		IsLockOn = false;
-		AttackLockOn = false;
-		IsParriged = true;
-		IsFirstExecution = true;
-		IsHitStun = true;
-		BossDataStruct.CurrentGrrogyGauge = 0;
-		BossAnimInstance->PlayGroggyMontage(BossAnimationType::STUN);
-	}
-	else if (!StartEnd.Get<0>() && CurrentActionTemp.HitCancel)
+	//	IsStun = true;
+	//	IsLockOn = false;
+	//	AttackLockOn = false;
+	//	IsParriged = true;
+	//	IsFirstExecution = true;
+	//	IsHitStun = true;
+	//	BossDataStruct.CurrentGrrogyGauge = 0;
+	//	BossAnimInstance->PlayGroggyMontage(BossAnimationType::STUN);
+	//}
+
+	if (!StartEnd.Get<0>() && CurrentActionTemp.HitCancel)
+	{
 		HitMap[PlayerCharacter->PlayerAttackType]();
+	}
 
 	return DamageAmount;
 }
@@ -1431,9 +1465,24 @@ void AJesusBoss::PlayExecutionAnimation()
 	ChangeMontageAnimation(BossAnimationType::EXECUTION);
 }
 
-void AJesusBoss::ActivateLockOnImage(bool value)
+void AJesusBoss::ActivateLockOnImage(bool value, UPrimitiveComponent* comp)
 {
 	value ? MonsterLockOnWidget->SetVisibility(ESlateVisibility::HitTestInvisible) : MonsterLockOnWidget->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void AJesusBoss::Stun()
+{	
+	IsParriged = true;
+	AttackLockOn = false;
+	BossDataStruct.CurrentGrrogyGauge = 0;
+	BossAnimInstance->PlayGroggyMontage(BossAnimationType::STUN);
+}
+
+bool AJesusBoss::IsAlive()
+{
+	if(BossDataStruct.CharacterHp > 0)
+	return true;
+	return false;
 }
 
 void AJesusBoss::SpawnInit()
@@ -1692,6 +1741,8 @@ BossAnimationType AJesusBoss::GetTypeFromMetaData(UAnimMontage* Montage)
 void AJesusBoss::GetEndedMontage(UAnimMontage* Montage, bool bInterrupted)
 {
 	IsStart.Exchange(false);
+	StartEnd.Key = false;
+	StartEnd.Value = true;
 	auto Type = GetTypeFromMetaData(Montage);
 
 	if (Type == BossAnimationType::RUN || Type == BossAnimationType::RUN_L || Type == BossAnimationType::RUN_R || Type == BossAnimationType::SPRINT)
@@ -1721,6 +1772,18 @@ void AJesusBoss::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	
 	auto Type = GetTypeFromMetaData(StartMontage);
 	
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+	if (OtherComp->GetName() == "ShieldCollision")
+	{
+		Player->SetShieldHP(-BossDataStruct.DamageList[Type]);
+		CameraShake(PlayerCameraShake);
+		VibrateGamePad(0.4f, 0.4f);
+		objectpool.SpawnObject(objectpool.ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		return;
+	}
+
 	if (!Player->Imotal)
 	{
 		if (BossDataStruct.DamageList.Contains(Type))
@@ -1959,7 +2022,7 @@ void AJesusBoss::OnStart()
 		StartEnd.Value = false;
 		
 		StartMontage = GetCurrentMontage();
-		//UE_LOG(LogTemp, Warning, TEXT("Start : %s"), *StartMontage->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Start : %s"), *StartMontage->GetName());
 		MontageStartMap[GetTypeFromMetaData(StartMontage)](this);
 	}
 }

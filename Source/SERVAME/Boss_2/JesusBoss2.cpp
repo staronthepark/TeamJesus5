@@ -11,6 +11,7 @@
 #include "..\ObjectPool\VomitObjectInPool.h"
 #include "..\ObjectPool\StoneObjectInPool.h"
 #include "DrawDebugHelpers.h"
+#include "..\Manager\JesusThreadManager.h"
 
 AJesusBoss2::AJesusBoss2()
 {
@@ -21,8 +22,12 @@ AJesusBoss2::AJesusBoss2()
 	Boss2HitCollision->SetupAttachment(GetMesh(), FName("LockOn_Bone"));
 	Boss2HitCollision->SetCollisionProfileName("AIHit");
 
-	LockOnWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget"));
-	LockOnWidget->SetupAttachment(GetMesh(), FName("Bip001-Head"));
+	HeadLockOnWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget"));
+	HeadLockOnWidgetComp->SetupAttachment(GetMesh(), FName("Bip001-Head"));
+	LeftArmLockOnWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget2"));
+	LeftArmLockOnWidgetComp->SetupAttachment(GetMesh(), FName("Bip001-L-UpperArm"));
+	RightLockOnWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget3"));
+	RightLockOnWidgetComp->SetupAttachment(GetMesh(), FName("Bip001-R-UpperArm"));
 	
 	LeftAtkCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Boss Left Hand"));
 	LeftAtkCollision->SetupAttachment(GetMesh(),FName("LHand"));
@@ -56,6 +61,32 @@ AJesusBoss2::AJesusBoss2()
 	RightArmHitCollision->SetupAttachment(GetMesh(), FName("Bip001-R-UpperArm"));
 	RightArmHitCollision->SetCollisionProfileName("AIHit");
 
+	LeftHandTrail1 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("L1 Trail"));
+	LeftHandTrail1->SetupAttachment(GetMesh(), FName("Bip001-L-Finger13"));
+	LeftHandTrail2 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("L2 Trail"));
+	LeftHandTrail2->SetupAttachment(GetMesh(), FName("Bip001-L-Finger23"));
+	LeftHandTrail3 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("L3 Trail"));
+	LeftHandTrail3->SetupAttachment(GetMesh(), FName("Bip001-L-Finger33"));
+
+	RightHandTrail1 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("R1 Trail"));
+	RightHandTrail1->SetupAttachment(GetMesh(), FName("Bip001-R-Finger13"));
+	RightHandTrail2 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("R2 Trail"));
+	RightHandTrail2->SetupAttachment(GetMesh(), FName("Bip001-R-Finger23"));
+	RightHandTrail3 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("R3 Trail"));
+	RightHandTrail3->SetupAttachment(GetMesh(), FName("Bip001-R-Finger33"));
+
+	LockOnTargetHead = CreateDefaultSubobject<USphereComponent>(TEXT("LockOnHead"));
+	LockOnTargetHead->SetupAttachment(HeadLockOnWidgetComp);
+	LockOnTargetHead->SetCollisionProfileName("LockOnTarget");
+
+	LockOnTargetLArm = CreateDefaultSubobject<USphereComponent>(TEXT("LockOnLArm"));
+	LockOnTargetLArm->SetupAttachment(LeftArmLockOnWidgetComp);
+	LockOnTargetLArm->SetCollisionProfileName("LockOnTarget");
+
+	LockOnTargetRArm = CreateDefaultSubobject<USphereComponent>(TEXT("LockOnRArm"));
+	LockOnTargetRArm->SetupAttachment(RightLockOnWidgetComp);
+	LockOnTargetRArm->SetCollisionProfileName("LockOnTarget");
+
 	MontageStartMap.Add(Boss2AnimationType::NONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 		}));
@@ -68,6 +99,21 @@ AJesusBoss2::AJesusBoss2()
 		}));
 	MontageEndMap.Add(Boss2AnimationType::IDLE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
+			Boss2->IsAttackMontageEnd = true;
+			Boss2->IsAttacking = false;
+		}));
+
+	MontageStartMap.Add(Boss2AnimationType::GROGGY, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->IsLockOn = false;
+			Boss2->AttackLockOn = false;
+			Boss2->CanMove = false;
+		}));
+	MontageEndMap.Add(Boss2AnimationType::GROGGY, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->IsLockOn = true;
+			Boss2->AttackLockOn = true;
+			Boss2->CanMove = true;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::CROSSFALL, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -90,9 +136,33 @@ AJesusBoss2::AJesusBoss2()
 
 	MontageStartMap.Add(Boss2AnimationType::LEFTWALK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
+			if (!Boss2->CircleWalkEnd)
+				return;
+
+			UE_LOG(LogTemp, Warning, TEXT("Timer SET"));
+			Boss2->CanMove = true;
+			Boss2->IsLockOn = true;
+			Boss2->DrawCircle(Boss2->PlayerCharacter->GetActorLocation());
+			Boss2->CircleWalkEnd = false;
+
+			Boss2->GetWorldTimerManager().SetTimer(Boss2->CircleWalkTimerHandle, FTimerDelegate::CreateLambda([=]()
+				{
+					if (Boss2->BossDataStruct.CharacterHp > 0)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Timer END"));
+						Boss2->Boss2SuperAction = B2_SUPER_ATTACK;
+						Boss2->AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("Boss2BaseAction")), B2_SUPER_ATTACK);
+						Boss2->CircleWalkEnd = true;
+						Boss2->AIController->StopMovement();
+						Boss2->OnEnd();
+					}
+					//GetWorldTimerManager().ClearTimer(CircleWalkTimerHandle);
+				}), Boss2->CircleWalkMaxTime, false);
 		}));
 	MontageEndMap.Add(Boss2AnimationType::LEFTWALK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
+			if (Boss2->CircleWalkEnd == false)
+				Boss2->ChangeMontageAnimation(Boss2AnimationType::LEFTWALK);
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::SLASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -104,6 +174,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::DOWNSMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -116,6 +187,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::DOUBLESMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -127,6 +199,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::SCREAMATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -138,6 +211,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::HEADATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -149,6 +223,31 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
+		}));
+
+	MontageStartMap.Add(Boss2AnimationType::FOLLOWUP_CHARGE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->IsAttackMontageEnd = false;
+			Boss2->CanMove = false;
+		}));
+	MontageEndMap.Add(Boss2AnimationType::FOLLOWUP_CHARGE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->CanMove = true;
+			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
+		}));
+
+	MontageStartMap.Add(Boss2AnimationType::FOLLOWUP_SCREAMATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->IsAttackMontageEnd = false;
+			Boss2->CanMove = false;
+		}));
+	MontageEndMap.Add(Boss2AnimationType::FOLLOWUP_SCREAMATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->CanMove = true;
+			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::CHARGE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -160,6 +259,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::HEADING, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -172,6 +272,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::VOMITFALL, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -183,6 +284,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::ELBOWSPIN, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -194,6 +296,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::HUNTJUMP, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -205,10 +308,12 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::JUMPEXPLOSION, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
+			Boss2->GetWorldTimerManager().SetTimer(Boss2->JumpExplosionTimer, Boss2, &AJesusBoss2::JumpExplosionCheck, Boss2->DelayBetweenJumpExplosion, true, Boss2->JumpExplosionStartTime);
 			Boss2->AreaAtkPos->AttachToComponent(Boss2->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("Bip001-Neck"));
 			Boss2->IsAttackMontageEnd = false;
 			Boss2->CanMove = false;
@@ -217,11 +322,11 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::THROWSTONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("stone"));
 			auto RightHandSocket = Boss2->GetMesh()->GetSocketLocation(FName("RHand"));
 			auto PoolObject = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[35].ObjClass,
 				RightHandSocket, FRotator::ZeroRotator);
@@ -234,6 +339,7 @@ AJesusBoss2::AJesusBoss2()
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
 		}));
 
 	//===========================================공격 실행=========================================================
@@ -265,14 +371,29 @@ AJesusBoss2::AJesusBoss2()
 			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::DOWNSMASH, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
 		}));
 
-	BossAttackMap.Add(Boss2ActionType::B2_DOUBLESMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
-		{
-			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::DOUBLESMASH, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
-		}));
-
 	BossAttackMap.Add(Boss2ActionType::B2_SCREAMATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::SCREAMATTACK, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
+		}));
+
+	BossAttackMap.Add(Boss2ActionType::B2_VOMITFALL, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::VOMITFALL, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
+		}));
+
+	BossAttackMap.Add(Boss2ActionType::B2_HEADING, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::HEADING, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
+		}));
+
+	BossAttackMap.Add(Boss2ActionType::B2_LEFTWALK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, true, Boss2AnimationType::LEFTWALK, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
+		}));
+
+	BossAttackMap.Add(Boss2ActionType::B2_DOUBLESMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::DOUBLESMASH, Boss2, Boss2->FollowUpActionArr, Boss2AttackType::B2_FOLLOWUP);
 		}));
 
 	BossAttackMap.Add(Boss2ActionType::B2_HEADATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -280,19 +401,14 @@ AJesusBoss2::AJesusBoss2()
 			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::HEADATTACK, Boss2, Boss2->FollowUpActionArr, Boss2AttackType::B2_FOLLOWUP);
 		}));
 
-	BossAttackMap.Add(Boss2ActionType::B2_CHARGE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+	BossAttackMap.Add(Boss2ActionType::B2_FOLLOWUP_CHARGE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CHARGE, Boss2, Boss2->RangeActionArr, Boss2AttackType::B2_RANGE);
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::FOLLOWUP_CHARGE, Boss2, Boss2->FollowUpActionArr, Boss2AttackType::B2_FOLLOWUP);
 		}));
 
-	BossAttackMap.Add(Boss2ActionType::B2_HEADING, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+	BossAttackMap.Add(Boss2ActionType::B2_FOLLOWUP_SCREAMATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
-			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::HEADING, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
-		}));
-	//
-	BossAttackMap.Add(Boss2ActionType::B2_VOMITFALL, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
-		{
-			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::VOMITFALL, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::FOLLOWUP_SCREAMATTACK, Boss2, Boss2->FollowUpActionArr, Boss2AttackType::B2_FOLLOWUP);
 		}));
 
 	//BossAttackMap.Add(Boss2ActionType::B2_ELBOWSPIN, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -315,6 +431,11 @@ AJesusBoss2::AJesusBoss2()
 			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::THROWSTONE, Boss2, Boss2->RangeActionArr, Boss2AttackType::B2_RANGE);
 		}));
 
+	BossAttackMap.Add(Boss2ActionType::B2_CHARGE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::CHARGE, Boss2, Boss2->RangeActionArr, Boss2AttackType::B2_RANGE);
+		}));
+
 	//====================================공격타입에 맞는 공격이 끝났을 때 실행되는 맵====================================
 
 	ActionEndMap.Add(Boss2AttackType::B2_MELEE, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
@@ -322,17 +443,29 @@ AJesusBoss2::AJesusBoss2()
 			Boss2ActionTemp ActionTemp{};
 
 			auto Type = GetTypeFromMetaData(Montage);
-		
+			auto name = Boss2AnimationEnum->GetNameStringByValue((uint64)Type);
+			UE_LOG(LogTemp, Warning, TEXT("end attack name : %s"), *name);
+
 			if (CurrentActionTemp.IsAddPercentage)
 				InitPercentageMap[CurrentActionTemp.AttackType]();
 			else
 				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
 
+			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
+			{
+				CurrentActionTemp = MeleeActionArr.Last();
+				SetBTAction(CurrentActionTemp);
+				return;
+			}
+
 			if (Type == Boss2AnimationType::DOWNSMASH || Type == Boss2AnimationType::SLASH)
 			{
-				CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_FOLLOWUP]();
+				if (Dist >= 800.f)
+					CurrentActionTemp = FollowUpActionArr.Last();
+				else
+					CurrentActionTemp = GetRandomPatternMap[Boss2AttackType::B2_FOLLOWUP]();
+
 				SetBTAction(CurrentActionTemp);
-				IsAttackMontageEnd = true;
 				return;
 			}
 
@@ -351,6 +484,13 @@ AJesusBoss2::AJesusBoss2()
 			else
 				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
 
+			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
+			{
+				CurrentActionTemp = MeleeActionArr.Last();
+				SetBTAction(CurrentActionTemp);
+				return;
+			}
+
 			SetBTAction(GetRandomPattern(Dist));
 
 			IsAttackMontageEnd = true;
@@ -366,54 +506,68 @@ AJesusBoss2::AJesusBoss2()
 			else
 				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
 
-			SetBTAction(GetRandomPattern(Dist));
-			IsAttackMontageEnd = true;
-		}));
+			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
+			{
+				CurrentActionTemp = MeleeActionArr.Last();
+				SetBTAction(CurrentActionTemp);
+				return;
+			}
 
-	ActionEndMap.Add(Boss2AttackType::B2_LEFTATK, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
-		{
-			Boss2ActionTemp ActionTemp{};
-
-			auto Type = GetTypeFromMetaData(Montage);
-		
-			if (CurrentActionTemp.IsAddPercentage)
-				InitPercentageMap[CurrentActionTemp.AttackType]();
-			else
-				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
-
-			SetBTAction(GetRandomPattern(Dist));
-			IsAttackMontageEnd = true;
-		}));
-
-	ActionEndMap.Add(Boss2AttackType::B2_RIGHTATK, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
-		{
-			Boss2ActionTemp ActionTemp{};
-
-			auto Type = GetTypeFromMetaData(Montage);
-			
-			if (CurrentActionTemp.IsAddPercentage)
-				InitPercentageMap[CurrentActionTemp.AttackType]();
-			else
-				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
+			if (Type == Boss2AnimationType::FOLLOWUP_CHARGE)
+			{
+				CurrentActionTemp = FollowUpActionArr[2];
+				SetBTAction(CurrentActionTemp);
+				return;
+			}
 
 			SetBTAction(GetRandomPattern(Dist));
 			IsAttackMontageEnd = true;
 		}));
 
-	ActionEndMap.Add(Boss2AttackType::B2_BACKATK, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
-		{
-			Boss2ActionTemp ActionTemp{};
+	//ActionEndMap.Add(Boss2AttackType::B2_LEFTATK, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
+	//	{
+	//		Boss2ActionTemp ActionTemp{};
 
-			auto Type = GetTypeFromMetaData(Montage);
-		
-			if (CurrentActionTemp.IsAddPercentage)
-				InitPercentageMap[CurrentActionTemp.AttackType]();
-			else
-				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
+	//		auto Type = GetTypeFromMetaData(Montage);
+	//	
+	//		if (CurrentActionTemp.IsAddPercentage)
+	//			InitPercentageMap[CurrentActionTemp.AttackType]();
+	//		else
+	//			ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
 
-			SetBTAction(GetRandomPattern(Dist));
-			IsAttackMontageEnd = true;
-		}));
+	//		SetBTAction(GetRandomPattern(Dist));
+	//		IsAttackMontageEnd = true;
+	//	}));
+
+	//ActionEndMap.Add(Boss2AttackType::B2_RIGHTATK, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
+	//	{
+	//		Boss2ActionTemp ActionTemp{};
+
+	//		auto Type = GetTypeFromMetaData(Montage);
+	//		
+	//		if (CurrentActionTemp.IsAddPercentage)
+	//			InitPercentageMap[CurrentActionTemp.AttackType]();
+	//		else
+	//			ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
+
+	//		SetBTAction(GetRandomPattern(Dist));
+	//		IsAttackMontageEnd = true;
+	//	}));
+
+	//ActionEndMap.Add(Boss2AttackType::B2_BACKATK, TFunction<void(float, float, UAnimMontage*)>([=](float Dist, float Time, UAnimMontage* Montage)
+	//	{
+	//		Boss2ActionTemp ActionTemp{};
+
+	//		auto Type = GetTypeFromMetaData(Montage);
+	//	
+	//		if (CurrentActionTemp.IsAddPercentage)
+	//			InitPercentageMap[CurrentActionTemp.AttackType]();
+	//		else
+	//			ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
+
+	//		SetBTAction(GetRandomPattern(Dist));
+	//		IsAttackMontageEnd = true;
+	//	}));
 
 	//======================================확률에 의한 랜덤 패턴 가져오기========================================
 
@@ -540,6 +694,12 @@ AJesusBoss2::AJesusBoss2()
 
 			for (int i = 0; i < MeleeActionArr.Num(); i++)
 			{
+				if (MeleeActionArr[i].ActionType == Boss2ActionType::B2_FALLTHECROSS)
+				{
+					MeleePercentageVec.push_back(MeleeActionArr[i].Percentage);
+					continue;
+				}
+
 				if (MeleeActionArr[i].ActionType == Temp->ActionType)
 				{
 					MeleeActionArr[i].Percentage -= DecreasePercentageVal;
@@ -548,7 +708,8 @@ AJesusBoss2::AJesusBoss2()
 				}
 
 				MeleeActionArr[i].IsAddPercentage = true;
-				MeleeActionArr[i].Percentage += DecreasePercentageVal / (MeleeActionArr.Num() - 1);
+				//0퍼센트 패턴이 있기 때문에 -2
+				MeleeActionArr[i].Percentage += DecreasePercentageVal / (MeleeActionArr.Num() - 2);
 				MeleePercentageVec.push_back(MeleeActionArr[i].Percentage);
 			}
 		}));
@@ -578,6 +739,13 @@ AJesusBoss2::AJesusBoss2()
 
 			for (int i = 0; i < FollowUpActionArr.Num(); i++)
 			{
+				if (FollowUpActionArr[i].ActionType == Boss2ActionType::B2_FOLLOWUP_CHARGE ||
+					FollowUpActionArr[i].ActionType == Boss2ActionType::B2_FOLLOWUP_SCREAMATTACK)
+				{
+					FollowUpPercentageVec.push_back(FollowUpActionArr[i].Percentage);
+					continue;
+				}
+
 				if (FollowUpActionArr[i].ActionType == Temp->ActionType)
 				{
 					FollowUpActionArr[i].Percentage -= DecreasePercentageVal;
@@ -814,6 +982,20 @@ AJesusBoss2::AJesusBoss2()
 				Damage = 0;
 			}
 		}));
+
+	//=======================================보스 부위별 락온 UI 표시=========================================
+	LockonWidgetMap.Add(LockOnTargetHead, TFunction<UMonsterWidget*()>([=]()
+		{
+			return HeadLockOnWidget;
+		}));
+	LockonWidgetMap.Add(LockOnTargetLArm, TFunction<UMonsterWidget*()>([=]()
+		{
+			return LeftArmLockOnWidget;
+		}));
+	LockonWidgetMap.Add(LockOnTargetRArm, TFunction<UMonsterWidget* ()>([=]()
+		{
+			return RightArmLockOnWidget;
+		}));
 }
 
 AJesusBoss2::~AJesusBoss2()
@@ -863,13 +1045,21 @@ void AJesusBoss2::BeginPlay()
 {
 	Super::BeginPlay();
 
+	DeactivateTrail();
+
 	SetMetaData();
 	AIController = Cast<ABoss2AIController>(GetController());
 	Boss2ActionEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("Boss2ActionType"), true);
+	Boss2AnimationEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("Boss2AnimationType"), true);
 	GetCharacterMovement()->MaxWalkSpeed = BossDataStruct.CharacterOriginSpeed;
-	MonsterLockOnWidget = Cast<UMonsterWidget>(LockOnWidget->GetWidget());
-	MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
-	
+
+	HeadLockOnWidget = Cast<UMonsterWidget>(HeadLockOnWidgetComp->GetWidget());
+	HeadLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Collapsed);
+	LeftArmLockOnWidget = Cast<UMonsterWidget>(LeftArmLockOnWidgetComp->GetWidget());
+	LeftArmLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Collapsed);
+	RightArmLockOnWidget = Cast<UMonsterWidget>(RightLockOnWidgetComp->GetWidget());
+	RightArmLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Collapsed);
+
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
 	LeftAtkCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::AttackHit);
@@ -896,16 +1086,10 @@ void AJesusBoss2::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (PlayerCharacter->TargetComp != nullptr)
+	if (JumpExplosionCnt > 3)
 	{
-		if (PlayerCharacter->TargetComp->GetOwner() == this)
-		{
-			MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Visible);
-		}
-		else
-		{
-			MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
-		}
+		GetWorldTimerManager().ClearTimer(JumpExplosionTimer);
+		JumpExplosionCnt = 0;
 	}
 
 	if (AttackLockOn)
@@ -916,10 +1100,18 @@ void AJesusBoss2::Tick(float DeltaTime)
 
 	PlayMoveMontage();
 
+	CheckBossDie();
+
 	IsGameStart = Boss2AnimInstance->IsStart;
 
 	//본 회전시키는 코드
 	BoneMap[Boss2AnimInstance->CurrentBoneType]();
+
+	if (CircleWalkEnd == false)
+	{
+		AIController->MoveWhenArrived(CirclePoints[CircleIndexCount]);
+		RotateToPlayerInterp();
+	}
 }
 
 /*=====================
@@ -1002,24 +1194,44 @@ FBoss2Action* AJesusBoss2::GetActionData(FName Name)
 
 void AJesusBoss2::DoTypeAttack(float MinRange, float MaxRange, float Dist, bool LockOn, Boss2AnimationType Type, AJesusBoss2* Boss2, TArray<Boss2ActionTemp> &arr, Boss2AttackType AtkType)
 {
- 	if (Dist >= MinRange && Dist <= MaxRange && !Boss2->CurrentActionTemp.IsExcute)
+	if (Dist >= MinRange && Dist <= MaxRange && !Boss2->CurrentActionTemp.IsExcute)
 	{
-		InitIsExcute();
+		//InitIsExcute();
+
+		//스레드 사용
+		JesusThreadManager& t = JesusThreadManager::GetInstance();
+
+		t.EnqueueJob(TFunction<void(void)>([=](void)
+			{
+				std::unique_lock<std::mutex> lock(m1);
+				for (int i = 0; i < MeleeActionArr.Num(); i++)
+					MeleeActionArr[i].IsExcute = false;
+				for (int i = 0; i < RangeActionArr.Num(); i++)
+					RangeActionArr[i].IsExcute = false;
+				for (int i = 0; i < FollowUpActionArr.Num(); i++)
+					FollowUpActionArr[i].IsExcute = false;
+			}));
 
 		if (!Boss2->CurrentActionTemp.CanContinuity)
 		{
 			auto FoundIndex = arr.Find(Boss2->CurrentActionTemp);
+
 			if (FoundIndex == INDEX_NONE)
 			{
 				CurrentActionTemp = GetRandomPatternMap[AtkType]();
 				SetBTAction(CurrentActionTemp);
 				return;
 			}
-			
-			arr[FoundIndex].IsExcute = true;
+
+			t.EnqueueJob(TFunction<void(void)>([=, &arr](void)
+				{
+					std::unique_lock<std::mutex> lock(m1);
+					arr[FoundIndex].IsExcute = true;
+				}));
 		}
 
-		Boss2->CanMove = false;
+		if (Type != Boss2AnimationType::LEFTWALK)
+			Boss2->CanMove = false;
 		Boss2->GetCharacterMovement()->MaxWalkSpeed = CurrentActionTemp.Speed;
 		Boss2->PlayAttackAnim(Type);
 		Boss2->IsLockOn = LockOn;
@@ -1079,6 +1291,17 @@ void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 
 	auto Type = GetTypeFromMetaData(StartMontage);
 
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+	if (OtherComp->GetName() == "ShieldCollision" && Type != Boss2AnimationType::GROGGY)
+	{
+		Player->SetShieldHP(-BossDataStruct.DamageList[Type]);
+		CameraShake(PlayerCameraShake);
+		VibrateGamePad(0.4f, 0.4f);
+		objectpool.SpawnObject(objectpool.ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		return;
+	}
+
 	if (!Player->Imotal)
 	{
 		if (BossDataStruct.DamageList.Contains(Type))
@@ -1100,11 +1323,13 @@ float AJesusBoss2::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	OffHitCollision();
 
 	BossDataStruct.CharacterHp -= DamageAmount;
+	UE_LOG(LogTemp, Warning, TEXT("%f"), BossDataStruct.CharacterHp);
 
 	IsStartBoneRot = true;
 	GetWorldTimerManager().SetTimer(BoneRotateTimerHandle, this, &AJesusBoss2::ReSetBoneRot, Time, false);
 		
-	//TODO : 보스 체력 UI
+	AIController->BossUI->DecreaseHPGradual(this, BossDataStruct.CharacterHp / BossDataStruct.CharacterMaxHp);
+	AIController->BossUI->SetDamageText(DamageAmount);
 
 	//TODO : 그로기 관련 코드
 
@@ -1133,11 +1358,23 @@ void AJesusBoss2::RespawnCharacter()
 
 void AJesusBoss2::PlayExecutionAnimation()
 {
+	PlayAnimMontage(Boss2MontageMap[Boss2AnimationType::GROGGY]);
 }
 
-void AJesusBoss2::ActivateLockOnImage(bool value)
+void AJesusBoss2::Stun()
 {
-	value ? MonsterLockOnWidget->SetVisibility(ESlateVisibility::HitTestInvisible) : MonsterLockOnWidget->SetVisibility(ESlateVisibility::Collapsed);
+	AttackLockOn = false;
+	PlayAnimMontage(Boss2MontageMap[Boss2AnimationType::GROGGY]);
+}
+
+void AJesusBoss2::ActivateLockOnImage(bool value, UPrimitiveComponent* comp)
+{
+	UMonsterWidget* Widget = LockonWidgetMap[comp]();
+
+	if (Widget == nullptr)
+		return;
+
+	value ? Widget->LockOnImage->SetVisibility(ESlateVisibility::HitTestInvisible) : Widget->LockOnImage->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 FVector AJesusBoss2::Lerp(const FVector& start, const FVector& end, const float t)
@@ -1182,7 +1419,7 @@ void AJesusBoss2::SpawnInit()
 {
 	BossDataStruct.CharacterHp = BossDataStruct.CharacterMaxHp;
 	BossDataStruct.CharacterOriginSpeed = 60.f;
-	//TODO : UI 초기화
+	AIController->BossUI->SetHP(1);
 	IsDead = false;
 
 	//패턴 확률 초기화
@@ -1238,6 +1475,155 @@ void AJesusBoss2::JumpMove()
 	SetActorLocation(NewLoc);
 }
 
+void AJesusBoss2::JumpExplosionCheck()
+{
+	JumpExplosionCnt += 1;
+
+	float Size = 0.f;
+
+	if (JumpExplosionCnt == 1)
+	{
+		Size = EXplosionSphereSize;
+		Damage = BossDataStruct.DamageList[Boss2AnimationType::JUMPEXPLOSION];
+	}
+	else if (JumpExplosionCnt == 2)
+	{
+		Size = EXplosionSphereSize + 200.f;
+		Damage = BossDataStruct.DamageList[Boss2AnimationType::JUMPEXPLOSION]-10;
+	}
+	else if (JumpExplosionCnt == 3)
+	{
+		Size = EXplosionSphereSize + 600.f;
+		Damage = BossDataStruct.DamageList[Boss2AnimationType::JUMPEXPLOSION]-20;
+	}
+
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+
+	bool bResult = GetWorld()->SweepSingleByChannel(
+		OUT HitResult,
+		GetActorLocation(),
+		GetActorLocation(),
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel3,
+		FCollisionShape::MakeSphere(Size),
+		Params);
+
+	FVector Center = GetActorLocation();
+	FColor DrawColor;
+
+	if (bResult)
+		DrawColor = FColor::Green;
+	else
+		DrawColor = FColor::Red;
+
+	DrawDebugSphere(GetWorld(), Center, Size, 16, DrawColor, false, 1.f);
+
+	CameraShake(PlayerCameraShake);
+	VibrateGamePad(1.0f, 0.5f);
+
+	if (bResult && HitResult.GetActor())
+	{
+		FDamageEvent DamageEvent;
+		auto Player = Cast<APlayerCharacter>(HitResult.GetActor());
+
+		Player->TakeDamage(Damage, DamageEvent, GetController(), this);
+	}
+
+}
+
+void AJesusBoss2::CheckBossDie()
+{
+	if (BossDataStruct.CharacterHp <= 0 && IsDead == false)
+	{
+		IsLockOn = false;
+		CanMove = false;
+		IsDead = true;
+		PlayerCharacter->AxisX = 1;
+		PlayerCharacter->AxisY = 1;
+		GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
+		ChangeMontageAnimation(Boss2AnimationType::DIE);
+		
+		AIController->BossUI->PlayBossDiedAnimtion();
+		AIController->OnUnPossess();
+
+		for (auto iter = BossDataStruct.DamageList.begin(); iter != BossDataStruct.DamageList.end(); iter.operator++())
+		{
+			iter.Value() = 0;
+		}
+	}
+}
+
+void AJesusBoss2::ActivateTrail()
+{
+	LeftHandTrail1->Activate();
+	LeftHandTrail2->Activate();
+	LeftHandTrail3->Activate();
+
+	RightHandTrail1->Activate();
+	RightHandTrail2->Activate();
+	RightHandTrail3->Activate();
+}
+
+void AJesusBoss2::DeactivateTrail()
+{
+	LeftHandTrail1->Deactivate();
+	LeftHandTrail2->Deactivate();
+	LeftHandTrail3->Deactivate();
+
+	RightHandTrail1->Deactivate();
+	RightHandTrail2->Deactivate();
+	RightHandTrail3->Deactivate();
+}
+
+void AJesusBoss2::DrawCircle(FVector Center)
+{
+	CirclePoints.SetNum(NumSegments);
+
+	const float AngleBetweenSegments = 2 * PI / NumSegments;
+
+	// 원을 구성하는 점들 계산
+	int ClosestPointIndex = 0;
+	float MinDistance = FLT_MAX;
+
+	for (int i = 1; i < NumSegments; ++i)
+	{
+		float Angle = i * AngleBetweenSegments;
+		float X = Center.X + Radius * FMath::Cos(Angle);
+		float Y = Center.Y + Radius * FMath::Sin(Angle);
+		FVector Point(X, Y, Center.Z);
+		CirclePoints[i] = Point;
+
+		float Distance = FVector::Dist(Point, GetActorLocation());
+		if (Distance < MinDistance)
+		{
+			MinDistance = Distance;
+			ClosestPointIndex = i;
+		}
+	}
+
+	// ClosestPointIndex부터 시작하여 원의 점들 재배열
+	TArray<FVector> TempArray;
+	TempArray.Append(CirclePoints.GetData() + ClosestPointIndex, CirclePoints.Num() - ClosestPointIndex);
+	TempArray.Append(CirclePoints.GetData() + 1, ClosestPointIndex);
+	CirclePoints = TempArray;
+
+	if (DrawDebugCircle)
+	{
+		// 점들을 이어서 원 그리기
+		for (int32 i = 0; i < NumSegments; ++i)
+		{
+			FVector Start = CirclePoints[i];
+			FVector End = CirclePoints[(i + 1) % NumSegments];
+
+			if (i == 0)
+				DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1.0f, 0, 5.0f);
+			else
+				DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 1.0f, 0, 5.0f);
+		}
+	}
+}
+
 void AJesusBoss2::SetBoneHead(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	Boss2AnimInstance->CurrentBoneType = Boss2BoneRotateType::HEAD;
@@ -1260,6 +1646,7 @@ void AJesusBoss2::ActivateHitCollision()
 	LeftArmHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	RightArmHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
+
 void AJesusBoss2::GetEndedMontage(UAnimMontage* Montage, bool bInterrupted)
 {
 	IsStart.Exchange(false);
@@ -1271,6 +1658,7 @@ void AJesusBoss2::GetEndedMontage(UAnimMontage* Montage, bool bInterrupted)
 =====================*/
 void AJesusBoss2::OnCrossFall()
 {
+	CrossEvent = true;
 	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
 
 	if (NavSystem == nullptr)
@@ -1341,7 +1729,7 @@ void AJesusBoss2::OnVomitFall()
 			HeadAtkCollision->GetComponentLocation(),FRotator::ZeroRotator);
 		auto CastObject = Cast<AVomitObjectInPool>(PoolObject);
 		CastObject->SphereCollision->AddImpulse(FVector(0, 0, 1200));
-		CastObject->ProjectileEffect->Activate();
+		CastObject->SpawnEffect->Activate();
 		VomitArr.Add(CastObject);
 	}
 
@@ -1353,6 +1741,10 @@ void AJesusBoss2::OnVomitFall()
 			{
 				if (NavSystem->GetRandomPointInNavigableRadius(PlayerCharacter->GetActorLocation(), VomitMaxRange, RandomLocation))
 				{
+					VomitArr[i]->DispersionEffect->Activate();
+					VomitArr[i]->ProjectileEffect->Activate();
+					VomitArr[i]->SpawnEffect->DestroyComponent();
+
 					VomitArr[i]->arcValue = 0.5f;
 					VomitArr[i]->ShootProjectile(RandomLocation.Location);
 				}
@@ -1371,7 +1763,7 @@ void AJesusBoss2::OnStart()
 		StartEnd.Value = false;
 
 		StartMontage = GetCurrentMontage();
-		UE_LOG(LogTemp, Warning, TEXT("Start : %s"), *StartMontage->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("Start : %s"), *StartMontage->GetName());
 		MontageStartMap[GetTypeFromMetaData(StartMontage)](this);
 	}
 }
@@ -1399,7 +1791,7 @@ void AJesusBoss2::OnEnd()
 	if (!IsEnd.Exchange(true))
 		MontageEndMap[Type](this);
 
-	if (!IsDead)
+	if (!IsDead && CircleWalkEnd)
 		ActionEndMap[CurrentActionTemp.AttackType](Dist, fDeltaTime, StartMontage);
 
 	IsEnd.Exchange(false);
@@ -1423,10 +1815,20 @@ void AJesusBoss2::ThrowStone()
 {
 	if (StonePoolObj != nullptr)
 	{
+		StonePoolObj->MoveDir = PlayerCharacter->GetActorLocation() - StonePoolObj->GetActorLocation();
 		StonePoolObj->SceneComp->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 		StonePoolObj->SetActorTickEnabled(true);
 	}
 }
+
+
+bool AJesusBoss2::IsAlive()
+{
+	if (BossDataStruct.CharacterHp > 0)
+		return true;
+	return false;
+}
+
 
 void AJesusBoss2::IsNotifyActive(bool value)
 {

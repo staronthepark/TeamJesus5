@@ -105,6 +105,7 @@ public:
 
 	UPROPERTY()
 	UJesusGameInstance* GameInstance;
+	USphereComponent* LockOnComp;
 
 private:
 	UPROPERTY()
@@ -116,7 +117,8 @@ public:
 	virtual void BeginPlay();
 	virtual void PostInitializeComponents();	
 	virtual void PlayExecutionAnimation() {}
-	virtual void ActivateLockOnImage(bool value){}
+	virtual void ActivateLockOnImage(bool value, UPrimitiveComponent* comp) {}
+	virtual void SetActive(bool active);
 
 	virtual void Tick(float DeltaTime);
 
@@ -138,10 +140,12 @@ public:
 	virtual void ResumeMontage(){ HitStopTimer(); }
 
 	virtual void HitStop(){ HitStopTimer(); }
-
+	virtual void Stun(){}
 	void HitStopTimer();
 
 	void SwordVFXSpawn();
+
+	virtual bool IsAlive() { return 0; }
 
 	void CameraShake(TSubclassOf< UCameraShakeBase> Shake);
 

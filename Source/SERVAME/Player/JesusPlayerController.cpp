@@ -1,10 +1,12 @@
 #include "..\Boss_1\JesusBoss.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/GameUserSettings.h"
 #include "JesusPlayerController.h"
 
 void AJesusPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
 	bAutoManageActiveCameraTarget = false;
 
 	bShowMouseCursor = true;
@@ -19,7 +21,7 @@ void AJesusPlayerController::BeginPlay()
 
 	PlayerSkillType = 2;
 
-	ConsoleCommand("t.maxfps 60");
+	//ConsoleCommand("t.maxfps 60");
 
 	
 	CameraYawRotateEventMap.Add(false, [&](float Val)
@@ -28,7 +30,8 @@ void AJesusPlayerController::BeginPlay()
 		});
 	CameraYawRotateEventMap.Add(true, [&](float Val)
 		{
-			ChangeTargetEventMap[FMath::Abs(Val) > ChangeTargetMouseValue && character->ChangeTargetTime >= 0.5f][Val < 0]();
+			float MouseValue = character->IsInputPad ? .1f : ChangeTargetMouseValue;
+			ChangeTargetEventMap[FMath::Abs(Val) > MouseValue && character->ChangeTargetTime >= 0.5f][Val < 0]();
 		});
 
 	ChangeTargetEventMap.Add(false, TMap<bool, TFunction<void()>>());
@@ -126,6 +129,7 @@ void AJesusPlayerController::PressDodge()
 			character->PlayerHUD->PlayAnimations(EGuides::dodge, false);
 			return;
 		}
+
 		if (character->UserSettingUI->IsInViewport())
 		{
 			SetPause(false);
@@ -135,12 +139,6 @@ void AJesusPlayerController::PressDodge()
 		}
 	}
 
-	if (character->AnimInstance->PlayerAnimationType == AnimationType::GAMESTART ||
-		character->AnimInstance->PlayerAnimationType == AnimationType::GAMESTARTLOOP)
-	{
-		return;
-	}
-
 	if (character->AnimInstance->PlayerAnimationType == AnimationType::SAVELOOP && IsInputKeyDown(EKeys::Gamepad_FaceButton_Right))
 	{
 		character->ChangeMontageAnimation(AnimationType::SAVEEND);
@@ -148,26 +146,11 @@ void AJesusPlayerController::PressDodge()
 		return;
 	}
 
-	character->GetWorldTimerManager().SetTimer(character->SprintStartTimer, character, &APlayerCharacter::SetSprint, 0.2f);
 	character->InputEventMap[character->PlayerCurAction][ActionType::DODGE][true]();
 }
 
 void AJesusPlayerController::UnPressDodge()
 {
-	if (character->AnimInstance->PlayerAnimationType == AnimationType::GAMESTART || 
-		character->AnimInstance->PlayerAnimationType == AnimationType::GAMESTARTLOOP)
-	{
-		return;
-	}
-	character->GetWorldTimerManager().ClearTimer(character->SprintStartTimer);
-	if (character->IsSprint)
-	{
-		character->GetWorldTimerManager().SetTimer(character->SprintEndTimer, character, &APlayerCharacter::EndSprint, 0.1f);
-	}
-	else
-	{
-		character->InputEventMap[character->PlayerCurAction][ActionType::DODGE][false]();
-	}
 }
 
 void AJesusPlayerController::PressPowerAttack()
@@ -200,6 +183,30 @@ void AJesusPlayerController::PressUseItem()
 void AJesusPlayerController::UnPressUseItem()
 {
 	character->InputEventMap[character->PlayerCurAction][ActionType::HEAL][false]();
+}
+
+void AJesusPlayerController::PressSprint()
+{
+	if(!character->IsGrab)
+	character->SetSprint();
+}
+
+void AJesusPlayerController::UnPressSprint()
+{
+	if (!character->IsGrab)
+		character->InputEventMap[PlayerAction::SPRINT][ActionType::DODGE][false]();
+}
+
+void AJesusPlayerController::PressGrab()
+{
+	character->InputEventMap[character->PlayerCurAction][ActionType::SHIELD][true]();
+}
+
+void AJesusPlayerController::UnPressGrab()
+{
+	if(character->IsGrab)
+	character->InputEventMap[character->PlayerCurAction][ActionType::SHIELD][false]();
+
 }
 
 void AJesusPlayerController::ViewLog()
@@ -290,7 +297,7 @@ void AJesusPlayerController::PressMoveBack()
 	character->ForwardMovementValue = -1.0f;
 	character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][true]();
 
-	if(character->CurActionType == ActionType::MOVE)
+	if(character->CurActionType == ActionType::MOVE && !character->IsGrab)
 	character->TargetCameraBoomLength = character->IsShoulderView ? character->ShoulderViewCameraLength : character->BackViewCameraLength;
 }
 
@@ -301,6 +308,8 @@ void AJesusPlayerController::UnPressMoveBack()
 		character->AxisY = 1;
 		character->InputEventMap[character->PlayerCurAction][ActionType::MOVE][false]();
 	}
+
+	if(!character->IsGrab)
 	character->TargetCameraBoomLength = character->IsShoulderView ? character->ShoulderViewCameraLength : character->BackViewCameraLength;
 }
 
@@ -356,7 +365,7 @@ void AJesusPlayerController::ChangeView()
 }
 
 void AJesusPlayerController::OpenMenu()
-{
+{	
 	if (!GameInstance->MainMenuWidget->IsInViewport())
 	{
 		if (character->PlayerHUD->IsRender())
@@ -419,17 +428,17 @@ void AJesusPlayerController::SetupInputComponent()
 	InputComponent->BindAction("Parring", IE_Pressed, this, &AJesusPlayerController::PressParring);
 	InputComponent->BindAction("Parring", IE_Released, this, &AJesusPlayerController::UnPressParring);
 
-	InputComponent->BindAction("MoveForward", IE_Pressed, this, &AJesusPlayerController::PressMoveForward);
-	InputComponent->BindAction("MoveForward", IE_Released, this, &AJesusPlayerController::UnPressMoveForward);
+	InputComponent->BindAction("MoveForward", IE_Pressed, this, &AJesusPlayerController::PressMoveForward).bExecuteWhenPaused = true;
+	InputComponent->BindAction("MoveForward", IE_Released, this, &AJesusPlayerController::UnPressMoveForward).bExecuteWhenPaused = true;
 
-	InputComponent->BindAction("MoveBack", IE_Pressed, this, &AJesusPlayerController::PressMoveBack);
-	InputComponent->BindAction("MoveBack", IE_Released, this, &AJesusPlayerController::UnPressMoveBack);
+	InputComponent->BindAction("MoveBack", IE_Pressed, this, &AJesusPlayerController::PressMoveBack).bExecuteWhenPaused = true;
+	InputComponent->BindAction("MoveBack", IE_Released, this, &AJesusPlayerController::UnPressMoveBack).bExecuteWhenPaused = true;
 
-	InputComponent->BindAction("MoveRight", IE_Pressed, this, &AJesusPlayerController::PressMoveRight);
-	InputComponent->BindAction("MoveRight", IE_Released, this, &AJesusPlayerController::UnPressMoveRight);
+	InputComponent->BindAction("MoveRight", IE_Pressed, this, &AJesusPlayerController::PressMoveRight).bExecuteWhenPaused = true;
+	InputComponent->BindAction("MoveRight", IE_Released, this, &AJesusPlayerController::UnPressMoveRight).bExecuteWhenPaused = true;
 
-	InputComponent->BindAction("MoveLeft", IE_Pressed, this, &AJesusPlayerController::PressMoveLeft);
-	InputComponent->BindAction("MoveLeft", IE_Released, this, &AJesusPlayerController::UnPressMoveLeft);
+	InputComponent->BindAction("MoveLeft", IE_Pressed, this, &AJesusPlayerController::PressMoveLeft).bExecuteWhenPaused = true;
+	InputComponent->BindAction("MoveLeft", IE_Released, this, &AJesusPlayerController::UnPressMoveLeft).bExecuteWhenPaused = true;
 
 	InputComponent->BindAction("UseItem", IE_Pressed, this, &AJesusPlayerController::PressUseItem);
 	InputComponent->BindAction("UseItem", IE_Released, this, &AJesusPlayerController::UnPressUseItem);
@@ -449,4 +458,11 @@ void AJesusPlayerController::SetupInputComponent()
 	InputComponent->BindAction("CloseMenu", IE_Pressed, this, &AJesusPlayerController::CloseMenu).bExecuteWhenPaused = true;
 
 	InputComponent->BindAction("ChangeView", IE_Pressed, this, &AJesusPlayerController::ChangeView);
+
+	InputComponent->BindAction("Sprint", IE_Pressed, this, &AJesusPlayerController::PressSprint).bExecuteWhenPaused = true;
+	InputComponent->BindAction("Sprint", IE_Released, this, &AJesusPlayerController::UnPressSprint).bExecuteWhenPaused = true;
+
+	InputComponent->BindAction("Grab", IE_Pressed, this, &AJesusPlayerController::PressGrab);
+	InputComponent->BindAction("Grab", IE_Released, this, &AJesusPlayerController::UnPressGrab);
+
 }

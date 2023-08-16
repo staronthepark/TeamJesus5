@@ -23,7 +23,6 @@ void UUDamageSphereTriggerComp::BeginPlay()
 
 void UUDamageSphereTriggerComp::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ASFDSADFASD"));
 	if (Character == nullptr)
 		Character = Cast<APlayerCharacter>(OtherActor);
 
@@ -46,9 +45,10 @@ void UUDamageSphereTriggerComp::ActiveHit()
 	
 	if (Character->TakeDamage(Damage, DamageEvent, nullptr, GetOwner()))
 	{
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, Character->GetActorLocation(), FRotator(90, 180, 180));
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, Character->GetActorLocation(), FRotator(90, 180, 180));
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[3].ObjClass, Character->GetActorLocation(), FRotator(90, 180, 180));
+		AObjectPool& objectpool = AObjectPool::GetInstance();
+		objectpool.SpawnObject(objectpool.ObjectArray[8].ObjClass, Character->GetActorLocation(), FRotator(90, 180, 180));
+		objectpool.SpawnObject(objectpool.ObjectArray[9].ObjClass, Character->GetActorLocation(), FRotator(90, 180, 180));
+		objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, Character->GetActorLocation(), FRotator(90, 180, 180));
 	}
 	
 	if (Count >= MaxCount)

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "Perception/AIPerceptionComponent.h"
 #include "MonsterController.generated.h"
 
 
@@ -17,7 +18,33 @@ public:
 
 	virtual void BeginPlay();
 
+	bool IsArrived = false;
+	bool FindPlayer = false;
+
 	void Movement(FVector Location);
+	void MoveWhenArrived(FVector Location);
+
+	UFUNCTION()
+	void OnPerception(AActor* Actor, FAIStimulus Stimulus);
+
+	UFUNCTION()
+	void OnTargetPerceptionUpdated_Delegate(AActor* Actor, FAIStimulus Stimulus);
+
+	class AEnemyMonster* Monster;
+	class APlayerCharacter* Player;
+
+	UPROPERTY()
+	class UAISenseConfig_Sight* Sight;
+
+	UPROPERTY(VisibleAnywhere)
+	UAIPerceptionComponent* AIPerceptionComponent;
+
+	TArray<AActor*> DetectedActorArr;
 
 private:
+	virtual void OnPossess(APawn* InPawn) override;
+	virtual void OnUnPossess() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const;
+
 };

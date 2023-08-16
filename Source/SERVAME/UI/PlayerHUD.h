@@ -32,6 +32,14 @@ enum class EInteractions : uint8
 	rest		UMETA(DisplayName = "Rest")
 };
 
+UENUM(BlueprintType)
+enum class EPlayerStatType : uint8
+{
+	STRENGTH UMETA(DisplayName = "Strength"),
+	HP		UMETA(DisplayName = "HP"),
+	STAMINA	UMETA(DisplayName = "STAMINA"),
+};
+
 USTRUCT(BlueprintType)
 struct SERVAME_API FInteractionTextures 
 {
