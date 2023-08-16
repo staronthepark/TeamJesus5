@@ -1674,7 +1674,7 @@ void APlayerCharacter::RestoreStat()
 
 void APlayerCharacter::MoveSpawnLocation(FVector Location)
 {
-	SetActorRotation(FRotator(0, 0, 0));
+	SetActorRotation(FRotator(0, 180, 0));
 	SetActorLocation(Location);
 	SpawnLocation = Location;
 }
