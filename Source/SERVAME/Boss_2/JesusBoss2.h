@@ -423,6 +423,7 @@ public:
 	virtual void PlayExecutionAnimation() override;
 	virtual void ActivateLockOnImage(bool value, UPrimitiveComponent* comp) override;
 	virtual void ActivateHitCollision() override;
+	virtual void Stun() override;
 
 	/*=====================
 	*		Function
