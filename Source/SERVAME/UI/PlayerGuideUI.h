@@ -23,7 +23,10 @@ enum class EGuides : uint8
 	grogy		UMETA(DisplayName = "Grogy"),
 	parrying	UMETA(DisplayName = "Parrying"),
 	savepoint	UMETA(DisplayName = "SavePoint"),
-	map			UMETA(DisplayName = "Map")
+	map			UMETA(DisplayName = "Map"),
+	shield			UMETA(DisplayName = "shield"),
+	shieldattack			UMETA(DisplayName = "shieldattack"),
+	soul			UMETA(DisplayName = "soul")
 };
 
 USTRUCT(BlueprintType)

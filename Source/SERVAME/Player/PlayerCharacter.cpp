@@ -2277,7 +2277,7 @@ void APlayerCharacter::Attack()
 
 void APlayerCharacter::BasicAttack()
 {
-	//MoveSpawnLocation(FVector(-7207.843457, -62406.767053, 50));
+	//MoveSpawnLocation(FVector());
 	if (!IsGrab)
 	{
 		Attack();
