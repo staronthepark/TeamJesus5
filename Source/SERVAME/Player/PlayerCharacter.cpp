@@ -1396,7 +1396,17 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::SPRINT][ActionType::HEAL].Add(false,InputEventMap[PlayerAction::NONE][ActionType::HEAL][false]);
 	InputEventMap[PlayerAction::SPRINT][ActionType::INTERACTION].Add(true,  InputEventMap[PlayerAction::NONE][ActionType::INTERACTION][true]);
 	InputEventMap[PlayerAction::SPRINT][ActionType::INTERACTION].Add(false, InputEventMap[PlayerAction::NONE][ActionType::INTERACTION][false]);
-	InputEventMap[PlayerAction::SPRINT][ActionType::SHIELD].Add(true, InputEventMap[PlayerAction::NONE][ActionType::SHIELD][true]);
+	InputEventMap[PlayerAction::SPRINT][ActionType::SHIELD].Add(true, [&]()
+		{
+			if (IsSprint)
+			{
+				InputEventMap[PlayerAction::SPRINT][ActionType::DODGE][false]();
+			}
+			InputEventMap[PlayerAction::NONE][ActionType::SHIELD][true]();
+
+			if (IsGrab)
+				AnimInstance->BodyBlendAlpha = 0.0f;
+		});
 	InputEventMap[PlayerAction::SPRINT][ActionType::SHIELD].Add(false, InputEventMap[PlayerAction::NONE][ActionType::SHIELD][false]);
 
 	PlayerEventFuncMap.Add(AnimationType::SUPERHIT, TMap<bool, TFunction<void()>>());
@@ -1775,12 +1785,15 @@ void APlayerCharacter::ChangeTarget(CameraDirection CamDirection)
 
 	if (TargetArray.Num() < 1)return;
 	int32 TargetIdx = 0;
+
 	for (int32 i = 1; i < TargetArray.Num(); i++)
 	{
+		float Distance = FVector::DistSquared(CameraLocation, TargetArray[i]->GetComponentLocation());
+		float Distance2 = FVector::DistSquared(CameraLocation, TargetArray[TargetIdx]->GetComponentLocation());
 		float TargetDot = FVector::DotProduct(TargetDir, (TargetArray[TargetIdx]->GetComponentLocation() - CameraLocation).GetSafeNormal());
 		float NextDot = FVector::DotProduct(TargetDir, (TargetArray[i]->GetComponentLocation() - CameraLocation).GetSafeNormal());
 
-		if (NextDot > TargetDot)
+		if (NextDot > TargetDot && Distance > Distance2)
 			TargetIdx = i;
 	}
 
@@ -2395,6 +2408,10 @@ void APlayerCharacter::ShieldAttack()
 void APlayerCharacter::SetSoul(int32 value)
 {
 	PlayerDataStruct.SoulCount += value;
+	if (PlayerDataStruct.SoulCount % PlayerDataStruct.ShieldRecoverySoulCount == 0)
+	{
+		SetShieldHP(PlayerDataStruct.MaxShieldHP);
+	}
 }
 
 void APlayerCharacter::PlayStartAnimation()
@@ -2443,10 +2460,6 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	GameInstance->DebugLogWidget->T_PlayerHP->SetText(FText::AsNumber(PlayerDataStruct.CharacterHp));
 	VibrateGamePad(0.2f, 0.2f);
 	CameraShake(PlayerCameraShake);
-	AnimInstance->BodyBlendAlpha = 1.0f;
-	ShieldOff();
-	ShoulderView(IsShoulderView);
-	IsGrab = false;
 
 
 	FVector HitDir = DamageCauser->GetActorLocation() - GetActorLocation();
@@ -2464,11 +2477,23 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		if (PlayerDataStruct.CharacterHp <= 0)
 			ASoundManager::GetInstance().PlaySoundWithCymbalSound(3);
 
+
+		AnimInstance->BodyBlendAlpha = 1.0f;
+		ShieldOff();
+		ShoulderView(IsShoulderView);
+		IsGrab = false;
+
 		return DamageAmount;
 	}
 
 	if (DamageAmount > 10)
 	{
+
+		AnimInstance->BodyBlendAlpha = 1.0f;
+		ShieldOff();
+		ShoulderView(IsShoulderView);
+		IsGrab = false;
+
 		UCombatManager::GetInstance().ActivateCollider();
 
 		AnimInstance->StopMontage(MontageMap[AnimInstance->PlayerAnimationType]);

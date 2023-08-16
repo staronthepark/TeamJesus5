@@ -25,17 +25,12 @@ void UMoveToLocationComp::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	FVector TargetLocation = TargetActor->GetActorLocation();
 
 
-	FVector TargetDirection = TargetLocation + FVector(0, 0, 100) - OwnerLocation;
-	FRotator Difference = FRotationMatrix::MakeFromX(TargetDirection).Rotator();
-
-	Owner->SetActorLocation(FMath::Lerp(OwnerLocation, TargetLocation, DeltaTime * MoveSpeed));
-	Owner->SetActorRotation(Difference);
+	FVector TargetDirection = TargetLocation - OwnerLocation;
+	FRotator Difference = TargetDirection.Rotation();
 
 
-	if (FVector::Distance(OwnerLocation, TargetLocation) < 10.0f)
-	{
-		SetComponentTickEnabled(false);
-	}
+	Owner->SetActorRotation(FMath::Lerp(Owner->GetActorRotation(), Difference, DeltaTime * 6.0f));
+	Owner->AddActorWorldOffset(Owner->GetActorRotation().Vector() * DeltaTime * 600.0f);
 }
 
 void UMoveToLocationComp::SetTargetLocation(AActor* actor)
