@@ -15,13 +15,14 @@ void UButtonUI::NativeOnInitialized()
 
 void UButtonUI::LeftButtonClicked()
 {
-	index = FMath::Abs(--index % OnOffImages.Num());
+	if (--index == -1)
+		index = OnOffImages.Num() - 1;
 	ChangeLanguage();
 }
 
 void UButtonUI::RightButtonClicked()
 {
-	index = FMath::Abs(++index % OnOffImages.Num());
+	index = ++index % OnOffImages.Num();
 	ChangeLanguage();
 }
 
@@ -41,13 +42,10 @@ void UButtonUI::ChangeLanguage()
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (GameInstance->language == Language::ENG)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%d"), index);
 		OnOffImage->SetBrushFromTexture(OnOffImages.Find(index)->EngTexture, true);
 	}
 	else if (GameInstance->language == Language::KOR)
 	{
-
-		UE_LOG(LogTemp, Warning, TEXT("%d"), index);
 		OnOffImage->SetBrushFromTexture(OnOffImages.Find(index)->KorTexture, true);
 	}
 }
