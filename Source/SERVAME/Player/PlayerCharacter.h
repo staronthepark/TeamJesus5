@@ -139,8 +139,8 @@ private:
 	UCameraComponent* FollowCamera;
 
 
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
-//		UNiagara* ShieldMeshComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
+		UNiagaraComponent* ShieldEffectComp;
 
 	FVector CamExecutionDirection;
 
