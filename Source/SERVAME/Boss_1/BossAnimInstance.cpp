@@ -23,6 +23,19 @@ void UBossAnimInstance::PlayGroggyMontage(BossAnimationType Type)
 {
 	auto Boss = Cast<AJesusBoss>(GetOwningActor());
 	
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+	for (int32 i = 0; i < Boss->BossDataStruct.DropSoulCount; i++)
+	{
+		float x = FMath::RandRange(-300.0f, 300.0f);
+		float y = FMath::RandRange(-300.0f, 300.0f);
+		float z = FMath::RandRange(-300.0f, 300.0f);
+
+		FVector location = Boss->GetActorLocation() + FVector(x * 0.1f, y * 0.1f, z * 0.1f);
+		FRotator rotation = Boss->GetActorRotation() + FRotator(x, y, z);
+
+		objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
+	}
+
 	if (Boss->BossDataStruct.CurrentGrrogyGauge <= 0)
 	{
 		Boss->ChangeMontageAnimation(Type);

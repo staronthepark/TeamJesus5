@@ -1518,7 +1518,7 @@ void AJesusBoss2::JumpExplosionCheck()
 	else
 		DrawColor = FColor::Red;
 
-	DrawDebugSphere(GetWorld(), Center, Size, 16, DrawColor, false, 1.f);
+	//DrawDebugSphere(GetWorld(), Center, Size, 16, DrawColor, false, 1.f);
 
 	CameraShake(PlayerCameraShake);
 	VibrateGamePad(1.0f, 0.5f);
