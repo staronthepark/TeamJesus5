@@ -101,11 +101,11 @@ void UBossUI::ChangeLanguage()
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (GameInstance->language == Language::ENG)
 	{
-		BossNameText->SetBrushFromTexture(BossNameTextures.Find(EBossSettings::phase1)->EngTexture);
+		BossNameText->SetBrushFromTexture(BossNameTextures.Find(EBossSettings::phase1)->EngTexture, true);
 	}
 	else if (GameInstance -> language == Language::KOR)
 	{
-		BossNameText->SetBrushFromTexture(BossNameTextures.Find(EBossSettings::phase1)->KorTexture);
+		BossNameText->SetBrushFromTexture(BossNameTextures.Find(EBossSettings::phase1)->KorTexture, true);
 	}
 }
 
