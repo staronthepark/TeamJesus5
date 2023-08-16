@@ -16,7 +16,7 @@ void ALevelStreamerActor::BeginPlay()
 	OverlapVolume->OnComponentBeginOverlap.AddUniqueDynamic(this, &ALevelStreamerActor::OverlapBegins);
 	OverlapVolume->OnComponentEndOverlap.AddUniqueDynamic(this, &ALevelStreamerActor::OverlapEnds);
 
-
+	if (LevelToLoad == "2-2Map")return;
 	for (int32 i = 0; i < MonsterList.Num(); i++)
 	{
 		MonsterList[i]->SetActive(false);
