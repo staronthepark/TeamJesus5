@@ -86,6 +86,10 @@ APlayerCharacter::APlayerCharacter()
 	SwordTrailComp->SetupAttachment(GetMesh(), FName("Weapon_bone"));
 	SwordTrailComp->SetCollisionProfileName("Sword Trail");
 
+	ShieldEffectComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Shield Effect Comp"));
+	ShieldEffectComp->SetupAttachment(GetMesh(), FName("POINT_SHIELD"));
+	ShieldEffectComp->SetCollisionProfileName("Shield Effect Comp");
+
 	PlayerMaxAttackIndex.Add(ActionType::ATTACK, 4);
 	PlayerMaxAttackIndex.Add(ActionType::POWERATTACK, 3);
 
@@ -1450,6 +1454,7 @@ void APlayerCharacter::BeginPlay()
 
 	PlayerSKMesh = GetMesh();
 	DebugMode = false;
+	ShieldEffectComp->SetVisibility(false);
 	LocketSKMesh->SetVisibility(true);
 	ChangeActionType(ActionType::DEAD);
 
@@ -1925,6 +1930,7 @@ void APlayerCharacter::SetSpeed(float speed)
 void APlayerCharacter::ShieldOff()
 {
 	IsCollisionCamera = true;
+	ShieldEffectComp->SetVisibility(false);
 	ShieldMeshComp->SetVisibility(false);
 	ShieldAttackOverlap->SetRelativeLocation(FVector(10000, 10000, 10000));
 	ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -1934,6 +1940,7 @@ void APlayerCharacter::ShieldOff()
 void APlayerCharacter::ShieldOn()
 {
 	IsCollisionCamera = false;
+	ShieldEffectComp->SetVisibility(true);
 	ShieldMeshComp->SetVisibility(true);
 	ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
