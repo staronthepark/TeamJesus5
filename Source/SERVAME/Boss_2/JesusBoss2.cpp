@@ -1364,6 +1364,7 @@ void AJesusBoss2::PlayExecutionAnimation()
 void AJesusBoss2::Stun()
 {
 	AttackLockOn = false;
+	AIController->StopMovement();
 	PlayAnimMontage(Boss2MontageMap[Boss2AnimationType::GROGGY]);
 }
 
