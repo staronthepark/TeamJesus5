@@ -1677,6 +1677,8 @@ void APlayerCharacter::MoveSpawnLocation(FVector Location)
 	SetActorRotation(FRotator(0, 180, 0));
 	SetActorLocation(Location);
 	SpawnLocation = Location;
+	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
+
 }
 
 void APlayerCharacter::LockOn()
