@@ -13,5 +13,8 @@ UCLASS()
 class SERVAME_API UNumAnimInstance : public UBaseAnimInstance
 {
 	GENERATED_BODY()
+
+public:
+	UNumAnimInstance();
 	
 };

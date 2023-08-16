@@ -5,7 +5,6 @@
 #include "Math/RandomStream.h"
 #include "KnightAttackTriggerComp.h"
 #include "..\..\Manager\CombatManager.h"
-#include "KnightAttackTriggerComp.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 AKinghtMonster::AKinghtMonster()
