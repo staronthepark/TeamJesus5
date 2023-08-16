@@ -8,6 +8,8 @@
 #include "BehaviorTree/BlackboardData.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Engine/DataTable.h"
+#include "Templates/Atomic.h"
+#include "..\UI\BossUI.h"
 #include "Boss2AIController.generated.h"
 
 /**
@@ -20,8 +22,13 @@ class SERVAME_API ABoss2AIController : public AAIController
 public:
 	ABoss2AIController(const FObjectInitializer& ObjectInitializer);
 
+	UPROPERTY()
+	UBossUI* BossUI;
+
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
+
+	void MoveWhenArrived(FVector Location);
 
 	UFUNCTION()
 	void OnPerception(AActor* Actor, FAIStimulus Stimulus);
@@ -34,8 +41,12 @@ public:
 
 	TArray<AActor*> DetectedActorArr;
 
+	TAtomic<bool> IsUIActivate = false;
+
 	//애니메이션 테스트 용 나중에 지우기.
 	bool TestBool = false;
+
+	bool IsArrived = false;
 
 protected:
 	virtual void BeginPlay() override;
@@ -45,6 +56,9 @@ protected:
 	UAIPerceptionComponent* AIPerceptionComponent;
 
 private:
+	UPROPERTY()
+	TSubclassOf<UBossUI> BossUIClass;
+	
 	FTimerHandle TimerHandle;
 
 	UPROPERTY(EditAnywhere, Category = AI)

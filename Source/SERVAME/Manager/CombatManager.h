@@ -23,8 +23,10 @@ public:
 
 		static UCombatManager& GetInstance();
 
-		TArray<ABaseCharacter*> HitMonsterInfoArray;
-		TArray<ABaseCharacter*> MonsterInfoArray;
+		UPROPERTY(EditAnywhere)
+			TArray<ABaseCharacter*> HitMonsterInfoArray;
+		UPROPERTY(EditAnywhere)
+			TArray<ABaseCharacter*> MonsterInfoArray;
 
 		void ActivateCollider();
 		void DeactivateCollider();

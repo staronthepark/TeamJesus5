@@ -57,6 +57,8 @@ enum BossActionType
 	F_NEARJUMP UMETA(DisplayName = "F_NEARJUMP"),
 	M_GROUNDEXPLOSION UMETA(DisplayName = "M_GROUNDEXPLOSION"),
 	R_SPRINT UMETA(DisplayName = "R_SPRINT"),
+	LEFT_STEP UMETA(DisplayName = "LEFT_STEP"),
+	RIGHT_STEP UMETA(DisplayName = "RIGHT_STEP"),
 	ENUMEND,
 };
 
@@ -85,6 +87,7 @@ enum BossAttackType
 	MELEE,
 	RANGE,
 	FOLLOWUP,
+	STEP,
 };
 
 USTRUCT()
@@ -221,9 +224,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* BossWeaponMesh;
 
-	UPROPERTY(VisibleAnywhere, Category = AI)
-	AAIController* BossAIController;
-
 	UPROPERTY(EditAnyWhere, Category = "BossMontageMap")
 	TMap<BossAnimationType, UAnimMontage*> BossMontageMap;
 
@@ -342,7 +342,6 @@ public:
 	TAtomic<bool>IsEnd = false;
 	TAtomic<bool>CheckAttack2 = false;
 
-	ABossAIController* BossAI;
 	ABossAIController* AIController;
 	APlayerCharacter* PlayerCharacter;
 
@@ -358,6 +357,7 @@ public:
 	TArray<BossActionTemp> FollowUpTempArr;
 	std::vector<int>FollowUpPercentageVec;
 
+	TArray<BossActionTemp> StepArr;
 
 	BossActionTemp CurrentActionTemp{};
 
@@ -463,7 +463,9 @@ public:
 	virtual void RespawnCharacter() override;
 	virtual void IsNotifyActive(bool value) override;
 	virtual void PlayExecutionAnimation() override;
-	virtual void ActivateLockOnImage(bool value)override;
+	virtual void ActivateLockOnImage(bool value, UPrimitiveComponent* comp) override;
+	virtual void Stun()override;
+	virtual bool IsAlive()override;
 
 protected:
 	virtual void BeginPlay() override;

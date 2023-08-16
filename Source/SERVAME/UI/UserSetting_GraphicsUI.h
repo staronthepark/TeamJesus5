@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "SubUserSettingUI.h"
 #include <Components/Image.h>
+#include "GameFramework/GameUserSettings.h"
 #include "SliderUI.h"
+#include "ButtonUI.h"
 #include "UserSetting_GraphicsUI.generated.h"
 
 /**
@@ -63,6 +65,8 @@ class SERVAME_API UUserSetting_GraphicsUI : public USubUserSettingUI
 
 	UPROPERTY(EditAnywhere)
 	TMap<EGraphicsSettings, FGraphicsTextures> ImageTextures;
+
+	UGameUserSettings* Setting;
 
 public:
 	virtual void NativeOnInitialized() override;

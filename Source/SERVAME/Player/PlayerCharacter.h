@@ -44,6 +44,7 @@ enum class ActionType : uint8
 	HIT,
 	INTERACTION,
 	DEAD,
+	SHIELD,
 };
 
 UENUM(BlueprintType)
@@ -73,13 +74,15 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 {
 	GENERATED_BODY()
 
+	int32 SoulCount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TMap<AnimationType, FPlayerDamageInfo>DamageList;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 MaxHealCount;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 ShieldRecoverySoulCount;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MaxStamina;  
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -97,13 +100,18 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PlayerRunStamina;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int32 MaxBulletCount;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PlayerExecutionFirstDamage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PlayerExecutionSecondDamage;
-
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float DeployShieldStaminaReduce;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float ShieldDashMoveDistance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float ShieldHP;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float MaxShieldHP;
+	
 };
 
 UCLASS()
@@ -130,12 +138,21 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", Meta = (AllowPrivateAccess = true))
 	UCameraComponent* FollowCamera;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
+		UNiagaraComponent* ShieldEffectComp;
+
 	FVector CamExecutionDirection;
 
 	int32 CurRotateIndex;
 
 	float DiagonalSpeed;
 	float RotSpeed;
+
+	bool IsCollisionCamera;
+	float CameraDistanceToPlayer;
+
+	USkeletalMeshComponent* PlayerSKMesh;
 
 	FVector PlayerForwardDirection;
 	FVector PlayerRightDirection;
@@ -160,8 +177,17 @@ public:
 	bool DebugMode;
 	bool CanExecution;
 
+	float ShieldDashSpeed;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraSpringArm")
 		USpringArmComponent* CameraBoom1;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
+		UStaticMeshComponent* ShieldMeshComp;
+
+	UPROPERTY()
+		UBoxComponent* ShieldOverlapComp;
 
 	UPROPERTY()
 		TSubclassOf<UPlayerHUD> PlayerUIClass;
@@ -186,6 +212,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UBoxComponent* ExecutionTrigger;
+
+	UPROPERTY(EditAnywhere)
+		UBoxComponent* ShieldAttackOverlap;
 
 	UPROPERTY()
 		UCanvasPanelSlot* LockOnImageSlot;
@@ -212,7 +241,6 @@ public:
 	FVector ExecuteDirection;
 	FVector ExecuteLocation;
 
-	int32 CurBulletCount;
 	int32 CurHealCount;
 
 	float ChangeTargetTime;	
@@ -239,10 +267,15 @@ public:
 	int32 AxisX;
 	int32 AxisY;
 	
+	bool IsExecute;
 	bool CanNextAttack;
 	bool IsSprint;
 	bool IsInteraction;
 	bool IsDead;
+	bool IsGrab;
+	bool IsInputPad;
+	
+	float TargetOpacity;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MontageBlendInTime;
@@ -262,6 +295,8 @@ public:
 	UPROPERTY(EditAnyWhere, Category = "MontageMap")
 	TMap<AnimationType,UAnimMontage*> MontageMap;
 
+	TMap<EPlayerStatType, int32> StatCurrentIdxMap;
+
 	UPROPERTY(EditAnyWhere, Category = "StaminaMap")
 	TMap<ActionType, float>PlayerUseStaminaMap;
 
@@ -274,6 +309,8 @@ public:
 
 	TMap<bool, TFunction<void( )>> LockOnCameraSettingMap;
 
+
+
 	UPROPERTY()
 		TArray<UBoxComponent*> ForwardOverlap;
 
@@ -285,6 +322,8 @@ public:
 		float BackViewCameraLength;
 	UPROPERTY(EditAnyWhere, Category = "CameraViewSetting")
 		float ShoulderViewCameraLength;
+	UPROPERTY(EditAnyWhere, Category = "CameraViewSetting")
+		float GrabCameraLength;
 
 	UPROPERTY(EditAnyWhere, Category = "CameraViewSetting")
 		FVector TargetSocketOffset;
@@ -292,6 +331,8 @@ public:
 		FVector ShoulderViewSocketOffset;
 	UPROPERTY(EditAnyWhere, Category = "CameraViewSetting")
 		FVector BackViewSocketOffset;
+	UPROPERTY(EditAnyWhere, Category = "CameraViewSetting")
+		FVector GrabSocketOffset;
 
 public:
 
@@ -306,8 +347,6 @@ public:
 	void UseItem();
 
 	void LookTarget();
-
-	void EndSprint();
 
 	void SetPlayerForwardRotAndDir();
 	void SetPlayerRightRotAndDir();
@@ -333,10 +372,13 @@ public:
 
 	void RestoreStat();
 
+	void MoveSpawnLocation(FVector Location);
+
 	void LockOn();
 
 	void Sprint();
 	void Run();
+	void SetShieldHP(float HP);
 
 	void RecoverStamina();
 
@@ -350,6 +392,9 @@ public:
 
 	void SetSpeed(float speed);
 
+	void ShieldOff();
+	void ShieldOn();
+
 	void ChangeMontageAnimation(AnimationType type);
 
 	void ChangeActionType(ActionType type);
@@ -358,8 +403,15 @@ public:
 	
 	void SetSprint();
 
+	void PlayerShieldDashMovement();
+
 	void FadeOut();
 
+	void SetCameraTarget(FVector Offset, float Length);
+
+	void ShieldAttack();
+
+	void SetSoul(int32 value);
 
 	UFUNCTION()
 		void PlayStartAnimation();
@@ -404,9 +456,12 @@ public:
 	UFUNCTION()
 		void OnParryingOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	void SetCameraLocation(FVector Location);
+	UFUNCTION()
+		void OnShieldOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	void PlayerDead(bool IsFly);
+
+	float GetPercent(float value, float min, float max);
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)override;
 

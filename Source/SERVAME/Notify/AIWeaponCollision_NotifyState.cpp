@@ -12,6 +12,7 @@ void UAIWeaponCollision_NotifyState::NotifyBegin(USkeletalMeshComponent* MeshCom
 		if (Boss2)
 		{
 			Boss2->CollisionMap[CollisionType](true);
+			Boss2->ActivateTrail();
 		}
 	}
 }
@@ -25,6 +26,8 @@ void UAIWeaponCollision_NotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp,
 		if (Boss2)
 		{
 			Boss2->CollisionMap[CollisionType](false);
+			Boss2->DeactivateTrail();
+			Boss2->Damage = 0.f;
 		}
 	}
 }

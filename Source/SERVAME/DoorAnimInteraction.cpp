@@ -86,8 +86,8 @@ void ADoorAnimInteraction::EnableEvent()
 	GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(CineCameraActor, 6.0f);
 
 	
-	//for (int i = 0; i < ParticleArray.Num(); i++)
-	//{
-	//	ParticleArray[i]->SetActive(true, false);
-	//}
+	for (int i = 0; i < ParticleArray.Num(); i++)
+	{
+		ParticleArray[i]->SetActive(true, false);
+	}
 }

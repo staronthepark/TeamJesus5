@@ -21,7 +21,7 @@ void ABaseCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	SpawnLocation = GetActorLocation();
-	SpawnRotation = GetActorLocation().ForwardVector.Rotation();
+	SpawnRotation = GetActorRotation();
 
 	GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
@@ -73,21 +73,29 @@ void ABaseCharacter::VibrateGamePad(float Intensity, float time)
 float ABaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	int value = FMath::RandRange(16, 17);
-	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[value].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[18].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[19].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+	objectpool.SpawnObject(objectpool.ObjectArray[value].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	objectpool.SpawnObject(objectpool.ObjectArray[18].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 	HitStop();
 	return 0.0f;
 }
 
 void ABaseCharacter::OnDustCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {	
-	//AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[2].ObjClass, OverlappedComponent->GetComponentTransform().GetLocation() - FVector(0, 0, 5.0f), FRotator::ZeroRotator);
+	//objectpool.SpawnObject(objectpool.ObjectArray[2].ObjClass, OverlappedComponent->GetComponentTransform().GetLocation() - FVector(0, 0, 5.0f), FRotator::ZeroRotator);
 }
 
 void ABaseCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+}
+
+void ABaseCharacter::SetActive(bool active)
+{
+	SetActorHiddenInGame(!active);
+	SetActorEnableCollision(active);
+	SetActorTickEnabled(active);
 }
 
 void ABaseCharacter::Tick(float DeltaTime)
@@ -103,6 +111,7 @@ void ABaseCharacter::HitStopTimer()
 
 void ABaseCharacter::SwordVFXSpawn()
 {
-	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[12].ObjClass, WeaponOverlapStaticMeshCollision->GetComponentLocation(), FRotator(90, 0, 0));
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+	objectpool.SpawnObject(objectpool.ObjectArray[12].ObjClass, WeaponOverlapStaticMeshCollision->GetComponentLocation(), FRotator(90, 0, 0));
 	GetWorldTimerManager().SetTimer(SMOverlapTimerHandler, this, &ABaseCharacter::SwordVFXSpawn, 0.02f);
 }

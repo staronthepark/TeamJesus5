@@ -35,6 +35,8 @@ class SERVAME_API UBTService_BossActionDecision : public UBTService
 	UPROPERTY(EditAnywhere, Category = "Boss FollowUp Pattern")
 	TArray<TEnumAsByte<BossActionType>> BossFollowUpPatternArr;
 
+	UPROPERTY(EditAnywhere, Category = "Boss Step Pattern")
+	TArray<TEnumAsByte<BossActionType>> BossStepPatternArr;
 
 public:
 	UBTService_BossActionDecision();

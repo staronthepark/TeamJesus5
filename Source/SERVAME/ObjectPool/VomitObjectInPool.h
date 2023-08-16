@@ -55,6 +55,12 @@ public:
 	TObjectPtr<USphereComponent> GroundHitCollision;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vomit")
+	TObjectPtr<UNiagaraComponent> SpawnEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vomit")
+	TObjectPtr<UNiagaraComponent> DispersionEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vomit")
 	TObjectPtr<UNiagaraComponent> ProjectileEffect;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vomit")

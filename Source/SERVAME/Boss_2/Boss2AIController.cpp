@@ -21,6 +21,11 @@ ABoss2AIController::ABoss2AIController(const FObjectInitializer& ObjectInitializ
 
 	AIPerceptionComponent->ConfigureSense(*Sight);
 	AIPerceptionComponent->SetDominantSense(Sight->GetSenseImplementation());
+
+	static ConstructorHelpers::FClassFinder<UBossUI> BossUIAsset(TEXT("/Game/02_Resource/04_UI/01_WBP/02_BossUI/WBP_BossUI"));
+
+	if (BossUIAsset.Succeeded())
+		BossUIClass = BossUIAsset.Class;
 }
 
 void ABoss2AIController::BeginPlay()
@@ -31,12 +36,18 @@ void ABoss2AIController::BeginPlay()
 	if (Boss2Pawn)
 		Boss2 = Boss2Pawn;
 
+	// UI
+	if (IsValid(BossUIClass))
+	{
+		BossUI = Cast<UBossUI>(CreateWidget(GetWorld(), BossUIClass));
+	}
+	BossUI->SetHP(1);
 }
 
 void ABoss2AIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	Boss2->GetCharacterMovement()->bUseControllerDesiredRotation = true;
+	//Boss2->GetCharacterMovement()->bUseControllerDesiredRotation = true;
 
 	if (Boss2->IsLockOn)
 	{
@@ -54,6 +65,16 @@ void ABoss2AIController::Tick(float DeltaTime)
 		if (DetectedActorArr.Num() >= 1)
 		{
 			GetBlackboardComponent()->SetValueAsBool(FName(TEXT("IsDetected")), true);
+			
+			if (!IsUIActivate.Exchange(true))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Visible"));
+				if (IsValid(BossUI))
+				{
+					BossUI->AddToViewport();
+				}
+			}
+
 			return;
 		}
 		AIPerceptionComponent->GetCurrentlyPerceivedActors(UAISenseConfig_Sight::StaticClass(), DetectedActorArr);
@@ -62,6 +83,15 @@ void ABoss2AIController::Tick(float DeltaTime)
 	{
 		DetectedActorArr.Empty();
 		GetBlackboardComponent()->SetValueAsBool(FName(TEXT("IsDetected")), false);
+
+		if (IsUIActivate.Exchange(false))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Hidden"));
+			if (IsValid(BossUI))
+			{
+				BossUI->RemoveFromParent();
+			}
+		}
 	}
 
 	//if (DetectedActorArr.Num() >= 1 && !TestBool)
@@ -106,6 +136,19 @@ void ABoss2AIController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 	UE_LOG(LogTemp, Log, TEXT("OnPerception"));
 	//Boss->SetAnimState(Stimulus.WasSuccessfullySensed());
 	SetFocus(Stimulus.WasSuccessfullySensed() ? Player : nullptr);
+}
+
+void ABoss2AIController::MoveWhenArrived(FVector Location)
+{
+	IsArrived = false;
+
+	auto type = MoveToLocation(Location);
+
+	if (type == EPathFollowingRequestResult::AlreadyAtGoal)
+	{
+		IsArrived = true;
+		Boss2->CircleIndexCount++;
+	}
 }
 
 
