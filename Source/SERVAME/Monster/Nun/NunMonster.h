@@ -9,6 +9,7 @@
 #include "..\..\UI\MonsterWidget.h"
 #include "Components/WidgetComponent.h"
 #include "NumAnimInstance.h"
+#include "..\Knight\KinghtMonster.h"
 #include "NunMonster.generated.h"
 
 /**
@@ -27,6 +28,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UNunAttackTriggerComp* AttackTrigger;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AKinghtMonster*> KnightArr;
 
 	UFUNCTION()
 	void OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
