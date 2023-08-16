@@ -966,6 +966,19 @@ AJesusBoss::AJesusBoss()
 
 			HitCount++;
 
+			AObjectPool& objectpool = AObjectPool::GetInstance();
+			for (int32 i = 0; i < BossDataStruct.DropSoulCount; i++)
+			{
+				float x = FMath::RandRange(-300.0f, 300.0f);
+				float y = FMath::RandRange(-300.0f, 300.0f);
+				float z = FMath::RandRange(-300.0f, 300.0f);
+
+				FVector location = GetActorLocation() + FVector(x * 0.1f, y * 0.1f, z * 0.1f);
+				FRotator rotation = GetActorRotation() + FRotator(x, y, z);
+
+				objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
+			}
+
 			ChangeMontageAnimation(BossAnimationType::HIT);
 		}));
 	HitMap.Add(ActionType::POWERATTACK, TFunction<void()>([=]()
@@ -978,6 +991,18 @@ AJesusBoss::AJesusBoss()
 
 			HitCount++;
 
+			AObjectPool& objectpool = AObjectPool::GetInstance();
+			for (int32 i = 0; i < BossDataStruct.DropSoulCount; i++)
+			{
+				float x = FMath::RandRange(-300.0f, 300.0f);
+				float y = FMath::RandRange(-300.0f, 300.0f);
+				float z = FMath::RandRange(-300.0f, 300.0f);
+
+				FVector location = GetActorLocation() + FVector(x * 0.1f, y * 0.1f, z * 0.1f);
+				FRotator rotation = GetActorRotation() + FRotator(x, y, z);
+
+				objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
+			}
 			ChangeMontageAnimation(BossAnimationType::POWERHIT);
 		}));
 
@@ -1235,11 +1260,24 @@ void AJesusBoss::CheckBossDie()
 		ChangeMontageAnimation(BossAnimationType::DIE);
 		IsDead = true;
 		AIController->BossUI->PlayBossDiedAnimtion();
+		AIController->BossUI->SetVisibility(ESlateVisibility::Hidden);
 		AIController->OnUnPossess();
+
 		for (auto iter = BossDataStruct.DamageList.begin(); iter != BossDataStruct.DamageList.end(); iter.operator++())
 		{
 			iter.Value() = 0;
 		}
+
+		//¸Ê ·Îµù µÆÀ» ¶§ BossUIÀÇ PlayFadeOutAnimation È£Ãâ
+		GetWorldTimerManager().SetTimer(ChangePlayerLocTimerHandle, FTimerDelegate::CreateLambda([=]()
+			{
+				PlayerCharacter->SetActorLocation(FVector(-7207.843457, -62406.767053, 50));
+			}), 1.f, false);
+
+		GetWorldTimerManager().SetTimer(FadeInTimerHandle, FTimerDelegate::CreateLambda([=]()
+			{
+				AIController->BossUI->PlayFadeOutAnimation();
+			}), 1.5f, false);
 	}
 }
 

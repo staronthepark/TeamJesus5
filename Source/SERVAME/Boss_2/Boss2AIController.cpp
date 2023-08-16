@@ -116,6 +116,13 @@ void ABoss2AIController::OnPossess(APawn* InPawn)
 			UE_LOG(LogTemp, Log, TEXT("RunBehaviorTree"));
 		}
 	}
+	
+	if (Boss2 != nullptr)
+	{
+		Boss2->CanMove = true;
+		Boss2->IsLockOn = true;
+		Boss2->Boss2AnimInstance->IsStart = true;
+	}
 
 	AIPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ABoss2AIController::OnPerception);
 }
