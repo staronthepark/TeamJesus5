@@ -23,6 +23,8 @@ void ANunMonster::BeginPlay()
 
 	NunAnimInstance = Cast<UNumAnimInstance>(GetMesh()->GetAnimInstance());
 	WeaponOverlapStaticMeshCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	WeaponCollision->SetupAttachment(GetMesh(), FName("Nun_Weapon_Bone"));
 }
 
 void ANunMonster::Tick(float DeltaTime)
