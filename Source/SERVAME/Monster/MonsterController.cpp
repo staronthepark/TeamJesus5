@@ -1,6 +1,5 @@
 #include "MonsterController.h"
 #include "EnemyMonster.h"
-#include "Runtime/AIModule/Classes/Perception/AISenseConfig_Sight.h"
 
 AMonsterController::AMonsterController()
 {
