@@ -1396,7 +1396,17 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::SPRINT][ActionType::HEAL].Add(false,InputEventMap[PlayerAction::NONE][ActionType::HEAL][false]);
 	InputEventMap[PlayerAction::SPRINT][ActionType::INTERACTION].Add(true,  InputEventMap[PlayerAction::NONE][ActionType::INTERACTION][true]);
 	InputEventMap[PlayerAction::SPRINT][ActionType::INTERACTION].Add(false, InputEventMap[PlayerAction::NONE][ActionType::INTERACTION][false]);
-	InputEventMap[PlayerAction::SPRINT][ActionType::SHIELD].Add(true, InputEventMap[PlayerAction::NONE][ActionType::SHIELD][true]);
+	InputEventMap[PlayerAction::SPRINT][ActionType::SHIELD].Add(true, [&]()
+		{
+			if (IsSprint)
+			{
+				InputEventMap[PlayerAction::SPRINT][ActionType::DODGE][false]();
+			}
+			InputEventMap[PlayerAction::NONE][ActionType::SHIELD][true]();
+
+			if (IsGrab)
+				AnimInstance->BodyBlendAlpha = 0.0f;
+		});
 	InputEventMap[PlayerAction::SPRINT][ActionType::SHIELD].Add(false, InputEventMap[PlayerAction::NONE][ActionType::SHIELD][false]);
 
 	PlayerEventFuncMap.Add(AnimationType::SUPERHIT, TMap<bool, TFunction<void()>>());

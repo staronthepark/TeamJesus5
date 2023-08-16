@@ -37,7 +37,7 @@ void ANiagaraObjectInPool::SetActive(bool active)
 
 		if (IsMove)
 		{
-			GetWorldTimerManager().SetTimer(MoveStartTimer, this, &ANiagaraObjectInPool::StartMove, 0.2f);
+			GetWorldTimerManager().SetTimer(MoveStartTimer, this, &ANiagaraObjectInPool::StartMove, 0.3f);
 		}
 		else
 		{
