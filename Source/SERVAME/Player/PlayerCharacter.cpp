@@ -2079,6 +2079,7 @@ void APlayerCharacter::PlayExecutionAnimation()
 		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false, TargetComp);
 	}
 	TargetComp = ExecutionCharacter->LockOnComp;
+	if(TargetComp != nullptr)
 	Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true, TargetComp);
 	if (!IsLockOn)
 	{
