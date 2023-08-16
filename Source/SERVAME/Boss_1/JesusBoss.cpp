@@ -1261,6 +1261,8 @@ void AJesusBoss::CheckBossDie()
 		IsDead = true;
 		AIController->BossUI->PlayBossDiedAnimtion();
 		AIController->OnUnPossess();
+		if(PlayerCharacter->IsLockOn)
+		PlayerCharacter->LockOn();
 
 		for (auto iter = BossDataStruct.DamageList.begin(); iter != BossDataStruct.DamageList.end(); iter.operator++())
 		{
