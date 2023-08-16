@@ -1076,6 +1076,8 @@ void AJesusBoss2::BeginPlay()
 	LeftArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneLArm);
 	RightArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneRArm);
 	
+	UCombatManager::GetInstance().MonsterInfoArray.Add(this);
+
 	//임시로 변수 설정
 	CanMove = true;
 	IsLockOn = true;
@@ -1422,14 +1424,18 @@ void AJesusBoss2::SpawnInit()
 	BossDataStruct.CharacterOriginSpeed = 60.f;
 	AIController->BossUI->SetHP(1);
 	IsDead = false;
+	CanMove = true;
+	IsLockOn = true;
+	Boss2AnimInstance->IsStart = true;
+	CrossEvent = false;
 
 	//패턴 확률 초기화
 	InitPercentageMap[Boss2AttackType::B2_MELEE]();
 	InitPercentageMap[Boss2AttackType::B2_RANGE]();
 	InitPercentageMap[Boss2AttackType::B2_FOLLOWUP]();
-	InitPercentageMap[Boss2AttackType::B2_LEFTATK]();
-	InitPercentageMap[Boss2AttackType::B2_RIGHTATK]();
-	InitPercentageMap[Boss2AttackType::B2_BACKATK]();
+	//InitPercentageMap[Boss2AttackType::B2_LEFTATK]();
+	//InitPercentageMap[Boss2AttackType::B2_RIGHTATK]();
+	//InitPercentageMap[Boss2AttackType::B2_BACKATK]();
 
 	//애니
 	ChangeMontageAnimation(Boss2AnimationType::IDLE);

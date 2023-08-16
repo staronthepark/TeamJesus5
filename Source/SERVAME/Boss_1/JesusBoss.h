@@ -366,6 +366,9 @@ public:
 
 	FTimerHandle TimerHandle;
 	FTimerHandle HitTimerHandle;
+	FTimerHandle ChangePlayerLocTimerHandle;
+	FTimerHandle FadeInTimerHandle;
+
 
 	UPROPERTY()
 	UAnimMontage* EndedMontage;

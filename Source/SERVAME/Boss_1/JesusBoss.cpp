@@ -1260,14 +1260,24 @@ void AJesusBoss::CheckBossDie()
 		ChangeMontageAnimation(BossAnimationType::DIE);
 		IsDead = true;
 		AIController->BossUI->PlayBossDiedAnimtion();
+		AIController->BossUI->SetVisibility(ESlateVisibility::Hidden);
 		AIController->OnUnPossess();
+
 		for (auto iter = BossDataStruct.DamageList.begin(); iter != BossDataStruct.DamageList.end(); iter.operator++())
 		{
 			iter.Value() = 0;
 		}
-		
+
 		//¸Ê ·Îµù µÆÀ» ¶§ BossUIÀÇ PlayFadeOutAnimation È£Ãâ
-		PlayerCharacter->SetActorLocation(FVector(-7207.843457, -62406.767053, 50));
+		GetWorldTimerManager().SetTimer(ChangePlayerLocTimerHandle, FTimerDelegate::CreateLambda([=]()
+			{
+				PlayerCharacter->SetActorLocation(FVector(-7207.843457, -62406.767053, 50));
+			}), 1.f, false);
+
+		GetWorldTimerManager().SetTimer(FadeInTimerHandle, FTimerDelegate::CreateLambda([=]()
+			{
+				AIController->BossUI->PlayFadeOutAnimation();
+			}), 1.5f, false);
 	}
 }
 
