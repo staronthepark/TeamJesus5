@@ -103,6 +103,19 @@ AJesusBoss2::AJesusBoss2()
 			Boss2->IsAttacking = false;
 		}));
 
+	MontageStartMap.Add(Boss2AnimationType::GROGGY, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->IsLockOn = false;
+			Boss2->AttackLockOn = false;
+			Boss2->CanMove = false;
+		}));
+	MontageEndMap.Add(Boss2AnimationType::GROGGY, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->IsLockOn = true;
+			Boss2->AttackLockOn = true;
+			Boss2->CanMove = true;
+		}));
+
 	MontageStartMap.Add(Boss2AnimationType::CROSSFALL, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 			Boss2->IsAttackMontageEnd = false;
@@ -1279,7 +1292,7 @@ void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 	auto Type = GetTypeFromMetaData(StartMontage);
 
 	AObjectPool& objectpool = AObjectPool::GetInstance();
-	if (OtherComp->GetName() == "ShieldCollision")
+	if (OtherComp->GetName() == "ShieldCollision" && Type != Boss2AnimationType::GROGGY)
 	{
 		Player->SetShieldHP(-BossDataStruct.DamageList[Type]);
 		CameraShake(PlayerCameraShake);
@@ -1345,6 +1358,13 @@ void AJesusBoss2::RespawnCharacter()
 
 void AJesusBoss2::PlayExecutionAnimation()
 {
+	PlayAnimMontage(Boss2MontageMap[Boss2AnimationType::GROGGY]);
+}
+
+void AJesusBoss2::Stun()
+{
+	AttackLockOn = false;
+	PlayAnimMontage(Boss2MontageMap[Boss2AnimationType::GROGGY]);
 }
 
 void AJesusBoss2::ActivateLockOnImage(bool value, UPrimitiveComponent* comp)
@@ -1626,6 +1646,7 @@ void AJesusBoss2::ActivateHitCollision()
 	LeftArmHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	RightArmHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
+
 void AJesusBoss2::GetEndedMontage(UAnimMontage* Montage, bool bInterrupted)
 {
 	IsStart.Exchange(false);
