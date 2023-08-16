@@ -165,13 +165,14 @@ AEnemyMonster::AEnemyMonster()
 						AObjectPool& objectpool =  AObjectPool::GetInstance();
 						for (int32 i = 0; i < MonsterDataStruct.DropSoulCount; i++)
 						{
-							float x = FMath::RandRange(-30.0f, 30.0f);
-							float y = FMath::RandRange(-30.0f, 30.0f);
-							float z = FMath::RandRange(-30.0f, 30.0f);
+							float x = FMath::RandRange(-300.0f, 300.0f);
+							float y = FMath::RandRange(-300.0f, 300.0f);
+							float z = FMath::RandRange(-300.0f, 300.0f);
 
-							FVector location = GetActorLocation() + FVector(x, y, z);
+							FVector location = GetActorLocation() + FVector(x * 0.1f, y * 0.1f, z * 0.1f);
+							FRotator rotation = GetActorRotation() + FRotator(x, y, z);
 
-							objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, FRotator::ZeroRotator);
+							objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
 						}
 
 						if (PlayerCharacter->TargetComp == nullptr)

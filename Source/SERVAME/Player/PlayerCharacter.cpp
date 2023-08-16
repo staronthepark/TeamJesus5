@@ -1775,12 +1775,15 @@ void APlayerCharacter::ChangeTarget(CameraDirection CamDirection)
 
 	if (TargetArray.Num() < 1)return;
 	int32 TargetIdx = 0;
+
 	for (int32 i = 1; i < TargetArray.Num(); i++)
 	{
+		float Distance = FVector::DistSquared(CameraLocation, TargetArray[i]->GetComponentLocation());
+		float Distance2 = FVector::DistSquared(CameraLocation, TargetArray[TargetIdx]->GetComponentLocation());
 		float TargetDot = FVector::DotProduct(TargetDir, (TargetArray[TargetIdx]->GetComponentLocation() - CameraLocation).GetSafeNormal());
 		float NextDot = FVector::DotProduct(TargetDir, (TargetArray[i]->GetComponentLocation() - CameraLocation).GetSafeNormal());
 
-		if (NextDot > TargetDot)
+		if (NextDot > TargetDot && Distance > Distance2)
 			TargetIdx = i;
 	}
 
