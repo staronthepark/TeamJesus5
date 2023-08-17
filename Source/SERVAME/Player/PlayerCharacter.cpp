@@ -1454,6 +1454,7 @@ void APlayerCharacter::BeginPlay()
 
 	PlayerSKMesh = GetMesh();
 	DebugMode = false;
+	ShieldEffectComp->SetVisibility(false);
 	LocketSKMesh->SetVisibility(true);
 	ChangeActionType(ActionType::DEAD);
 
@@ -1673,8 +1674,13 @@ void APlayerCharacter::RestoreStat()
 
 void APlayerCharacter::MoveSpawnLocation(FVector Location)
 {
+	if (IsLockOn)
+		LockOn();
+	SetActorRotation(FRotator(0, 180, 0));
+	YawRotation = FRotator(0, 180, 0);
 	SetActorLocation(Location);
 	SpawnLocation = Location;
+	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 }
 
 void APlayerCharacter::LockOn()
@@ -1929,6 +1935,7 @@ void APlayerCharacter::SetSpeed(float speed)
 void APlayerCharacter::ShieldOff()
 {
 	IsCollisionCamera = true;
+	ShieldEffectComp->SetVisibility(false);
 	ShieldMeshComp->SetVisibility(false);
 	ShieldAttackOverlap->SetRelativeLocation(FVector(10000, 10000, 10000));
 	ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -1938,6 +1945,7 @@ void APlayerCharacter::ShieldOff()
 void APlayerCharacter::ShieldOn()
 {
 	IsCollisionCamera = false;
+	ShieldEffectComp->SetVisibility(true);
 	ShieldMeshComp->SetVisibility(true);
 	ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
@@ -2274,7 +2282,7 @@ void APlayerCharacter::Attack()
 
 void APlayerCharacter::BasicAttack()
 {
-	//MoveSpawnLocation(FVector(-7207.843457, -62406.767053, 50));
+	//MoveSpawnLocation(FVector());
 	if (!IsGrab)
 	{
 		Attack();

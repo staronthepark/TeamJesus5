@@ -165,6 +165,9 @@ struct FBossDataStruct : public FCharacterBaseDataStruct
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CurrentGrrogyGauge;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int DropSoulCount;
 };
 
 DECLARE_MULTICAST_DELEGATE(FOnHit);
@@ -363,6 +366,9 @@ public:
 
 	FTimerHandle TimerHandle;
 	FTimerHandle HitTimerHandle;
+	FTimerHandle ChangePlayerLocTimerHandle;
+	FTimerHandle FadeInTimerHandle;
+
 
 	UPROPERTY()
 	UAnimMontage* EndedMontage;
