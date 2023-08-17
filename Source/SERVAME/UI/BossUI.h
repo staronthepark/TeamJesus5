@@ -72,6 +72,7 @@ class SERVAME_API UBossUI : public UBaseUI
 	FTimerHandle DamageTimerHandle;
 	float CumulateDamage;
 
+	EBossSettings CurrentBoss;
 	//MediaPlayer
 	//UPROPERTY(meta = (BindWidget))
 	//	UImage* EndingCreditImage;
@@ -88,7 +89,7 @@ public:
 	virtual void NativeConstruct() override;
 	void SetHP(float value);
 	void DecreaseHPGradual(AActor* Actor, float value);
-	void PlayBossHPOpenAnimation(bool IsOpen);
+	void PlayBossHPOpenAnimation(bool IsOpen, EBossSettings Boss);
 
 	void PlayBossDiedAnimtion();
 
