@@ -24,9 +24,9 @@ enum class EGuides : uint8
 	parrying	UMETA(DisplayName = "Parrying"),
 	savepoint	UMETA(DisplayName = "SavePoint"),
 	map			UMETA(DisplayName = "Map"),
-	shield			UMETA(DisplayName = "shield"),
-	shieldattack			UMETA(DisplayName = "shieldattack"),
-	soul			UMETA(DisplayName = "soul")
+	shield			UMETA(DisplayName = "Shield"),
+	shieldattack			UMETA(DisplayName = "Shieldattack"),
+	soul			UMETA(DisplayName = "Soul")
 };
 
 USTRUCT(BlueprintType)

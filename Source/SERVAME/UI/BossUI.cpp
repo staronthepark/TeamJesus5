@@ -18,7 +18,7 @@ void UBossUI::NativeOnInitialized()
 void UBossUI::NativeConstruct()
 {
 	Super::NativeConstruct();
-	ChangeLanguage();
+	CurrentBoss = EBossSettings::phase1;
 	PlayAnimation(BossHPOpenAnimation);
 }
 
@@ -41,8 +41,10 @@ void UBossUI::DecreaseHPGradual(AActor* Actor, float value)
 
 }
 
-void UBossUI::PlayBossHPOpenAnimation(bool IsOpen)
+void UBossUI::PlayBossHPOpenAnimation(bool IsOpen, EBossSettings Boss)
 {
+	CurrentBoss = Boss;
+	ChangeLanguage();
 	PlayAnimation(BossHPOpenAnimation, IsOpen ? EUMGSequencePlayMode::Forward : EUMGSequencePlayMode::Reverse);
 }
 
@@ -101,11 +103,11 @@ void UBossUI::ChangeLanguage()
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (GameInstance->language == Language::ENG)
 	{
-		BossNameText->SetBrushFromTexture(BossNameTextures.Find(EBossSettings::phase1)->EngTexture, true);
+		BossNameText->SetBrushFromTexture(BossNameTextures.Find(CurrentBoss)->EngTexture, true);
 	}
 	else if (GameInstance -> language == Language::KOR)
 	{
-		BossNameText->SetBrushFromTexture(BossNameTextures.Find(EBossSettings::phase1)->KorTexture, true);
+		BossNameText->SetBrushFromTexture(BossNameTextures.Find(CurrentBoss)->KorTexture, true);
 	}
 }
 
