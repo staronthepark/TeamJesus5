@@ -34,7 +34,7 @@ void UPlayerHUD::NativeOnInitialized()
 	GuideAnimationFunction.Add(EGuides::map, [&](bool value)
 		{
 			currentLanguage = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->language;
-			PlayMapUIAnimation("asd");
+			PlayMapUIAnimation("asd") ;
 		});
 	GuideAnimationFunction.Add(EGuides::shield, [&](bool value)
 		{

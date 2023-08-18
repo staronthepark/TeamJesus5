@@ -28,6 +28,7 @@ class SERVAME_API UButtonUI : public UUserWidget
 {
 	GENERATED_BODY()
 
+	int index; 
 
 	UPROPERTY(meta = (BindWidget))
 		UImage* OnOffImage;
@@ -40,7 +41,6 @@ class SERVAME_API UButtonUI : public UUserWidget
 
 
 public:
-	int index; 
 	UPROPERTY(meta = (BindWidget))
 		UButton* LeftButton;
 	UPROPERTY(meta = (BindWidget))
