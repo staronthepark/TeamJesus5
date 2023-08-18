@@ -1188,7 +1188,6 @@ void AJesusBoss::Tick(float DeltaTime)
 	if (BossDataStruct.CharacterHp <= BossDataStruct.CharacterMaxHp / 2 && IsHalfHp == false)
 	{
 		IsHalfHp = true;
-		ASoundManager::GetInstance().PlaySoundWithCymbalSound(2);
 	}
 
 	//기존 피격 모션(본 회전시키는 코드)
@@ -1252,6 +1251,8 @@ void AJesusBoss::CheckBossDie()
 {	
 	if (BossDataStruct.CharacterHp <= 0 && IsDead == false)
 	{
+		ASoundManager::GetInstance().PlaySoundWithCymbalSound(2);
+
 		DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		PlayerCharacter->AxisX = 1;
 		PlayerCharacter->AxisY = 1;
