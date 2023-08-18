@@ -2107,6 +2107,9 @@ void AJesusBoss::ReturnStun()
 {	
 	if (IsFirstExecution)
 		ChangeMontageAnimation(BossAnimationType::GROGGYIDLE);
+
+	//피격 그로기 다시 생기면 아래 코드 지워야 됨.
+	CanExecution = false;
 }
 
 void AJesusBoss::IsNotifyActive(bool value)
