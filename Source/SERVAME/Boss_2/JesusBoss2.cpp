@@ -309,6 +309,7 @@ AJesusBoss2::AJesusBoss2()
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
 			Boss2->Damage = 0.f;
+			Boss2->ActivateHitCollision();
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::JUMPEXPLOSION, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -323,6 +324,7 @@ AJesusBoss2::AJesusBoss2()
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
 			Boss2->Damage = 0.f;
+			Boss2->ActivateHitCollision();
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::THROWSTONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -1114,27 +1116,15 @@ void AJesusBoss2::Tick(float DeltaTime)
 		RotateToPlayerInterp();
 	}
 
+	//if (PlayerCharacter != nullptr)
+	//{
+	//	auto Dir = PlayerCharacter->GetActorLocation() - GetActorLocation();
+	//	float AngleInRadians = FMath::Atan2(-Dir.Y, -Dir.X);
 
-	if (PlayerCharacter != nullptr)
-	{
-		auto PlayerLoc = PlayerCharacter->GetActorLocation();
-		auto PlayerVec = FVector(PlayerLoc.X, PlayerLoc.Y, 0.f);
-		auto BossVec = GetActorForwardVector();
+	//	AngleToPlayer = FMath::RadiansToDegrees(AngleInRadians);
 
-		BossVec.Normalize();
-		PlayerVec.Normalize();
-
-		float DotProduct = FVector::DotProduct(BossVec, PlayerVec);
-		float AngleInRadians = FMath::Acos(DotProduct);
-		AngleToPlayer = FMath::RadiansToDegrees(AngleInRadians);
-
-		FVector CrossProduct = FVector::CrossProduct(BossVec, PlayerVec);
-
-		if (CrossProduct.Z < 0)
-			AngleToPlayer = -AngleToPlayer;
-
-		UE_LOG(LogTemp, Warning, TEXT("Angle : %f"), AngleToPlayer);
-	}
+	//	UE_LOG(LogTemp, Warning, TEXT("Angle : %f"), AngleToPlayer);
+	//}
 }
 
 /*=====================
@@ -1492,6 +1482,7 @@ void AJesusBoss2::SlerpJump()
 {
 	GetCapsuleComponent()->SetCollisionProfileName("IgnorePlayer");
 	JumpMoveStart = true;
+	DeactivateHitCollision();
 }
 
 void AJesusBoss2::SlerpJumpEnd()
@@ -1820,26 +1811,8 @@ void AJesusBoss2::OnEnd()
 	float Dist = 0.0f;
 	if (Player)
 	{
-		auto PlayerLoc = Player->GetActorLocation();
-		Dist = FVector::Dist(GetActorLocation(), PlayerLoc);
-		PlayerVec = FVector(PlayerLoc.X, PlayerLoc.Y, 0.f);
+		Dist = FVector::Dist(GetActorLocation(), PlayerCharacter->GetActorLocation());
 	}
-	
-	BossVec = GetActorLocation().ForwardVector;
-
-	BossVec.Normalize();
-	PlayerVec.Normalize();
-
-	float DotProduct = FVector::DotProduct(BossVec, PlayerVec);
-	float AngleInRadians = FMath::Acos(DotProduct);
-	AngleToPlayer = FMath::RadiansToDegrees(AngleInRadians);
-
-	FVector CrossProduct = FVector::CrossProduct(BossVec, PlayerVec);
-
-	if (CrossProduct.Z < 0)
-		AngleToPlayer = -AngleToPlayer;
-
-	UE_LOG(LogTemp, Warning, TEXT("Angle : %f"), AngleToPlayer);
 
 	//UE_LOG(LogTemp, Warning, TEXT("End : %s"), *StartMontage->GetName());
 
