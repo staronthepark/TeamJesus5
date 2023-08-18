@@ -453,7 +453,7 @@ AJesusBoss2::AJesusBoss2()
 
 			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
 			{
-				CurrentActionTemp = MeleeActionArr.Last();
+				CurrentActionTemp = MeleeActionArr[5];
 				SetBTAction(CurrentActionTemp);
 				return;
 			}
@@ -486,7 +486,7 @@ AJesusBoss2::AJesusBoss2()
 
 			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
 			{
-				CurrentActionTemp = MeleeActionArr.Last();
+				CurrentActionTemp = MeleeActionArr[5];
 				SetBTAction(CurrentActionTemp);
 				return;
 			}
@@ -508,7 +508,7 @@ AJesusBoss2::AJesusBoss2()
 
 			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
 			{
-				CurrentActionTemp = MeleeActionArr.Last();
+				CurrentActionTemp = MeleeActionArr[5];
 				SetBTAction(CurrentActionTemp);
 				return;
 			}
@@ -1076,6 +1076,8 @@ void AJesusBoss2::BeginPlay()
 	LeftArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneLArm);
 	RightArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneRArm);
 	
+	UCombatManager::GetInstance().MonsterInfoArray.Add(this);
+
 	//임시로 변수 설정
 	CanMove = true;
 	IsLockOn = true;
@@ -1328,8 +1330,11 @@ float AJesusBoss2::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	IsStartBoneRot = true;
 	GetWorldTimerManager().SetTimer(BoneRotateTimerHandle, this, &AJesusBoss2::ReSetBoneRot, Time, false);
 		
-	AIController->BossUI->DecreaseHPGradual(this, BossDataStruct.CharacterHp / BossDataStruct.CharacterMaxHp);
-	AIController->BossUI->SetDamageText(DamageAmount);
+	if (BossDataStruct.CharacterHp > 0)
+	{
+		AIController->BossUI->DecreaseHPGradual(this, BossDataStruct.CharacterHp / BossDataStruct.CharacterMaxHp);
+		AIController->BossUI->SetDamageText(DamageAmount);
+	}
 
 	//TODO : 그로기 관련 코드
 
@@ -1364,6 +1369,7 @@ void AJesusBoss2::PlayExecutionAnimation()
 void AJesusBoss2::Stun()
 {
 	AttackLockOn = false;
+	AIController->StopMovement();
 	PlayAnimMontage(Boss2MontageMap[Boss2AnimationType::GROGGY]);
 }
 
@@ -1421,14 +1427,18 @@ void AJesusBoss2::SpawnInit()
 	BossDataStruct.CharacterOriginSpeed = 60.f;
 	AIController->BossUI->SetHP(1);
 	IsDead = false;
+	CanMove = true;
+	IsLockOn = true;
+	Boss2AnimInstance->IsStart = true;
+	CrossEvent = false;
 
 	//패턴 확률 초기화
 	InitPercentageMap[Boss2AttackType::B2_MELEE]();
 	InitPercentageMap[Boss2AttackType::B2_RANGE]();
 	InitPercentageMap[Boss2AttackType::B2_FOLLOWUP]();
-	InitPercentageMap[Boss2AttackType::B2_LEFTATK]();
-	InitPercentageMap[Boss2AttackType::B2_RIGHTATK]();
-	InitPercentageMap[Boss2AttackType::B2_BACKATK]();
+	//InitPercentageMap[Boss2AttackType::B2_LEFTATK]();
+	//InitPercentageMap[Boss2AttackType::B2_RIGHTATK]();
+	//InitPercentageMap[Boss2AttackType::B2_BACKATK]();
 
 	//애니
 	ChangeMontageAnimation(Boss2AnimationType::IDLE);
@@ -1517,7 +1527,7 @@ void AJesusBoss2::JumpExplosionCheck()
 	else
 		DrawColor = FColor::Red;
 
-	DrawDebugSphere(GetWorld(), Center, Size, 16, DrawColor, false, 1.f);
+	//DrawDebugSphere(GetWorld(), Center, Size, 16, DrawColor, false, 1.f);
 
 	CameraShake(PlayerCameraShake);
 	VibrateGamePad(1.0f, 0.5f);
@@ -1529,7 +1539,6 @@ void AJesusBoss2::JumpExplosionCheck()
 
 		Player->TakeDamage(Damage, DamageEvent, GetController(), this);
 	}
-
 }
 
 void AJesusBoss2::CheckBossDie()
@@ -1551,6 +1560,12 @@ void AJesusBoss2::CheckBossDie()
 		{
 			iter.Value() = 0;
 		}
+
+		GetWorldTimerManager().SetTimer(LoadingTimerHandle, FTimerDelegate::CreateLambda([=]()
+			{		
+				AIController->BossUI->RemoveFromViewport();
+				UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/00_Maps/01_Art/00_Modeller/InGameMap/MainMap")));
+			}), 5.f, false);
 	}
 }
 

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AIController.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "Runtime/AIModule/Classes/Perception/AISenseConfig_Sight.h"
 #include "MonsterController.generated.h"
 
 
@@ -34,7 +35,7 @@ public:
 	class APlayerCharacter* Player;
 
 	UPROPERTY()
-	class UAISenseConfig_Sight* Sight;
+	UAISenseConfig_Sight* Sight;
 
 	UPROPERTY(VisibleAnywhere)
 	UAIPerceptionComponent* AIPerceptionComponent;

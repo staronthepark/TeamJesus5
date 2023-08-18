@@ -374,6 +374,8 @@ public:
 
 	void MoveSpawnLocation(FVector Location);
 
+	virtual bool IsAlive() override;
+
 	void LockOn();
 
 	void Sprint();
