@@ -38,9 +38,9 @@ void ASoundManager::Init()
 	PlayNextBGM = false;
 	CurrentIndex = 0;
 	MaxTempoTime = 0.4511278195488722f;
-	BGMVolume = 1.0f;
-	SFXVolume = 1.0f;
-	VoiceVolume = 1.0f;
+	BGMVolume = 0.5f;
+	SFXVolume = 0.5f;
+	VoiceVolume = 0.5f;
 
 
 	BGMAudioCompArray.AddUnique(CymbalAudio);
@@ -50,6 +50,7 @@ void ASoundManager::Init()
 	for (int32 i = 0; i < BGMAudioCompArray.Num(); i++)
 	{
 		BGMAudioCompArray[i]->SetPaused(true);
+		BGMAudioCompArray[i]->SetUISound(true);
 	}
 
 	CymbalAudio->SetPaused(true);
@@ -93,6 +94,7 @@ void ASoundManager::SetSFXVolume(float value)
 	if (value != 0)
 		SFXVolume = value;
 
+
 	for (int32 i = 0; i < SFXAudioCompArray.Num(); i++)
 	{
 		SFXAudioCompArray[i]->SetVolumeMultiplier(value);
@@ -103,7 +105,7 @@ void ASoundManager::SetVoiceVolume(float value)
 {
 	if (value != 0)
 		VoiceVolume = value;
-	
+
 	for (int32 i = 0; i < VoiceAudioCompArray.Num(); i++)
 	{
 		VoiceAudioCompArray[i]->SetVolumeMultiplier(value);
