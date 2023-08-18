@@ -789,7 +789,6 @@ APlayerCharacter::APlayerCharacter()
 	MontageEndEventMap.Add(AnimationType::DOOROPEN, [&]()
 		{
 			ComboAttackEnd();
-
 			AxisX = 1;
 			AxisY = 1;
 			CheckInputKey();
@@ -852,6 +851,9 @@ APlayerCharacter::APlayerCharacter()
 		});
 	MontageEndEventMap.Add(AnimationType::EXECUTIONBOSS, [&]()
 		{
+			if (IsLockOn)
+				LockOn();
+
 			IsExecute = false;			
 			GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 			CheckInputKey();
@@ -1683,6 +1685,13 @@ void APlayerCharacter::MoveSpawnLocation(FVector Location)
 	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 }
 
+bool APlayerCharacter::IsAlive()
+{
+	if(PlayerDataStruct.CharacterHp > 0)
+	return true;
+	return false;
+}
+
 void APlayerCharacter::LockOn()
 {
 	IsLockOn = !IsLockOn;
@@ -2450,6 +2459,13 @@ void APlayerCharacter::PlayerDead(bool IsFly)
 	{
 		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false, TargetComp);
 	}
+
+	if (PlayerHUD->IsRender())
+	{
+		//UGameplayStatics::SetGlobalTimeDilation(this, 1.0f);
+		PlayerHUD->PlayAnimations(EGuides::dodge, false);
+	}
+
 	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 	Imotal = true;
 	PlayerHUD->PlayDied(true);
