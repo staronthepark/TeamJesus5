@@ -291,7 +291,6 @@ AJesusBoss::AJesusBoss()
 			Boss->IsLockOn = true;
 			//Boss->DealTimePercent += Boss->GetRandomNum(10, 30);
 
-
 			//Boss->CheckDealTime();
 		}));
 
