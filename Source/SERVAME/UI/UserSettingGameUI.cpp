@@ -13,8 +13,8 @@ void UUserSettingGameUI::NativeOnInitialized()
 	//WBP_Setting_Button->LeftButton->OnClicked.AddDynamic(this, &UUserSettingGameUI::SetBleeding);
 	//WBP_Setting_Button->RightButton->OnClicked.AddDynamic(this, &UUserSettingGameUI::SetBleeding);
 	WBP_Setting_Slider->Slider_1->OnValueChanged.AddDynamic(this, &UUserSettingGameUI::SetMouseSensitive);
-	WBP_Camera_Button->LeftButton->OnClicked.AddDynamic(this, &UUserSettingGameUI::ChangeCameraView);
-	WBP_Camera_Button->RightButton->OnClicked.AddDynamic(this, &UUserSettingGameUI::ChangeCameraView);
+	//WBP_Camera_Button->LeftButton->OnClicked.AddDynamic(this, &UUserSettingGameUI::ChangeCameraView);
+	//WBP_Camera_Button->RightButton->OnClicked.AddDynamic(this, &UUserSettingGameUI::ChangeCameraView);
 
 	WBP_Language_Button->RightButton->OnClicked.AddDynamic(this, &UUserSettingGameUI::SetLanguage);
 	WBP_Language_Button->LeftButton->OnClicked.AddDynamic(this, &UUserSettingGameUI::SetLanguage);
@@ -32,24 +32,7 @@ void UUserSettingGameUI::NativeConstruct()
 	//else
 	//	WBP_Setting_Button->SetValue(1);
 
-	if (GameInstance->language == Language::ENG)
-	{
-		TitleGameImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::title)->EngTexture, true);
-		CameraImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::camera)->EngTexture, true);
-		MouseSensitiveImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::mouse)->EngTexture, true);
-		LightSettingButton->WidgetStyle.Normal.SetResourceObject(ImageTextures.Find(EGameSettings::brightnessnormal)->EngTexture);
-		LightSettingButton->WidgetStyle.Hovered.SetResourceObject(ImageTextures.Find(EGameSettings::brightnesshovered)->EngTexture);
-		LightSettingButton->WidgetStyle.Pressed.SetResourceObject(ImageTextures.Find(EGameSettings::brightnesspressed)->EngTexture);
-	}
-	else if (GameInstance->language == Language::KOR)
-	{
-		TitleGameImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::title)->KorTexture, true);
-		CameraImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::camera)->KorTexture, true);
-		MouseSensitiveImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::mouse)->KorTexture, true);
-		LightSettingButton->WidgetStyle.Normal.SetResourceObject(ImageTextures.Find(EGameSettings::brightnessnormal)->KorTexture);
-		LightSettingButton->WidgetStyle.Hovered.SetResourceObject(ImageTextures.Find(EGameSettings::brightnesshovered)->KorTexture);
-		LightSettingButton->WidgetStyle.Pressed.SetResourceObject(ImageTextures.Find(EGameSettings::brightnesspressed)->KorTexture);
-	}
+	SetLanguage();
 
 	WBP_Setting_Slider->SetValue((GameInstance->PlayerOptionSetting.DPI - 20) / 40);
 
@@ -81,13 +64,13 @@ void UUserSettingGameUI::SetMouseSensitive(float value)
 	GameInstance->PlayerOptionSetting.DPI = (value * 40) + 20;
 }
 
-void UUserSettingGameUI::ChangeCameraView()
-{
-	if(WBP_Camera_Button->GetValue() == 0)
-		Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController())->character->ShoulderView(true);
-	else
-		Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController())->character->ShoulderView(false);
-}
+//void UUserSettingGameUI::ChangeCameraView()
+//{
+//	if(WBP_Camera_Button->GetValue() == 0)
+//		Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController())->character->ShoulderView(true);
+//	else
+//		Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController())->character->ShoulderView(false);
+//}
 
 void UUserSettingGameUI::SetLanguage()
 {
@@ -100,22 +83,24 @@ void UUserSettingGameUI::SetLanguage()
 	if (GameInstance->language == Language::ENG)
 	{
 		TitleGameImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::title)->EngTexture, true);
-		CameraImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::camera)->EngTexture, true);
+		//CameraImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::camera)->EngTexture, true);
 		MouseSensitiveImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::mouse)->EngTexture, true);
+		LanguageImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::language)->EngTexture, true);
 		LightSettingButton->WidgetStyle.Normal.SetResourceObject(ImageTextures.Find(EGameSettings::brightnessnormal)->EngTexture);
 		LightSettingButton->WidgetStyle.Hovered.SetResourceObject(ImageTextures.Find(EGameSettings::brightnesshovered)->EngTexture);
 		LightSettingButton->WidgetStyle.Pressed.SetResourceObject(ImageTextures.Find(EGameSettings::brightnesspressed)->EngTexture);
-		WBP_Camera_Button->ChangeLanguage();
+		//WBP_Camera_Button->ChangeLanguage();
 	}
 	else if (GameInstance->language == Language::KOR)
 	{
 		TitleGameImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::title)->KorTexture, true);
-		CameraImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::camera)->KorTexture, true);
+		//CameraImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::camera)->KorTexture, true);
 		MouseSensitiveImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::mouse)->KorTexture, true);
+		LanguageImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::language)->KorTexture, true);
 		LightSettingButton->WidgetStyle.Normal.SetResourceObject(ImageTextures.Find(EGameSettings::brightnessnormal)->KorTexture);
 		LightSettingButton->WidgetStyle.Hovered.SetResourceObject(ImageTextures.Find(EGameSettings::brightnesshovered)->KorTexture);
 		LightSettingButton->WidgetStyle.Pressed.SetResourceObject(ImageTextures.Find(EGameSettings::brightnesspressed)->KorTexture);
-		WBP_Camera_Button->ChangeLanguage();
+		//WBP_Camera_Button->ChangeLanguage();
 	}
 
 	
