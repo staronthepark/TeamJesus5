@@ -309,6 +309,7 @@ public:
 
 	int HitCount;
 	float Damage;
+	float AngleToPlayer;
 
 	bool CanAttack = false;
 	bool ChangeSuperAction = false;

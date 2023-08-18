@@ -46,7 +46,8 @@ void UAttackCheckNotifyState::NotifyBegin(USkeletalMeshComponent * MeshComp, UAn
 				else
 					DrawColor = FColor::Red;
 
-				//DrawDebugSphere(val->GetWorld(), Center, AttackRadius, 16, DrawColor, false, 1.f);
+				if(DrawDebugLine)
+					DrawDebugSphere(val->GetWorld(), Center, AttackRadius, 16, DrawColor, false, 1.f);
 
 				val->CameraShake(val->PlayerCameraShake);
 				val->VibrateGamePad(1.0f, 0.5f);

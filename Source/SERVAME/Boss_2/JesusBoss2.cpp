@@ -309,6 +309,7 @@ AJesusBoss2::AJesusBoss2()
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
 			Boss2->Damage = 0.f;
+			Boss2->ActivateHitCollision();
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::JUMPEXPLOSION, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -323,6 +324,7 @@ AJesusBoss2::AJesusBoss2()
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
 			Boss2->Damage = 0.f;
+			Boss2->ActivateHitCollision();
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::THROWSTONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
@@ -444,7 +446,6 @@ AJesusBoss2::AJesusBoss2()
 
 			auto Type = GetTypeFromMetaData(Montage);
 			auto name = Boss2AnimationEnum->GetNameStringByValue((uint64)Type);
-			UE_LOG(LogTemp, Warning, TEXT("end attack name : %s"), *name);
 
 			if (CurrentActionTemp.IsAddPercentage)
 				InitPercentageMap[CurrentActionTemp.AttackType]();
@@ -1080,7 +1081,7 @@ void AJesusBoss2::BeginPlay()
 
 	//임시로 변수 설정
 	CanMove = true;
-	IsLockOn = true;
+	IsLockOn = false;
 	Boss2AnimInstance->IsStart = true;
 }
 
@@ -1114,6 +1115,16 @@ void AJesusBoss2::Tick(float DeltaTime)
 		AIController->MoveWhenArrived(CirclePoints[CircleIndexCount]);
 		RotateToPlayerInterp();
 	}
+
+	//if (PlayerCharacter != nullptr)
+	//{
+	//	auto Dir = PlayerCharacter->GetActorLocation() - GetActorLocation();
+	//	float AngleInRadians = FMath::Atan2(-Dir.Y, -Dir.X);
+
+	//	AngleToPlayer = FMath::RadiansToDegrees(AngleInRadians);
+
+	//	UE_LOG(LogTemp, Warning, TEXT("Angle : %f"), AngleToPlayer);
+	//}
 }
 
 /*=====================
@@ -1471,6 +1482,7 @@ void AJesusBoss2::SlerpJump()
 {
 	GetCapsuleComponent()->SetCollisionProfileName("IgnorePlayer");
 	JumpMoveStart = true;
+	DeactivateHitCollision();
 }
 
 void AJesusBoss2::SlerpJumpEnd()
@@ -1787,15 +1799,20 @@ void AJesusBoss2::OnEnd()
 {
 	StartEnd.Key = false;
 	StartEnd.Value = true;
-
+	
 	GetCapsuleComponent()->SetCollisionProfileName("AIPhysics");
 	IsAttacking = false;
 	AttackLockOn = false;
 
+	FVector BossVec;
+	FVector PlayerVec;
+
 	auto Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	float Dist = 0.0f;
 	if (Player)
-		Dist = FVector::Dist(GetActorLocation(), Player->GetActorLocation());
+	{
+		Dist = FVector::Dist(GetActorLocation(), PlayerCharacter->GetActorLocation());
+	}
 
 	//UE_LOG(LogTemp, Warning, TEXT("End : %s"), *StartMontage->GetName());
 

@@ -21,4 +21,6 @@ class SERVAME_API UAttackCheckNotifyState : public UBossBaseNotifyState
 public:
 	UPROPERTY(EditAnywhere)
 	float AttackRadius;
+	UPROPERTY(EditAnywhere)
+	bool DrawDebugLine = false;
 };

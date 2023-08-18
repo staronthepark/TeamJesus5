@@ -26,11 +26,11 @@ void USelectTextUI::Select()
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (GameInstance->language == Language::ENG) 
 	{
-		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::hovered)->EngTextures);
+		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::hovered)->EngTextures,true);
 	}
 	else if (GameInstance->language == Language::KOR) 
 	{
-		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::hovered)->KorTextures);
+		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::hovered)->KorTextures, true);
 	}
 	SelectedBackgroundImage->SetRenderOpacity(Selected);
 	LeftButton->SetRenderOpacity(Selected);
@@ -42,11 +42,11 @@ void USelectTextUI::Unselect()
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (GameInstance->language == Language::ENG)
 	{
-		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::unhovered)->EngTextures);
+		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::unhovered)->EngTextures, true);
 	}
 	else if (GameInstance->language == Language::KOR)
 	{
-		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::unhovered)->KorTextures);
+		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::unhovered)->KorTextures, true);
 	}
 	SelectedBackgroundImage->SetRenderOpacity(Unselected);
 	LeftButton->SetRenderOpacity(Unselected);
@@ -58,11 +58,11 @@ void USelectTextUI::OnHovered()
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (GameInstance->language == Language::ENG)
 	{
-		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::hovered)->EngTextures);
+		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::hovered)->EngTextures, true);
 	}
 	else if (GameInstance->language == Language::KOR)
 	{
-		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::hovered)->KorTextures);
+		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::hovered)->KorTextures, true);
 	}
 }
 
@@ -71,11 +71,11 @@ void USelectTextUI::OnUnhovered()
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (GameInstance->language == Language::ENG)
 	{
-		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::unhovered)->EngTextures);
+		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::unhovered)->EngTextures, true);
 	}
 	else if (GameInstance->language == Language::KOR)
 	{
-		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::unhovered)->KorTextures);
+		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::unhovered)->KorTextures, true);
 	}
 }
 
@@ -84,11 +84,11 @@ void USelectTextUI::ChangeLanguage()
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (GameInstance->language == Language::ENG)
 	{
-		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::unhovered)->EngTextures);
+		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::unhovered)->EngTextures, true);
 	}
 	else if (GameInstance->language == Language::KOR)
 	{
-		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::unhovered)->KorTextures);
+		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::unhovered)->KorTextures, true);
 	}
 }
 

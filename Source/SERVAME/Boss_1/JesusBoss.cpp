@@ -262,12 +262,14 @@ AJesusBoss::AJesusBoss()
 			Boss->IsAttackMontageEnd = false;
 			Boss->CanMove = false;
 			Boss->IsActionEnd = false;
+			Boss->DeactivateHitCollision();
 		}));
 	MontageEndMap.Add(BossAnimationType::JUMPATTACK, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
 			Boss->CanMove = true;
 			Boss->IsLockOn = true;
 			Boss->Damage = 0;
+			Boss->ActivateHitCollision();
 			//Boss->DealTimePercent += Boss->GetRandomNum(10, 30);
 			//Boss->CheckDealTime();
 		}));
@@ -290,7 +292,6 @@ AJesusBoss::AJesusBoss()
 			Boss->CanMove = true;
 			Boss->IsLockOn = true;
 			//Boss->DealTimePercent += Boss->GetRandomNum(10, 30);
-
 
 			//Boss->CheckDealTime();
 		}));
@@ -359,6 +360,7 @@ AJesusBoss::AJesusBoss()
 			Boss->IsAttackMontageEnd = false;
 			Boss->CanMove = false;
 			Boss->IsActionEnd = false;
+			Boss->DeactivateHitCollision();
 		}));
 	MontageEndMap.Add(BossAnimationType::THIRDJUMP, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
@@ -366,6 +368,7 @@ AJesusBoss::AJesusBoss()
 			Boss->IsLockOn = true;
 			//Boss->DealTimePercent += Boss->GetRandomNum(10, 30);
 			Boss->Damage = 0;
+			Boss->ActivateHitCollision();
 			//Boss->CheckDealTime();
 		}));
 
@@ -1189,7 +1192,6 @@ void AJesusBoss::Tick(float DeltaTime)
 	if (BossDataStruct.CharacterHp <= BossDataStruct.CharacterMaxHp / 2 && IsHalfHp == false)
 	{
 		IsHalfHp = true;
-		ASoundManager::GetInstance().PlaySoundWithCymbalSound(2);
 	}
 
 	//기존 피격 모션(본 회전시키는 코드)
@@ -1253,6 +1255,8 @@ void AJesusBoss::CheckBossDie()
 {	
 	if (BossDataStruct.CharacterHp <= 0 && IsDead == false)
 	{
+		ASoundManager::GetInstance().PlaySoundWithCymbalSound(2);
+
 		DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		PlayerCharacter->AxisX = 1;
 		PlayerCharacter->AxisY = 1;
@@ -2045,6 +2049,7 @@ void AJesusBoss::SlerpJump()
 {	
 	GetCapsuleComponent()->SetCollisionProfileName("IgnorePlayer");
 	JumpMoveStart = true;
+	DeactivateHitCollision();
 }
 
 void AJesusBoss::SlerpJumpEnd() 
@@ -2108,6 +2113,9 @@ void AJesusBoss::ReturnStun()
 {	
 	if (IsFirstExecution)
 		ChangeMontageAnimation(BossAnimationType::GROGGYIDLE);
+
+	//피격 그로기 다시 생기면 아래 코드 지워야 됨.
+	CanExecution = false;
 }
 
 void AJesusBoss::IsNotifyActive(bool value)
