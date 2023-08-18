@@ -21,6 +21,7 @@ enum class EGameSettings : uint8
 	title		UMETA(DisplayName = "Title"),
 	camera		UMETA(DisplayName = "Camera"),
 	mouse		UMETA(DisplayName = "Mouse"),
+	language	UMETA(DisplayName = "Language"),
 	brightnessnormal	UMETA(DisplayName = "BrightnessNormal"),
 	brightnesshovered	UMETA(DisplayName = "BrightnessHovered"),
 	brightnesspressed	UMETA(DisplayName = "BrightnessPressed")
@@ -48,18 +49,21 @@ class SERVAME_API UUserSettingGameUI : public USubUserSettingUI
 	UPROPERTY(meta = (BindWidget))
 		UImage* TitleGameImage;
 
-	UPROPERTY(meta = (BindWidget))
-		UImage* CameraImage;
+	//UPROPERTY(meta = (BindWidget))
+	//	UImage* CameraImage;
 
 	UPROPERTY(meta = (BindWidget))
 		UImage* MouseSensitiveImage;
+
+	UPROPERTY(meta = (BindWidget))
+		UImage* LanguageImage;
 
 	UPROPERTY(EditAnywhere)
 	TMap<EGameSettings, FTextures> ImageTextures;
 
 
-	UPROPERTY(meta = (BindWidget))
-	UButtonUI* WBP_Camera_Button;
+	//UPROPERTY(meta = (BindWidget))
+	//UButtonUI* WBP_Camera_Button;
 
 	UPROPERTY(meta = (BindWidget))
 	USliderUI* WBP_Setting_Slider;
@@ -91,8 +95,8 @@ public:
 	UFUNCTION()
 		void SetMouseSensitive(float value);
 
-	UFUNCTION()
-		void ChangeCameraView();
+	//UFUNCTION()
+	//	void ChangeCameraView();
 
 	UFUNCTION()
 		void SetLanguage();
