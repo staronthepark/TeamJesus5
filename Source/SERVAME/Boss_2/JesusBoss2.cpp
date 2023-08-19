@@ -74,6 +74,12 @@ AJesusBoss2::AJesusBoss2()
 	RightHandTrail2->SetupAttachment(GetMesh(), FName("Bip001-R-Finger23"));
 	RightHandTrail3 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("R3 Trail"));
 	RightHandTrail3->SetupAttachment(GetMesh(), FName("Bip001-R-Finger33"));
+	
+	LeftFingerOverlapCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("LeftFingerOverlap"));
+	LeftFingerOverlapCollision->SetupAttachment(GetMesh(), FName("Bip001-L-Finger23"));
+
+	RightFingerOverlapCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("RightFingerOverlap"));
+	RightFingerOverlapCollision->SetupAttachment(GetMesh(), FName("Bip001-R-Finger23"));
 
 	LockOnTargetHead = CreateDefaultSubobject<USphereComponent>(TEXT("LockOnHead"));
 	LockOnTargetHead->SetupAttachment(HeadLockOnWidgetComp);
@@ -171,6 +177,30 @@ AJesusBoss2::AJesusBoss2()
 			Boss2->CanMove = false;
 		}));
 	MontageEndMap.Add(Boss2AnimationType::SLASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->CanMove = true;
+			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
+		}));
+
+	MontageStartMap.Add(Boss2AnimationType::LEFT_TURN_ATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->IsAttackMontageEnd = false;
+			Boss2->CanMove = false;
+		}));
+	MontageEndMap.Add(Boss2AnimationType::LEFT_TURN_ATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->CanMove = true;
+			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
+		}));
+
+	MontageStartMap.Add(Boss2AnimationType::RIGHT_TURN_ATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->IsAttackMontageEnd = false;
+			Boss2->CanMove = false;	
+		}));
+	MontageEndMap.Add(Boss2AnimationType::RIGHT_TURN_ATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
@@ -452,6 +482,17 @@ AJesusBoss2::AJesusBoss2()
 			else
 				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
 
+			if (IsBLBR.Get<0>())
+			{
+				PlayAttackAnim(Boss2AnimationType::RIGHT_TURN_ATTACK);
+				return; 
+			}
+			else if (IsBLBR.Get<1>())
+			{
+				PlayAttackAnim(Boss2AnimationType::LEFT_TURN_ATTACK);
+				return;
+			}
+
 			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
 			{
 				CurrentActionTemp = MeleeActionArr[5];
@@ -484,6 +525,17 @@ AJesusBoss2::AJesusBoss2()
 				InitPercentageMap[CurrentActionTemp.AttackType]();
 			else
 				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
+
+			if (PlayerDirection == B2_LEFT || IsBLBR.Get<0>())
+			{
+				PlayAttackAnim(Boss2AnimationType::RIGHT_TURN_ATTACK);
+				return;
+			}
+			else if (PlayerDirection == B2_RIGHT || IsBLBR.Get<1>())
+			{
+				PlayAttackAnim(Boss2AnimationType::LEFT_TURN_ATTACK);
+				return;
+			}
 
 			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
 			{
@@ -518,6 +570,17 @@ AJesusBoss2::AJesusBoss2()
 			{
 				CurrentActionTemp = FollowUpActionArr[2];
 				SetBTAction(CurrentActionTemp);
+				return;
+			}
+
+			if (PlayerDirection == B2_LEFT || IsBLBR.Get<0>())
+			{
+				PlayAttackAnim(Boss2AnimationType::RIGHT_TURN_ATTACK);
+				return;
+			}
+			else if (PlayerDirection == B2_RIGHT || IsBLBR.Get<1>())
+			{
+				PlayAttackAnim(Boss2AnimationType::LEFT_TURN_ATTACK);
 				return;
 			}
 
@@ -1077,11 +1140,19 @@ void AJesusBoss2::BeginPlay()
 	LeftArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneLArm);
 	RightArmHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::SetBoneRArm);
 	
+	LeftFingerOverlapCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::OnSMOverlapBegin);
+	LeftFingerOverlapCollision->OnComponentEndOverlap.AddDynamic(this, &AJesusBoss2::OnSMOverlapEnd);
+	LeftFingerOverlapCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
+	RightFingerOverlapCollision->OnComponentBeginOverlap.AddDynamic(this, &AJesusBoss2::OnSMOverlapBegin);
+	RightFingerOverlapCollision->OnComponentEndOverlap.AddDynamic(this, &AJesusBoss2::OnSMOverlapEnd);
+	RightFingerOverlapCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	UCombatManager::GetInstance().MonsterInfoArray.Add(this);
 
 	//임시로 변수 설정
 	CanMove = true;
-	IsLockOn = false;
+	IsLockOn = true;
 	Boss2AnimInstance->IsStart = true;
 }
 
@@ -1130,6 +1201,15 @@ void AJesusBoss2::Tick(float DeltaTime)
 /*=====================
 *		Function
 =====================*/
+void AJesusBoss2::OnSMOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	SwordVFXSpawnByLocation(OverlappedComponent->GetComponentLocation());
+}
+
+void AJesusBoss2::OnSMOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	GetWorldTimerManager().ClearTimer(SMOverlapTimerHandler);
+}
 
 void AJesusBoss2::PlayMoveMontage()
 {
@@ -1649,6 +1729,27 @@ void AJesusBoss2::DrawCircle(FVector Center)
 				DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 1.0f, 0, 5.0f);
 		}
 	}
+}
+
+void AJesusBoss2::ActivateLFOverlap()
+{
+	LeftFingerOverlapCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
+
+void AJesusBoss2::ActivateRFOverlap()
+{
+	RightFingerOverlapCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
+
+void AJesusBoss2::DeactivateLFOverlap()
+{
+	LeftFingerOverlapCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+}
+
+void AJesusBoss2::DeactivateRFOverlap()
+{
+	RightFingerOverlapCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void AJesusBoss2::SetBoneHead(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

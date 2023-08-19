@@ -68,6 +68,9 @@ void UBTService_2_SearchTarget::FindPlayerPos(UBehaviorTreeComponent& OwnerComp)
 
 	if (ForwardSpeed > 0)
 	{
+		Boss2->IsBLBR.Key = false;
+		Boss2->IsBLBR.Value = false;
+
 		if (RightSpeed < 0)
 		{
 			if (ForwardSpeed > -RightSpeed)
@@ -116,6 +119,9 @@ void UBTService_2_SearchTarget::FindPlayerPos(UBehaviorTreeComponent& OwnerComp)
 				OwnerComp.GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("Direction")), B2_LEFT);
 				Boss2->PlayerDirection = B2_LEFT;
 			}
+
+			Boss2->IsBLBR.Key = true;
+			Boss2->IsBLBR.Value = false;
 		}
 		if (RightSpeed > 0)
 		{
@@ -131,6 +137,9 @@ void UBTService_2_SearchTarget::FindPlayerPos(UBehaviorTreeComponent& OwnerComp)
 				OwnerComp.GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("Direction")), B2_RIGHT);
 				Boss2->PlayerDirection = B2_RIGHT;
 			}
+
+			Boss2->IsBLBR.Key = false;
+			Boss2->IsBLBR.Value = true;
 		}
 	}
 }

@@ -23,4 +23,8 @@ class SERVAME_API UAIWeaponCollision_NotifyState : public UAnimNotifyState
 public:
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<Boss2CollisionType> CollisionType;
+	UPROPERTY(EditAnywhere)
+	bool Left;
+	UPROPERTY(EditAnywhere)
+	bool Right;
 };

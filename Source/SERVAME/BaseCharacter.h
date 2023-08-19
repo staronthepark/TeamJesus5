@@ -145,6 +145,9 @@ public:
 
 	void SwordVFXSpawn();
 
+	void SwordVFXSpawnByLocation(FVector Location);
+
+
 	virtual bool IsAlive() { return 0; }
 
 	void CameraShake(TSubclassOf< UCameraShakeBase> Shake);
