@@ -17,10 +17,12 @@
 UENUM()
 enum class EGraphicsSettings : uint8
 {
+	title		UMETA(DisplayName = "Title"),
 	volumetric	UMETA(DisplayName = "Volumetric"),
 	shadow		UMETA(DisplayName = "Shadow"),
 	Gi			UMETA(DisplayName = "GI"),
-	effect		UMETA(DisplayName = "Effect")
+	effect		UMETA(DisplayName = "Effect"),
+	reflect		UMETA(DiplayName = "Reflect")
 };
 
 USTRUCT(Blueprinttype)
@@ -38,6 +40,8 @@ UCLASS()
 class SERVAME_API UUserSetting_GraphicsUI : public USubUserSettingUI
 {
 	GENERATED_BODY()
+	UPROPERTY(meta = (BindWidget))
+		UImage* TitleGraphicImage;
 
 	UPROPERTY(meta = (BindWidget))
 		UImage* VolumetricImage;
@@ -52,6 +56,9 @@ class SERVAME_API UUserSetting_GraphicsUI : public USubUserSettingUI
 		UImage* EffectImage;
 
 	UPROPERTY(meta = (BindWidget))
+		UImage* ReflectImage;
+
+	UPROPERTY(meta = (BindWidget))
 	UButtonUI* WBP_Volumetric_Button;	
 	
 	UPROPERTY(meta = (BindWidget))
@@ -62,6 +69,9 @@ class SERVAME_API UUserSetting_GraphicsUI : public USubUserSettingUI
 	
 	UPROPERTY(meta = (BindWidget))
 	UButtonUI* WBP_Effect_Button;
+
+	UPROPERTY(meta = (BindWidget))
+	UButtonUI* WBP_Reflect_Button;
 
 	UPROPERTY(EditAnywhere)
 	TMap<EGraphicsSettings, FGraphicsTextures> ImageTextures;
@@ -83,6 +93,9 @@ public:
 
 	UFUNCTION()
 		void SetEffect();
+
+	UFUNCTION()
+		void SetReflect();
 
 	UFUNCTION()
 		void ChangeLanguage();
