@@ -111,7 +111,18 @@ void ABaseCharacter::HitStopTimer()
 
 void ABaseCharacter::SwordVFXSpawn()
 {
-	AObjectPool& objectpool = AObjectPool::GetInstance();
+ 	AObjectPool& objectpool = AObjectPool::GetInstance();
 	objectpool.SpawnObject(objectpool.ObjectArray[12].ObjClass, WeaponOverlapStaticMeshCollision->GetComponentLocation(), FRotator(90, 0, 0));
 	GetWorldTimerManager().SetTimer(SMOverlapTimerHandler, this, &ABaseCharacter::SwordVFXSpawn, 0.02f);
+}
+
+void ABaseCharacter::SwordVFXSpawnByLocation(FVector Location)
+{
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+	objectpool.SpawnObject(objectpool.ObjectArray[12].ObjClass, Location, FRotator(90, 0, 0));
+
+	GetWorldTimerManager().SetTimer(SMOverlapTimerHandler, FTimerDelegate::CreateLambda([=]()
+		{
+			SwordVFXSpawnByLocation(Location);
+		}), 0.02f, false);
 }

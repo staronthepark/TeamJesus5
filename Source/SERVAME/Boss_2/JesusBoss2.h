@@ -288,6 +288,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UNiagaraComponent> RightHandTrail3;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UBoxComponent> LeftFingerOverlapCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UBoxComponent> RightFingerOverlapCollision;
+
 	Boss2BaseAction Boss2SuperAction;
 	Boss2DirectionType PlayerDirection;
 	Boss2ActionType CurrentAction;
@@ -326,6 +331,8 @@ public:
 	bool IsStartBoneRot;
 	bool JumpMoveStart;
 	bool CrossEvent = false;
+
+	TTuple<bool, bool> IsBLBR;
 
 	FVector LastPlayerLoc;
 
@@ -458,6 +465,10 @@ public:
 	void ActivateTrail();
 	void DeactivateTrail();
 	void DrawCircle(FVector Center);
+	void ActivateLFOverlap();
+	void ActivateRFOverlap();
+	void DeactivateLFOverlap();
+	void DeactivateRFOverlap();
 
 	/*======================
 	*		UFUNCTION
@@ -472,7 +483,11 @@ public:
 	void SetBoneRArm(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	void GetEndedMontage(UAnimMontage* Montage, bool bInterrupted);
-
+	UFUNCTION()
+	void OnSMOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnSMOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	
 	/*=====================
 			Notify
 	=====================*/

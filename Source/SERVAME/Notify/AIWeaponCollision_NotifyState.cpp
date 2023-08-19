@@ -13,6 +13,11 @@ void UAIWeaponCollision_NotifyState::NotifyBegin(USkeletalMeshComponent* MeshCom
 		{
 			Boss2->CollisionMap[CollisionType](true);
 			Boss2->ActivateTrail();
+
+			if (Left)
+				Boss2->ActivateLFOverlap();
+			if(Right)
+				Boss2->ActivateRFOverlap();
 		}
 	}
 }
@@ -27,6 +32,8 @@ void UAIWeaponCollision_NotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp,
 		{
 			Boss2->CollisionMap[CollisionType](false);
 			Boss2->DeactivateTrail();
+			Boss2->DeactivateLFOverlap();
+			Boss2->DeactivateRFOverlap();
 			Boss2->Damage = 0.f;
 		}
 	}
