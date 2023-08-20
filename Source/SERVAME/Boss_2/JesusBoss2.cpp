@@ -82,7 +82,7 @@ AJesusBoss2::AJesusBoss2()
 	RightFingerOverlapCollision->SetupAttachment(GetMesh(), FName("Bip001-R-Finger23"));
 
 	LockOnTargetHead = CreateDefaultSubobject<USphereComponent>(TEXT("LockOnHead"));
-	LockOnTargetHead->SetupAttachment(HeadLockOnWidgetComp);
+	LockOnTargetHead->SetupAttachment(GetMesh(), FName("Bip001-Spine2"));
 	LockOnTargetHead->SetCollisionProfileName("LockOnTarget");
 
 	LockOnTargetLArm = CreateDefaultSubobject<USphereComponent>(TEXT("LockOnLArm"));
