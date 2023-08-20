@@ -62,23 +62,7 @@ void AStoneObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* Overlapped
 {
 	BurstEffect->Activate();
 
-	AJesusBoss2* boss;
-	boss = Cast<AJesusBoss2>(UGameplayStatics::GetActorOfClass(GetWorld(), AJesusBoss2::StaticClass()));
-
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *OtherComp->GetName());
-
-	if (OtherComp->GetName() == "ShieldCollision")
+	if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("shield"));
-		auto Player = Cast<APlayerCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), APlayerCharacter::StaticClass()));
-		Player->SetShieldHP(-Damage);
-		boss->CameraShake(boss->PlayerCameraShake);
-		boss->VibrateGamePad(0.4f, 0.4f);
-		ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		return;
-	}
-	else if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("take damage"));
 	}
 }
