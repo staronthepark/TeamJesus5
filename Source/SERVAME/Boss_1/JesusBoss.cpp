@@ -392,6 +392,28 @@ AJesusBoss::AJesusBoss()
 			Boss->CanMove = true;
 		}));
 
+	MontageStartMap.Add(BossAnimationType::SHIELD_GROGGY, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
+		{
+			Boss->AIController->StopMovement();
+
+			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			Boss->DeactivateSMOverlap();
+			Boss->IsLockOn = false;
+			Boss->CanMove = false;
+			Boss->IsAttacking = false;
+			Boss->SwordTrailComp->Deactivate();
+			Boss->ParringTrailComp->Deactivate();
+		}));
+	MontageEndMap.Add(BossAnimationType::SHIELD_GROGGY, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
+		{
+			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			Boss->IsLockOn = true;
+			Boss->IsParriged = false;
+			Boss->IsStun = false;
+			Boss->IsMontagePlay = false;
+			Boss->CanMove = true;
+		}));
+
 	MontageStartMap.Add(BossAnimationType::STUN, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
 			Boss->AIController->StopMovement();
@@ -1518,7 +1540,7 @@ void AJesusBoss::Stun()
 	IsParriged = true;
 	AttackLockOn = false;
 	BossDataStruct.CurrentGrrogyGauge = 0;
-	BossAnimInstance->PlayGroggyMontage(BossAnimationType::STUN);
+	BossAnimInstance->PlayGroggyMontage(BossAnimationType::SHIELD_GROGGY);
 }
 
 bool AJesusBoss::IsAlive()
