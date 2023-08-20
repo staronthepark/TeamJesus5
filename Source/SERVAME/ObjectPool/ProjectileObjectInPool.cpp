@@ -47,6 +47,19 @@ void AProjectileObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* Overl
 		SetActorTickEnabled(false);
 	}
 
+	AJesusBoss* boss;
+	boss = Cast<AJesusBoss>(UGameplayStatics::GetActorOfClass(GetWorld(), AJesusBoss::StaticClass()));
+
+	if (OtherComp->GetName() == "ShieldCollision")
+	{
+		auto Player = Cast<APlayerCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), APlayerCharacter::StaticClass()));
+		Player->SetShieldHP(-Damage);
+		boss->CameraShake(boss->PlayerCameraShake);
+		boss->VibrateGamePad(0.4f, 0.4f);
+		Collision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		return;
+	}
+
 	FVector HitDir = OtherActor->GetActorLocation() - GetActorLocation();
 	FRotator Rotation = HitDir.Rotation();
 	if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
