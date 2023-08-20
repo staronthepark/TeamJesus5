@@ -154,26 +154,26 @@ AEnemyMonster::AEnemyMonster()
 				SetActorTickEnabled(false);
 				if (PlayerCharacter != nullptr)
 				{
+					AObjectPool& objectpool = AObjectPool::GetInstance();
+					for (int32 i = 0; i < MonsterDataStruct.DropSoulCount; i++)
+					{
+						float x = FMath::RandRange(-300.0f, 300.0f);
+						float y = FMath::RandRange(-300.0f, 300.0f);
+						float z = FMath::RandRange(-300.0f, 300.0f);
+
+						FVector location = GetActorLocation() + FVector(x * 0.1f, y * 0.1f, z * 0.1f);
+						FRotator rotation = GetActorRotation() + FRotator(x, y, z);
+
+						objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
+					}
+
 					if (PlayerCharacter->IsLockOn)
 					{
 						SetActorTickEnabled(false);
 						//PlayerCharacter->TargetCompArray.Remove(this);
 						PlayerCharacter->TargetComp = nullptr;
 						PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
-						PlayerCharacter->GetFirstTarget();
-
-						AObjectPool& objectpool =  AObjectPool::GetInstance();
-						for (int32 i = 0; i < MonsterDataStruct.DropSoulCount; i++)
-						{
-							float x = FMath::RandRange(-300.0f, 300.0f);
-							float y = FMath::RandRange(-300.0f, 300.0f);
-							float z = FMath::RandRange(-300.0f, 300.0f);
-
-							FVector location = GetActorLocation() + FVector(x * 0.1f, y * 0.1f, z * 0.1f);
-							FRotator rotation = GetActorRotation() + FRotator(x, y, z);
-
-							objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
-						}
+						PlayerCharacter->GetFirstTarget();	
 
 						if (MyMonsterType == MonsterType::TUTORIAL && PlayerCharacter->IsAlive())
 							PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::soul, true);

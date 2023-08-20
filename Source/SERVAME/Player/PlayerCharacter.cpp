@@ -183,6 +183,7 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SHIELDSTART, PlayerAction::CANWALK);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SHIELDLOOP, PlayerAction::CANWALK);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SHIELDEND, PlayerAction::NONE);
+	PlayerEnumToAnimTypeMap.Add(AnimationType::EOSTOEXECUTION, PlayerAction::CANTACT);
 
 
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SHIELDATTACK, PlayerAction::CANTACT);
@@ -737,6 +738,11 @@ APlayerCharacter::APlayerCharacter()
 			CheckInputKey();
 		});
 
+	MontageEndEventMap.Add(AnimationType::EOSTOEXECUTION, [&]()
+		{
+			PlayExecutionAnimation();
+		});
+
 	MontageEndEventMap.Add(AnimationType::ATTACK2, MontageEndEventMap[AnimationType::ATTACK1]);
 	MontageEndEventMap.Add(AnimationType::ATTACK3, MontageEndEventMap[AnimationType::ATTACK1]);
 	MontageEndEventMap.Add(AnimationType::ATTACK4, MontageEndEventMap[AnimationType::ATTACK1]);
@@ -851,9 +857,6 @@ APlayerCharacter::APlayerCharacter()
 		});
 	MontageEndEventMap.Add(AnimationType::EXECUTIONBOSS, [&]()
 		{
-			if (IsLockOn)
-				LockOn();
-
 			IsExecute = false;			
 			GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 			CheckInputKey();
@@ -926,6 +929,7 @@ APlayerCharacter::APlayerCharacter()
 		});
 	MontageEndEventMap.Add(AnimationType::SHIELDEND, [&]()
 		{
+			CheckInputKey();
 		});
 	MontageEndEventMap.Add(AnimationType::SHIELDATTACK, [&]()
 		{
@@ -1090,12 +1094,12 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::NONE][ActionType::SHIELD].Add(false, [&]()
 		{
 			if (!IsGrab)return;
-			ChangeMontageAnimation(AnimationType::SHIELDEND);
 			IsGrab = false;
+			AxisY == 1 && AxisX == 1 ? ChangeMontageAnimation(AnimationType::SHIELDEND)
+				: ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());			
 			SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
 			AnimInstance->BodyBlendAlpha = 1.0f;
 			ShieldOff();
-			CheckInputKey();
 			ShoulderView(IsShoulderView);
 		});
 
@@ -1443,6 +1447,16 @@ APlayerCharacter::APlayerCharacter()
 			VibrateGamePad(0.4f, 0.4f);
 			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 		});
+
+	PlayerEventFuncMap.Add(AnimationType::EOSTOEXECUTION, TMap<bool, TFunction<void()>>());
+	PlayerEventFuncMap[AnimationType::EOSTOEXECUTION].Add(true, [&]()
+		{
+			UGameplayStatics::SetGlobalTimeDilation(this, 1.0f);
+		});
+	PlayerEventFuncMap[AnimationType::EOSTOEXECUTION].Add(false , [&]()
+		{
+
+		});
 }
 
 APlayerCharacter::~APlayerCharacter()
@@ -1785,7 +1799,11 @@ void APlayerCharacter::ChangeTarget(CameraDirection CamDirection)
 	ChangeTargetTime = 0.0f;
 	GetCompsInScreen(TargetCompArray);
 	FVector CameraLocation = CameraBoom1->GetComponentLocation();
-	FVector TargetDir = (TargetComp->GetComponentLocation() - CameraLocation).GetSafeNormal();
+	FVector TargetVector = FVector(0, 0, 0);
+	if (TargetComp != nullptr)
+		TargetVector = TargetComp->GetComponentLocation();
+
+	FVector TargetDir = (TargetVector - CameraLocation).GetSafeNormal();
 	TArray<UPrimitiveComponent*> TargetArray;
 
 	for (int32 i = 0; i < TargetCompInScreenArray.Num(); i++)
@@ -1869,6 +1887,7 @@ void APlayerCharacter::SetShieldHP(float HP)
 	{
 		IsGrab = false;
 		VibrateGamePad(0.4f, 0.4f);
+		CameraShake(PlayerCameraShake);
 		ShieldOff();
 		ShoulderView(IsShoulderView);
 		AnimInstance->BodyBlendAlpha = 1.0f;
@@ -2094,18 +2113,7 @@ void APlayerCharacter::EventNotify(bool value)
 }
 
 void APlayerCharacter::PlayExecutionAnimation()
-{
-	if (TargetComp)
-	{
-		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false, TargetComp);
-	}
-	TargetComp = ExecutionCharacter->LockOnComp;
-	if(TargetComp != nullptr)
-	Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true, TargetComp);
-	if (!IsLockOn)
-	{
-		LockOn();
-	}
+{	
 	IsExecute = true;
 	//ExecuteDirection = ExecutionGetActorLocation() - GetActorLocation();
 	//ExecuteDirection.Normalize();
@@ -2230,7 +2238,15 @@ void APlayerCharacter::OnParryingOverlapBegin(UPrimitiveComponent* OverlappedCom
 void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (IsGrab)return;
+	
+	if (!IsLockOn)
+	{
+		LockOn();
+	}
+
+	UGameplayStatics::SetGlobalTimeDilation(this, .25f);
 	VibrateGamePad(0.4f, 0.4f);
+	CameraShake(PlayerCameraShake);
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[38].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[39].ObjClass, ShieldMeshComp->GetComponentLocation(), GetActorRotation() + FRotator(0, 90, 0));
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
@@ -2241,8 +2257,16 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	ChangeActionType(ActionType::DEAD);	
 	ShieldOff();
 	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
+
+	if (TargetComp->GetOwner() != ExecutionCharacter)
+	{
+		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false, TargetComp);
+		TargetComp = ExecutionCharacter->LockOnComp;
+		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true, TargetComp);
+	}
+
 	ExecutionCharacter->Stun();
-	PlayExecutionAnimation();
+	ChangeMontageAnimation(AnimationType::EOSTOEXECUTION);
 }
 
 void APlayerCharacter::ActivateRightWeapon()

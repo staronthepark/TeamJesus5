@@ -46,6 +46,7 @@ void ASoundObjectInPool::BeginPlay()
 	if (AudioType == EAudioType::SFX)
 	{
 		ASoundManager::GetInstance().SFXAudioCompArray.AddUnique(AudioComp);
+		AudioComp->SetVolumeMultiplier(ASoundManager::GetInstance().GetSFXVolume());
 	}
 	else if (AudioType == EAudioType::VOICE)
 	{
