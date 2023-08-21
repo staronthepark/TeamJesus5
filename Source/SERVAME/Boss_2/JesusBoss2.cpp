@@ -1150,8 +1150,6 @@ void AJesusBoss2::BeginPlay()
 
 	UCombatManager::GetInstance().MonsterInfoArray.Add(this);
 
-	//PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->LeftButton->OnClicked.AddDynamic(this, &AJesusBoss2::ChangeLanguage);
-	//PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->RightButton->OnClicked.AddDynamic(this, &AJesusBoss2::ChangeLanguage);
 
 	//임시로 변수 설정
 	CanMove = true;
@@ -1513,11 +1511,6 @@ Boss2ActionTemp AJesusBoss2::GetRandomPattern(float Dist)
 	}
 
 	return CurrentActionTemp;
-}
-
-void AJesusBoss2::ChangeLanguage()
-{
-	AIController->BossUI->ChangeLanguage();
 }
 
 void AJesusBoss2::SpawnInit()

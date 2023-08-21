@@ -73,6 +73,8 @@ void ABoss2AIController::Tick(float DeltaTime)
 				if (IsValid(BossUI))
 				{
 					BossUI->AddToViewport();
+					Boss2->PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->LeftButton->OnClicked.AddDynamic(this, &ABoss2AIController::ChangeLanguage);
+					Boss2->PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->RightButton->OnClicked.AddDynamic(this, &ABoss2AIController::ChangeLanguage);
 					BossUI->PlayBossHPOpenAnimation(true, EBossSettings::phase2);
 				}
 			}
