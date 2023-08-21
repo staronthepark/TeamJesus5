@@ -27,6 +27,9 @@ public:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
+		bool IsLoadWhenOverlapEnds;
+
+	UPROPERTY(EditAnywhere)
 		TArray<ABaseCharacter*> MonsterList;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -43,4 +46,7 @@ public:
 
 	UFUNCTION()
 		void OverlapEnds(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UFUNCTION()
+		void OverlapEndsLoad(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };
