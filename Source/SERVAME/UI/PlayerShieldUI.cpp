@@ -26,3 +26,12 @@ void UPlayerShieldUI::SetShield(int value)
 		Shields[i]->Deactivate();
 	}
 }
+
+void UPlayerShieldUI::Clear()
+{
+	for (int32 i = 0; i < Shields.Num(); i++)
+
+	{
+		Shields[i]->Deactivate();
+	}
+}

@@ -54,6 +54,12 @@ void UPlayerHUD::NativeOnInitialized()
 
 }
 
+void UPlayerHUD::ClearShield()
+{
+	WBP_Player_ShieldsUI->Clear();
+}
+
+
 void UPlayerHUD::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -116,6 +122,11 @@ void UPlayerHUD::SetGamepad(bool isPad)
 void UPlayerHUD::PlayAnimations(EGuides type, bool IsOpen)
 {
 	GuideAnimationFunction[type](IsOpen);
+}
+
+void UPlayerHUD::SetShield(int value)
+{
+	WBP_Player_ShieldsUI->SetShield(value);
 }
 
 

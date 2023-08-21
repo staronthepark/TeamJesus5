@@ -179,6 +179,8 @@ public:
 
 	float ShieldDashSpeed;
 
+	int ShieldCount;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraSpringArm")
 		USpringArmComponent* CameraBoom1;
 

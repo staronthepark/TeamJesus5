@@ -1554,6 +1554,9 @@ void APlayerCharacter::BeginPlay()
 	GameStartSequncePlayer->Play();
 	GameStartSequncePlayer->Pause();
 
+	ShieldCount = 3;
+	PlayerHUD->SetShield(ShieldCount);
+
 	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnWeaponOverlapBegin);
 	ExecutionTrigger->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnExecutionOverlapBegin);
 	ExecutionTrigger->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnExecutionOverlapEnd);
@@ -1885,6 +1888,8 @@ void APlayerCharacter::SetShieldHP(float HP)
 	}
 	if (PlayerDataStruct.ShieldHP <= 0)
 	{
+		ShieldCount = 0;
+		PlayerHUD->ClearShield();
 		IsGrab = false;
 		VibrateGamePad(0.4f, 0.4f);
 		CameraShake(PlayerCameraShake);
@@ -2245,6 +2250,8 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 		LockOn();
 	}
 
+	ShieldCount = 0;
+	PlayerHUD->ClearShield();
 	UGameplayStatics::SetGlobalTimeDilation(this, .25f);
 	VibrateGamePad(0.4f, 0.4f);
 	CameraShake(PlayerCameraShake);
@@ -2455,8 +2462,10 @@ void APlayerCharacter::ShieldAttack()
 
 void APlayerCharacter::SetSoul(int32 value)
 {
+	if(ShieldCount < 3)
+	PlayerHUD->SetShield(ShieldCount++);
 	PlayerDataStruct.SoulCount += value;
-	if (PlayerDataStruct.SoulCount % PlayerDataStruct.ShieldRecoverySoulCount == 0)
+	if (ShieldCount >= 3)
 	{
 		SetShieldHP(PlayerDataStruct.MaxShieldHP);
 	}
