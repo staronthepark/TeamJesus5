@@ -1155,9 +1155,6 @@ void AJesusBoss::BeginPlay()
 
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
-
-	//PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->LeftButton->OnClicked.AddDynamic(this, &AJesusBoss::ChangeLanguage);
-	//PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->RightButton->OnClicked.AddDynamic(this, &AJesusBoss::ChangeLanguage);
 }
 
 void AJesusBoss::Tick(float DeltaTime)
@@ -1939,11 +1936,6 @@ void AJesusBoss::GroundExplosionHit(UPrimitiveComponent* OverlappedComponent, AA
 	Player->TakeDamage(ExplosionDamage, DamageEvent, GetController(), this);
 }
 
-void AJesusBoss::ChangeLanguage()
-{
-	AIController->BossUI->ChangeLanguage();
-}
-
 /*=====================
 		DebugLog
 =====================*/
@@ -2086,6 +2078,7 @@ void AJesusBoss::SlerpJumpEnd()
 { 
 	JumpMoveStart = false;
 	GetCapsuleComponent()->SetCollisionProfileName("AIPhysics");
+	ActivateHitCollision();
 }
 
 void AJesusBoss::OnStart()
