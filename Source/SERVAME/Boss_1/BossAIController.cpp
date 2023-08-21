@@ -71,6 +71,7 @@ void ABossAIController::Tick(float DeltaTime)
 				if (IsValid(BossUI))
 				{
 					BossUI->AddToViewport();
+					BossUI->PlayBossHPOpenAnimation(true, EBossSettings::phase1);
 				}
 				ASoundManager::GetInstance().PlaySoundWithCymbalSound(1);
 			}
@@ -174,8 +175,8 @@ void ABossAIController::OnPossess(APawn* InPawn)
 		//}
 	}
 	//GameInstance->PlayerHUDWidget->PB_BossHP->SetPercent((float)BossDataStruct.CharacterHp / (float)BossDataStruct.CharacterMaxHp);
-	BossUI->SetHP(1);
 
+	BossUI->SetHP(1);
 
 	Boss->DeactivateSMOverlap();
 	Boss->WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -189,3 +190,7 @@ void ABossAIController::OnUnPossess()
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 }
 
+void ABossAIController::ChangeLanguage()
+{
+	BossUI->ChangeLanguage();
+}

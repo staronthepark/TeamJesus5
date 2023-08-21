@@ -31,6 +31,9 @@ public:
 	UFUNCTION()
 	void OnPerception(AActor* Actor, FAIStimulus Stimulus);
 
+	UFUNCTION()
+	void ChangeLanguage();
+
 	UPROPERTY(BlueprintReadWrite)
 	class AJesusBoss* Boss;
 

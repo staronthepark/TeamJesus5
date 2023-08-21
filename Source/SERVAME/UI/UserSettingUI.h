@@ -25,9 +25,6 @@ class SERVAME_API UUserSettingUI : public UUserWidget
 		UUserSettingSelectUI* WBP_UserSetting_SelectUI;
 
 	UPROPERTY(meta = (BindWidget))
-		UUserSettingGameUI* WBP_UserSetting_GameUI;
-
-	UPROPERTY(meta = (BindWidget))
 		UUserSettingAudioUI* WBP_UserSetting_AudioUI;
 
 	UPROPERTY(meta = (BindWidget))
@@ -62,6 +59,9 @@ public:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+
+	UPROPERTY(meta = (BindWidget))
+		UUserSettingGameUI* WBP_UserSetting_GameUI;
 
 
 	UFUNCTION()
