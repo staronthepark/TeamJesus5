@@ -3,6 +3,7 @@
 
 #include "StoneObjectInPool.h"
 #include "..\Player\PlayerCharacter.h"
+#include "..\Boss_2\JesusBoss2.h"
 
 AStoneObjectInPool::AStoneObjectInPool()
 {
@@ -14,6 +15,9 @@ AStoneObjectInPool::AStoneObjectInPool()
 	ProjectileCollision = CreateDefaultSubobject<UBoxComponent>("Collision");
 	ProjectileCollision->SetupAttachment(RootComponent);
 	ProjectileCollision->SetCollisionProfileName("AIProjectile");
+
+	BurstEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Stone Burst Effect"));
+	BurstEffect->SetupAttachment(RootComponent);
 }
 
 void AStoneObjectInPool::BeginPlay()
@@ -21,6 +25,7 @@ void AStoneObjectInPool::BeginPlay()
 	Super::BeginPlay();
 	
 	SetActorTickEnabled(false);
+	BurstEffect->Deactivate();
 
 	ProjectileCollision->OnComponentBeginOverlap.AddDynamic(this, &AStoneObjectInPool::OnCollisionBeginOverlap);
 	GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
@@ -55,7 +60,7 @@ void AStoneObjectInPool::ReturnObject()
 
 void AStoneObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ReturnObject();
+	BurstEffect->Activate();
 
 	if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
 	{
