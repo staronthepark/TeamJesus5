@@ -40,6 +40,7 @@ enum class BossAnimationType : uint8
 	SPRINT,
 	CRY,
 	STANDUP,
+	SHIELD_GROGGY,
 };
 
 DECLARE_MULTICAST_DELEGATE(FOnLevelStart);

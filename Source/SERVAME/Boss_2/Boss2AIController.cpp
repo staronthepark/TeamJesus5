@@ -2,7 +2,7 @@
 
 
 #include "Boss2AIController.h"
-#include "..\Player\\PlayerCharacter.h"
+#include "..\Player\PlayerCharacter.h"
 #include "JesusBoss2.h"
 #include "Runtime/AIModule/Classes/Perception/AISenseConfig_Sight.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -41,6 +41,7 @@ void ABoss2AIController::BeginPlay()
 	{
 		BossUI = Cast<UBossUI>(CreateWidget(GetWorld(), BossUIClass));
 	}
+
 	BossUI->SetHP(1);
 }
 
@@ -72,6 +73,7 @@ void ABoss2AIController::Tick(float DeltaTime)
 				if (IsValid(BossUI))
 				{
 					BossUI->AddToViewport();
+					BossUI->PlayBossHPOpenAnimation(true, EBossSettings::phase2);
 				}
 			}
 
@@ -156,6 +158,11 @@ void ABoss2AIController::MoveWhenArrived(FVector Location)
 		IsArrived = true;
 		Boss2->CircleIndexCount++;
 	}
+}
+
+void ABoss2AIController::ChangeLanguage()
+{
+	BossUI->ChangeLanguage();
 }
 
 

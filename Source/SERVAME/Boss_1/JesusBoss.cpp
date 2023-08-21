@@ -392,6 +392,28 @@ AJesusBoss::AJesusBoss()
 			Boss->CanMove = true;
 		}));
 
+	MontageStartMap.Add(BossAnimationType::SHIELD_GROGGY, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
+		{
+			Boss->AIController->StopMovement();
+
+			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			Boss->DeactivateSMOverlap();
+			Boss->IsLockOn = false;
+			Boss->CanMove = false;
+			Boss->IsAttacking = false;
+			Boss->SwordTrailComp->Deactivate();
+			Boss->ParringTrailComp->Deactivate();
+		}));
+	MontageEndMap.Add(BossAnimationType::SHIELD_GROGGY, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
+		{
+			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			Boss->IsLockOn = true;
+			Boss->IsParriged = false;
+			Boss->IsStun = false;
+			Boss->IsMontagePlay = false;
+			Boss->CanMove = true;
+		}));
+
 	MontageStartMap.Add(BossAnimationType::STUN, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
 			Boss->AIController->StopMovement();
@@ -1133,6 +1155,9 @@ void AJesusBoss::BeginPlay()
 
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
+
+	//PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->LeftButton->OnClicked.AddDynamic(this, &AJesusBoss::ChangeLanguage);
+	//PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->RightButton->OnClicked.AddDynamic(this, &AJesusBoss::ChangeLanguage);
 }
 
 void AJesusBoss::Tick(float DeltaTime)
@@ -1518,7 +1543,7 @@ void AJesusBoss::Stun()
 	IsParriged = true;
 	AttackLockOn = false;
 	BossDataStruct.CurrentGrrogyGauge = 0;
-	BossAnimInstance->PlayGroggyMontage(BossAnimationType::STUN);
+	BossAnimInstance->PlayGroggyMontage(BossAnimationType::SHIELD_GROGGY);
 }
 
 bool AJesusBoss::IsAlive()
@@ -1912,6 +1937,11 @@ void AJesusBoss::GroundExplosionHit(UPrimitiveComponent* OverlappedComponent, AA
 		return;
 	
 	Player->TakeDamage(ExplosionDamage, DamageEvent, GetController(), this);
+}
+
+void AJesusBoss::ChangeLanguage()
+{
+	AIController->BossUI->ChangeLanguage();
 }
 
 /*=====================

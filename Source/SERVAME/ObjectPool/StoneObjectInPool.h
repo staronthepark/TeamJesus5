@@ -6,6 +6,7 @@
 #include "BaseObjectInPool.h"
 #include "Components/BoxComponent.h"
 #include "..\BaseCharacter.h"
+#include "NiagaraComponent.h"
 #include "StoneObjectInPool.generated.h"
 
 /**
@@ -36,6 +37,9 @@ public:
 
 	UPROPERTY()
 	UJesusGameInstance* GameInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stone")
+	TObjectPtr<UNiagaraComponent> BurstEffect;
 
 	FTimerHandle LifeTimer;
 	FDamageEvent DamageEvent;

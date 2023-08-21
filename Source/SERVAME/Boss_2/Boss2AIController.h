@@ -31,6 +31,9 @@ public:
 	void MoveWhenArrived(FVector Location);
 
 	UFUNCTION()
+	void ChangeLanguage();
+
+	UFUNCTION()
 	void OnPerception(AActor* Actor, FAIStimulus Stimulus);
 
 	UPROPERTY(BlueprintReadWrite)
