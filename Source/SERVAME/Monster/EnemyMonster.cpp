@@ -225,6 +225,16 @@ AEnemyMonster::AEnemyMonster()
 			}
 		});
 
+	MontageEndEventMap.Add(MonsterAnimationType::FORWARDMOVE, [=]()
+		{
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+			}
+		});
+
 	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
 		{			
 			if (TracePlayer)

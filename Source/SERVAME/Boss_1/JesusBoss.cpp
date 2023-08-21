@@ -2078,6 +2078,7 @@ void AJesusBoss::SlerpJumpEnd()
 { 
 	JumpMoveStart = false;
 	GetCapsuleComponent()->SetCollisionProfileName("AIPhysics");
+	ActivateHitCollision();
 }
 
 void AJesusBoss::OnStart()
