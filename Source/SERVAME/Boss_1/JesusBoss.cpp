@@ -90,6 +90,7 @@ AJesusBoss::AJesusBoss()
 		{
 			Boss->SwordTrailComp->Deactivate();
 			Boss->ParringTrailComp->Deactivate();
+			Boss->DarkExplosionCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}));
 	MontageEndMap.Add(BossAnimationType::IDLE, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
