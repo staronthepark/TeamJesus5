@@ -14,6 +14,7 @@
 #include "PlayerHPUI.h"
 #include "SkillIconUI.h"
 #include "PlayerGuideUI.h"
+#include "PlayerShieldUI.h"
 #include <Components/CanvasPanel.h>
 #include "PlayerHUD.generated.h"
 
@@ -70,6 +71,9 @@ class SERVAME_API UPlayerHUD : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 		UImage* Interaction_Image;
+
+	UPROPERTY(meta = (BindWidget))
+		UPlayerShieldUI* WBP_Player_ShieldsUI;
 
 	//UPROPERTY(meta = (BindWidget))
 	//	UImage* Exit_Image;
@@ -135,15 +139,17 @@ public:
 	void SetGamepad(bool isPad);
 
 	void PlayAnimations(EGuides type, bool IsOpen);
+	void SetShield(int value);
 
 	void PlayGuidesAnimation(EGuides type ,bool IsOpen);
 	void PlayKeyGuideAnimation(bool IsOpen);
 	void PlayInteractionAnimation(bool IsOpen, EInteractions interactions);
 	void PlayInteractionAnimation(bool IsOpen);
 	void PlayExitAnimation(bool IsOpen);
-	void PlayMapUIAnimation(FString MapName);
+	void PlayMapUIAnimation(EMapName MapName);
 
 	void FadeInAnimation(bool isFadeIn);
+	void ClearShield();
 
 	bool IsRender();
 

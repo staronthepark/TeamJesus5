@@ -1469,6 +1469,7 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	PlayerSKMesh = GetMesh();
+	IsPhaseTwo = false;
 	DebugMode = false;
 	ShieldEffectComp->SetVisibility(false);
 	LocketSKMesh->SetVisibility(true);
@@ -1553,6 +1554,9 @@ void APlayerCharacter::BeginPlay()
 
 	GameStartSequncePlayer->Play();
 	GameStartSequncePlayer->Pause();
+
+	ShieldCount = 3;
+	PlayerHUD->SetShield(ShieldCount);
 
 	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnWeaponOverlapBegin);
 	ExecutionTrigger->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnExecutionOverlapBegin);
@@ -1692,6 +1696,7 @@ void APlayerCharacter::MoveSpawnLocation(FVector Location)
 {
 	if (IsLockOn)
 		LockOn();
+	IsPhaseTwo = true;
 	SetActorRotation(FRotator(0, 180, 0));
 	YawRotation = FRotator(0, 180, 0);
 	SetActorLocation(Location);
@@ -1885,6 +1890,8 @@ void APlayerCharacter::SetShieldHP(float HP)
 	}
 	if (PlayerDataStruct.ShieldHP <= 0)
 	{
+		ShieldCount = 0;
+		PlayerHUD->ClearShield();
 		IsGrab = false;
 		VibrateGamePad(0.4f, 0.4f);
 		CameraShake(PlayerCameraShake);
@@ -2069,11 +2076,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 	CameraDistanceToPlayer = FVector::Distance(FollowCamera->GetComponentLocation(), GetActorLocation());
 	CameraDistanceToPlayer = FMath::Clamp(CameraDistanceToPlayer, 40, 300);
 	PlayerSKMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 300));
+	WeaponMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 300));
 }
 
 float APlayerCharacter::GetPercent(float value, float min, float max)
 {
-	return IsCollisionCamera ? (value - min) / (max - min) : 1.0f;
+	return IsCollisionCamera ? ((value - min) / (max - min)) : 1.0f;
 }
 
 
@@ -2081,7 +2089,13 @@ void APlayerCharacter::RespawnCharacter()
 {
 	Super::RespawnCharacter();
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::FadeOut, 4.0f);
+
+	if(!IsPhaseTwo)
 	ASoundManager::GetInstance().StartBGMSound();
+	else
+		ASoundManager::GetInstance().PlaySoundWithCymbalSound(2);
+
+	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 
 	AnimInstance->BodyBlendAlpha = 1.0f;
 
@@ -2092,6 +2106,8 @@ void APlayerCharacter::RespawnCharacter()
 	YawRotation = SpawnRotation;
 	ChangeActionType(ActionType::NONE);
 	ChangeMontageAnimation(AnimationType::IDLE);
+	AxisX = 1;
+	AxisY = 1;
 
 	RestoreStat();
 
@@ -2244,6 +2260,8 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 		LockOn();
 	}
 
+	ShieldCount = 0;
+	PlayerHUD->ClearShield();
 	UGameplayStatics::SetGlobalTimeDilation(this, .25f);
 	VibrateGamePad(0.4f, 0.4f);
 	CameraShake(PlayerCameraShake);
@@ -2258,11 +2276,14 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	ShieldOff();
 	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
 
-	if (TargetComp->GetOwner() != ExecutionCharacter)
+	if (TargetComp != nullptr)
 	{
-		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false, TargetComp);
-		TargetComp = ExecutionCharacter->LockOnComp;
-		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true, TargetComp);
+		if (TargetComp->GetOwner() != ExecutionCharacter)
+		{
+			Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false, TargetComp);
+			TargetComp = ExecutionCharacter->LockOnComp;
+			Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true, TargetComp);
+		}
 	}
 
 	ExecutionCharacter->Stun();
@@ -2407,8 +2428,11 @@ void APlayerCharacter::SetSprint()
 {
 	IsSprint = true;
 	if (CurActionType == ActionType::MOVE
-		&& AnimInstance->PlayerAnimationType != AnimationType::HEAL && PlayerCurAction != PlayerAction::CANTACT
-		&& AnimInstance->PlayerAnimationType != AnimationType::ENDOFRUN && AnimInstance->PlayerAnimationType != AnimationType::ENDOFSPRINT)
+		&& AnimInstance->PlayerAnimationType != AnimationType::HEAL
+		&& PlayerCurAction != PlayerAction::CANTACT
+		&& AnimInstance->PlayerAnimationType != AnimationType::ENDOFRUN
+		&& AnimInstance->PlayerAnimationType != AnimationType::ENDOFSPRINT
+		&& AnimInstance->PlayerAnimationType != AnimationType::SUPERHIT)
 	{
 		Sprint();
 	}
@@ -2454,8 +2478,10 @@ void APlayerCharacter::ShieldAttack()
 
 void APlayerCharacter::SetSoul(int32 value)
 {
+	if(ShieldCount < 3)
+	PlayerHUD->SetShield(ShieldCount++);
 	PlayerDataStruct.SoulCount += value;
-	if (PlayerDataStruct.SoulCount % PlayerDataStruct.ShieldRecoverySoulCount == 0)
+	if (ShieldCount >= 3)
 	{
 		SetShieldHP(PlayerDataStruct.MaxShieldHP);
 	}
@@ -2593,6 +2619,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 
 	if (PlayerDataStruct.CharacterHp <= 0)
 	{
+		GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 		ASoundManager::GetInstance().PlaySoundWithCymbalSound(3);
 		PlayerDead(false);
 	}

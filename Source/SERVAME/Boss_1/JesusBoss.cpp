@@ -375,6 +375,8 @@ AJesusBoss::AJesusBoss()
 	MontageStartMap.Add(BossAnimationType::GROGGY, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
 			Boss->DeactivateSMOverlap();
+			Boss->DoStep = false;
+			Boss->DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			Boss->IsLockOn = false;
 			Boss->CanMove = false;
@@ -395,7 +397,9 @@ AJesusBoss::AJesusBoss()
 	MontageStartMap.Add(BossAnimationType::SHIELD_GROGGY, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
 			Boss->AIController->StopMovement();
-
+			
+			Boss->DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			Boss->DoStep = false;
 			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			Boss->DeactivateSMOverlap();
 			Boss->IsLockOn = false;
@@ -418,6 +422,8 @@ AJesusBoss::AJesusBoss()
 		{
 			Boss->AIController->StopMovement();
 
+			Boss->DoStep = false;
+			Boss->DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			Boss->DeactivateSMOverlap();
 			Boss->IsLockOn = false;
@@ -1136,7 +1142,7 @@ void AJesusBoss::BeginPlay()
 
 	FOutputDeviceNull ar;
 	this->CallFunctionByNameWithArguments(TEXT("PlayEndingCredit"), ar, NULL, true);
-
+	   
 	DeactivateSMOverlap();
 
 	ChangeMontageAnimation(BossAnimationType::LEVELSTART);
@@ -1296,7 +1302,7 @@ void AJesusBoss::CheckBossDie()
 		//¸Ê ·Îµù µÆÀ» ¶§ BossUIÀÇ PlayFadeOutAnimation È£Ãâ
 		GetWorldTimerManager().SetTimer(ChangePlayerLocTimerHandle, FTimerDelegate::CreateLambda([=]()
 			{
-				PlayerCharacter->MoveSpawnLocation(FVector(-7207.843457, -62406.767053, 50));
+				PlayerCharacter->MoveSpawnLocation(FVector(-6912.570360, -60620.187377, 24.529288));
 				//PlayerCharacter->SetActorLocation();
 			}), 2.f, false);
 
@@ -1808,6 +1814,9 @@ void AJesusBoss::GetEndedMontage(UAnimMontage* Montage, bool bInterrupted)
 	IsStart.Exchange(false);
 	StartEnd.Key = false;
 	StartEnd.Value = true;
+	DoStep = false;
+	IsExplosion = false;
+
 	auto Type = GetTypeFromMetaData(Montage);
 
 	if (Type == BossAnimationType::RUN || Type == BossAnimationType::RUN_L || Type == BossAnimationType::RUN_R || Type == BossAnimationType::SPRINT)
@@ -2078,6 +2087,7 @@ void AJesusBoss::SlerpJumpEnd()
 { 
 	JumpMoveStart = false;
 	GetCapsuleComponent()->SetCollisionProfileName("AIPhysics");
+	ActivateHitCollision();
 }
 
 void AJesusBoss::OnStart()

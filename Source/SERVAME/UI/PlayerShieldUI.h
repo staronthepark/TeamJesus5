@@ -29,4 +29,5 @@ public:
 	virtual void NativeOnInitialized();
 
 	void SetShield(int value);
+	void Clear();
 };

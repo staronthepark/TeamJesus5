@@ -179,6 +179,8 @@ public:
 
 	float ShieldDashSpeed;
 
+	int ShieldCount;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraSpringArm")
 		USpringArmComponent* CameraBoom1;
 
@@ -308,6 +310,8 @@ public:
 	TMap<bool, TMap<bool, float>>SpeedMap;
 
 	TMap<bool, TFunction<void( )>> LockOnCameraSettingMap;
+
+	bool IsPhaseTwo;
 
 
 
