@@ -116,7 +116,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 	auto Dist = FVector::Distance(Player->GetActorLocation(), Monster->GetActorLocation());
 
 	//퍼셉션 시야각 거리 - 100
-	if (Dist <= 2400)
+	if (Dist <= PerceptionSight)
 	{
 		if (GetTeamAttitudeTowards(*Actor) == ETeamAttitude::Hostile)
 		{

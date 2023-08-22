@@ -34,6 +34,9 @@ public:
 	class AEnemyMonster* Monster;
 	class APlayerCharacter* Player;
 
+	UPROPERTY(EditAnywhere)
+	float PerceptionSight = 0.f;
+
 	UPROPERTY()
 	UAISenseConfig_Sight* Sight;
 
