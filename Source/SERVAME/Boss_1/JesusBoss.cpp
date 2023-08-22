@@ -375,6 +375,7 @@ AJesusBoss::AJesusBoss()
 	MontageStartMap.Add(BossAnimationType::GROGGY, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
 			Boss->DeactivateSMOverlap();
+			Boss->DoStep = false;
 			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			Boss->IsLockOn = false;
 			Boss->CanMove = false;
@@ -396,6 +397,7 @@ AJesusBoss::AJesusBoss()
 		{
 			Boss->AIController->StopMovement();
 
+			Boss->DoStep = false;
 			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			Boss->DeactivateSMOverlap();
 			Boss->IsLockOn = false;
@@ -418,6 +420,7 @@ AJesusBoss::AJesusBoss()
 		{
 			Boss->AIController->StopMovement();
 
+			Boss->DoStep = false;
 			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			Boss->DeactivateSMOverlap();
 			Boss->IsLockOn = false;
@@ -1136,7 +1139,7 @@ void AJesusBoss::BeginPlay()
 
 	FOutputDeviceNull ar;
 	this->CallFunctionByNameWithArguments(TEXT("PlayEndingCredit"), ar, NULL, true);
-
+	   
 	DeactivateSMOverlap();
 
 	ChangeMontageAnimation(BossAnimationType::LEVELSTART);
