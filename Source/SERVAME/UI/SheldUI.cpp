@@ -10,11 +10,15 @@
 void USheldUI::Activate()
 {
 	ShieldImage->SetBrushFromTexture(ShieldImages[ACTIVE]);
-	ActivateUI->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
 void USheldUI::Deactivate()
 {
 	ShieldImage->SetBrushFromTexture(ShieldImages[DEACTIVE]);
 	ActivateUI->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void USheldUI::ActivateFire()
+{
+	ActivateUI->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }

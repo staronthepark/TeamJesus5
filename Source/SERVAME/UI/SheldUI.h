@@ -30,5 +30,5 @@ public:
 	void Activate();
 	void Deactivate();
 
-
+	void ActivateFire();
 };

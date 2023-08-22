@@ -2,9 +2,19 @@
 
 
 #include "MapUI.h"
+#include <SERVAME/Manager/JesusGameInstance.h>
 
 
-void UMapUI::PlayMapInfoAnimation(FString MapName, bool isOpen)
+void UMapUI::PlayMapInfoAnimation(EMapName MapName, bool isOpen)
 {
+	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (GameInstance->language == Language::ENG)
+	{
+		MapInformation->SetBrushFromTexture(Textures.Find(MapName)->EngTextures);
+	}
+	else if (GameInstance->language == Language::KOR)
+	{
+		MapInformation->SetBrushFromTexture(Textures.Find(MapName)->KorTextures);
+	}
 	PlayAnimation(MapInfoOpenAnimation, isOpen ? EUMGSequencePlayMode::Forward : EUMGSequencePlayMode::Reverse);
 }
