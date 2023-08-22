@@ -1136,7 +1136,7 @@ void AJesusBoss::BeginPlay()
 
 	FOutputDeviceNull ar;
 	this->CallFunctionByNameWithArguments(TEXT("PlayEndingCredit"), ar, NULL, true);
-
+	   
 	DeactivateSMOverlap();
 
 	ChangeMontageAnimation(BossAnimationType::LEVELSTART);
