@@ -1811,6 +1811,8 @@ void AJesusBoss::GetEndedMontage(UAnimMontage* Montage, bool bInterrupted)
 	IsStart.Exchange(false);
 	StartEnd.Key = false;
 	StartEnd.Value = true;
+	DoStep = false;
+
 	auto Type = GetTypeFromMetaData(Montage);
 
 	if (Type == BossAnimationType::RUN || Type == BossAnimationType::RUN_L || Type == BossAnimationType::RUN_R || Type == BossAnimationType::SPRINT)
