@@ -34,7 +34,7 @@ void UPlayerHUD::NativeOnInitialized()
 	GuideAnimationFunction.Add(EGuides::map, [&](bool value)
 		{
 			currentLanguage = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->language;
-			PlayMapUIAnimation("asd") ;
+			PlayMapUIAnimation(EMapName::Heros);
 		});
 	GuideAnimationFunction.Add(EGuides::shield, [&](bool value)
 		{
@@ -219,7 +219,7 @@ void UPlayerHUD::PlayExitAnimation(bool IsOpen)
 	//IsOpen ? PlayAnimation(ExitOpenAnimation) : PlayAnimation(ExitCloseAnimation);
 }
 
-void UPlayerHUD::PlayMapUIAnimation(FString MapName)
+void UPlayerHUD::PlayMapUIAnimation(EMapName MapName)
 {
 	if (WBP_MapInfo)
 		WBP_MapInfo->PlayMapInfoAnimation(MapName);

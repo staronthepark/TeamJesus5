@@ -146,7 +146,7 @@ public:
 	void PlayInteractionAnimation(bool IsOpen, EInteractions interactions);
 	void PlayInteractionAnimation(bool IsOpen);
 	void PlayExitAnimation(bool IsOpen);
-	void PlayMapUIAnimation(FString MapName);
+	void PlayMapUIAnimation(EMapName MapName);
 
 	void FadeInAnimation(bool isFadeIn);
 	void ClearShield();
