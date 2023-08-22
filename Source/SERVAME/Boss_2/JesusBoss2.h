@@ -361,6 +361,9 @@ public:
 	UMonsterWidget* LeftArmLockOnWidget;
 	UPROPERTY()
 	UMonsterWidget* RightArmLockOnWidget;
+	UPROPERTY()
+	UMonsterWidget* HipLockOnWidget;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UWidgetComponent* HeadLockOnWidgetComp;
@@ -368,6 +371,8 @@ public:
 	UWidgetComponent* LeftArmLockOnWidgetComp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UWidgetComponent* RightLockOnWidgetComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UWidgetComponent* HipLockOnWidgetComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USphereComponent> LockOnTargetHead;
@@ -375,7 +380,8 @@ public:
 	TObjectPtr<USphereComponent> LockOnTargetLArm;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USphereComponent> LockOnTargetRArm;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USphereComponent> LockOnTargetHip;
 
 	TObjectPtr<APlayerCharacter> PlayerCharacter;
 
