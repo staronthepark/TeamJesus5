@@ -311,6 +311,8 @@ public:
 
 	TMap<bool, TFunction<void( )>> LockOnCameraSettingMap;
 
+	bool IsPhaseTwo;
+
 
 
 	UPROPERTY()

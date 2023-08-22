@@ -147,6 +147,7 @@ AEnemyMonster::AEnemyMonster()
 		{
 			SkeletalMeshComp->SetScalarParameterValueOnMaterials("Opacity", MeshOpacity -= fDeltaTime * 0.25f);
 			SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity  -= fDeltaTime * 0.25f);
+			AnimInstance->StopAllMontages(0.0f);
 			if (WeaponOpacity < 0.0f)
 			{
 				SetActorHiddenInGame(true);
