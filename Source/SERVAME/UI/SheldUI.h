@@ -23,12 +23,17 @@ class SERVAME_API USheldUI : public UUserWidget
 	UPROPERTY(meta = (BindWIdget))
 		UImage* ActivateUI;
 
+	UPROPERTY(meta = (BindWidget))
+		UImage* ActiveEffect;
+
 	UPROPERTY(EditAnywhere)
 		TArray<UTexture2D*> ShieldImages;
 
+	FTimerHandle EffectTimerHandle;
+	int EffectScalarValue;
 public:
 	void Activate();
 	void Deactivate();
 
-
+	void ActivateFire();
 };
