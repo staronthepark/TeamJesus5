@@ -2266,11 +2266,14 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	ShieldOff();
 	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
 
-	if (TargetComp->GetOwner() != ExecutionCharacter)
+	if (TargetComp != nullptr)
 	{
-		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false, TargetComp);
-		TargetComp = ExecutionCharacter->LockOnComp;
-		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true, TargetComp);
+		if (TargetComp->GetOwner() != ExecutionCharacter)
+		{
+			Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false, TargetComp);
+			TargetComp = ExecutionCharacter->LockOnComp;
+			Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true, TargetComp);
+		}
 	}
 
 	ExecutionCharacter->Stun();
