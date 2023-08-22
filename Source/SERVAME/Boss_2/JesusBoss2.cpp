@@ -1133,7 +1133,7 @@ void AJesusBoss2::BeginPlay()
 	LeftArmLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Collapsed);
 	RightArmLockOnWidget = Cast<UMonsterWidget>(RightLockOnWidgetComp->GetWidget());
 	RightArmLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Collapsed);
-	HipLockOnWidget = Cast<UMonsterWidget>(RightLockOnWidgetComp->GetWidget());
+	HipLockOnWidget = Cast<UMonsterWidget>(HipLockOnWidgetComp->GetWidget());
 	HipLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Collapsed);
 
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
