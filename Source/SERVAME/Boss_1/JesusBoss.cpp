@@ -90,7 +90,6 @@ AJesusBoss::AJesusBoss()
 		{
 			Boss->SwordTrailComp->Deactivate();
 			Boss->ParringTrailComp->Deactivate();
-			Boss->DarkExplosionCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}));
 	MontageEndMap.Add(BossAnimationType::IDLE, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
@@ -377,6 +376,7 @@ AJesusBoss::AJesusBoss()
 		{
 			Boss->DeactivateSMOverlap();
 			Boss->DoStep = false;
+			Boss->DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			Boss->IsLockOn = false;
 			Boss->CanMove = false;
@@ -397,7 +397,8 @@ AJesusBoss::AJesusBoss()
 	MontageStartMap.Add(BossAnimationType::SHIELD_GROGGY, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
 			Boss->AIController->StopMovement();
-
+			
+			Boss->DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			Boss->DoStep = false;
 			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			Boss->DeactivateSMOverlap();
@@ -422,6 +423,7 @@ AJesusBoss::AJesusBoss()
 			Boss->AIController->StopMovement();
 
 			Boss->DoStep = false;
+			Boss->DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			Boss->DeactivateSMOverlap();
 			Boss->IsLockOn = false;
@@ -1813,6 +1815,7 @@ void AJesusBoss::GetEndedMontage(UAnimMontage* Montage, bool bInterrupted)
 	StartEnd.Key = false;
 	StartEnd.Value = true;
 	DoStep = false;
+	IsExplosion = false;
 
 	auto Type = GetTypeFromMetaData(Montage);
 
