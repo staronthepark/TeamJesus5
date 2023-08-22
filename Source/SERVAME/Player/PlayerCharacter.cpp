@@ -2079,7 +2079,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 float APlayerCharacter::GetPercent(float value, float min, float max)
 {
-	return IsCollisionCamera ? (value - min) / (max - min) : 1.0f;
+	return IsCollisionCamera ? ((value - min) / (max - min)) * (40.0f - -15.0f) + -15.0f : 40.0f;
 }
 
 
