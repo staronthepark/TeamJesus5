@@ -1469,6 +1469,7 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	PlayerSKMesh = GetMesh();
+	IsPhaseTwo = false;
 	DebugMode = false;
 	ShieldEffectComp->SetVisibility(false);
 	LocketSKMesh->SetVisibility(true);
@@ -1695,6 +1696,7 @@ void APlayerCharacter::MoveSpawnLocation(FVector Location)
 {
 	if (IsLockOn)
 		LockOn();
+	IsPhaseTwo = true;
 	SetActorRotation(FRotator(0, 180, 0));
 	YawRotation = FRotator(0, 180, 0);
 	SetActorLocation(Location);
@@ -2087,7 +2089,13 @@ void APlayerCharacter::RespawnCharacter()
 {
 	Super::RespawnCharacter();
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::FadeOut, 4.0f);
+
+	if(!IsPhaseTwo)
 	ASoundManager::GetInstance().StartBGMSound();
+	else
+		ASoundManager::GetInstance().PlaySoundWithCymbalSound(2);
+
+	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 
 	AnimInstance->BodyBlendAlpha = 1.0f;
 
@@ -2098,6 +2106,8 @@ void APlayerCharacter::RespawnCharacter()
 	YawRotation = SpawnRotation;
 	ChangeActionType(ActionType::NONE);
 	ChangeMontageAnimation(AnimationType::IDLE);
+	AxisX = 1;
+	AxisY = 1;
 
 	RestoreStat();
 
@@ -2418,8 +2428,11 @@ void APlayerCharacter::SetSprint()
 {
 	IsSprint = true;
 	if (CurActionType == ActionType::MOVE
-		&& AnimInstance->PlayerAnimationType != AnimationType::HEAL && PlayerCurAction != PlayerAction::CANTACT
-		&& AnimInstance->PlayerAnimationType != AnimationType::ENDOFRUN && AnimInstance->PlayerAnimationType != AnimationType::ENDOFSPRINT)
+		&& AnimInstance->PlayerAnimationType != AnimationType::HEAL
+		&& PlayerCurAction != PlayerAction::CANTACT
+		&& AnimInstance->PlayerAnimationType != AnimationType::ENDOFRUN
+		&& AnimInstance->PlayerAnimationType != AnimationType::ENDOFSPRINT
+		&& AnimInstance->PlayerAnimationType != AnimationType::SUPERHIT)
 	{
 		Sprint();
 	}
@@ -2606,6 +2619,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 
 	if (PlayerDataStruct.CharacterHp <= 0)
 	{
+		GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 		ASoundManager::GetInstance().PlaySoundWithCymbalSound(3);
 		PlayerDead(false);
 	}
