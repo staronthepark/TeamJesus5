@@ -197,6 +197,10 @@ public:
 	UPROPERTY()
 		UPlayerHUD* PlayerHUD;
 
+	UPROPERTY(EditAnywhere)
+		USceneComponent* HeadBoneLocation;
+
+
 	UPROPERTY()
 		UActorSequenceComponent* BossExecutionSequence;
 	
