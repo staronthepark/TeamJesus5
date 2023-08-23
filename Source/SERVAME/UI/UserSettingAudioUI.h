@@ -20,7 +20,7 @@ enum class EAudioSettings : uint8
 	master	UMETA(DisplayName = "Master"),
 	bgm		UMETA(DisplayName = "BGM"),
 	se		UMETA(DisplayName = "SE"),
-	voice	UMETA(DisplayName = "Voice")
+	//voice	UMETA(DisplayName = "Voice")
 };
 
 USTRUCT(BlueprintType)
@@ -49,8 +49,8 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	USliderUI* WBP_Setting_Slider_SE;
 
-	UPROPERTY(meta = (BindWidget))
-	USliderUI* WBP_Setting_Slider_Voice;
+	//UPROPERTY(meta = (BindWidget))
+	//USliderUI* WBP_Setting_Slider_Voice;
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* TitleAudioImage;
@@ -64,8 +64,8 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	UImage* SEAudioImage;
 	
-	UPROPERTY(meta = (BindWidget))
-	UImage* VoiceAudioImage;
+	//UPROPERTY(meta = (BindWidget))
+	//UImage* VoiceAudioImage;
 
 	UPROPERTY(EditAnywhere)
 		TMap<EAudioSettings, FAudioTextures> ImageTextures;
@@ -81,8 +81,8 @@ public:
 	void SetBGMVolume(float value);
 	UFUNCTION()
 	void SetSFXVolume(float value);
-	UFUNCTION()
-	void SetVoiceVolume(float value);
+	//UFUNCTION()
+	//void SetVoiceVolume(float value);
 
 	UFUNCTION()
 	void ChangeLanguage();

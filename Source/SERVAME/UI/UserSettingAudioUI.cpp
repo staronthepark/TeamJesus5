@@ -19,7 +19,7 @@ void UUserSettingAudioUI::NativeOnInitialized()
 
 	WBP_Setting_Slider_BGM->Slider_1->OnValueChanged.AddDynamic(this, &UUserSettingAudioUI::SetBGMVolume);
 	WBP_Setting_Slider_SE->Slider_1->OnValueChanged.AddDynamic(this, &UUserSettingAudioUI::SetSFXVolume);
-	WBP_Setting_Slider_Voice->Slider_1->OnValueChanged.AddDynamic(this, &UUserSettingAudioUI::SetVoiceVolume);
+	/*WBP_Setting_Slider_Voice->Slider_1->OnValueChanged.AddDynamic(this, &UUserSettingAudioUI::SetVoiceVolume);*/
 }
 
 void UUserSettingAudioUI::NativeConstruct()
@@ -31,7 +31,7 @@ void UUserSettingAudioUI::NativeConstruct()
 		WBP_Setting_Button->SetValue(Off);
 	WBP_Setting_Slider_BGM->SetValue(ASoundManager::ASoundManager::GetInstance().GetBGMVolume());
 	WBP_Setting_Slider_SE->SetValue(ASoundManager::ASoundManager::GetInstance().GetSFXVolume());
-	WBP_Setting_Slider_Voice->SetValue(ASoundManager::ASoundManager::GetInstance().GetVoiceVolume());
+	//WBP_Setting_Slider_Voice->SetValue(ASoundManager::ASoundManager::GetInstance().GetVoiceVolume());
 
 	ChangeLanguage();
 }
@@ -64,12 +64,12 @@ void UUserSettingAudioUI::SetSFXVolume(float value)
 	//WBP_Setting_Button->SetValue(On);
 }
 
-void UUserSettingAudioUI::SetVoiceVolume(float value)
-{
-	ASoundManager::ASoundManager::GetInstance().SetVoiceVolume(value);
-	//ASoundManager::ASoundManager::GetInstance().MuteSound(false);
-	//WBP_Setting_Button->SetValue(On);
-}
+//void UUserSettingAudioUI::SetVoiceVolume(float value)
+//{
+//	ASoundManager::ASoundManager::GetInstance().SetVoiceVolume(value);
+//	//ASoundManager::ASoundManager::GetInstance().MuteSound(false);
+//	//WBP_Setting_Button->SetValue(On);
+//}
 
 void UUserSettingAudioUI::ChangeLanguage()
 {
@@ -81,7 +81,7 @@ void UUserSettingAudioUI::ChangeLanguage()
 		MasterAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::master)->EngTexture, true);
 		BGMAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::bgm)->EngTexture, true);
 		SEAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::se)->EngTexture, true);
-		VoiceAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::voice)->EngTexture, true);
+		//VoiceAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::voice)->EngTexture, true);
 	}
 	else if (GameInstance->language == Language::KOR)
 	{
@@ -89,6 +89,6 @@ void UUserSettingAudioUI::ChangeLanguage()
 		MasterAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::master)->KorTexture, true);
 		BGMAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::bgm)->KorTexture, true);
 		SEAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::se)->KorTexture, true);
-		VoiceAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::voice)->KorTexture, true);
+		//VoiceAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::voice)->KorTexture, true);
 	}
 }
