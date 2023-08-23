@@ -25,11 +25,11 @@ void UUserSetting_GraphicsUI::NativeOnInitialized()
 
 	Setting = GEngine->GetGameUserSettings();
 	
-	WBP_Volumetric_Button->SetValue(Setting->GetPostProcessingQuality() + 1);
-	WBP_Shadow_Button->SetValue(Setting->GetShadingQuality() + 1);
-	WBP_GI_Button->SetValue(Setting->GetGlobalIlluminationQuality() + 1);
-	WBP_Effect_Button->SetValue(Setting->GetVisualEffectQuality() + 2);
-	WBP_Reflect_Button->SetValue(Setting->GetReflectionQuality() + 1);
+	WBP_Volumetric_Button->SetValue(Setting->GetPostProcessingQuality() - 1);
+	WBP_Shadow_Button->SetValue(Setting->GetShadingQuality() - 1);
+	WBP_GI_Button->SetValue(Setting->GetGlobalIlluminationQuality() - 1);
+	WBP_Effect_Button->SetValue(Setting->GetVisualEffectQuality() - 2);
+	WBP_Reflect_Button->SetValue(Setting->GetReflectionQuality() - 1);
 }
 
 void UUserSetting_GraphicsUI::NativeConstruct()
@@ -91,4 +91,10 @@ void UUserSetting_GraphicsUI::ChangeLanguage()
 		EffectImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::effect)->KorTexture, true);
 		ReflectImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::reflect)->KorTexture, true);
 	}
+
+	WBP_Volumetric_Button->ChangeLanguage();
+	WBP_Shadow_Button->ChangeLanguage();
+	WBP_GI_Button->ChangeLanguage();
+	WBP_Effect_Button->ChangeLanguage();
+	WBP_Reflect_Button->ChangeLanguage();
 }
