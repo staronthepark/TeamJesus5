@@ -1400,14 +1400,17 @@ void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 
 	auto Type = GetTypeFromMetaData(StartMontage);
 
+
 	AObjectPool& objectpool = AObjectPool::GetInstance();
-	if (OtherComp->GetName() == "ShieldCollision" && Type != Boss2AnimationType::GROGGY)
+
+	if (OtherComp->GetName() == "ShieldCollision")
 	{
 		Player->SetShieldHP(-BossDataStruct.DamageList[Type]);
 		CameraShake(PlayerCameraShake);
 		VibrateGamePad(0.4f, 0.4f);
 		objectpool.SpawnObject(objectpool.ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		objectpool.SpawnObject(objectpool.ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 		return;
 	}
 
