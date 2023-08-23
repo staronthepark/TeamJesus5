@@ -632,7 +632,10 @@ void AEnemyMonster::Rotate()
 {
 	if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP
 		|| AnimationType == MonsterAnimationType::EXECUTION)return;
-	SetActorRotation(FMath::Lerp(GetActorRotation(), YawRotation, MonsterDataStruct.RotateSpeed * fDeltaTime));
+
+	auto Rot = FRotator(0.f, GetActorRotation().Yaw, GetActorRotation().Roll);
+
+	SetActorRotation(FMath::Lerp(Rot, YawRotation, MonsterDataStruct.RotateSpeed * fDeltaTime));
 }
 
 void AEnemyMonster::Stun()
