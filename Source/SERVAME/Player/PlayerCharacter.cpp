@@ -1362,7 +1362,8 @@ APlayerCharacter::APlayerCharacter()
 			IsSprint = false;
 			if (CurActionType == ActionType::MOVE && 
 				AnimInstance->PlayerAnimationType != AnimationType::ENDOFSPRINT &&
-				AnimInstance->PlayerAnimationType != AnimationType::HEAL)
+				AnimInstance->PlayerAnimationType != AnimationType::HEAL &&
+				AnimInstance->PlayerAnimationType != AnimationType::SUPERHIT)
 			{
 				Run();
 			}
@@ -1411,7 +1412,7 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::SPRINT][ActionType::INTERACTION].Add(false, InputEventMap[PlayerAction::NONE][ActionType::INTERACTION][false]);
 	InputEventMap[PlayerAction::SPRINT][ActionType::SHIELD].Add(true, [&]()
 		{
-			if (IsSprint)
+			if (IsSprint && AnimInstance->PlayerAnimationType == AnimationType::SPRINT)
 			{
 				InputEventMap[PlayerAction::SPRINT][ActionType::DODGE][false]();
 			}
