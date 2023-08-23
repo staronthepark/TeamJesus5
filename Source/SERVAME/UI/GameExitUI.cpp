@@ -47,16 +47,16 @@ void UGameExitUI::ChangeLanguage()
 	{
 		PanelBackground->SetBrushFromTexture(ImageTextures.Find(EExitSettings::title)->KorTexture,true);
 		YesButton->WidgetStyle.Normal.SetResourceObject(ImageTextures.Find(EExitSettings::yesnormal)->KorTexture);
-		YesButton->WidgetStyle.Normal.ImageSize = FVector2D(93, 24);
+		YesButton->WidgetStyle.Normal.ImageSize = FVector2D(69, 24);
 		YesButton->WidgetStyle.Hovered.SetResourceObject(ImageTextures.Find(EExitSettings::yeshovered)->KorTexture);
-		YesButton->WidgetStyle.Hovered.ImageSize = FVector2D(93, 24);
+		YesButton->WidgetStyle.Hovered.ImageSize = FVector2D(69, 24);
 		YesButton->WidgetStyle.Pressed.SetResourceObject(ImageTextures.Find(EExitSettings::yespressed)->KorTexture);
-		YesButton->WidgetStyle.Pressed.ImageSize = FVector2D(93, 24);
+		YesButton->WidgetStyle.Pressed.ImageSize = FVector2D(69, 24);
 		NoButton->WidgetStyle.Normal.SetResourceObject(ImageTextures.Find(EExitSettings::nonormal)->KorTexture);
-		NoButton->WidgetStyle.Normal.ImageSize = FVector2D(93, 24);
+		NoButton->WidgetStyle.Normal.ImageSize = FVector2D(69, 24);
 		NoButton->WidgetStyle.Hovered.SetResourceObject(ImageTextures.Find(EExitSettings::nohovered)->KorTexture);
-		NoButton->WidgetStyle.Hovered.ImageSize = FVector2D(93, 24);
+		NoButton->WidgetStyle.Hovered.ImageSize = FVector2D(69, 24);
 		NoButton->WidgetStyle.Pressed.SetResourceObject(ImageTextures.Find(EExitSettings::nopressed)->KorTexture);
-		NoButton->WidgetStyle.Pressed.ImageSize = FVector2D(93, 24);
+		NoButton->WidgetStyle.Pressed.ImageSize = FVector2D(69, 24);
 	}
 }
