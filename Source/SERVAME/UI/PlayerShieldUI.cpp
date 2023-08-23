@@ -19,9 +19,10 @@ void UPlayerShieldUI::SetShield(int value)
 	for (; i < value + 1; i++)
 	{
 		Shields[i]->Activate();
+		//if (i == Shields.Num() - 1)
+		//	Shields[i]->ActivateFire();
 	}
 	for (; i < Shields.Num(); i++)
-
 	{
 		Shields[i]->Deactivate();
 	}
