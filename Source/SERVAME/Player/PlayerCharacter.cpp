@@ -1696,6 +1696,7 @@ void APlayerCharacter::MoveSpawnLocation(FVector Location)
 {
 	if (IsLockOn)
 		LockOn();
+	UCombatManager::GetInstance().Boss2->SetActive(true);
 	IsPhaseTwo = true;
 	SetActorRotation(FRotator(0, 180, 0));
 	YawRotation = FRotator(0, 180, 0);
@@ -2336,7 +2337,7 @@ void APlayerCharacter::Attack()
 
 void APlayerCharacter::BasicAttack()
 {
-	//MoveSpawnLocation(FVector());
+	MoveSpawnLocation(FVector(-6912.570360, -60620.187377, 24.529288));
 	if (!IsGrab)
 	{
 		Attack();

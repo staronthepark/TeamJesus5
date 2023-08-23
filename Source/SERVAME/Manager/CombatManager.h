@@ -28,6 +28,8 @@ public:
 		UPROPERTY(EditAnywhere)
 			TArray<ABaseCharacter*> MonsterInfoArray;
 
+		ABaseCharacter* Boss2;
+
 		void ActivateCollider();
 		void DeactivateCollider();
 

@@ -1169,6 +1169,7 @@ void AJesusBoss2::BeginPlay()
 	Boss2AnimInstance->IsStart = true;
 
 	SetActive(false);
+	UCombatManager::GetInstance().Boss2 = this;
 }
 
 void AJesusBoss2::Tick(float DeltaTime)
