@@ -188,10 +188,16 @@ void AJesusPlayerController::UnPressUseItem()
 
 void AJesusPlayerController::PressTab()
 {
-	if(!IsGuideRender)
-	character->PlayerHUD->PlayAnimations(EGuides::keyguide, true);
+	if (!IsGuideRender)
+	{
+		character->PlayerHUD->PlayAnimations(EGuides::keyguide, true);
+		IsGuideRender = true;
+	}
 	else
-	character->PlayerHUD->PlayAnimations(EGuides::keyguide, false);
+	{
+		character->PlayerHUD->PlayAnimations(EGuides::keyguide, false);
+		IsGuideRender = false;
+	}
 }
 
 void AJesusPlayerController::PressSprint()
