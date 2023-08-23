@@ -21,6 +21,7 @@ void AJesusPlayerController::BeginPlay()
 
 	PlayerSkillType = 2;
 
+	IsGuideRender = false;
 	//ConsoleCommand("t.maxfps 60");
 
 	
@@ -183,6 +184,14 @@ void AJesusPlayerController::PressUseItem()
 void AJesusPlayerController::UnPressUseItem()
 {
 	character->InputEventMap[character->PlayerCurAction][ActionType::HEAL][false]();
+}
+
+void AJesusPlayerController::PressTab()
+{
+	if(!IsGuideRender)
+	character->PlayerHUD->PlayAnimations(EGuides::keyguide, true);
+	else
+	character->PlayerHUD->PlayAnimations(EGuides::keyguide, false);
 }
 
 void AJesusPlayerController::PressSprint()
@@ -464,5 +473,8 @@ void AJesusPlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("Grab", IE_Pressed, this, &AJesusPlayerController::PressGrab);
 	InputComponent->BindAction("Grab", IE_Released, this, &AJesusPlayerController::UnPressGrab);
+
+	InputComponent->BindAction("Guide", IE_Pressed, this, &AJesusPlayerController::PressTab);
+
 
 }

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "PlayerCharacter.h"
+#include "../UI/PlayerGuideUI.h"
 #include "JesusPlayerController.generated.h"
 
 /**
@@ -25,6 +26,9 @@ private:
 
 	int PlayerSkillType;
 
+	bool IsGuideRender;
+
+	
 
 public:
 	APlayerCharacter* character;
@@ -74,6 +78,8 @@ public:
 
 	void PressUseItem();
 	void UnPressUseItem();
+
+	void PressTab();
 
 	void PressSprint();
 	void UnPressSprint();
