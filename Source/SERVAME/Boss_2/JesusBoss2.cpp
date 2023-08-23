@@ -1167,6 +1167,8 @@ void AJesusBoss2::BeginPlay()
 	CanMove = true;
 	IsLockOn = true;
 	Boss2AnimInstance->IsStart = true;
+
+	SetActive(false);
 }
 
 void AJesusBoss2::Tick(float DeltaTime)
