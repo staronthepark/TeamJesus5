@@ -1818,6 +1818,7 @@ void APlayerCharacter::ChangeTarget(CameraDirection CamDirection)
 
 	for (int32 i = 0; i < TargetCompInScreenArray.Num(); i++)
 	{
+		if (!TargetCompInScreenArray[i]->GetOwner()->IsActorTickEnabled())continue;
 		if (TargetComp == TargetCompInScreenArray[i])continue;
 		FVector Direction = (TargetCompInScreenArray[i]->GetComponentLocation() - CameraLocation).GetSafeNormal();
 		FVector Cross = FVector::CrossProduct(TargetDir, Direction);
