@@ -94,7 +94,7 @@ public:
 	AnimationType PlayerAnimationType;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MyInstance, meta = (AllowPrivateAccess = "true"))
-		FRotator SpineBoneRotate;
+		FRotator HeadBoneRotate;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MyInstance, meta = (AllowPrivateAccess = "true"))
 		float BodyBlendAlpha;

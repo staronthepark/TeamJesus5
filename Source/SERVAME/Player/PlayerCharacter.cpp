@@ -52,6 +52,9 @@ APlayerCharacter::APlayerCharacter()
 	CameraBoom1->TargetArmLength = 0.5f;
 	CameraBoom1->bUsePawnControlRotation = true; 
 
+	HeadBoneLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Head Bone Location"));
+	HeadBoneLocation->SetupAttachment(GetMesh(), FName("Ref_Bip001-Head"));
+
 	TargetDetectionCollison = CreateDefaultSubobject<USphereComponent>(TEXT("Enemy Detection Collider"));
 	TargetDetectionCollison->SetupAttachment(RootComponent);
 	TargetDetectionCollison->SetCollisionProfileName("Weapon");
@@ -1551,6 +1554,7 @@ void APlayerCharacter::BeginPlay()
 	DeactivateRightWeapon();
 
 	AnimInstance->BodyBlendAlpha = 1.0f;
+	AnimInstance->HeadBoneRotate = FRotator(0, 0, 0);
 
 	GameStartSequncePlayer->Play();
 	GameStartSequncePlayer->Pause();
@@ -2047,6 +2051,16 @@ void APlayerCharacter::LookTarget()
 	Difference = FRotationMatrix::MakeFromX(TargetDirection).Rotator();
 	GetController()->SetControlRotation(FMath::Lerp(GetController()->GetControlRotation(), Difference, fDeltaTime * 2.0f));
 
+	//PlayerSKMesh->getskele
+	FRotator rotation = FRotationMatrix::MakeFromX(TargetComp->GetComponentLocation() - HeadBoneLocation->GetComponentLocation()).Rotator();
+
+	AnimInstance->HeadBoneRotate.Yaw = rotation.Yaw;
+	if (AnimInstance->HeadBoneRotate.Yaw <= -25.0f)AnimInstance->HeadBoneRotate.Yaw = -25.0f;
+	else if (AnimInstance->HeadBoneRotate.Yaw >= 25.0f)AnimInstance->HeadBoneRotate.Yaw = 25.0f;
+
+
+	UE_LOG(LogTemp, Warning, TEXT("%f"), GetController()->GetControlRotation().Yaw);
+
 	if (AnimInstance->PlayerAnimationType != AnimationType::BATTLEDODGE
 		&& AnimInstance->PlayerAnimationType != AnimationType::SPRINT
 		&& AnimInstance->PlayerAnimationType != AnimationType::DEADLOOP
@@ -2337,7 +2351,6 @@ void APlayerCharacter::Attack()
 
 void APlayerCharacter::BasicAttack()
 {
-	MoveSpawnLocation(FVector(-6912.570360, -60620.187377, 24.529288));
 	if (!IsGrab)
 	{
 		Attack();
