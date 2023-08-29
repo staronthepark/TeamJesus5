@@ -1759,7 +1759,7 @@ void APlayerCharacter::LockOn()
 	}
 
 	if (CurActionType == ActionType::MOVE && AnimInstance->PlayerAnimationType != AnimationType::ENDOFSPRINT && 
-		AnimInstance->PlayerAnimationType != AnimationType::HEAL && !IsGrab)
+		AnimInstance->PlayerAnimationType != AnimationType::HEAL && !IsGrab && PlayerCurAction != PlayerAction::CANTACT)
 	{
 		CheckInputKey();
 	}
