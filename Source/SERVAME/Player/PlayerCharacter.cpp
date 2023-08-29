@@ -1741,6 +1741,9 @@ void APlayerCharacter::LockOn()
 			SetSpeed(SpeedMap[IsLockOn || IsGrab][IsSprint]);
 		}
 
+		if (IsPhaseTwo)
+			ShoulderView(false);
+
 		CurRotateIndex = 1;
 	}
 	else

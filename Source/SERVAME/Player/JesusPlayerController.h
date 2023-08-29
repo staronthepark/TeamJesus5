@@ -90,6 +90,8 @@ public:
 	void PressPowerAttack();
 	void UnPressPowerAttack();
 
+	void Boss2();
+
 	void PressInteraction();
 	void UnPressInteraction();
 
