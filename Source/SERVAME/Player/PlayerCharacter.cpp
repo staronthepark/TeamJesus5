@@ -2160,6 +2160,7 @@ void APlayerCharacter::PlayExecutionAnimation()
 	//SetActorLocation(ExecuteLocation);
 	ShoulderView(true);
 
+	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 	CanExecution = false;
 	ExecutionCharacter->PlayExecutionAnimation();
 	DeactivateRightWeapon();
@@ -2249,7 +2250,6 @@ void APlayerCharacter::OnExecutionOverlapBegin(UPrimitiveComponent* OverlappedCo
 		ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
 		CanExecution = true;
 	}
-
 }
 
 void APlayerCharacter::OnExecutionOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
