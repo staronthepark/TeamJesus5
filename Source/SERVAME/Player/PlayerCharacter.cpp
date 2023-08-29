@@ -863,6 +863,7 @@ APlayerCharacter::APlayerCharacter()
 			IsExecute = false;			
 			GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 			CheckInputKey();
+			ShoulderView(!IsPhaseTwo);
 			Imotal = false;
 			if(!IsGrab)
 			TargetCameraBoomLength = IsShoulderView ? ShoulderViewCameraLength : BackViewCameraLength;
@@ -1743,6 +1744,8 @@ void APlayerCharacter::LockOn()
 
 		if (IsPhaseTwo)
 			ShoulderView(false);
+		else
+			ShoulderView(true);
 
 		CurRotateIndex = 1;
 	}
@@ -2156,6 +2159,8 @@ void APlayerCharacter::PlayExecutionAnimation()
 
 	//ExecuteLocation = GetActorLocation() - ExecuteDirection * 50.0f;
 	//SetActorLocation(ExecuteLocation);
+	ShoulderView(true);
+
 	CanExecution = false;
 	ExecutionCharacter->PlayExecutionAnimation();
 	DeactivateRightWeapon();
