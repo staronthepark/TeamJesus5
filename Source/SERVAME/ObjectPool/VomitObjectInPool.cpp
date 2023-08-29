@@ -107,8 +107,6 @@ void AVomitObjectInPool::OnGroundOverlap(UPrimitiveComponent* OverlappedComponen
 {
 	BurstEffect->Activate();
 	ProjectileEffect->Deactivate();
-	SpawnEffect->Deactivate();
-	DispersionEffect->Deactivate();
 
 	IsHitGround = true;
 	SetActorTickEnabled(false);
