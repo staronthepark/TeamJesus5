@@ -48,7 +48,7 @@ APlayerCharacter::APlayerCharacter()
 	LocketSKMesh->SetupAttachment(GetMesh(), FName("Root"));
 
 	CameraBoom1 = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom1"));
-	CameraBoom1->SetupAttachment(GetMesh(), FName("Ref_Bip001-Spine"));
+	CameraBoom1->SetupAttachment(GetMesh(), FName("Ref_SIMON_COM"));
 	CameraBoom1->TargetArmLength = 0.5f;
 	CameraBoom1->bUsePawnControlRotation = true; 
 
@@ -1722,6 +1722,9 @@ void APlayerCharacter::LockOn()
 {
 	IsLockOn = !IsLockOn;
 
+	if (IsPhaseTwo)
+		ShoulderView(!IsLockOn);
+
 	if (IsLockOn)
 	{
 		if (TargetComp == nullptr)
@@ -1742,10 +1745,6 @@ void APlayerCharacter::LockOn()
 			SetSpeed(SpeedMap[IsLockOn || IsGrab][IsSprint]);
 		}
 
-		if (IsPhaseTwo)
-			ShoulderView(false);
-		else
-			ShoulderView(true);
 
 		CurRotateIndex = 1;
 	}
