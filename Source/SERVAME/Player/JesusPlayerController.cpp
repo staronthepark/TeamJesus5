@@ -417,10 +417,15 @@ void AJesusPlayerController::CloseMenu()
 		if (character->UserSettingUI->IsInViewport())
 		{
 			SetPause(false);
-			bShowMouseCursor = false;
+			bShowMouseCursor = false;	
 			character->UserSettingUI->RemoveFromParent();
 		}
 	}
+}
+
+void AJesusPlayerController::Boss2()
+{
+	character->MoveSpawnLocation(FVector(-6912.570360, -60620.187377, 40.0f));
 }
 
 void AJesusPlayerController::SetupInputComponent()
@@ -482,5 +487,5 @@ void AJesusPlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("Guide", IE_Pressed, this, &AJesusPlayerController::PressTab);
 
-
+	InputComponent->BindAction("Boss2", IE_Pressed, this, &AJesusPlayerController::Boss2);
 }
