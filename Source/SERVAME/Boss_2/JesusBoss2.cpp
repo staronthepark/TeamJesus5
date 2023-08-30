@@ -1110,6 +1110,11 @@ void AJesusBoss2::PostInitializeComponents()
 		Boss2AnimInstance->OnJumpStart.AddUObject(this, &AJesusBoss2::SlerpJump);
 		Boss2AnimInstance->OnJumpEnd.AddUObject(this, &AJesusBoss2::SlerpJumpEnd);
 		Boss2AnimInstance->OnStoneThrow.AddUObject(this, &AJesusBoss2::ThrowStone);
+		Boss2AnimInstance->OnLeftLockOn.AddUObject(this, &AJesusBoss2::LeftLockOn);
+		Boss2AnimInstance->OnLeftLockOff.AddUObject(this, &AJesusBoss2::LeftLockOff);
+		Boss2AnimInstance->OnRightLockOn.AddUObject(this, &AJesusBoss2::RightLockOn);
+		Boss2AnimInstance->OnRightLockOff.AddUObject(this, &AJesusBoss2::RightLockOff);
+
 
 		Boss2AnimInstance->OnMontageEnded.AddDynamic(this, &AJesusBoss2::GetEndedMontage);
 	}
@@ -1185,6 +1190,12 @@ void AJesusBoss2::Tick(float DeltaTime)
 	if (AttackLockOn)
 		RotateToPlayerInterp();
 
+	if (LeftTurnAttackLockOn)
+		LeftRotateToPlayerInterp();
+
+	if (RightTurnAttackLockOn)
+		RightRotateToPlayerInterp();
+
 	if (JumpMoveStart)
 		JumpMove();
 
@@ -1202,16 +1213,6 @@ void AJesusBoss2::Tick(float DeltaTime)
 		AIController->MoveWhenArrived(CirclePoints[CircleIndexCount]);
 		RotateToPlayerInterp();
 	}
-
-	//if (PlayerCharacter != nullptr)
-	//{
-	//	auto Dir = PlayerCharacter->GetActorLocation() - GetActorLocation();
-	//	float AngleInRadians = FMath::Atan2(-Dir.Y, -Dir.X);
-
-	//	AngleToPlayer = FMath::RadiansToDegrees(AngleInRadians);
-
-	//	UE_LOG(LogTemp, Warning, TEXT("Angle : %f"), AngleToPlayer);
-	//}
 }
 
 /*=====================
@@ -1255,6 +1256,30 @@ void AJesusBoss2::RotateToPlayerInterp()
 {
 	FRotator ToTarget = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), PlayerCharacter->GetActorLocation());
 	FRotator LookAtRotation = FMath::RInterpTo(GetActorRotation(), ToTarget, GetWorld()->DeltaTimeSeconds, 4.f);
+	SetActorRotation(LookAtRotation);
+}
+
+void AJesusBoss2::LeftRotateToPlayerInterp()
+{
+	FRotator CurrentRotation = GetActorRotation();
+
+	float RotationAngle = DesiredRotationAngle;
+
+	FRotator RotationAmount(0.0f, RotationAngle, 0.0f);
+
+	FRotator LookAtRotation = FMath::RInterpTo(GetActorRotation(), CurrentRotation + RotationAmount, GetWorld()->DeltaTimeSeconds, 4.f);
+	SetActorRotation(LookAtRotation);
+}
+
+void AJesusBoss2::RightRotateToPlayerInterp()
+{
+	FRotator CurrentRotation = GetActorRotation();
+
+	float RotationAngle = -DesiredRotationAngle;
+
+	FRotator RotationAmount(0.0f, RotationAngle, 0.0f);
+
+	FRotator LookAtRotation = FMath::RInterpTo(GetActorRotation(), CurrentRotation + RotationAmount, GetWorld()->DeltaTimeSeconds, 4.f);
 	SetActorRotation(LookAtRotation);
 }
 
@@ -1962,6 +1987,14 @@ void AJesusBoss2::LockOff()
 	AttackLockOn = false;
 	LastPlayerLoc = PlayerCharacter->GetActorLocation();
 }
+
+void AJesusBoss2::LeftLockOn() { LeftTurnAttackLockOn = true; }
+
+void AJesusBoss2::LeftLockOff() { LeftTurnAttackLockOn = false; }
+
+void AJesusBoss2::RightLockOn() { RightTurnAttackLockOn = true; }
+
+void AJesusBoss2::RightLockOff() { RightTurnAttackLockOn = false; }
 
 void AJesusBoss2::ThrowStone()
 {

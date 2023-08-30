@@ -38,3 +38,10 @@ void UBoss2AnimInstance::AnimNotify_JumpEnd() { OnJumpEnd.Broadcast(); }
 
 void UBoss2AnimInstance::AnimNotify_ThrowStone() { OnStoneThrow.Broadcast(); }
 
+void UBoss2AnimInstance::AnimNotify_LeftLockOn() { OnLeftLockOn.Broadcast(); }
+
+void UBoss2AnimInstance::AnimNotify_LeftLockOff() { OnLeftLockOff.Broadcast(); }
+
+void UBoss2AnimInstance::AnimNotify_RightLockOn() { OnRightLockOn.Broadcast(); }
+
+void UBoss2AnimInstance::AnimNotify_RightLockOff() { OnRightLockOff.Broadcast(); }
