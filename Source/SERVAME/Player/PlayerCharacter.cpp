@@ -2272,7 +2272,7 @@ void APlayerCharacter::OnParryingOverlapBegin(UPrimitiveComponent* OverlappedCom
 
 	UGameplayStatics::SetGlobalTimeDilation(this, .5f);
 	Imotal = true;
-	BossParryingSequncePlayer->Play();
+	//BossParryingSequncePlayer->Play();
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[15].ObjClass, GetActorLocation(), FRotator(90, 180, 0));
 	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
