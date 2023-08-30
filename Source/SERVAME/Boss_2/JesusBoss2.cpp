@@ -2011,10 +2011,9 @@ void AJesusBoss2::LeftLockOn()
 	FVector Location1 = GetActorLocation();
 	FVector Location2 = PlayerCharacter->GetActorLocation();
 
-	FVector Direction = (Location2 - Location1).GetSafeNormal(); // 두 액터 사이의 방향 벡터 계산
-	FVector ForwardVector = GetActorForwardVector(); // 첫 번째 액터의 전방 벡터 가져오기
+	FVector Direction = (Location2 - Location1).GetSafeNormal(); 
+	FVector ForwardVector = GetActorForwardVector(); 
 
-	// 두 벡터 사이의 각도 계산 (라디안 값을 돌려주기 때문에 필요시 디그리로 변환)
 	float AngleRadians = FMath::Acos(FVector::DotProduct(Direction, ForwardVector));
 	float AngleDegrees = FMath::RadiansToDegrees(AngleRadians);
 
@@ -2030,14 +2029,13 @@ void AJesusBoss2::RightLockOn()
 	FVector Location1 = GetActorLocation();
 	FVector Location2 = PlayerCharacter->GetActorLocation();
 
-	FVector Direction = (Location2 - Location1).GetSafeNormal(); // 두 액터 사이의 방향 벡터 계산
-	FVector ForwardVector = GetActorForwardVector(); // 첫 번째 액터의 전방 벡터 가져오기
+	FVector Direction = (Location2 - Location1).GetSafeNormal(); 
+	FVector ForwardVector = GetActorForwardVector(); 
 
-	// 두 벡터 사이의 각도 계산 (라디안 값을 돌려주기 때문에 필요시 디그리로 변환)
 	float AngleRadians = FMath::Acos(FVector::DotProduct(Direction, ForwardVector));
 	float AngleDegrees = FMath::RadiansToDegrees(AngleRadians);
 
-	DesiredRotationAngle = (AngleDegrees - 45);
+	DesiredRotationAngle = (AngleDegrees - 60);
 }
 
 void AJesusBoss2::RightLockOff() { RightTurnAttackLockOn = false; }

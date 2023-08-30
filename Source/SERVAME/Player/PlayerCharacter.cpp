@@ -2067,7 +2067,7 @@ void APlayerCharacter::LookTarget()
 	else if (AnimInstance->HeadBoneRotate.Yaw >= 25.0f)AnimInstance->HeadBoneRotate.Yaw = 25.0f;
 
 
-	UE_LOG(LogTemp, Warning, TEXT("%f"), GetController()->GetControlRotation().Yaw);
+	//UE_LOG(LogTemp, Warning, TEXT("%f"), GetController()->GetControlRotation().Yaw);
 
 	if (AnimInstance->PlayerAnimationType != AnimationType::BATTLEDODGE
 		&& AnimInstance->PlayerAnimationType != AnimationType::SPRINT
