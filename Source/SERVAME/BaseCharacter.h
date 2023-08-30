@@ -45,6 +45,8 @@ struct FCharacterBaseDataStruct
 		float CharacterHp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CharacterOriginSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float ExcutionHPPercent;
 };
 
 UCLASS()
