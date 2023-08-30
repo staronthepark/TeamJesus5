@@ -665,32 +665,21 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 	MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
 	MonsterDataStruct.CharacterHp -= DamageAmount;
-	MonsterHPWidget->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
 
-	UE_LOG(LogTemp, Warning, TEXT("%f,%f"), DamageAmount, MonsterDataStruct.CharacterHp);
+	float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
+	MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
+
+	if (CurrentPercent <= MonsterDataStruct.ExcutionHPPercent && AnimationType != MonsterAnimationType::EXECUTION)
+	{
+		PlayerCharacter->ExecutionNextAnim = true;
+		//PlayerCharacter->ExecutionCharacter = this;
+		//PlayerCharacter->PlayExecutionAnimation();
+		return DamageAmount;
+	}
+
 
 	Die(DamageAmount);
 
-	//if (DamageAmount >= 30)
-	//{
-	//	MonsterController->StopMovement();
-	//	AnimInstance->StopMontage(MontageMap[AnimationType]);
-	//	if (MontageEndEventMap.Contains(AnimationType))
-	//		MontageEndEventMap[AnimationType]();
-	//
-	//	ChangeActionType(MonsterActionType::NONE);
-	//	ChangeMontageAnimation(MonsterAnimationType::HIT);
-	//}
-	//else if(ArmorType == EArmorType::LOW)
-	//{
-	//	MonsterController->StopMovement();
-	//	AnimInstance->StopMontage(MontageMap[AnimationType]);
-	//	if (MontageEndEventMap.Contains(AnimationType))
-	//		MontageEndEventMap[AnimationType]();
-	//
-	//	ChangeActionType(MonsterActionType::NONE);
-	//	ChangeMontageAnimation(MonsterAnimationType::HIT);
-	//}
 	return DamageAmount;
 }
 

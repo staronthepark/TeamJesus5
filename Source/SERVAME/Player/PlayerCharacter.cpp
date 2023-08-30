@@ -48,7 +48,7 @@ APlayerCharacter::APlayerCharacter()
 	LocketSKMesh->SetupAttachment(GetMesh(), FName("Root"));
 
 	CameraBoom1 = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom1"));
-	CameraBoom1->SetupAttachment(GetMesh(), FName("Ref_Bip001-Spine"));
+	CameraBoom1->SetupAttachment(GetMesh(), FName("Ref_SIMON_COM"));
 	CameraBoom1->TargetArmLength = 0.5f;
 	CameraBoom1->bUsePawnControlRotation = true; 
 
@@ -863,6 +863,7 @@ APlayerCharacter::APlayerCharacter()
 			IsExecute = false;			
 			GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 			CheckInputKey();
+			ShoulderView(!IsPhaseTwo);
 			Imotal = false;
 			if(!IsGrab)
 			TargetCameraBoomLength = IsShoulderView ? ShoulderViewCameraLength : BackViewCameraLength;
@@ -1741,13 +1742,13 @@ void APlayerCharacter::LockOn()
 			SetSpeed(SpeedMap[IsLockOn || IsGrab][IsSprint]);
 		}
 
-		if (IsPhaseTwo)
-			ShoulderView(false);
 
+		ShoulderView(!IsPhaseTwo);
 		CurRotateIndex = 1;
 	}
 	else
 	{
+		ShoulderView(true);
 		if(TargetComp != nullptr)
 		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false, TargetComp);
 		TargetComp = nullptr;
@@ -1757,7 +1758,7 @@ void APlayerCharacter::LockOn()
 	}
 
 	if (CurActionType == ActionType::MOVE && AnimInstance->PlayerAnimationType != AnimationType::ENDOFSPRINT && 
-		AnimInstance->PlayerAnimationType != AnimationType::HEAL && !IsGrab)
+		AnimInstance->PlayerAnimationType != AnimationType::HEAL && !IsGrab && PlayerCurAction != PlayerAction::CANTACT)
 	{
 		CheckInputKey();
 	}
@@ -1809,7 +1810,9 @@ void APlayerCharacter::GetCompsInScreen(TArray<UPrimitiveComponent*>Array)
 
 void APlayerCharacter::ChangeTarget(CameraDirection CamDirection)
 {
-	if (AnimInstance->PlayerAnimationType == AnimationType::EXECUTIONBOSS)return;
+	if (AnimInstance->PlayerAnimationType == AnimationType::EXECUTIONBOSS
+		|| AnimInstance->PlayerAnimationType == AnimationType::EOSTOEXECUTION ||
+		AnimInstance->PlayerAnimationType == AnimationType::SHIELDATTACK)return;
 	ChangeTargetTime = 0.0f;
 	GetCompsInScreen(TargetCompArray);
 	FVector CameraLocation = CameraBoom1->GetComponentLocation();
@@ -2064,7 +2067,7 @@ void APlayerCharacter::LookTarget()
 	else if (AnimInstance->HeadBoneRotate.Yaw >= 25.0f)AnimInstance->HeadBoneRotate.Yaw = 25.0f;
 
 
-	UE_LOG(LogTemp, Warning, TEXT("%f"), GetController()->GetControlRotation().Yaw);
+	//UE_LOG(LogTemp, Warning, TEXT("%f"), GetController()->GetControlRotation().Yaw);
 
 	if (AnimInstance->PlayerAnimationType != AnimationType::BATTLEDODGE
 		&& AnimInstance->PlayerAnimationType != AnimationType::SPRINT
@@ -2156,6 +2159,8 @@ void APlayerCharacter::PlayExecutionAnimation()
 
 	//ExecuteLocation = GetActorLocation() - ExecuteDirection * 50.0f;
 	//SetActorLocation(ExecuteLocation);
+	ShoulderView(true);
+
 	CanExecution = false;
 	ExecutionCharacter->PlayExecutionAnimation();
 	DeactivateRightWeapon();
@@ -2207,11 +2212,6 @@ void APlayerCharacter::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	AObjectPool& objectpool = AObjectPool::GetInstance();
 	objectpool.SpawnObject(objectpool.ObjectArray[17].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 
-	if (PlayerDataStruct.DamageList.Contains(AnimInstance->PlayerAnimationType))
-	{
-		OtherActor->TakeDamage(PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].Damage, CharacterDamageEvent, nullptr, this);
-		VibrateGamePad(PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].VibrateIntensity, PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].VibrateDuration);
-	}	
 	UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(Cast<ABaseCharacter>(OtherActor));
 
 	if (HitEffectRotatorList.Contains(AnimInstance->PlayerAnimationType))
@@ -2224,7 +2224,14 @@ void APlayerCharacter::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedCompo
 
 		objectpool.SpawnObject(objectpool.ObjectArray[5].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
 		objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
-	}		
+	}
+
+	if (PlayerDataStruct.DamageList.Contains(AnimInstance->PlayerAnimationType))
+	{
+		VibrateGamePad(PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].VibrateIntensity, PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].VibrateDuration);
+		OtherActor->TakeDamage(PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].Damage, CharacterDamageEvent, nullptr, this);
+	}	
+		
 }
 
 void APlayerCharacter::OnSMOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -2245,7 +2252,6 @@ void APlayerCharacter::OnExecutionOverlapBegin(UPrimitiveComponent* OverlappedCo
 		ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
 		CanExecution = true;
 	}
-
 }
 
 void APlayerCharacter::OnExecutionOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)

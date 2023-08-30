@@ -12,7 +12,8 @@
 				"CinematicCamera",
 				"ActorSequence",
 				"Engine",
-				"AIModule"
+				"AIModule",
+				"CoreUObject"
 			]
 		}
 	],

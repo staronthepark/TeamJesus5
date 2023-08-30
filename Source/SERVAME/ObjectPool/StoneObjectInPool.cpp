@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "StoneObjectInPool.h"
 #include "..\Player\PlayerCharacter.h"
 #include "..\Boss_2\JesusBoss2.h"
@@ -18,6 +17,9 @@ AStoneObjectInPool::AStoneObjectInPool()
 
 	BurstEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Stone Burst Effect"));
 	BurstEffect->SetupAttachment(RootComponent);
+
+	StoneMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Stone Mesh"));
+	StoneMesh->SetupAttachment(RootComponent);
 }
 
 void AStoneObjectInPool::BeginPlay()
@@ -39,7 +41,7 @@ void AStoneObjectInPool::Tick(float DeltaTime)
 void AStoneObjectInPool::SetActive(bool active)
 {
 	Super::SetActive(active);
-
+	StoneMesh->SetActive(true);
 	SetActorTickEnabled(false);
 
 	auto Player = Cast<APlayerCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), APlayerCharacter::StaticClass()));
@@ -61,6 +63,7 @@ void AStoneObjectInPool::ReturnObject()
 void AStoneObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	BurstEffect->Activate();
+	StoneMesh->SetActive(false);
 
 	if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
 	{
