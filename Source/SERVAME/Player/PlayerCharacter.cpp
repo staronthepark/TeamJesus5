@@ -1743,10 +1743,12 @@ void APlayerCharacter::LockOn()
 		}
 
 
+		ShoulderView(!IsPhaseTwo);
 		CurRotateIndex = 1;
 	}
 	else
 	{
+		ShoulderView(true);
 		if(TargetComp != nullptr)
 		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false, TargetComp);
 		TargetComp = nullptr;
@@ -1760,10 +1762,6 @@ void APlayerCharacter::LockOn()
 	{
 		CheckInputKey();
 	}
-
-
-	if (IsPhaseTwo && TargetComp != nullptr)
-		ShoulderView(!IsLockOn);
 }
 
 void APlayerCharacter::GetFirstTarget()
