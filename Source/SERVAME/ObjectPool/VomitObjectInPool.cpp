@@ -70,6 +70,8 @@ void AVomitObjectInPool::ReturnObject()
 
 void AVomitObjectInPool::ShootProjectile(FVector target)
 {
+	SpawnEffect->DeactivateImmediate();
+
 	targetLoc = target;
 	startLoc = SphereCollision->GetComponentLocation();
 	FVector outVelocity = FVector::ZeroVector;   // °á°ú Velocity
