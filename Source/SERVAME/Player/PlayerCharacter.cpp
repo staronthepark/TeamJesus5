@@ -1722,9 +1722,6 @@ void APlayerCharacter::LockOn()
 {
 	IsLockOn = !IsLockOn;
 
-	if (IsPhaseTwo)
-		ShoulderView(!IsLockOn);
-
 	if (IsLockOn)
 	{
 		if (TargetComp == nullptr)
@@ -1746,10 +1743,12 @@ void APlayerCharacter::LockOn()
 		}
 
 
+		ShoulderView(!IsPhaseTwo);
 		CurRotateIndex = 1;
 	}
 	else
 	{
+		ShoulderView(true);
 		if(TargetComp != nullptr)
 		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false, TargetComp);
 		TargetComp = nullptr;
@@ -1811,7 +1810,9 @@ void APlayerCharacter::GetCompsInScreen(TArray<UPrimitiveComponent*>Array)
 
 void APlayerCharacter::ChangeTarget(CameraDirection CamDirection)
 {
-	if (AnimInstance->PlayerAnimationType == AnimationType::EXECUTIONBOSS)return;
+	if (AnimInstance->PlayerAnimationType == AnimationType::EXECUTIONBOSS
+		|| AnimInstance->PlayerAnimationType == AnimationType::EOSTOEXECUTION ||
+		AnimInstance->PlayerAnimationType == AnimationType::SHIELDATTACK)return;
 	ChangeTargetTime = 0.0f;
 	GetCompsInScreen(TargetCompArray);
 	FVector CameraLocation = CameraBoom1->GetComponentLocation();
@@ -2160,7 +2161,6 @@ void APlayerCharacter::PlayExecutionAnimation()
 	//SetActorLocation(ExecuteLocation);
 	ShoulderView(true);
 
-	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 	CanExecution = false;
 	ExecutionCharacter->PlayExecutionAnimation();
 	DeactivateRightWeapon();
