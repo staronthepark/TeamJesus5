@@ -48,7 +48,7 @@ APlayerCharacter::APlayerCharacter()
 	LocketSKMesh->SetupAttachment(GetMesh(), FName("Root"));
 
 	CameraBoom1 = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom1"));
-	CameraBoom1->SetupAttachment(GetMesh(), FName("Ref_Bip001-Spine"));
+	CameraBoom1->SetupAttachment(GetMesh(), FName("Ref_SIMON_COM"));
 	CameraBoom1->TargetArmLength = 0.5f;
 	CameraBoom1->bUsePawnControlRotation = true; 
 
@@ -863,6 +863,7 @@ APlayerCharacter::APlayerCharacter()
 			IsExecute = false;			
 			GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 			CheckInputKey();
+			ShoulderView(!IsPhaseTwo);
 			Imotal = false;
 			if(!IsGrab)
 			TargetCameraBoomLength = IsShoulderView ? ShoulderViewCameraLength : BackViewCameraLength;
@@ -1721,6 +1722,9 @@ void APlayerCharacter::LockOn()
 {
 	IsLockOn = !IsLockOn;
 
+	if (IsPhaseTwo)
+		ShoulderView(!IsLockOn);
+
 	if (IsLockOn)
 	{
 		if (TargetComp == nullptr)
@@ -1741,8 +1745,6 @@ void APlayerCharacter::LockOn()
 			SetSpeed(SpeedMap[IsLockOn || IsGrab][IsSprint]);
 		}
 
-		if (IsPhaseTwo)
-			ShoulderView(false);
 
 		CurRotateIndex = 1;
 	}
@@ -1757,7 +1759,7 @@ void APlayerCharacter::LockOn()
 	}
 
 	if (CurActionType == ActionType::MOVE && AnimInstance->PlayerAnimationType != AnimationType::ENDOFSPRINT && 
-		AnimInstance->PlayerAnimationType != AnimationType::HEAL && !IsGrab)
+		AnimInstance->PlayerAnimationType != AnimationType::HEAL && !IsGrab && PlayerCurAction != PlayerAction::CANTACT)
 	{
 		CheckInputKey();
 	}
@@ -2156,6 +2158,9 @@ void APlayerCharacter::PlayExecutionAnimation()
 
 	//ExecuteLocation = GetActorLocation() - ExecuteDirection * 50.0f;
 	//SetActorLocation(ExecuteLocation);
+	ShoulderView(true);
+
+	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 	CanExecution = false;
 	ExecutionCharacter->PlayExecutionAnimation();
 	DeactivateRightWeapon();
@@ -2245,7 +2250,6 @@ void APlayerCharacter::OnExecutionOverlapBegin(UPrimitiveComponent* OverlappedCo
 		ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
 		CanExecution = true;
 	}
-
 }
 
 void APlayerCharacter::OnExecutionOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
