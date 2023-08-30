@@ -1275,8 +1275,12 @@ void AJesusBoss2::RotateToPlayerInterp()
 
 void AJesusBoss2::LeftRotateToPlayerInterp()
 {
-	FRotator ToTarget = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), PlayerCharacter->GetActorLocation());
-	UE_LOG(LogTemp, Warning, TEXT("Yaw : %f"), ToTarget.Yaw);
+	FVector Direction = GetActorLocation() - PlayerCharacter->GetActorLocation();
+	Direction.Z = 0.0f; 
+
+	FRotator Rotator = FRotationMatrix::MakeFromX(Direction).Rotator();
+	float Angle = Rotator.Yaw;
+	UE_LOG(LogTemp, Warning, TEXT("Yaw : %f"), Angle);
 	
 	FRotator CurrentRotation = GetActorRotation();
 
@@ -1290,8 +1294,12 @@ void AJesusBoss2::LeftRotateToPlayerInterp()
 
 void AJesusBoss2::RightRotateToPlayerInterp()
 {
-	FRotator ToTarget = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), PlayerCharacter->GetActorLocation());
-	UE_LOG(LogTemp, Warning, TEXT("Yaw : %f"), ToTarget.Yaw);
+	FVector Direction = GetActorLocation() - PlayerCharacter->GetActorLocation();
+	Direction.Z = 0.0f;
+
+	FRotator Rotator = FRotationMatrix::MakeFromX(Direction).Rotator();
+	float Angle = Rotator.Yaw;
+	UE_LOG(LogTemp, Warning, TEXT("Yaw : %f"), Angle);
 
 	FRotator CurrentRotation = GetActorRotation();
 
