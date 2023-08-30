@@ -2160,7 +2160,6 @@ void APlayerCharacter::PlayExecutionAnimation()
 	//SetActorLocation(ExecuteLocation);
 	ShoulderView(true);
 
-	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 	CanExecution = false;
 	ExecutionCharacter->PlayExecutionAnimation();
 	DeactivateRightWeapon();
