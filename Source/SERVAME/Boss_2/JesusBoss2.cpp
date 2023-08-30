@@ -488,15 +488,18 @@ AJesusBoss2::AJesusBoss2()
 			else
 				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
 
-			if (IsBLBR.Get<0>())
+			if (Type != Boss2AnimationType::RIGHT_TURN_ATTACK && Type != Boss2AnimationType::LEFT_TURN_ATTACK)
 			{
-				PlayAttackAnim(Boss2AnimationType::RIGHT_TURN_ATTACK);
-				return; 
-			}
-			else if (IsBLBR.Get<1>())
-			{
-				PlayAttackAnim(Boss2AnimationType::LEFT_TURN_ATTACK);
-				return;
+				if (IsBLBR.Get<0>())
+				{
+					PlayAttackAnim(Boss2AnimationType::RIGHT_TURN_ATTACK);
+					return;
+				}
+				else if (IsBLBR.Get<1>())
+				{
+					PlayAttackAnim(Boss2AnimationType::LEFT_TURN_ATTACK);
+					return;
+				}
 			}
 
 			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
@@ -531,16 +534,19 @@ AJesusBoss2::AJesusBoss2()
 				InitPercentageMap[CurrentActionTemp.AttackType]();
 			else
 				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
-
-			if (PlayerDirection == B2_LEFT || IsBLBR.Get<0>())
+	
+			if (Type != Boss2AnimationType::RIGHT_TURN_ATTACK && Type != Boss2AnimationType::LEFT_TURN_ATTACK)
 			{
-				PlayAttackAnim(Boss2AnimationType::RIGHT_TURN_ATTACK);
-				return;
-			}
-			else if (PlayerDirection == B2_RIGHT || IsBLBR.Get<1>())
-			{
-				PlayAttackAnim(Boss2AnimationType::LEFT_TURN_ATTACK);
-				return;
+				if (PlayerDirection == B2_LEFT || IsBLBR.Get<0>())
+				{
+					PlayAttackAnim(Boss2AnimationType::RIGHT_TURN_ATTACK);
+					return;
+				}
+				else if (PlayerDirection == B2_RIGHT || IsBLBR.Get<1>())
+				{
+					PlayAttackAnim(Boss2AnimationType::LEFT_TURN_ATTACK);
+					return;
+				}
 			}
 
 			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
@@ -579,15 +585,18 @@ AJesusBoss2::AJesusBoss2()
 				return;
 			}
 
-			if (PlayerDirection == B2_LEFT || IsBLBR.Get<0>())
+			if (Type != Boss2AnimationType::RIGHT_TURN_ATTACK && Type != Boss2AnimationType::LEFT_TURN_ATTACK)
 			{
-				PlayAttackAnim(Boss2AnimationType::RIGHT_TURN_ATTACK);
-				return;
-			}
-			else if (PlayerDirection == B2_RIGHT || IsBLBR.Get<1>())
-			{
-				PlayAttackAnim(Boss2AnimationType::LEFT_TURN_ATTACK);
-				return;
+				if (PlayerDirection == B2_LEFT || IsBLBR.Get<0>())
+				{
+					PlayAttackAnim(Boss2AnimationType::RIGHT_TURN_ATTACK);
+					return;
+				}
+				else if (PlayerDirection == B2_RIGHT || IsBLBR.Get<1>())
+				{
+					PlayAttackAnim(Boss2AnimationType::LEFT_TURN_ATTACK);
+					return;
+				}
 			}
 
 			SetBTAction(GetRandomPattern(Dist));
@@ -1261,6 +1270,9 @@ void AJesusBoss2::RotateToPlayerInterp()
 
 void AJesusBoss2::LeftRotateToPlayerInterp()
 {
+	FRotator ToTarget = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), PlayerCharacter->GetActorLocation());
+	UE_LOG(LogTemp, Warning, TEXT("Yaw : %f"), ToTarget.Yaw);
+	
 	FRotator CurrentRotation = GetActorRotation();
 
 	float RotationAngle = DesiredRotationAngle;
@@ -1273,6 +1285,9 @@ void AJesusBoss2::LeftRotateToPlayerInterp()
 
 void AJesusBoss2::RightRotateToPlayerInterp()
 {
+	FRotator ToTarget = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), PlayerCharacter->GetActorLocation());
+	UE_LOG(LogTemp, Warning, TEXT("Yaw : %f"), ToTarget.Yaw);
+
 	FRotator CurrentRotation = GetActorRotation();
 
 	float RotationAngle = -DesiredRotationAngle;
