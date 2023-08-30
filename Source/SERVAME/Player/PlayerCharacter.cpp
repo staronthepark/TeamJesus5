@@ -1722,9 +1722,6 @@ void APlayerCharacter::LockOn()
 {
 	IsLockOn = !IsLockOn;
 
-	if (IsPhaseTwo)
-		ShoulderView(!IsLockOn);
-
 	if (IsLockOn)
 	{
 		if (TargetComp == nullptr)
@@ -1763,6 +1760,10 @@ void APlayerCharacter::LockOn()
 	{
 		CheckInputKey();
 	}
+
+
+	if (IsPhaseTwo && TargetComp != nullptr)
+		ShoulderView(!IsLockOn);
 }
 
 void APlayerCharacter::GetFirstTarget()
