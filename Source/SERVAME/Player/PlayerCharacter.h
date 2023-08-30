@@ -177,8 +177,6 @@ public:
 	bool DebugMode;
 	bool CanExecution;
 
-	bool ExecutionNextAnim;
-
 	float ShieldDashSpeed;
 
 	int ShieldCount;

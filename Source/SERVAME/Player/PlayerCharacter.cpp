@@ -863,6 +863,7 @@ APlayerCharacter::APlayerCharacter()
 			IsExecute = false;			
 			GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 			CheckInputKey();
+			ExecutionCharacter = nullptr;
 			ShoulderView(!IsPhaseTwo);
 			Imotal = false;
 			if(!IsGrab)
@@ -2156,12 +2157,24 @@ void APlayerCharacter::PlayExecutionAnimation()
 	IsExecute = true;
 	//ExecuteDirection = ExecutionGetActorLocation() - GetActorLocation();
 	//ExecuteDirection.Normalize();
-
 	//ExecuteLocation = GetActorLocation() - ExecuteDirection * 50.0f;
 	//SetActorLocation(ExecuteLocation);
-	ShoulderView(true);
 
-	CanExecution = false;
+	if (!IsLockOn)
+	{
+		LockOn();
+	}
+
+	if (TargetComp != nullptr)
+	{
+		if (TargetComp->GetOwner() != ExecutionCharacter)
+		{
+			Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false, TargetComp);
+			TargetComp = ExecutionCharacter->LockOnComp;
+			Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true, TargetComp);
+		}
+	}
+	ShoulderView(true);
 	ExecutionCharacter->PlayExecutionAnimation();
 	DeactivateRightWeapon();
 	DeactivateSMOverlap();
@@ -2247,32 +2260,28 @@ void APlayerCharacter::OnSMOverlapEnd(UPrimitiveComponent* OverlappedComponent, 
 
 void APlayerCharacter::OnExecutionOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!IsExecute && !CanExecution)
+	ABaseCharacter * character = Cast<ABaseCharacter>(OtherActor);
+	if (!character->CanExecution)return;
+	if (!IsExecute && ExecutionCharacter == nullptr)
 	{
-		ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
-		CanExecution = true;
+		ExecutionCharacter = character;
 	}
 }
 
 void APlayerCharacter::OnExecutionOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (!IsExecute && !CanExecution)
+	if (!IsExecute)
 	{
 		ExecutionCharacter = nullptr;
-		CanExecution = false;
 	}
 }
 
 void APlayerCharacter::OnParryingOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!IsLockOn)
-	{
-		LockOn();
-	}
-
-	UGameplayStatics::SetGlobalTimeDilation(this, .5f);
+	//UGameplayStatics::SetGlobalTimeDilation(this, .5f);
+	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
 	Imotal = true;
-	BossParryingSequncePlayer->Play();
+	//BossParryingSequncePlayer->Play();
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[15].ObjClass, GetActorLocation(), FRotator(90, 180, 0));
 	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
@@ -2281,10 +2290,6 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 {
 	if (IsGrab)return;
 	
-	if (!IsLockOn)
-	{
-		LockOn();
-	}
 
 	ShieldCount = 0;
 	PlayerHUD->ClearShield();
@@ -2295,7 +2300,7 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[39].ObjClass, ShieldMeshComp->GetComponentLocation(), GetActorRotation() + FRotator(0, 90, 0));
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 	PlayerDataStruct.ShieldHP = 0;
-	CanExecution = true;
+	IsExecute = true;
 	IsCollisionCamera = true;
 	Imotal = true;
 	ChangeActionType(ActionType::DEAD);	
@@ -2338,9 +2343,9 @@ void APlayerCharacter::DeactivateSMOverlap()
 
 void APlayerCharacter::Attack()
 {
-	if (ExecutionCharacter && CanExecution)
+	if (ExecutionCharacter && ExecutionCharacter->CanExecution)
 	{
-		if (ExecutionCharacter->CanExecution)
+		if (ExecutionCharacter)
 		{
 			PlayExecutionAnimation();
 			return;
@@ -2374,9 +2379,9 @@ void APlayerCharacter::BasicAttack()
 
 void APlayerCharacter::PowerAttack()
 {
-	if (ExecutionCharacter && CanExecution)
+	if (ExecutionCharacter && ExecutionCharacter->CanExecution)
 	{
-		if (ExecutionCharacter->CanExecution)
+		if (ExecutionCharacter)
 		{
 			PlayExecutionAnimation();
 			return;
