@@ -1812,7 +1812,9 @@ void APlayerCharacter::GetCompsInScreen(TArray<UPrimitiveComponent*>Array)
 
 void APlayerCharacter::ChangeTarget(CameraDirection CamDirection)
 {
-	if (AnimInstance->PlayerAnimationType == AnimationType::EXECUTIONBOSS)return;
+	if (AnimInstance->PlayerAnimationType == AnimationType::EXECUTIONBOSS
+		|| AnimInstance->PlayerAnimationType == AnimationType::EOSTOEXECUTION ||
+		AnimInstance->PlayerAnimationType == AnimationType::SHIELDATTACK)return;
 	ChangeTargetTime = 0.0f;
 	GetCompsInScreen(TargetCompArray);
 	FVector CameraLocation = CameraBoom1->GetComponentLocation();
