@@ -22,6 +22,10 @@ AJesusBoss2::AJesusBoss2()
 	Boss2HitCollision->SetupAttachment(GetMesh(), FName("LockOn_Bone"));
 	Boss2HitCollision->SetCollisionProfileName("AIHit");
 
+	Boss2BodyCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Boss2 Body Collision"));
+	Boss2BodyCollision->SetupAttachment(GetMesh(), FName("Bip001-Spine2"));
+	Boss2BodyCollision->SetCollisionProfileName("AIPhysics");
+
 	HeadLockOnWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget"));
 	HeadLockOnWidgetComp->SetupAttachment(GetMesh(), FName("Bip001-Head"));
 	LeftArmLockOnWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget2"));
@@ -370,6 +374,7 @@ AJesusBoss2::AJesusBoss2()
 				RightHandSocket, FRotator::ZeroRotator);
 			Boss2->StonePoolObj = Cast<AStoneObjectInPool>(PoolObject);
 			Boss2->StonePoolObj->SceneComp->AttachToComponent(Boss2->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("RHand"));
+			Boss2->StonePoolObj->StoneMesh->SetActive(true);
 			Boss2->IsAttackMontageEnd = false;
 			Boss2->CanMove = false;
 		}));
@@ -1269,10 +1274,7 @@ void AJesusBoss2::RotateToPlayerInterp()
 }
 
 void AJesusBoss2::LeftRotateToPlayerInterp()
-{
-	FRotator ToTarget = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), PlayerCharacter->GetActorLocation());
-	UE_LOG(LogTemp, Warning, TEXT("Yaw : %f"), ToTarget.Yaw);
-	
+{	
 	FRotator CurrentRotation = GetActorRotation();
 
 	float RotationAngle = DesiredRotationAngle;
@@ -1285,12 +1287,9 @@ void AJesusBoss2::LeftRotateToPlayerInterp()
 
 void AJesusBoss2::RightRotateToPlayerInterp()
 {
-	FRotator ToTarget = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), PlayerCharacter->GetActorLocation());
-	UE_LOG(LogTemp, Warning, TEXT("Yaw : %f"), ToTarget.Yaw);
-
 	FRotator CurrentRotation = GetActorRotation();
 
-	float RotationAngle = -DesiredRotationAngle;
+	float RotationAngle = DesiredRotationAngle;
 
 	FRotator RotationAmount(0.0f, RotationAngle, 0.0f);
 
@@ -2003,11 +2002,27 @@ void AJesusBoss2::LockOff()
 	LastPlayerLoc = PlayerCharacter->GetActorLocation();
 }
 
-void AJesusBoss2::LeftLockOn() { LeftTurnAttackLockOn = true; }
+void AJesusBoss2::LeftLockOn()
+{
+	LeftTurnAttackLockOn = true;
+
+	FVector Direction = GetActorLocation() - PlayerCharacter->GetActorLocation();
+	Direction.Z = 0.0f;
+	FRotator Rotator = FRotationMatrix::MakeFromX(Direction).Rotator();
+	DesiredRotationAngle = Rotator.Yaw;
+}
 
 void AJesusBoss2::LeftLockOff() { LeftTurnAttackLockOn = false; }
 
-void AJesusBoss2::RightLockOn() { RightTurnAttackLockOn = true; }
+void AJesusBoss2::RightLockOn() 
+{ 
+	RightTurnAttackLockOn = true; 
+
+	FVector Direction = GetActorLocation() - PlayerCharacter->GetActorLocation();
+	Direction.Z = 0.0f;
+	FRotator Rotator = FRotationMatrix::MakeFromX(Direction).Rotator();
+	DesiredRotationAngle = Rotator.Yaw;
+}
 
 void AJesusBoss2::RightLockOff() { RightTurnAttackLockOn = false; }
 
@@ -2016,6 +2031,7 @@ void AJesusBoss2::ThrowStone()
 	if (StonePoolObj != nullptr)
 	{
 		StonePoolObj->MoveDir = PlayerCharacter->GetActorLocation() - StonePoolObj->GetActorLocation();
+		StonePoolObj->MoveDir.Normalize();
 		StonePoolObj->SceneComp->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 		StonePoolObj->SetActorTickEnabled(true);
 	}

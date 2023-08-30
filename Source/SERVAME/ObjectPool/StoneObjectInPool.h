@@ -39,6 +39,9 @@ public:
 	UJesusGameInstance* GameInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stone")
+	UStaticMeshComponent* StoneMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stone")
 	TObjectPtr<UNiagaraComponent> BurstEffect;
 
 	FTimerHandle LifeTimer;
