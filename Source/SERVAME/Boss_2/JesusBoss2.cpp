@@ -22,6 +22,10 @@ AJesusBoss2::AJesusBoss2()
 	Boss2HitCollision->SetupAttachment(GetMesh(), FName("LockOn_Bone"));
 	Boss2HitCollision->SetCollisionProfileName("AIHit");
 
+	Boss2BodyCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Boss2 Body Collision"));
+	Boss2BodyCollision->SetupAttachment(GetMesh(), FName("Bip001-Spine2"));
+	Boss2BodyCollision->SetCollisionProfileName("AIPhysics");
+
 	HeadLockOnWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget"));
 	HeadLockOnWidgetComp->SetupAttachment(GetMesh(), FName("Bip001-Head"));
 	LeftArmLockOnWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget2"));

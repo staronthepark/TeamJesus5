@@ -258,6 +258,9 @@ public:
 	UCapsuleComponent* Boss2HitCollision;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCapsuleComponent* Boss2BodyCollision;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USphereComponent> LeftAtkCollision;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USphereComponent> RightAtkCollision;
