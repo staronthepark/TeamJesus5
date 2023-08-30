@@ -374,7 +374,6 @@ AJesusBoss2::AJesusBoss2()
 				RightHandSocket, FRotator::ZeroRotator);
 			Boss2->StonePoolObj = Cast<AStoneObjectInPool>(PoolObject);
 			Boss2->StonePoolObj->SceneComp->AttachToComponent(Boss2->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("RHand"));
-			Boss2->StonePoolObj->StoneMesh->SetActive(true);
 			Boss2->IsAttackMontageEnd = false;
 			Boss2->CanMove = false;
 		}));
@@ -2035,7 +2034,7 @@ void AJesusBoss2::RightLockOn()
 	float AngleRadians = FMath::Acos(FVector::DotProduct(Direction, ForwardVector));
 	float AngleDegrees = FMath::RadiansToDegrees(AngleRadians);
 
-	DesiredRotationAngle = (AngleDegrees - 60);
+	DesiredRotationAngle = (AngleDegrees - 70);
 }
 
 void AJesusBoss2::RightLockOff() { RightTurnAttackLockOn = false; }
