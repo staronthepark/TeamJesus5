@@ -70,6 +70,8 @@ void AVomitObjectInPool::ReturnObject()
 
 void AVomitObjectInPool::ShootProjectile(FVector target)
 {
+	SpawnEffect->DeactivateImmediate();
+
 	targetLoc = target;
 	startLoc = SphereCollision->GetComponentLocation();
 	FVector outVelocity = FVector::ZeroVector;   // °á°ú Velocity
@@ -107,8 +109,6 @@ void AVomitObjectInPool::OnGroundOverlap(UPrimitiveComponent* OverlappedComponen
 {
 	BurstEffect->Activate();
 	ProjectileEffect->Deactivate();
-	SpawnEffect->Deactivate();
-	DispersionEffect->Deactivate();
 
 	IsHitGround = true;
 	SetActorTickEnabled(false);

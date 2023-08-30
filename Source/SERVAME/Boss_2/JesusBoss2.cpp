@@ -488,15 +488,18 @@ AJesusBoss2::AJesusBoss2()
 			else
 				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
 
-			if (IsBLBR.Get<0>())
+			if (Type != Boss2AnimationType::RIGHT_TURN_ATTACK && Type != Boss2AnimationType::LEFT_TURN_ATTACK)
 			{
-				PlayAttackAnim(Boss2AnimationType::RIGHT_TURN_ATTACK);
-				return; 
-			}
-			else if (IsBLBR.Get<1>())
-			{
-				PlayAttackAnim(Boss2AnimationType::LEFT_TURN_ATTACK);
-				return;
+				if (IsBLBR.Get<0>())
+				{
+					PlayAttackAnim(Boss2AnimationType::RIGHT_TURN_ATTACK);
+					return;
+				}
+				else if (IsBLBR.Get<1>())
+				{
+					PlayAttackAnim(Boss2AnimationType::LEFT_TURN_ATTACK);
+					return;
+				}
 			}
 
 			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
@@ -531,16 +534,19 @@ AJesusBoss2::AJesusBoss2()
 				InitPercentageMap[CurrentActionTemp.AttackType]();
 			else
 				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
-
-			if (PlayerDirection == B2_LEFT || IsBLBR.Get<0>())
+	
+			if (Type != Boss2AnimationType::RIGHT_TURN_ATTACK && Type != Boss2AnimationType::LEFT_TURN_ATTACK)
 			{
-				PlayAttackAnim(Boss2AnimationType::RIGHT_TURN_ATTACK);
-				return;
-			}
-			else if (PlayerDirection == B2_RIGHT || IsBLBR.Get<1>())
-			{
-				PlayAttackAnim(Boss2AnimationType::LEFT_TURN_ATTACK);
-				return;
+				if (PlayerDirection == B2_LEFT || IsBLBR.Get<0>())
+				{
+					PlayAttackAnim(Boss2AnimationType::RIGHT_TURN_ATTACK);
+					return;
+				}
+				else if (PlayerDirection == B2_RIGHT || IsBLBR.Get<1>())
+				{
+					PlayAttackAnim(Boss2AnimationType::LEFT_TURN_ATTACK);
+					return;
+				}
 			}
 
 			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
@@ -579,15 +585,18 @@ AJesusBoss2::AJesusBoss2()
 				return;
 			}
 
-			if (PlayerDirection == B2_LEFT || IsBLBR.Get<0>())
+			if (Type != Boss2AnimationType::RIGHT_TURN_ATTACK && Type != Boss2AnimationType::LEFT_TURN_ATTACK)
 			{
-				PlayAttackAnim(Boss2AnimationType::RIGHT_TURN_ATTACK);
-				return;
-			}
-			else if (PlayerDirection == B2_RIGHT || IsBLBR.Get<1>())
-			{
-				PlayAttackAnim(Boss2AnimationType::LEFT_TURN_ATTACK);
-				return;
+				if (PlayerDirection == B2_LEFT || IsBLBR.Get<0>())
+				{
+					PlayAttackAnim(Boss2AnimationType::RIGHT_TURN_ATTACK);
+					return;
+				}
+				else if (PlayerDirection == B2_RIGHT || IsBLBR.Get<1>())
+				{
+					PlayAttackAnim(Boss2AnimationType::LEFT_TURN_ATTACK);
+					return;
+				}
 			}
 
 			SetBTAction(GetRandomPattern(Dist));
@@ -1110,6 +1119,11 @@ void AJesusBoss2::PostInitializeComponents()
 		Boss2AnimInstance->OnJumpStart.AddUObject(this, &AJesusBoss2::SlerpJump);
 		Boss2AnimInstance->OnJumpEnd.AddUObject(this, &AJesusBoss2::SlerpJumpEnd);
 		Boss2AnimInstance->OnStoneThrow.AddUObject(this, &AJesusBoss2::ThrowStone);
+		Boss2AnimInstance->OnLeftLockOn.AddUObject(this, &AJesusBoss2::LeftLockOn);
+		Boss2AnimInstance->OnLeftLockOff.AddUObject(this, &AJesusBoss2::LeftLockOff);
+		Boss2AnimInstance->OnRightLockOn.AddUObject(this, &AJesusBoss2::RightLockOn);
+		Boss2AnimInstance->OnRightLockOff.AddUObject(this, &AJesusBoss2::RightLockOff);
+
 
 		Boss2AnimInstance->OnMontageEnded.AddDynamic(this, &AJesusBoss2::GetEndedMontage);
 	}
@@ -1185,6 +1199,12 @@ void AJesusBoss2::Tick(float DeltaTime)
 	if (AttackLockOn)
 		RotateToPlayerInterp();
 
+	if (LeftTurnAttackLockOn)
+		LeftRotateToPlayerInterp();
+
+	if (RightTurnAttackLockOn)
+		RightRotateToPlayerInterp();
+
 	if (JumpMoveStart)
 		JumpMove();
 
@@ -1202,16 +1222,6 @@ void AJesusBoss2::Tick(float DeltaTime)
 		AIController->MoveWhenArrived(CirclePoints[CircleIndexCount]);
 		RotateToPlayerInterp();
 	}
-
-	//if (PlayerCharacter != nullptr)
-	//{
-	//	auto Dir = PlayerCharacter->GetActorLocation() - GetActorLocation();
-	//	float AngleInRadians = FMath::Atan2(-Dir.Y, -Dir.X);
-
-	//	AngleToPlayer = FMath::RadiansToDegrees(AngleInRadians);
-
-	//	UE_LOG(LogTemp, Warning, TEXT("Angle : %f"), AngleToPlayer);
-	//}
 }
 
 /*=====================
@@ -1255,6 +1265,36 @@ void AJesusBoss2::RotateToPlayerInterp()
 {
 	FRotator ToTarget = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), PlayerCharacter->GetActorLocation());
 	FRotator LookAtRotation = FMath::RInterpTo(GetActorRotation(), ToTarget, GetWorld()->DeltaTimeSeconds, 4.f);
+	SetActorRotation(LookAtRotation);
+}
+
+void AJesusBoss2::LeftRotateToPlayerInterp()
+{
+	FRotator ToTarget = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), PlayerCharacter->GetActorLocation());
+	UE_LOG(LogTemp, Warning, TEXT("Yaw : %f"), ToTarget.Yaw);
+	
+	FRotator CurrentRotation = GetActorRotation();
+
+	float RotationAngle = DesiredRotationAngle;
+
+	FRotator RotationAmount(0.0f, RotationAngle, 0.0f);
+
+	FRotator LookAtRotation = FMath::RInterpTo(GetActorRotation(), CurrentRotation + RotationAmount, GetWorld()->DeltaTimeSeconds, 4.f);
+	SetActorRotation(LookAtRotation);
+}
+
+void AJesusBoss2::RightRotateToPlayerInterp()
+{
+	FRotator ToTarget = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), PlayerCharacter->GetActorLocation());
+	UE_LOG(LogTemp, Warning, TEXT("Yaw : %f"), ToTarget.Yaw);
+
+	FRotator CurrentRotation = GetActorRotation();
+
+	float RotationAngle = -DesiredRotationAngle;
+
+	FRotator RotationAmount(0.0f, RotationAngle, 0.0f);
+
+	FRotator LookAtRotation = FMath::RInterpTo(GetActorRotation(), CurrentRotation + RotationAmount, GetWorld()->DeltaTimeSeconds, 4.f);
 	SetActorRotation(LookAtRotation);
 }
 
@@ -1878,6 +1918,7 @@ void AJesusBoss2::OnVomitFall()
 		auto CastObject = Cast<AVomitObjectInPool>(PoolObject);
 		CastObject->SphereCollision->AddImpulse(FVector(0, 0, 1200));
 		CastObject->SpawnEffect->Activate();
+		CastObject->ProjectileEffect->Activate();
 		VomitArr.Add(CastObject);
 	}
 
@@ -1890,8 +1931,6 @@ void AJesusBoss2::OnVomitFall()
 				if (NavSystem->GetRandomPointInNavigableRadius(PlayerCharacter->GetActorLocation(), VomitMaxRange, RandomLocation))
 				{
 					VomitArr[i]->DispersionEffect->Activate();
-					VomitArr[i]->ProjectileEffect->Activate();
-					VomitArr[i]->SpawnEffect->DestroyComponent();
 
 					VomitArr[i]->arcValue = 0.5f;
 					VomitArr[i]->ShootProjectile(RandomLocation.Location);
@@ -1963,6 +2002,14 @@ void AJesusBoss2::LockOff()
 	AttackLockOn = false;
 	LastPlayerLoc = PlayerCharacter->GetActorLocation();
 }
+
+void AJesusBoss2::LeftLockOn() { LeftTurnAttackLockOn = true; }
+
+void AJesusBoss2::LeftLockOff() { LeftTurnAttackLockOn = false; }
+
+void AJesusBoss2::RightLockOn() { RightTurnAttackLockOn = true; }
+
+void AJesusBoss2::RightLockOff() { RightTurnAttackLockOn = false; }
 
 void AJesusBoss2::ThrowStone()
 {

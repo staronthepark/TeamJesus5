@@ -250,7 +250,7 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Boss2)
 	bool IsLockOn = false;
 	UPROPERTY(EditAnywhere, Category = Boss2)
-	float RangeAtk = 700.f;
+	float RangeAtk = 1000.f;
 	UPROPERTY(EditAnywhere, Category = Boss2)
 	float MaxAtkRange = 2500.f;
 
@@ -312,6 +312,9 @@ public:
 	int JumpExplosionCnt = 0;
 	FTimerHandle JumpExplosionTimer;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TurnAttackAngle")
+	float DesiredRotationAngle = 150.f;
+
 	int HitCount;
 	float Damage;
 	float AngleToPlayer;
@@ -321,6 +324,8 @@ public:
 	bool CanMove;
 	bool IsPlayerAlive;
 	bool AttackLockOn;
+	bool LeftTurnAttackLockOn;
+	bool RightTurnAttackLockOn;
 	bool IsDead = false;
 	bool IsAttackMontageEnd = true;
 	bool IsMontagePlay = false;
@@ -455,6 +460,9 @@ public:
 	void PlayAttackAnim(Boss2AnimationType Type);
 	void PlayMoveMontage();
 	void RotateToPlayerInterp();
+	void LeftRotateToPlayerInterp();
+	void RightRotateToPlayerInterp();
+
 	void SetLockOn() { AttackLockOn = true; }
 	void SetLockOff() { AttackLockOn = false; LastPlayerLoc = PlayerCharacter->GetActorLocation(); }
 	FVector Lerp(const FVector& start, const FVector& end, const float t);
@@ -503,6 +511,10 @@ public:
 	void OnEnd();
 	void LockOn();
 	void LockOff();
+	void LeftLockOn();
+	void LeftLockOff();
+	void RightLockOn();
+	void RightLockOff();
 	void ThrowStone();
 
 protected:

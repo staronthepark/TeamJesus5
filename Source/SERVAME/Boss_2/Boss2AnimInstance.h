@@ -52,7 +52,10 @@ DECLARE_MULTICAST_DELEGATE(FOnLockOff);
 DECLARE_MULTICAST_DELEGATE(FOnJumpMoveStart);
 DECLARE_MULTICAST_DELEGATE(FOnJumpMoveEnd);
 DECLARE_MULTICAST_DELEGATE(FOnStoneThorw);
-
+DECLARE_MULTICAST_DELEGATE(FOnLeftLockOn);
+DECLARE_MULTICAST_DELEGATE(FOnLeftLockOff);
+DECLARE_MULTICAST_DELEGATE(FOnRightLockOn);
+DECLARE_MULTICAST_DELEGATE(FOnRightLockOff);
 
 UCLASS()
 class SERVAME_API UBoss2AnimInstance : public UBaseAnimInstance
@@ -104,7 +107,14 @@ private:
 	void AnimNotify_JumpEnd();
 	UFUNCTION()
 	void AnimNotify_ThrowStone();
-
+	UFUNCTION()
+	void AnimNotify_LeftLockOn();
+	UFUNCTION()
+	void AnimNotify_LeftLockOff();
+	UFUNCTION()
+	void AnimNotify_RightLockOn();
+	UFUNCTION()
+	void AnimNotify_RightLockOff();
 public:
 	FOnCrossFall OnCrossFall;
 	FOnVomitFall OnVomitFall;
@@ -115,4 +125,8 @@ public:
 	FOnJumpMoveStart OnJumpStart;
 	FOnJumpMoveEnd OnJumpEnd;
 	FOnStoneThorw OnStoneThrow;
+	FOnLeftLockOn OnLeftLockOn;
+	FOnLeftLockOff OnLeftLockOff;
+	FOnRightLockOn OnRightLockOn;
+	FOnRightLockOff OnRightLockOff;
 };

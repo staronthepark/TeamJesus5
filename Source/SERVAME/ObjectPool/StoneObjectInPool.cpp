@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "StoneObjectInPool.h"
 #include "..\Player\PlayerCharacter.h"
 #include "..\Boss_2\JesusBoss2.h"
