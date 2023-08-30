@@ -315,12 +315,10 @@ public:
 	int JumpExplosionCnt = 0;
 	FTimerHandle JumpExplosionTimer;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TurnAttackAngle")
-	float DesiredRotationAngle = 150.f;
 
 	int HitCount;
 	float Damage;
-	float AngleToPlayer;
+	float DesiredRotationAngle = 0.f;
 
 	bool CanAttack = false;
 	bool ChangeSuperAction = false;

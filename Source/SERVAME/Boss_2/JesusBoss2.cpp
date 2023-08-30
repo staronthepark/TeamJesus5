@@ -1274,14 +1274,7 @@ void AJesusBoss2::RotateToPlayerInterp()
 }
 
 void AJesusBoss2::LeftRotateToPlayerInterp()
-{
-	FVector Direction = GetActorLocation() - PlayerCharacter->GetActorLocation();
-	Direction.Z = 0.0f; 
-
-	FRotator Rotator = FRotationMatrix::MakeFromX(Direction).Rotator();
-	float Angle = Rotator.Yaw;
-	UE_LOG(LogTemp, Warning, TEXT("Yaw : %f"), Angle);
-	
+{	
 	FRotator CurrentRotation = GetActorRotation();
 
 	float RotationAngle = DesiredRotationAngle;
@@ -1294,16 +1287,9 @@ void AJesusBoss2::LeftRotateToPlayerInterp()
 
 void AJesusBoss2::RightRotateToPlayerInterp()
 {
-	FVector Direction = GetActorLocation() - PlayerCharacter->GetActorLocation();
-	Direction.Z = 0.0f;
-
-	FRotator Rotator = FRotationMatrix::MakeFromX(Direction).Rotator();
-	float Angle = Rotator.Yaw;
-	UE_LOG(LogTemp, Warning, TEXT("Yaw : %f"), Angle);
-
 	FRotator CurrentRotation = GetActorRotation();
 
-	float RotationAngle = -DesiredRotationAngle;
+	float RotationAngle = DesiredRotationAngle;
 
 	FRotator RotationAmount(0.0f, RotationAngle, 0.0f);
 
@@ -2016,11 +2002,27 @@ void AJesusBoss2::LockOff()
 	LastPlayerLoc = PlayerCharacter->GetActorLocation();
 }
 
-void AJesusBoss2::LeftLockOn() { LeftTurnAttackLockOn = true; }
+void AJesusBoss2::LeftLockOn()
+{
+	LeftTurnAttackLockOn = true;
+
+	FVector Direction = GetActorLocation() - PlayerCharacter->GetActorLocation();
+	Direction.Z = 0.0f;
+	FRotator Rotator = FRotationMatrix::MakeFromX(Direction).Rotator();
+	DesiredRotationAngle = Rotator.Yaw;
+}
 
 void AJesusBoss2::LeftLockOff() { LeftTurnAttackLockOn = false; }
 
-void AJesusBoss2::RightLockOn() { RightTurnAttackLockOn = true; }
+void AJesusBoss2::RightLockOn() 
+{ 
+	RightTurnAttackLockOn = true; 
+
+	FVector Direction = GetActorLocation() - PlayerCharacter->GetActorLocation();
+	Direction.Z = 0.0f;
+	FRotator Rotator = FRotationMatrix::MakeFromX(Direction).Rotator();
+	DesiredRotationAngle = Rotator.Yaw;
+}
 
 void AJesusBoss2::RightLockOff() { RightTurnAttackLockOn = false; }
 
