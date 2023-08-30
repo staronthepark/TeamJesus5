@@ -669,15 +669,6 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
 	MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
 
-	if (CurrentPercent <= MonsterDataStruct.ExcutionHPPercent && AnimationType != MonsterAnimationType::EXECUTION)
-	{
-		PlayerCharacter->ExecutionNextAnim = true;
-		//PlayerCharacter->ExecutionCharacter = this;
-		//PlayerCharacter->PlayExecutionAnimation();
-		return DamageAmount;
-	}
-
-
 	Die(DamageAmount);
 
 	return DamageAmount;
