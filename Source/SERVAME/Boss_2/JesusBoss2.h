@@ -250,7 +250,7 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Boss2)
 	bool IsLockOn = false;
 	UPROPERTY(EditAnywhere, Category = Boss2)
-	float RangeAtk = 700.f;
+	float RangeAtk = 1000.f;
 	UPROPERTY(EditAnywhere, Category = Boss2)
 	float MaxAtkRange = 2500.f;
 
