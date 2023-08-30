@@ -41,7 +41,7 @@ void AStoneObjectInPool::Tick(float DeltaTime)
 void AStoneObjectInPool::SetActive(bool active)
 {
 	Super::SetActive(active);
-
+	StoneMesh->SetActive(true);
 	SetActorTickEnabled(false);
 
 	auto Player = Cast<APlayerCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), APlayerCharacter::StaticClass()));

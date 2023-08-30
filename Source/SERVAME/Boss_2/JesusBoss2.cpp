@@ -374,7 +374,6 @@ AJesusBoss2::AJesusBoss2()
 				RightHandSocket, FRotator::ZeroRotator);
 			Boss2->StonePoolObj = Cast<AStoneObjectInPool>(PoolObject);
 			Boss2->StonePoolObj->SceneComp->AttachToComponent(Boss2->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("RHand"));
-			Boss2->StonePoolObj->StoneMesh->SetActive(true);
 			Boss2->IsAttackMontageEnd = false;
 			Boss2->CanMove = false;
 		}));
@@ -2011,10 +2010,9 @@ void AJesusBoss2::LeftLockOn()
 	FVector Location1 = GetActorLocation();
 	FVector Location2 = PlayerCharacter->GetActorLocation();
 
-	FVector Direction = (Location2 - Location1).GetSafeNormal(); // 두 액터 사이의 방향 벡터 계산
-	FVector ForwardVector = GetActorForwardVector(); // 첫 번째 액터의 전방 벡터 가져오기
+	FVector Direction = (Location2 - Location1).GetSafeNormal(); 
+	FVector ForwardVector = GetActorForwardVector(); 
 
-	// 두 벡터 사이의 각도 계산 (라디안 값을 돌려주기 때문에 필요시 디그리로 변환)
 	float AngleRadians = FMath::Acos(FVector::DotProduct(Direction, ForwardVector));
 	float AngleDegrees = FMath::RadiansToDegrees(AngleRadians);
 
@@ -2030,14 +2028,13 @@ void AJesusBoss2::RightLockOn()
 	FVector Location1 = GetActorLocation();
 	FVector Location2 = PlayerCharacter->GetActorLocation();
 
-	FVector Direction = (Location2 - Location1).GetSafeNormal(); // 두 액터 사이의 방향 벡터 계산
-	FVector ForwardVector = GetActorForwardVector(); // 첫 번째 액터의 전방 벡터 가져오기
+	FVector Direction = (Location2 - Location1).GetSafeNormal(); 
+	FVector ForwardVector = GetActorForwardVector(); 
 
-	// 두 벡터 사이의 각도 계산 (라디안 값을 돌려주기 때문에 필요시 디그리로 변환)
 	float AngleRadians = FMath::Acos(FVector::DotProduct(Direction, ForwardVector));
 	float AngleDegrees = FMath::RadiansToDegrees(AngleRadians);
 
-	DesiredRotationAngle = (AngleDegrees - 45);
+	DesiredRotationAngle = (AngleDegrees - 70);
 }
 
 void AJesusBoss2::RightLockOff() { RightTurnAttackLockOn = false; }
