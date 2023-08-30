@@ -370,6 +370,7 @@ AJesusBoss2::AJesusBoss2()
 				RightHandSocket, FRotator::ZeroRotator);
 			Boss2->StonePoolObj = Cast<AStoneObjectInPool>(PoolObject);
 			Boss2->StonePoolObj->SceneComp->AttachToComponent(Boss2->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("RHand"));
+			Boss2->StonePoolObj->StoneMesh->SetActive(true);
 			Boss2->IsAttackMontageEnd = false;
 			Boss2->CanMove = false;
 		}));
@@ -2016,6 +2017,7 @@ void AJesusBoss2::ThrowStone()
 	if (StonePoolObj != nullptr)
 	{
 		StonePoolObj->MoveDir = PlayerCharacter->GetActorLocation() - StonePoolObj->GetActorLocation();
+		StonePoolObj->MoveDir.Normalize();
 		StonePoolObj->SceneComp->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 		StonePoolObj->SetActorTickEnabled(true);
 	}
