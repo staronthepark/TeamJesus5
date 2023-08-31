@@ -32,7 +32,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<AKinghtMonster*> KnightArr;
 
-	bool Test = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AActor*> TeleportArr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
+	float TeleportVal;
+
+	void TelePort();
 
 	UFUNCTION()
 	void OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

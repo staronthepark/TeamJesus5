@@ -50,6 +50,7 @@ enum class MonsterType : uint8
 	BOSS,
 	TUTORIAL,
 	KNIGHT,
+	NUN,
 };
 
 USTRUCT(BlueprintType)

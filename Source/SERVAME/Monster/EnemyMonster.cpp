@@ -440,7 +440,6 @@ void AEnemyMonster::BeginPlay()
 	ActorCompArray = GetComponentsByTag(USphereComponent::StaticClass(), FName("LockOnTarget"));
 	LockOnComp = Cast<USphereComponent>(ActorCompArray[0]);
 
-		
 	PlayerCharacter = nullptr;
 	
 	GetCharacterMovement()->bOrientRotationToMovement = false;
