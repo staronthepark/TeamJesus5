@@ -15,25 +15,126 @@ ANunMonster::ANunMonster()
 	AttackTrigger = CreateDefaultSubobject<UNunAttackTriggerComp>(TEXT("AttackTriggerCollision"));
 	AttackTrigger->SetupAttachment(GetMesh());
 
+	AnimTypeToStateType.Add(MonsterAnimationType::HEAL1, MonsterStateType::BEFOREATTACK);
+	AnimTypeToStateType.Add(MonsterAnimationType::HEAL2, MonsterStateType::BEFOREATTACK);
+	AnimTypeToStateType.Add(MonsterAnimationType::SPAWNKNIGHT, MonsterStateType::BEFOREATTACK);
+
 	MonsterMoveMap.Add(1, [&]()
 		{
 		});
 
-	//TODO : SetActionByRandomMap 재정의 해서 각종 패턴 넣어주기.
+	TargetDetectEventMap.Add(MonsterAttackType::MELEE, [&]()
+		{
+			ChangeActionType(MonsterActionType::NONE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		});
 	
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::HEAL1, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::HEAL1].Add(true, [&]()
+		{
+			SingleHeal();
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::HEAL1].Add(false, [&]()
+		{
+		});
+
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::HEAL2, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::HEAL2].Add(true, [&]()
+		{
+			MultiHeal();
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::HEAL2].Add(false, [&]()
+		{
+		});
+
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::SPAWNKNIGHT, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::SPAWNKNIGHT].Add(true, [&]()
+		{
+			SpawnKnight();
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::SPAWNKNIGHT].Add(false, [&]()
+		{
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
+		{
+			ChangeActionType(MonsterActionType::NONE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::HEAL1, [&]()
+		{
+			ChangeActionType(MonsterActionType::NONE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::HEAL2, [&]()
+		{
+			ChangeActionType(MonsterActionType::NONE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::SPAWNKNIGHT, [&]()
+		{
+			ChangeActionType(MonsterActionType::NONE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		});
+
+	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
+		{
+			if (percent >= 0.5)
+			{
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
+			}
+			else if (percent < 0.5f)
+			{
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
+			}
+		});
+
+	SetActionByRandomMap.Add(MonsterAnimationType::HEAL1, [&](float percent)
+		{
+			if (percent >= 0.5)
+			{
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::HEAL1);
+			}
+			else if (percent < 0.5f)
+			{
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::HEAL2);
+			}
+		});
+
+	SetActionByRandomMap.Add(MonsterAnimationType::HEAL2, [&](float percent)
+		{
+			if (percent >= 0.5)
+			{
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::HEAL1);
+			}
+			else if (percent < 0.5f)
+			{
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::HEAL2);
+			}
+		});
+
+	SetActionByRandomMap.Add(MonsterAnimationType::SPAWNKNIGHT, [&](float percent)
+		{
+			ChangeActionType(MonsterActionType::ATTACK);
+			ChangeMontageAnimation(MonsterAnimationType::SPAWNKNIGHT);
+		});
 }
 
 void ANunMonster::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetActive(true);
-
-	DeactivateHpBar();
-
 	NunAnimInstance = Cast<UNumAnimInstance>(GetMesh()->GetAnimInstance());
 	WeaponOverlapStaticMeshCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	WeaponCollision->SetupAttachment(GetMesh(), FName("Nun_Weapon_Bone"));
 
@@ -48,17 +149,13 @@ void ANunMonster::BeginPlay()
 	}
 
 	MonsterMoveEventIndex = 1;
-
 }
 
 void ANunMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (NunAnimInstance == nullptr)
-	{
-		NunAnimInstance = Cast<UNumAnimInstance>(GetMesh()->GetAnimInstance());
-	}
+	UE_LOG(LogTemp, Warning, TEXT("%d"), ActionType);
 }
 
 void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -75,15 +172,27 @@ void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* Overlapp
 
 void ANunMonster::OnNunTargetDetectionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	AttackAnimationType = MonsterAnimationType::NONE;
+	//AttackAnimationType = MonsterAnimationType::NONE;
 }
 
 void ANunMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
+	if (NunAnimInstance == nullptr)
+	{
+		NunAnimInstance = Cast<UNumAnimInstance>(GetMesh()->GetAnimInstance());
+	}
+
 	TracePlayer = false;
 	if (StateType == MonsterStateType::CANTACT)
 		return;
 	AttackAnimationType = AttackAnimType;
+
+	//TODO : 거리별 패턴을 위한 Map 생성해주기
+	if (CurrentDistance >= 1000.f)
+		AttackAnimationType = MonsterAnimationType::HEAL1;
+	else if(CurrentDistance >= 800.f)
+		AttackAnimationType = MonsterAnimationType::HEAL2;
+
 	if (ActionType != MonsterActionType::ATTACK)
 	{
 		MonsterController->StopMovement();
@@ -102,7 +211,10 @@ void ANunMonster::EndAttackTrigger(MonsterAnimationType AttackAnimType)
 {
 	if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP)
 		return;
-	TracePlayer = true;
+
+	//TracePlayer = true;
+
+	AttackAnimationType = AttackAnimType;
 }
 
 float ANunMonster::Die(float Dm)
@@ -120,6 +232,47 @@ float ANunMonster::Die(float Dm)
 	}
 
 	return Dm;
+}
+
+void ANunMonster::SpawnKnight()
+{
+
+}
+
+void ANunMonster::MultiHeal()
+{
+	//스피어 콜라이더 만들어서 처리
+}
+
+void ANunMonster::SingleHeal()
+{
+	TArray<float> KnightHpArr;
+	int Min;
+	int index = 0;
+
+	for (int i = 0; i < KnightArr.Num(); i++)
+		KnightHpArr.Push(KnightArr[i]->MonsterDataStruct.CharacterHp);
+	
+	Min = KnightHpArr[0];
+
+	for (int i = 0; i < KnightHpArr.Num(); i++)
+	{
+		if (Min > KnightHpArr[i])
+		{
+			Min = KnightHpArr[i];
+			index = i;
+		}
+	}
+
+	auto TargetKnight = KnightArr[index];
+
+	TargetKnight->MonsterDataStruct.CharacterHp += HealVal;
+
+	if (TargetKnight->MonsterDataStruct.CharacterHp > TargetKnight->MonsterDataStruct.CharacterMaxHp)
+		TargetKnight->MonsterDataStruct.CharacterHp = TargetKnight->MonsterDataStruct.CharacterMaxHp;
+
+	float CurrentPercent = TargetKnight->MonsterDataStruct.CharacterHp / TargetKnight->MonsterDataStruct.CharacterMaxHp;
+	TargetKnight->MonsterHPWidget->SetHP(CurrentPercent);
 }
 
 void ANunMonster::Stun()
@@ -157,6 +310,8 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	
+	ChangeActionType(MonsterActionType::NONE);
+
 	if (Imotal)
 	{
 		return 0;
@@ -164,7 +319,7 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 
 	//MonsterHpWidget->Hp->SetVisibility(ESlateVisibility::Visible);
 	//MonsterHpWidget->HpBG->SetVisibility(ESlateVisibility::Visible);
-	GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
+	//GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
 
 	DeactivateHitCollision();
 
@@ -176,8 +331,11 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 
 	Die(DamageAmount);
 
-	if ((MonsterDataStruct.CharacterMaxHp * TeleportVal) <= MonsterDataStruct.CharacterMaxHp-MonsterDataStruct.CharacterHp)
+	if ((MonsterDataStruct.CharacterMaxHp * TeleportVal) <= MonsterDataStruct.CharacterMaxHp - MonsterDataStruct.CharacterHp)
+	{
 		TelePort();
+		SpawnKnight();
+	}
 
 	return DamageAmount;
 }
@@ -192,6 +350,9 @@ void ANunMonster::TelePort()
 	auto Num = rand() % TeleportArr.Num();
 
 	SetActorLocation(TeleportArr[Num]->GetActorLocation());
+
+	ChangeActionType(MonsterActionType::NONE);
+	ChangeMontageAnimation(MonsterAnimationType::IDLE);
 }
 
 void ANunMonster::CheckMontageEndNotify()

@@ -350,8 +350,6 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 		ChangeMontageAnimation(MonsterAnimationType::HIT);
 	}
 
-	
-
 	return DamageAmount;
 }
 

@@ -29,8 +29,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UNunAttackTriggerComp* AttackTrigger;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
 	TArray<AKinghtMonster*> KnightArr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
+	int KnightNum = 4;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<AActor*> TeleportArr;
@@ -38,7 +40,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
 	float TeleportVal;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
+	float HealVal;
+
 	void TelePort();
+	void SpawnKnight();
+	void SingleHeal();
+	void MultiHeal();
 
 	UFUNCTION()
 	void OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

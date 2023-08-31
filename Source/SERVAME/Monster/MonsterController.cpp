@@ -126,6 +126,9 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 	}
 	else
 	{
+		if (Monster->MyMonsterType == MonsterType::NUN)
+			return;
+
 		UE_LOG(LogTemp, Warning, TEXT("LostPlayer"));
 		Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
 		FindPlayer = false;

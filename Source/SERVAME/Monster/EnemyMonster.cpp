@@ -96,7 +96,8 @@ AEnemyMonster::AEnemyMonster()
 		});
 	CheckDIstanceMap.Add(true, [&]()
 		{
-			CurrentDistance = FVector::Distance(GetActorLocation(), PlayerCharacter->GetActorLocation());
+			if(PlayerCharacter != nullptr)
+				CurrentDistance = FVector::Distance(GetActorLocation(), PlayerCharacter->GetActorLocation());
 		});
 
 	MonsterTickEventMap.Add(MonsterActionType::NONE, [&]()
@@ -147,7 +148,7 @@ AEnemyMonster::AEnemyMonster()
 		{
 			SkeletalMeshComp->SetScalarParameterValueOnMaterials("Opacity", MeshOpacity -= fDeltaTime * 0.25f);
 			SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity  -= fDeltaTime * 0.25f);
-			AnimInstance->StopAllMontages(0.0f);
+
 			if (WeaponOpacity < 0.0f)
 			{
 				SetActorHiddenInGame(true);
@@ -519,6 +520,7 @@ void AEnemyMonster::TickOverlap()
 		return;
 
 	TracePlayer = true;
+	IsDetect = true;
 	MonsterMoveEventIndex = 1;
 
 	TargetDetectEventMap[AttackType]();
@@ -532,6 +534,11 @@ void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* Overlappe
 
 void AEnemyMonster::OnTargetDetectionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	if (MyMonsterType == MonsterType::NUN)
+	{
+		return;
+	}
+
 	IsOverlap = false;
 	AttackAnimationType = MonsterAnimationType::NONE;
 }
@@ -617,7 +624,8 @@ void AEnemyMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 
 void AEnemyMonster::EndAttackTrigger(MonsterAnimationType AttackAnimType)
 {
-	if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP)return;
+	if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP)
+		return;
 	TracePlayer = true;
 }
 
@@ -658,7 +666,7 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 	//MonsterHpWidget->Hp->SetVisibility(ESlateVisibility::Visible);
 	//MonsterHpWidget->HpBG->SetVisibility(ESlateVisibility::Visible);
-	GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
+	//GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
 
 	DeactivateHitCollision();
 
