@@ -37,12 +37,14 @@ public:
 	int KnightNum = 4;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
 	float KnightSpawnRadius = 400.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
+	float KnightSpawnVal = 0.3f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<AActor*> TeleportArr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
-	float TeleportVal;
+	float TeleportVal = 0.1f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
 	float HealVal;

@@ -156,8 +156,6 @@ void ANunMonster::BeginPlay()
 void ANunMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	UE_LOG(LogTemp, Warning, TEXT("%d"), ActionType);
 }
 
 void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -240,11 +238,12 @@ void ANunMonster::SpawnKnight()
 {
 	for (int i = 0; i < KnightNum; i++)
 	{
+		FActorSpawnParameters SpawnParams; 
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;;
 		FVector SpawnLoc = FVector::ZeroVector;
 		FRotator SpawnRot = FRotator::ZeroRotator;
 
-		auto KnightActor = GetWorld()->SpawnActor(KnightClass);
-		auto Knight = Cast<AKinghtMonster>(KnightActor);
+		auto Knight = GetWorld()->SpawnActor<AKinghtMonster>(KnightClass,SpawnLoc,SpawnRot,SpawnParams);
 
 		UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
 		if (NavSystem == nullptr)
@@ -254,7 +253,8 @@ void ANunMonster::SpawnKnight()
 
 		if (NavSystem->GetRandomPointInNavigableRadius(PlayerCharacter->GetActorLocation(), KnightSpawnRadius, RandomLocation))
 		{
-			SpawnLoc = RandomLocation.Location;
+			FVector Temp = RandomLocation.Location;
+			SpawnLoc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
 			SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
 		}
 
@@ -368,11 +368,13 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 
 	Die(DamageAmount);
 
+	//TODO : 연산 오류 있음. 코드 수정해야함
 	if ((MonsterDataStruct.CharacterMaxHp * TeleportVal) <= MonsterDataStruct.CharacterMaxHp - MonsterDataStruct.CharacterHp)
-	{
 		TelePort();
+
+	if ((MonsterDataStruct.CharacterMaxHp * KnightSpawnVal) <= MonsterDataStruct.CharacterMaxHp - MonsterDataStruct.CharacterHp)
 		SpawnKnight();
-	}
+
 
 	return DamageAmount;
 }

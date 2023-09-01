@@ -717,6 +717,9 @@ void AEnemyMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (testtest)
+		return;
+
 	fDeltaTime = DeltaTime;
 
 	CheckDIstanceMap[IsDetect]();
@@ -741,8 +744,8 @@ void AEnemyMonster::ActivateLockOnImage(bool value, UPrimitiveComponent* comp)
 
 bool AEnemyMonster::IsAlive()
 {
-	if(MonsterDataStruct.CharacterHp > 0)
-	return true;
+	if (MonsterDataStruct.CharacterHp > 0)
+		return true;
 	return false;
 }
 

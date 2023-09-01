@@ -86,6 +86,9 @@ class SERVAME_API AEnemyMonster : public ABaseCharacter
 	GENERATED_BODY()
 	
 public:
+
+	bool testtest = false;
+
 	AEnemyMonster();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

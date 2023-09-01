@@ -91,6 +91,9 @@ void AKinghtMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (testtest)
+		return;
+
 	if (IsInterpStart)
 		InterpMove();
 }

@@ -113,6 +113,11 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 	UE_LOG(LogTemp, Log, TEXT("OnPerception"));
 	SetFocus(Stimulus.WasSuccessfullySensed() ? Player : nullptr);
 
+	if (Monster == nullptr)
+	{
+		Monster = Cast<AEnemyMonster>(GetPawn());
+	}
+
 	auto Dist = FVector::Distance(Player->GetActorLocation(), Monster->GetActorLocation());
 
 	//퍼셉션 시야각 거리 - 100
