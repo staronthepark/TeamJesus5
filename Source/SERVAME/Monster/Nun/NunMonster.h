@@ -30,9 +30,13 @@ public:
 	class UNunAttackTriggerComp* AttackTrigger;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
+	TSubclassOf<AKinghtMonster> KnightClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
 	TArray<AKinghtMonster*> KnightArr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
 	int KnightNum = 4;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
+	float KnightSpawnRadius = 400.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<AActor*> TeleportArr;

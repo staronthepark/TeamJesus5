@@ -9,6 +9,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "NunAttackTriggerComp.h"
 #include "Runtime/AIModule/Classes/Perception/AISenseConfig_Sight.h"
+#include "NavigationSystem.h"
+#include <Kismet/KismetMathLibrary.h>
 
 ANunMonster::ANunMonster()
 {
@@ -236,7 +238,31 @@ float ANunMonster::Die(float Dm)
 
 void ANunMonster::SpawnKnight()
 {
+	for (int i = 0; i < KnightNum; i++)
+	{
+		FVector SpawnLoc = FVector::ZeroVector;
+		FRotator SpawnRot = FRotator::ZeroRotator;
 
+		auto KnightActor = GetWorld()->SpawnActor(KnightClass);
+		auto Knight = Cast<AKinghtMonster>(KnightActor);
+
+		UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
+		if (NavSystem == nullptr)
+			return;
+
+		FNavLocation RandomLocation;
+
+		if (NavSystem->GetRandomPointInNavigableRadius(PlayerCharacter->GetActorLocation(), KnightSpawnRadius, RandomLocation))
+		{
+			SpawnLoc = RandomLocation.Location;
+			SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
+		}
+
+		Knight->SetActorLocation(SpawnLoc);
+		Knight->SetActorRotation(SpawnRot);
+
+		KnightArr.Push(Knight);
+	}
 }
 
 void ANunMonster::MultiHeal()
@@ -246,12 +272,23 @@ void ANunMonster::MultiHeal()
 
 void ANunMonster::SingleHeal()
 {
+	if (KnightArr.IsEmpty())
+		return;
+
 	TArray<float> KnightHpArr;
 	int Min;
 	int index = 0;
 
 	for (int i = 0; i < KnightArr.Num(); i++)
+	{
+		if (KnightArr[i]->MonsterDataStruct.CharacterHp <= 0)
+		{
+			KnightArr.Remove(KnightArr[i]);
+			continue;
+		}
 		KnightHpArr.Push(KnightArr[i]->MonsterDataStruct.CharacterHp);
+
+	}
 	
 	Min = KnightHpArr[0];
 
