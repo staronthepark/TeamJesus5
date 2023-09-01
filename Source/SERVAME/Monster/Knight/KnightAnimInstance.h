@@ -10,6 +10,8 @@ DECLARE_MULTICAST_DELEGATE(FOnInterpStart);
 DECLARE_MULTICAST_DELEGATE(FOnInterpEnd);
 DECLARE_MULTICAST_DELEGATE(FOnKnockBackStart);
 DECLARE_MULTICAST_DELEGATE(FOnKnockBackEnd);
+DECLARE_MULTICAST_DELEGATE(FOnSpawningBegin);
+DECLARE_MULTICAST_DELEGATE(FOnSpawningEnd);
 
 UCLASS()
 class SERVAME_API UKnightAnimInstance : public UBaseAnimInstance
@@ -28,6 +30,11 @@ class SERVAME_API UKnightAnimInstance : public UBaseAnimInstance
 	UFUNCTION()
 	void AnimNotify_KnockBackEnd();
 
+	UFUNCTION()
+	void AnimNotify_SpawningBegin();
+
+	UFUNCTION()
+	void AnimNotify_SpawningEnd();
 public:
 	UKnightAnimInstance();	
 	
@@ -35,4 +42,6 @@ public:
 	FOnInterpEnd InterpEnd;
 	FOnKnockBackStart KnockBackStart;
 	FOnKnockBackEnd KnockBackEnd;
+	FOnSpawningBegin SpawningBegin;
+	FOnSpawningEnd SpawningEnd;
 };

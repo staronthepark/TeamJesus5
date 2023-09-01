@@ -20,6 +20,7 @@ enum class MonsterAnimationType : uint8
 	HEAL1,
 	HEAL2,
 	SPAWNKNIGHT,
+	SPAWNING,
 
 	FORWARDMOVE,
 	LEFTMOVE,

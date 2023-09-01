@@ -47,7 +47,14 @@ public:
 	float TeleportVal = 0.1f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
-	float HealVal;
+	float HealVal = 500.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
+	float MultiHealVal = 100.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
+	float HealRadius = 1000.f;
+
+	float TeleportDamageSum = 0.f;
+	float SpawnDamageSum = 0.f;
 
 	void TelePort();
 	void SpawnKnight();

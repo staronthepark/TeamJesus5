@@ -43,6 +43,8 @@ public:
 
 	bool IsInterpStart;
 
+	bool Spawning = false;
+
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool IsKnockBack = false;
 
@@ -57,17 +59,19 @@ public:
 	bool DrawDebugCircle = false;
 	bool CircleWalkEnd = false;
 
-private:
-
-	FTimerHandle KnockBackTimerHandle;
-	FTimerHandle KnockBackDelayTimerHandle;
-	FTimerHandle CircleWalkTimerHandle;
-
 	//Notify
 	void InterpStart();
 	void InterpEnd();
 	void KnockBackStart();
 	void KnockBackEmd();
+	void SpawnBegin();
+	void SpawnEnd();
+
+private:
+
+	FTimerHandle KnockBackTimerHandle;
+	FTimerHandle KnockBackDelayTimerHandle;
+	FTimerHandle CircleWalkTimerHandle;
 
 public:
 	void InterpMove();

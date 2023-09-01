@@ -84,11 +84,16 @@ void AKinghtMonster::BeginPlay()
 		KnightAnimInstance->InterpEnd.AddUObject(this, &AKinghtMonster::InterpEnd);
 		KnightAnimInstance->KnockBackStart.AddUObject(this, &AKinghtMonster::KnockBackStart);
 		KnightAnimInstance->KnockBackEnd.AddUObject(this, &AKinghtMonster::KnockBackEmd);
+		KnightAnimInstance->SpawningBegin.AddUObject(this, &AKinghtMonster::SpawnBegin);
+		KnightAnimInstance->SpawningEnd.AddUObject(this, &AKinghtMonster::SpawnEnd);
 	}
 }
 
 void AKinghtMonster::Tick(float DeltaTime)
 {
+	if (Spawning)
+		return;
+
 	Super::Tick(DeltaTime);
 
 	if (testtest)
@@ -146,6 +151,20 @@ void AKinghtMonster::KnockBackStart()
 void AKinghtMonster::KnockBackEmd() 
 { 
 	IsKnockBack = false; 
+}
+
+void AKinghtMonster::SpawnBegin()
+{
+	Spawning = true;
+	StateType = MonsterStateType::CANTACT;
+	HitCollision->Deactivate();
+}
+
+void AKinghtMonster::SpawnEnd()
+{
+	Spawning = false;
+	StateType = MonsterStateType::NONE;
+	HitCollision->Activate();
 }
 
 void AKinghtMonster::Stun()
@@ -326,6 +345,9 @@ float AKinghtMonster::Die(float Dm)
 
 float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	if (Spawning)
+		return DamageAmount;
+
 	if (KnightArmor->IsBroke)
 		Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 

@@ -255,11 +255,13 @@ void ANunMonster::SpawnKnight()
 		{
 			FVector Temp = RandomLocation.Location;
 			SpawnLoc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
-			SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
+			//SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
 		}
 
 		Knight->SetActorLocation(SpawnLoc);
 		Knight->SetActorRotation(SpawnRot);
+		Knight->SpawnBegin();
+		Knight->ChangeMontageAnimation(MonsterAnimationType::SPAWNING);
 
 		KnightArr.Push(Knight);
 	}
@@ -268,6 +270,54 @@ void ANunMonster::SpawnKnight()
 void ANunMonster::MultiHeal()
 {
 	//스피어 콜라이더 만들어서 처리
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+
+	bool bResult = GetWorld()->SweepSingleByChannel(
+		OUT HitResult,
+		GetActorLocation(),
+		GetActorLocation(),
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel16,
+		FCollisionShape::MakeSphere(HealRadius),
+		Params);
+
+	FVector Center = GetActorLocation();
+	FColor DrawColor;
+
+	if (bResult)
+		DrawColor = FColor::Green;
+	else
+		DrawColor = FColor::Red;
+
+	DrawDebugSphere(GetWorld(), Center, HealRadius, 16, DrawColor, false, 1.f);
+
+	CameraShake(PlayerCameraShake);
+	VibrateGamePad(1.0f, 0.5f);
+
+	if (bResult && HitResult.GetActor())
+	{
+		auto Knight = Cast<AKinghtMonster>(HitResult.GetActor());
+		
+		if (Knight->MonsterDataStruct.CharacterHp <= 0)
+		{
+			auto FoundIndex = KnightArr.Find(Knight);
+
+			if (FoundIndex != -1)
+			{
+				KnightArr.RemoveAt(FoundIndex);
+				return;
+			}
+		}
+
+		Knight->MonsterDataStruct.CharacterHp += MultiHealVal;
+
+		if (Knight->MonsterDataStruct.CharacterHp > Knight->MonsterDataStruct.CharacterMaxHp)
+			Knight->MonsterDataStruct.CharacterHp = Knight->MonsterDataStruct.CharacterMaxHp;
+	
+		float CurrentPercent = Knight->MonsterDataStruct.CharacterHp / Knight->MonsterDataStruct.CharacterMaxHp;
+		Knight->MonsterHPWidget->SetHP(CurrentPercent);
+	}
 }
 
 void ANunMonster::SingleHeal()
@@ -276,20 +326,25 @@ void ANunMonster::SingleHeal()
 		return;
 
 	TArray<float> KnightHpArr;
-	int Min;
+	int Min = 0;
 	int index = 0;
+	int RemoveIndex = -1;
 
 	for (int i = 0; i < KnightArr.Num(); i++)
 	{
 		if (KnightArr[i]->MonsterDataStruct.CharacterHp <= 0)
-		{
-			KnightArr.Remove(KnightArr[i]);
-			continue;
-		}
-		KnightHpArr.Push(KnightArr[i]->MonsterDataStruct.CharacterHp);
-
+			RemoveIndex = KnightArr.Find(KnightArr[i]);
+		else 		
+			KnightHpArr.Push(KnightArr[i]->MonsterDataStruct.CharacterHp);
+		
 	}
-	
+
+	if (RemoveIndex != -1)
+		KnightArr.RemoveAt(RemoveIndex);
+
+	if (KnightArr.IsEmpty())
+		return;
+
 	Min = KnightHpArr[0];
 
 	for (int i = 0; i < KnightHpArr.Num(); i++)
@@ -310,6 +365,8 @@ void ANunMonster::SingleHeal()
 
 	float CurrentPercent = TargetKnight->MonsterDataStruct.CharacterHp / TargetKnight->MonsterDataStruct.CharacterMaxHp;
 	TargetKnight->MonsterHPWidget->SetHP(CurrentPercent);
+
+	KnightHpArr.Empty();
 }
 
 void ANunMonster::Stun()
@@ -368,13 +425,19 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 
 	Die(DamageAmount);
 
-	//TODO : 연산 오류 있음. 코드 수정해야함
-	if ((MonsterDataStruct.CharacterMaxHp * TeleportVal) <= MonsterDataStruct.CharacterMaxHp - MonsterDataStruct.CharacterHp)
+	TeleportDamageSum += DamageAmount;
+	SpawnDamageSum += DamageAmount;
+
+	if (TeleportDamageSum >= MonsterDataStruct.CharacterMaxHp * TeleportVal)
+	{
 		TelePort();
-
-	if ((MonsterDataStruct.CharacterMaxHp * KnightSpawnVal) <= MonsterDataStruct.CharacterMaxHp - MonsterDataStruct.CharacterHp)
+		TeleportDamageSum = 0;
+	}
+	if (SpawnDamageSum >= MonsterDataStruct.CharacterMaxHp * KnightSpawnVal)
+	{
 		SpawnKnight();
-
+		SpawnDamageSum = 0;
+	}
 
 	return DamageAmount;
 }

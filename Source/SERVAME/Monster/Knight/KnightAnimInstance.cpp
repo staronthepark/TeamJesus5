@@ -15,3 +15,7 @@ void UKnightAnimInstance::AnimNotify_KnockBackStart() { KnockBackStart.Broadcast
 
 void UKnightAnimInstance::AnimNotify_KnockBackEnd() { KnockBackEnd.Broadcast(); }
 
+void UKnightAnimInstance::AnimNotify_SpawningBegin() { SpawningBegin.Broadcast(); }
+
+void UKnightAnimInstance::AnimNotify_SpawningEnd() { SpawningEnd.Broadcast(); }
+
