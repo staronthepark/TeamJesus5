@@ -13,13 +13,13 @@ ANunTeleportActor::ANunTeleportActor()
 // Called when the game starts or when spawned
 void ANunTeleportActor::BeginPlay()
 {
-	Super::BeginPlay();	
+	Super::BeginPlay();
 
 	Nun = Cast<ANunMonster>(UGameplayStatics::GetActorOfClass(GetWorld(), ANunMonster::StaticClass()));
 	if (Nun != nullptr)
 		Nun->TeleportArr.Push(this);
 
-	LocationActor->SetActive(false);
+	LocationActor->SetVisibility(false);
 }
 
 // Called every frame
