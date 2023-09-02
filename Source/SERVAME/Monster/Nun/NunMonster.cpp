@@ -11,6 +11,8 @@
 #include "Runtime/AIModule/Classes/Perception/AISenseConfig_Sight.h"
 #include "NavigationSystem.h"
 #include <Kismet/KismetMathLibrary.h>
+#include "Engine/StaticMeshActor.h"
+#include "EngineUtils.h"
 
 ANunMonster::ANunMonster()
 {
@@ -151,6 +153,17 @@ void ANunMonster::BeginPlay()
 	}
 
 	MonsterMoveEventIndex = 1;
+
+	for (TActorIterator<AStaticMeshActor> ActorIter(GetWorld()); ActorIter; ++ActorIter)
+	{
+		AStaticMeshActor* testActor = *ActorIter;
+
+		if (testActor->ActorHasTag("TP"))
+		{
+			TeleportArr.AddUnique(testActor);
+		}
+	}
+
 }
 
 void ANunMonster::Tick(float DeltaTime)
