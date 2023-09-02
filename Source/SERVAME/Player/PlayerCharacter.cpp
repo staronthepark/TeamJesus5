@@ -1701,8 +1701,6 @@ void APlayerCharacter::RestoreStat()
 
 void APlayerCharacter::MoveSpawnLocation(FVector Location)
 {
-	if (IsLockOn)
-		LockOn();
 	UCombatManager::GetInstance().Boss2->SetActive(true);
 	IsPhaseTwo = true;
 	SetActorRotation(FRotator(0, 180, 0));
@@ -1710,6 +1708,9 @@ void APlayerCharacter::MoveSpawnLocation(FVector Location)
 	SetActorLocation(Location);
 	SpawnLocation = Location;
 	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
+
+	if (IsLockOn)
+		LockOn();
 }
 
 bool APlayerCharacter::IsAlive()
