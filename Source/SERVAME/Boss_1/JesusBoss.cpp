@@ -537,7 +537,10 @@ AJesusBoss::AJesusBoss()
 			Boss->AccumulateDamage = 0;
 			Boss->ChangeSuperAction = true;
 			Boss->IsLockOn = true;
-			Boss->fDeltaTime = 0;
+
+			Boss->IsAttackMontageEnd = false;
+			Boss->CanMove = false;
+			Boss->IsActionEnd = false;
 		}));
 	MontageEndMap.Add(BossAnimationType::RIGHTSTEP, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
@@ -549,6 +552,10 @@ AJesusBoss::AJesusBoss()
 			Boss->BossSuperAction = SUPER_ATTACK;
 			Boss->AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("BossBaseAction")), Boss->BossSuperAction);
 			Boss->AIController->GetBlackboardComponent()->SetValueAsBool(FName(TEXT("IsStep")), Boss->DoStep);
+		
+			Boss->CanMove = true;
+			Boss->IsLockOn = true;
+			Boss->Damage = 0;
 		}));
 
 	MontageStartMap.Add(BossAnimationType::LEFTSTEP, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
@@ -558,7 +565,10 @@ AJesusBoss::AJesusBoss()
 			Boss->AccumulateDamage = 0;
 			Boss->ChangeSuperAction = true;
 			Boss->IsLockOn = true;
-			Boss->fDeltaTime = 0;
+
+			Boss->IsAttackMontageEnd = false;
+			Boss->CanMove = false;
+			Boss->IsActionEnd = false;
 		}));
 	MontageEndMap.Add(BossAnimationType::LEFTSTEP, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
@@ -570,6 +580,10 @@ AJesusBoss::AJesusBoss()
 			Boss->BossSuperAction = SUPER_ATTACK;
 			Boss->AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("BossBaseAction")), Boss->BossSuperAction);
 			Boss->AIController->GetBlackboardComponent()->SetValueAsBool(FName(TEXT("IsStep")), Boss->DoStep);
+	
+			Boss->CanMove = true;
+			Boss->IsLockOn = true;
+			Boss->Damage = 0;
 		}));
 	//===========================================공격 실행===================================
 
