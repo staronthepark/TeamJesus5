@@ -11,6 +11,8 @@
 #include "Runtime/AIModule/Classes/Perception/AISenseConfig_Sight.h"
 #include "NavigationSystem.h"
 #include <Kismet/KismetMathLibrary.h>
+#include "Engine/StaticMeshActor.h"
+#include "EngineUtils.h"
 
 ANunMonster::ANunMonster()
 {
