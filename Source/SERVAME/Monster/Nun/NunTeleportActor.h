@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "NunMonster.h"
 #include "NunTeleportActor.generated.h"
 
 UCLASS()
@@ -15,9 +16,10 @@ public:
 	// Sets default values for this actor's properties
 	ANunTeleportActor();
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* LocationActor;
 
+	ANunMonster* Nun;
 
 protected:
 	// Called when the game starts or when spawned

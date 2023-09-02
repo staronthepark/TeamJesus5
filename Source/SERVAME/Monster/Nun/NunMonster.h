@@ -40,7 +40,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
 	float KnightSpawnVal = 0.3f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<AActor*> TeleportArr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")

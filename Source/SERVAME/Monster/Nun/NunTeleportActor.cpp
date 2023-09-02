@@ -6,7 +6,7 @@
 // Sets default values
 ANunTeleportActor::ANunTeleportActor()
 {
-	LocationActor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BossWeaponMesh"));
+	LocationActor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TeleportLocation"));
 	LocationActor->SetupAttachment(RootComponent);
 }
 
@@ -14,6 +14,12 @@ ANunTeleportActor::ANunTeleportActor()
 void ANunTeleportActor::BeginPlay()
 {
 	Super::BeginPlay();	
+
+	Nun = Cast<ANunMonster>(UGameplayStatics::GetActorOfClass(GetWorld(), ANunMonster::StaticClass()));
+	if (Nun != nullptr)
+		Nun->TeleportArr.Push(this);
+
+	LocationActor->SetActive(false);
 }
 
 // Called every frame

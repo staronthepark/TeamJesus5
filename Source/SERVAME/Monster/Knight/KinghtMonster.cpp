@@ -158,6 +158,8 @@ void AKinghtMonster::SpawnBegin()
 	Spawning = true;
 	StateType = MonsterStateType::CANTACT;
 	HitCollision->Deactivate();
+	AttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	DashAttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void AKinghtMonster::SpawnEnd()
@@ -165,6 +167,8 @@ void AKinghtMonster::SpawnEnd()
 	Spawning = false;
 	StateType = MonsterStateType::NONE;
 	HitCollision->Activate();
+	AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	DashAttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 void AKinghtMonster::Stun()
