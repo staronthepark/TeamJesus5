@@ -10,6 +10,7 @@
 #include "Components/WidgetComponent.h"
 #include "KnightAnimInstance.h"
 #include "KnightArmor.h"
+#include "KnightPatrolSplineActor.h"
 #include "KinghtMonster.generated.h"
 
 UCLASS()
@@ -24,8 +25,17 @@ public:
 
 	AKnightArmor* KnightArmor;
 
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	float DistanceAlongSpline = 0.f;
+
 	UPROPERTY()
 	UKnightAnimInstance* KnightAnimInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AKnightPatrolSplineActor*> PatrolActorArr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* KnightHeadMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UKnightAttackTriggerComp* AttackTrigger;

@@ -24,6 +24,7 @@ public:
 
 	void Movement(FVector Location);
 	void MoveWhenArrived(FVector Location);
+	void Patrol(FVector Location, int PatrolArrNum);
 
 	UFUNCTION()
 	void OnPerception(AActor* Actor, FAIStimulus Stimulus);

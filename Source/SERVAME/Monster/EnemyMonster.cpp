@@ -726,7 +726,8 @@ void AEnemyMonster::Tick(float DeltaTime)
 	CheckDIstanceMap[IsDetect]();
 	MonsterTickEventMap[ActionType]();	
 
-	Rotate();
+	if (!IsPatrol)
+		Rotate();
 
 	if (MonsterDataStruct.CharacterHp <= 0)
 	{

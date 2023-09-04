@@ -15,21 +15,64 @@ AKinghtMonster::AKinghtMonster()
 	DashAttackTrigger = CreateDefaultSubobject<UKnightAttackTriggerComp>(TEXT("DashAttackTriggerCollision"));
 	DashAttackTrigger->SetupAttachment(GetMesh());
 
+	ParryingCollision1->SetupAttachment(GetMesh(), FName("B_WEAPON"));
+	SwordTrailComp->SetupAttachment(GetMesh(), FName("B_WEAPON"));
+	WeaponCollision->SetupAttachment(GetMesh(), FName("B_WEAPON"));
+	WeaponOverlapStaticMeshCollision->SetupAttachment(GetMesh(), FName("B_WEAPON"));
+	WeaponOverlapStaticMeshCollision->SetCollisionProfileName("Weapon");
+
+	KnightHeadMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("KnightHeadMesh"));
+	KnightHeadMesh->SetupAttachment(GetMesh(), FName("Bip001-Head"));
+
+	MonsterMoveMap.Add(0, [&]()
+		{
+			IsPatrol = true;
+			MonsterController->Patrol(PatrolActorArr[PatrolIndexCount]->GetActorLocation(), PatrolActorArr.Num());
+		});
 	MonsterMoveMap.Add(3, [&]()
 		{
 			if (CircleWalkEnd == false)
 				MonsterController->MoveWhenArrived(CirclePoints[CircleIndexCount]);
 		});
 
+	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
+		{
+			RotateMap[PlayerCharacter != nullptr]();
+			MonsterMoveMap[MonsterMoveEventIndex]();
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::FORWARDMOVE, [=]()
+		{
+			if (TracePlayer)
+			{
+				if(IsPatrol)
+					MonsterMoveEventIndex = 0;
+				else
+					MonsterMoveEventIndex = 1;
+
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+			}
+		});
+
+	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
+		{
+			ChangeActionType(MonsterActionType::ATTACK);
+			ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
+		});
+
 	SetActionByRandomMap.Add(MonsterAnimationType::DASHATTACK1, [&](float percent)
 		{
-			if (percent <= 0.45f)
+			if (percent <= 0.7f)
 			{
-				ChangeActionType(MonsterActionType::ATTACK);
-				ChangeMontageAnimation(MonsterAnimationType::DASHATTACK1);
+				UE_LOG(LogTemp, Warning, TEXT("walk"));
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 			}
 			else
 			{
+				UE_LOG(LogTemp, Warning, TEXT("circlewalk"));
 				DrawCircle(PlayerCharacter->GetActorLocation());
 				CircleWalkEnd = false;
 				MonsterMoveEventIndex = 3;
@@ -38,7 +81,7 @@ AKinghtMonster::AKinghtMonster()
 				GetWorldTimerManager().SetTimer(CircleWalkTimerHandle, FTimerDelegate::CreateLambda([=]()
 					{					
 						if (MonsterDataStruct.CharacterHp > 0 && MonsterController->FindPlayer
-							&& AnimationType != MonsterAnimationType::EXECUTION)
+							&& AnimationType != MonsterAnimationType::EXECUTION && ActionType != MonsterActionType::ATTACK)
 						{
 							CircleWalkEnd = true;
 							MonsterMoveEventIndex = 1;
@@ -101,6 +144,12 @@ void AKinghtMonster::Tick(float DeltaTime)
 
 	if (IsInterpStart)
 		InterpMove();
+
+	if (MonsterController->FindPlayer && CircleWalkEnd == true)
+	{
+		IsPatrol = false;
+		MonsterMoveEventIndex = 1;
+	}
 }
 
 void AKinghtMonster::RespawnCharacter()
