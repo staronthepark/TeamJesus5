@@ -446,9 +446,9 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 
 void ANunMonster::TelePort()
 {
-	//TODO : 텔레포트 좌표로 쓸 액터 블루프린트로 만들고 태그 지정해준 다음
-	//태그로 액터 찾아서 배열 자동 할당 해주기.
-	//기사도 똑같이 태그로 찾아서 할당 해주기.
+	if (PlayerCharacter->IsLockOn)
+		PlayerCharacter->LockOn();
+
 	srand(time(NULL));
 
 	auto Num = rand() % TeleportArr.Num();
