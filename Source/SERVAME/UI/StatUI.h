@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include <Components/Button.h>
+#include "../Player/PlayerStatComponent.h"
 #include "StatUI.generated.h"
 
 /**
@@ -45,7 +46,9 @@ class SERVAME_API UStatUI : public UUserWidget
 	UPROPERTY(EditAnywhere)
 	EStateType Type;
 
-	TMap<EStateType, TFunction<void()>> TypeAnimation;
+	TMap<EStateType, TFunction<void(int32 index)>> TypeAnimation;
+
+	UPlayerStatComponent* PlayerStatComp;
 	
 public:
 	virtual void NativeOnInitialized();
