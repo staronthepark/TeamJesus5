@@ -1703,8 +1703,8 @@ void APlayerCharacter::MoveSpawnLocation(FVector Location)
 {
 	UCombatManager::GetInstance().Boss2->SetActive(true);
 	IsPhaseTwo = true;
-	SetActorRotation(FRotator(0, 180, 0));
-	YawRotation = FRotator(0, 180, 0);
+	SetActorRotation(FRotator(0, 0, 0));
+	YawRotation = FRotator(0, 0, 0);
 	SetActorLocation(Location);
 	SpawnLocation = Location;
 	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
