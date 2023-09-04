@@ -1,5 +1,6 @@
 #include "MonsterController.h"
 #include "EnemyMonster.h"
+#include <Kismet/KismetMathLibrary.h>
 
 AMonsterController::AMonsterController()
 {
@@ -76,6 +77,28 @@ void AMonsterController::MoveWhenArrived(FVector Location)
 	}
 }
 
+void AMonsterController::Patrol(FVector Location, int PatrolArrNum)
+{
+	IsArrived = false;
+
+	auto type = MoveToLocation(Location);
+
+	FRotator ToTarget = UKismetMathLibrary::FindLookAtRotation(Monster->GetActorLocation(), Location);
+	FRotator RealToTarget = FRotator(0.f, ToTarget.Yaw, 0.f);
+
+	FRotator LookAtRotation = FMath::RInterpTo(Monster->GetActorRotation(), RealToTarget, GetWorld()->DeltaTimeSeconds, 4.f);
+	Monster->SetActorRotation(LookAtRotation);
+
+	if (type == EPathFollowingRequestResult::AlreadyAtGoal)
+	{
+		IsArrived = true;
+		Monster->PatrolIndexCount++;
+
+		if (Monster->PatrolIndexCount >= PatrolArrNum)
+			Monster->PatrolIndexCount = 0;
+	}
+}
+
 void AMonsterController::OnTargetPerceptionUpdated_Delegate(AActor* Actor, FAIStimulus Stimulus)
 {
 	switch (Stimulus.Type)
@@ -139,7 +162,6 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		FindPlayer = false;
 
 		//TODO : 몬스터 패트롤 상태로 변경
-		Monster->PatrolLocation = FVector::ZeroVector;
 		Monster->MonsterMoveEventIndex = 0;
 		Monster->ChangeActionType(MonsterActionType::MOVE);
 		Monster->ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);

@@ -24,18 +24,44 @@ AKinghtMonster::AKinghtMonster()
 	KnightHeadMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("KnightHeadMesh"));
 	KnightHeadMesh->SetupAttachment(GetMesh(), FName("Bip001-Head"));
 
+	MonsterMoveMap.Add(0, [&]()
+		{
+			IsPatrol = true;
+			MonsterController->Patrol(PatrolActorArr[PatrolIndexCount]->GetActorLocation(), PatrolActorArr.Num());
+		});
 	MonsterMoveMap.Add(3, [&]()
 		{
 			if (CircleWalkEnd == false)
 				MonsterController->MoveWhenArrived(CirclePoints[CircleIndexCount]);
 		});
 
+	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
+		{
+			RotateMap[PlayerCharacter != nullptr]();
+			MonsterMoveMap[MonsterMoveEventIndex]();
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::FORWARDMOVE, [=]()
+		{
+			if (TracePlayer)
+			{
+				if(IsPatrol)
+					MonsterMoveEventIndex = 0;
+				else
+					MonsterMoveEventIndex = 1;
+
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+			}
+		});
+
 	SetActionByRandomMap.Add(MonsterAnimationType::DASHATTACK1, [&](float percent)
 		{
-			if (percent <= 0.45f)
+			if (percent <= 0.3f)
 			{
-				ChangeActionType(MonsterActionType::ATTACK);
-				ChangeMontageAnimation(MonsterAnimationType::DASHATTACK1);
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 			}
 			else
 			{
@@ -110,6 +136,12 @@ void AKinghtMonster::Tick(float DeltaTime)
 
 	if (IsInterpStart)
 		InterpMove();
+
+	if (MonsterController->FindPlayer)
+	{
+		IsPatrol = false;
+		MonsterMoveEventIndex = 1;
+	}
 }
 
 void AKinghtMonster::RespawnCharacter()

@@ -152,6 +152,7 @@ public:
 	int32 MonsterMoveEventIndex;
 	int32 MonsterRandomMove;
 	int CircleIndexCount = 1;
+	int PatrolIndexCount = 0;
 
 	bool IsDetect;
 	bool TracePlayer;
@@ -160,6 +161,9 @@ public:
 
 	bool asd = false;
 	bool asd2 = false;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	bool IsPatrol = false;
 
 	AActor* otherActor;
 
