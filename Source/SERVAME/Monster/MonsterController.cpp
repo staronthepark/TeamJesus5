@@ -86,7 +86,7 @@ void AMonsterController::Patrol(FVector Location, int PatrolArrNum)
 	FRotator ToTarget = UKismetMathLibrary::FindLookAtRotation(Monster->GetActorLocation(), Location);
 	FRotator RealToTarget = FRotator(0.f, ToTarget.Yaw, 0.f);
 
-	FRotator LookAtRotation = FMath::RInterpTo(Monster->GetActorRotation(), RealToTarget, GetWorld()->DeltaTimeSeconds, 4.f);
+	FRotator LookAtRotation = FMath::RInterpTo(Monster->GetActorRotation(), RealToTarget, GetWorld()->DeltaTimeSeconds, 3.f);
 	Monster->SetActorRotation(LookAtRotation);
 
 	if (type == EPathFollowingRequestResult::AlreadyAtGoal)

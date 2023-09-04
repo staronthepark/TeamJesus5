@@ -55,16 +55,24 @@ AKinghtMonster::AKinghtMonster()
 			}
 		});
 
+	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
+		{
+			ChangeActionType(MonsterActionType::ATTACK);
+			ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
+		});
+
 	SetActionByRandomMap.Add(MonsterAnimationType::DASHATTACK1, [&](float percent)
 		{
-			if (percent <= 0.3f)
+			if (percent <= 0.7f)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("walk"));
 				MonsterMoveEventIndex = 1;
 				ChangeActionType(MonsterActionType::MOVE);
 				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 			}
 			else
 			{
+				UE_LOG(LogTemp, Warning, TEXT("circlewalk"));
 				DrawCircle(PlayerCharacter->GetActorLocation());
 				CircleWalkEnd = false;
 				MonsterMoveEventIndex = 3;
@@ -73,7 +81,7 @@ AKinghtMonster::AKinghtMonster()
 				GetWorldTimerManager().SetTimer(CircleWalkTimerHandle, FTimerDelegate::CreateLambda([=]()
 					{					
 						if (MonsterDataStruct.CharacterHp > 0 && MonsterController->FindPlayer
-							&& AnimationType != MonsterAnimationType::EXECUTION)
+							&& AnimationType != MonsterAnimationType::EXECUTION && ActionType != MonsterActionType::ATTACK)
 						{
 							CircleWalkEnd = true;
 							MonsterMoveEventIndex = 1;
@@ -137,7 +145,7 @@ void AKinghtMonster::Tick(float DeltaTime)
 	if (IsInterpStart)
 		InterpMove();
 
-	if (MonsterController->FindPlayer)
+	if (MonsterController->FindPlayer && CircleWalkEnd == true)
 	{
 		IsPatrol = false;
 		MonsterMoveEventIndex = 1;
