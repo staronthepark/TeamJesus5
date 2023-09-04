@@ -15,6 +15,15 @@ AKinghtMonster::AKinghtMonster()
 	DashAttackTrigger = CreateDefaultSubobject<UKnightAttackTriggerComp>(TEXT("DashAttackTriggerCollision"));
 	DashAttackTrigger->SetupAttachment(GetMesh());
 
+	ParryingCollision1->SetupAttachment(GetMesh(), FName("B_WEAPON"));
+	SwordTrailComp->SetupAttachment(GetMesh(), FName("B_WEAPON"));
+	WeaponCollision->SetupAttachment(GetMesh(), FName("B_WEAPON"));
+	WeaponOverlapStaticMeshCollision->SetupAttachment(GetMesh(), FName("B_WEAPON"));
+	WeaponOverlapStaticMeshCollision->SetCollisionProfileName("Weapon");
+
+	KnightHeadMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("KnightHeadMesh"));
+	KnightHeadMesh->SetupAttachment(GetMesh(), FName("Bip001-Head"));
+
 	MonsterMoveMap.Add(3, [&]()
 		{
 			if (CircleWalkEnd == false)

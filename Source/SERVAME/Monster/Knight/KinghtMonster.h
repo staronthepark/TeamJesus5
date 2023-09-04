@@ -28,6 +28,9 @@ public:
 	UKnightAnimInstance* KnightAnimInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* KnightHeadMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UKnightAttackTriggerComp* AttackTrigger;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
