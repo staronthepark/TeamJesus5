@@ -30,5 +30,6 @@ class SERVAME_API UMonsterHPUI : public UBaseUI
 
 public:
 	void SetHP(float value);
+	void IncreaseHPGradual(AActor* Actor, float value);
 	void DecreaseHPGradual(AActor* Actor, float value);
 };

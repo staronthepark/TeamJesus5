@@ -8,10 +8,17 @@ void UMonsterHPUI::SetHP(float value)
 	value = FMath::Clamp(value, 0.0f, 1.0f);
 
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
-	Monster_HP_Bar_Y->SetPercent(value);
+	Monster_HP_Bar->SetPercent(value);
 	HP_White_P->SetValue(value);
 	if (!TimerManager.IsTimerActive(HpDelayTimerHandle) && !TimerManager.IsTimerActive(HpProgressTimerHandle))
 		Monster_HP_Bar_Y->SetPercent(value);
+}
+
+void UMonsterHPUI::IncreaseHPGradual(AActor* Actor, float value)
+{
+	value = FMath::Clamp(value, 0.0f, 1.0f);
+	HP_White_P->SetValue(value);
+	ProgressIncrease(Actor, Monster_HP_Bar, 0, value, HpDelayTimerHandle, HpProgressTimerHandle);
 }
 
 void UMonsterHPUI::DecreaseHPGradual(AActor* Actor, float value)

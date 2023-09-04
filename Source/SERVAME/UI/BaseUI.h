@@ -23,4 +23,6 @@ class SERVAME_API UBaseUI : public UUserWidget
 
 protected:
 	void ProgressDecrease(AActor* Actor, UProgressBar* ProgressBar, float _min, float _max, FTimerHandle& DelayTimerHandle, FTimerHandle& ProgressTimerHandle);
+
+	void ProgressIncrease(AActor* Actor, UProgressBar* ProgressBar, float _min, float _max, FTimerHandle& DelayTimerHandle, FTimerHandle& ProgressTimerHandle);
 };
