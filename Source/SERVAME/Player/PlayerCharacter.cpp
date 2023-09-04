@@ -1697,6 +1697,12 @@ void APlayerCharacter::RestoreStat()
 	PlayerHUD->SetHP(PlayerDataStruct.CharacterHp / PlayerDataStruct.CharacterMaxHp);
 	CurHealCount = PlayerDataStruct.MaxHealCount;
 	PlayerHUD->ChangeHealCount(CurHealCount);
+	UCombatManager& combatmanager = UCombatManager::GetInstance();
+
+	for (int32 i = 0; i < combatmanager.MonsterInfoArray.Num(); i++)
+	{
+		combatmanager.MonsterInfoArray[i]->RespawnCharacter();
+	}
 }
 
 void APlayerCharacter::MoveSpawnLocation(FVector Location)
@@ -2136,12 +2142,7 @@ void APlayerCharacter::RespawnCharacter()
 
 	RestoreStat();
 
-	UCombatManager& combatmanager = UCombatManager::GetInstance();
-
-	for (int32 i = 0; i < combatmanager.MonsterInfoArray.Num(); i++)
-	{
-		combatmanager.MonsterInfoArray[i]->RespawnCharacter();
-	}
+	
 	SetSpeed(SpeedMap[false][false]);
 }
 
