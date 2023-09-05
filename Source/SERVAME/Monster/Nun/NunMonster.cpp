@@ -318,7 +318,7 @@ void ANunMonster::MultiHeal()
 			Knight->MonsterDataStruct.CharacterHp = Knight->MonsterDataStruct.CharacterMaxHp;
 	
 		float CurrentPercent = Knight->MonsterDataStruct.CharacterHp / Knight->MonsterDataStruct.CharacterMaxHp;
-		Knight->MonsterHPWidget->SetHP(CurrentPercent);
+		Knight->MonsterHPWidget->IncreaseHPGradual(Knight, CurrentPercent);
 	}
 }
 
@@ -366,7 +366,7 @@ void ANunMonster::SingleHeal()
 		TargetKnight->MonsterDataStruct.CharacterHp = TargetKnight->MonsterDataStruct.CharacterMaxHp;
 
 	float CurrentPercent = TargetKnight->MonsterDataStruct.CharacterHp / TargetKnight->MonsterDataStruct.CharacterMaxHp;
-	TargetKnight->MonsterHPWidget->SetHP(CurrentPercent);
+	TargetKnight->MonsterHPWidget->IncreaseHPGradual(TargetKnight, CurrentPercent);
 
 	KnightHpArr.Empty();
 }

@@ -53,6 +53,7 @@ AEnemyMonster::AEnemyMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::DASHATTACK1, MonsterStateType::BEFOREATTACK);
 
 	AnimTypeToStateType.Add(MonsterAnimationType::HIT, MonsterStateType::CANTACT);
+	AnimTypeToStateType.Add(MonsterAnimationType::BACKHIT, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::DEAD, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::DEADLOOP, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::EXECUTION, MonsterStateType::CANTACT);

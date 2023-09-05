@@ -174,6 +174,8 @@ void AKinghtMonster::Tick(float DeltaTime)
 
 		GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.RunSpeed;
 	}
+
+	SearchPlayer();
 }
 
 void AKinghtMonster::RespawnCharacter()
@@ -387,6 +389,23 @@ void AKinghtMonster::DrawCircle(FVector Center)
 	}
 }
 
+void AKinghtMonster::SearchPlayer()
+{
+	if (PlayerCharacter == nullptr)
+		return;
+
+	auto TargetLoc = PlayerCharacter->GetActorLocation() - GetActorLocation();
+	FVector Forward = GetActorForwardVector();
+	FVector Right = GetActorRightVector();
+	float ForwardSpeed = FVector::DotProduct(TargetLoc, Forward);
+	float RightSpeed = FVector::DotProduct(TargetLoc, Right);
+
+	if (ForwardSpeed > 0)
+		HitType = MonsterAnimationType::HIT;
+	else if (ForwardSpeed < 0)
+		HitType = MonsterAnimationType::BACKHIT;
+}
+
 float AKinghtMonster::Die(float Dm)
 {
 	if (MonsterDataStruct.CharacterHp <= 0)
@@ -430,8 +449,9 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 		if (MontageEndEventMap.Contains(AnimationType))
 			MontageEndEventMap[AnimationType]();
 		
+		//TODO : 앞 뒤 방향에 따른 피격
 		ChangeActionType(MonsterActionType::HIT);
-		ChangeMontageAnimation(MonsterAnimationType::HIT);
+		ChangeMontageAnimation(HitType);
 	}
 
 	return DamageAmount;

@@ -91,13 +91,15 @@ private:
 	FTimerHandle KnockBackDelayTimerHandle;
 	FTimerHandle CircleWalkTimerHandle;
 
+	MonsterAnimationType HitType;
+
 public:
 	void InterpMove();
 	void ActivateAttackTrigger();
 	void DeactivateAttackTrigger();
 	void Rotate();
 	void DrawCircle(FVector Center);
-
+	void SearchPlayer();
 
 	UFUNCTION()
 	void OnKnightTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
