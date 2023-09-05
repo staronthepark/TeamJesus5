@@ -1,5 +1,6 @@
 #include "MonsterController.h"
 #include "EnemyMonster.h"
+#include "Knight/KinghtMonster.h"
 #include <Kismet/KismetMathLibrary.h>
 
 AMonsterController::AMonsterController()
@@ -154,18 +155,22 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 	}
 	else
 	{
-		if (Monster->MyMonsterType == MonsterType::NUN)
-			return;
-
 		UE_LOG(LogTemp, Warning, TEXT("LostPlayer"));
-		Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
 		FindPlayer = false;
-		Monster->MonsterMoveEventIndex = 1;
 
-		//TODO : 몬스터 패트롤 상태로 변경
-		Monster->MonsterMoveEventIndex = 0;
-		Monster->ChangeActionType(MonsterActionType::MOVE);
-		Monster->ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+		if (Monster->MyMonsterType == MonsterType::KNIGHT)
+		{
+			auto Knight = Cast<AKinghtMonster>(Monster);
+
+			Knight->MonsterMoveEventIndex = 0;
+			Knight->ChangeActionType(MonsterActionType::MOVE);
+			Knight->KnightAnimInstance->BlendSpeed = Knight->WalkBlend;
+		}
+		else
+		{
+			Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			Monster->MonsterMoveEventIndex = 1;
+		}
 	}
 }
 

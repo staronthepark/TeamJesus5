@@ -20,11 +20,6 @@ class SERVAME_API AKinghtMonster : public AEnemyMonster
 public:
 	AKinghtMonster();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Armor")
-	TSubclassOf<AKnightArmor> ArmorClass;
-
-	AKnightArmor* KnightArmor;
-
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	float DistanceAlongSpline = 0.f;
 
@@ -39,9 +34,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UKnightAttackTriggerComp* AttackTrigger;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UKnightAttackTriggerComp* DashAttackTrigger;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	APlayerCharacter* PlayerCharacter;
@@ -68,6 +60,21 @@ public:
 	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
 	bool DrawDebugCircle = false;
 	bool CircleWalkEnd = false;
+
+	UPROPERTY(EditAnyWhere, Category = "RunableDistance")
+	float RunableDistance = 1000.f;
+	UPROPERTY(EditAnyWhere, Category = "RunableDistance")
+	float AccelerationDist = 700.f;
+	float InterpolationTime = 0.0f;
+	float InterpolationDuration = 0.5f;
+
+	bool StartRun;
+	float CalcedDist;
+	float Temp = 0.f;
+
+	const float IdleBlend = 0.f;
+	const float WalkBlend = 300.f;
+	const float RunBlend = 600.f;
 
 	//Notify
 	void InterpStart();

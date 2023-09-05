@@ -145,6 +145,11 @@ AEnemyMonster::AEnemyMonster()
 
 		});
 
+	MonsterTickEventMap.Add(MonsterActionType::RUN, [&]()
+		{
+
+		});
+
 	MonsterTickEventMap.Add(MonsterActionType::DEAD, [&]()
 		{
 			SkeletalMeshComp->SetScalarParameterValueOnMaterials("Opacity", MeshOpacity -= fDeltaTime * 0.25f);
@@ -391,6 +396,7 @@ AEnemyMonster::AEnemyMonster()
 				}
 			}
 		});
+
 	SetActionByRandomMap.Add(MonsterAnimationType::DASHATTACK1, [&](float percent)
 		{
 			if (percent <= 0.5f)
@@ -404,6 +410,7 @@ AEnemyMonster::AEnemyMonster()
 				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 			}
 		});
+
 	SetActionByRandomMap.Add(MonsterAnimationType::RANGEATTACK1, [&](float percent)
 		{
 			if (percent <= 0.8f)
@@ -634,7 +641,6 @@ void AEnemyMonster::ShotProjectile()
 {
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[4].ObjClass, GetActorLocation() + GetActorRotation().Vector() * 200.0f, GetActorRotation());
 }
-
 
 void AEnemyMonster::Rotate()
 {
