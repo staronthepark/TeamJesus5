@@ -245,7 +245,7 @@ AEnemyMonster::AEnemyMonster()
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
-		{			
+		{					
 			if (TracePlayer)
 			{
 				MonsterMoveEventIndex = 1;
@@ -277,6 +277,22 @@ AEnemyMonster::AEnemyMonster()
 				ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			}
 		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::BACKHIT, [&]()
+		{
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+			}
+			else
+			{
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			}
+		});
+
 
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::IDLE, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(true, [&]()

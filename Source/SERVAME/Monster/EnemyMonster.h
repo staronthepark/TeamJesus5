@@ -146,6 +146,9 @@ public:
 	USkeletalMeshComponent* SkeletalMeshComp;
 	UStaticMeshComponent* SwordMeshComp;
 
+	UPROPERTY(EditAnyWhere, Category = "AttackRange")
+	float AttackRange = 100.f;
+
 	float WeaponOpacity;
 	float MeshOpacity;
 

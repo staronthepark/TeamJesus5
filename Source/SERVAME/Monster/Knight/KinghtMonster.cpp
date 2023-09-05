@@ -21,6 +21,22 @@ AKinghtMonster::AKinghtMonster()
 	KnightHeadMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("KnightHeadMesh"));
 	KnightHeadMesh->SetupAttachment(GetMesh(), FName("Bip001-Head"));
 
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::IDLE, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(true, [&]()
+		{
+			KnightAnimInstance->BlendSpeed = IdleBlend;
+
+			if (AttackAnimationType != MonsterAnimationType::NONE && CurrentDistance < AttackRange)
+				StartAttackTrigger(AttackAnimationType);
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(false, [&]()
+		{
+			KnightAnimInstance->BlendSpeed = IdleBlend;
+			
+			if (AttackAnimationType != MonsterAnimationType::NONE && CurrentDistance < AttackRange)
+				StartAttackTrigger(AttackAnimationType);
+		});
+
 	TargetDetectEventMap.Add(MonsterAttackType::MELEE, [&]()
 		{
 			ChangeActionType(MonsterActionType::MOVE);
@@ -79,6 +95,12 @@ AKinghtMonster::AKinghtMonster()
 				RotateMap[PlayerCharacter != nullptr]();
 				MonsterMoveMap[MonsterMoveEventIndex]();
 			}
+		});
+
+	MonsterTickEventMap.Add(MonsterActionType::HIT, [&]()
+		{
+			//TODO : 블렌드 값 보간 해줘야함. 끝나자 마자 WalkBlend 값을 넣어버려서 끊겨 보임.
+			KnightAnimInstance->BlendSpeed = IdleBlend;
 		});
 
 	MonsterTickEventMap.Add(MonsterActionType::RUN, [&]()
@@ -155,19 +177,16 @@ void AKinghtMonster::Tick(float DeltaTime)
 	{
 		if (WalkToRunBlend)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Dist : walktorunblend"));
 			InterpolationTime += DeltaTime;
 			CalcedDist = FMath::Lerp(WalkBlend, RunBlend, InterpolationTime / InterpolationDuration);
 		}
 		else if (CurrentDistance >= AccelerationDist)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("CurrentDistance >= AccelerationDist"));
 			InterpolationTime += DeltaTime;
 			CalcedDist = FMath::Lerp(IdleBlend, WalkBlend, InterpolationTime / InterpolationDuration);
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("CalcedDist = RunBlend;"));
 			InterpolationTime = 0;
 			CalcedDist = RunBlend;
 		}
@@ -176,6 +195,8 @@ void AKinghtMonster::Tick(float DeltaTime)
 	}
 
 	SearchPlayer();
+
+	UE_LOG(LogTemp, Warning, TEXT("TracePlayer : %s"), TracePlayer ? TEXT("TRUE") : TEXT("FALSE"));
 }
 
 void AKinghtMonster::RespawnCharacter()
@@ -259,10 +280,13 @@ void AKinghtMonster::ChangeMontageAnimation(MonsterAnimationType type)
 	}
 	else
 	{
-		KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
+		if (MontageMap.Contains(AnimationType))
+			KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 		AnimationType = type;
 		StateType = AnimTypeToStateType[type];
-		KnightAnimInstance->PlayMontage(MontageMap[type]);
+
+		if (MontageMap.Contains(type))
+			KnightAnimInstance->PlayMontage(MontageMap[type]);
 	}
 }
 
@@ -315,7 +339,9 @@ void AKinghtMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 	if (ActionType != MonsterActionType::ATTACK)
 	{
 		MonsterController->StopMovement();
-		KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
+
+		if (MontageMap.Contains(AnimationType))
+			KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 
 		float RandomValue = FMath::RandRange(0, 100) * 0.01f;
 		if (SetActionByRandomMap.Contains(AttackAnimType))
