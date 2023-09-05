@@ -111,7 +111,8 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 		float ShieldHP;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MaxShieldHP;
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float BaseDamage;
 };
 
 UCLASS()
