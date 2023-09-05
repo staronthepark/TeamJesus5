@@ -165,6 +165,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 			Knight->MonsterMoveEventIndex = 0;
 			Knight->ChangeActionType(MonsterActionType::MOVE);
 			Knight->KnightAnimInstance->BlendSpeed = Knight->WalkBlend;
+			Knight->WalkToRunBlend = false;
 		}
 		else
 		{

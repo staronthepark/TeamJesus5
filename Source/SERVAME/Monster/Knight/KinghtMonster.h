@@ -67,6 +67,7 @@ public:
 	float AccelerationDist = 700.f;
 	float InterpolationTime = 0.0f;
 	float InterpolationDuration = 0.5f;
+	bool WalkToRunBlend;
 
 	bool StartRun;
 	float CalcedDist;

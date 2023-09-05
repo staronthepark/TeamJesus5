@@ -35,6 +35,7 @@ AKinghtMonster::AKinghtMonster()
 	MonsterMoveMap.Add(0, [&]()
 		{
 			IsPatrol = true;
+			GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.CharacterOriginSpeed;
 			MonsterController->Patrol(PatrolActorArr[PatrolIndexCount]->GetActorLocation(), PatrolActorArr.Num());
 		});
 	MonsterMoveMap.Add(3, [&]()
@@ -45,6 +46,8 @@ AKinghtMonster::AKinghtMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
 		{
+			WalkToRunBlend = false;
+
 			if (TracePlayer)
 			{
 				MonsterMoveEventIndex = 1;
@@ -66,6 +69,12 @@ AKinghtMonster::AKinghtMonster()
 			}
 			else
 			{
+				Temp = 0.f;
+				CalcedDist = 0.f;
+				InterpolationTime = 0.f;
+				WalkToRunBlend = true;
+
+				GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.CharacterOriginSpeed;
 				KnightAnimInstance->BlendSpeed = WalkBlend;
 				RotateMap[PlayerCharacter != nullptr]();
 				MonsterMoveMap[MonsterMoveEventIndex]();
@@ -96,7 +105,6 @@ AKinghtMonster::AKinghtMonster()
 
 	SetActionByRandomMap.Add(MonsterAnimationType::DASHATTACK1, [&](float percent)
 		{
-				UE_LOG(LogTemp, Warning, TEXT("walk"));
 				MonsterMoveEventIndex = 1;
 				ChangeActionType(MonsterActionType::MOVE);
 				KnightAnimInstance->BlendSpeed = WalkBlend;
@@ -145,13 +153,21 @@ void AKinghtMonster::Tick(float DeltaTime)
 
 	if (ActionType == MonsterActionType::RUN && CalcedDist != RunBlend)
 	{
-		if (CurrentDistance >= AccelerationDist)
+		if (WalkToRunBlend)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Dist : walktorunblend"));
+			InterpolationTime += DeltaTime;
+			CalcedDist = FMath::Lerp(WalkBlend, RunBlend, InterpolationTime / InterpolationDuration);
+		}
+		else if (CurrentDistance >= AccelerationDist)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("CurrentDistance >= AccelerationDist"));
 			InterpolationTime += DeltaTime;
 			CalcedDist = FMath::Lerp(IdleBlend, WalkBlend, InterpolationTime / InterpolationDuration);
 		}
 		else
 		{
+			UE_LOG(LogTemp, Warning, TEXT("CalcedDist = RunBlend;"));
 			InterpolationTime = 0;
 			CalcedDist = RunBlend;
 		}
