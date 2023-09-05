@@ -16,7 +16,7 @@ void AMonsterAreaActor::BeginPlay()
 	Area->OnComponentBeginOverlap.AddDynamic(this, &AMonsterAreaActor::BeginOverlap);
 	Area->OnComponentEndOverlap.AddDynamic(this, &AMonsterAreaActor::EndOverlap);
 
-	//AreaSize = Area->GetUnscaledBoxExtent();
+	AreaSize = Area->GetUnscaledBoxExtent();
 
 	CheckMonster();
 }
@@ -33,16 +33,20 @@ void AMonsterAreaActor::BeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 
 void AMonsterAreaActor::EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-
+	for (auto Monster : MonsterArr)
+	{
+		Monster->IsPatrol = true;
+		Monster->MonsterMoveEventIndex = 0;
+	}
 }
 
 void AMonsterAreaActor::CheckMonster()
 {
-	FHitResult HitResult;
+	TArray<FHitResult> OutHits;
 	FCollisionQueryParams Params(NAME_None, false, this);
 
-	bool bResult = GetWorld()->SweepSingleByChannel(
-		OUT HitResult,
+	bool bResult = GetWorld()->SweepMultiByChannel(
+		OUT OutHits,
 		GetActorLocation(),
 		GetActorLocation(),
 		FQuat::Identity,
@@ -58,11 +62,15 @@ void AMonsterAreaActor::CheckMonster()
 	else
 		DrawColor = FColor::Red;
 
-	DrawDebugBox(GetWorld(), Center, AreaSize, DrawColor, false, 3.f);
+	DrawDebugBox(GetWorld(), Center, AreaSize, DrawColor, false, 5.f);
 
-	if (bResult && HitResult.GetActor())
+	if (bResult)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *HitResult.GetActor()->GetName());
+		for (auto HitActor : OutHits)
+		{
+			auto MonsterActor = Cast<AEnemyMonster>(HitActor.GetActor());
+			MonsterArr.AddUnique(Cast<AEnemyMonster>(MonsterActor));
+		}
 	}
 }
 

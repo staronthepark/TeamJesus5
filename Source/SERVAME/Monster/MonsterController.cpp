@@ -160,6 +160,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		UE_LOG(LogTemp, Warning, TEXT("LostPlayer"));
 		Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
 		FindPlayer = false;
+		Monster->MonsterMoveEventIndex = 1;
 
 		//TODO : 몬스터 패트롤 상태로 변경
 		Monster->MonsterMoveEventIndex = 0;

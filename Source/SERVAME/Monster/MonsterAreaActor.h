@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include <Components/BoxComponent.h>
+#include "EnemyMonster.h"
 #include "MonsterAreaActor.generated.h"
 
 UCLASS()
@@ -20,6 +21,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector AreaSize = FVector::ZeroVector;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AEnemyMonster*> MonsterArr;
 
 protected:
 	virtual void BeginPlay() override;

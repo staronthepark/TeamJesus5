@@ -145,11 +145,8 @@ void AKinghtMonster::Tick(float DeltaTime)
 	if (IsInterpStart)
 		InterpMove();
 
-	if (MonsterController->FindPlayer && CircleWalkEnd == true)
-	{
+	if (MonsterController->FindPlayer)
 		IsPatrol = false;
-		MonsterMoveEventIndex = 1;
-	}
 }
 
 void AKinghtMonster::RespawnCharacter()
