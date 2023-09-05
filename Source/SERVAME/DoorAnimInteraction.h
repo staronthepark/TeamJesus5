@@ -31,6 +31,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UBoxComponent* OpenDoorComp;
 
+	UBoxComponent* OpenDoorTrigger;
+
 	ACineCameraActor* CineCameraActor;
 
 	ALevelSequenceActor* LevelSequenceActor;

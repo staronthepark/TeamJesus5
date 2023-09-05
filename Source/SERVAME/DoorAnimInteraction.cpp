@@ -25,6 +25,9 @@ void ADoorAnimInteraction::BeginPlay()
 
 	CineCameraActor = Cast<ACineCameraActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ACineCameraActor::StaticClass()));
 
+	ActorCompArray = GetComponentsByTag(UBoxComponent::StaticClass(), "DoorOpen");
+	OpenDoorComp = Cast<UBoxComponent>( ActorCompArray[0]);
+
 	BossRoomDoorOpenSequncePlayer->OnFinished.AddDynamic(this, &ADoorAnimInteraction::EndSequence);
 	CloseDoorComp->OnComponentBeginOverlap.AddDynamic(this, &ADoorAnimInteraction::OnCloseDoorOverlapBegin);
 	OpenDoorComp->OnComponentEndOverlap.AddDynamic(this, &ADoorAnimInteraction::OnOpenDoorOverlapEnd);
@@ -53,6 +56,7 @@ void ADoorAnimInteraction::OnCloseDoorOverlapBegin(UPrimitiveComponent* Overlapp
 
 void ADoorAnimInteraction::EndSequence()
 {
+	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 	GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(Character, 100.0f);
 }
 
@@ -69,7 +73,7 @@ void ADoorAnimInteraction::EnableEvent()
 	SetActorTickEnabled(false);
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[26].ObjClass, GetActorLocation(), GetActorForwardVector().Rotation() + FRotator(0, 0, -20));
 	AnimInstance->DoorAnimationType = DoorAnimationType::OPEN;
-	Character->SetActorLocation(FVector(-4507.492188, -31.434, 133));
+	Character->SetActorLocation(OpenDoorComp->GetComponentLocation());
 	Character->YawRotation = FRotator::ZeroRotator;
 	Character->YawRotation = FRotator::ZeroRotator;
 	Character->CameraShake(Character->PlayerDoorCameraShake);
