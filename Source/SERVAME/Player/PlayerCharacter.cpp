@@ -1982,7 +1982,7 @@ void APlayerCharacter::SetSpeed(float speed)
 	}
 	if (!IsGrab)
 	{
-		CameraBoom1->CameraLagSpeed = speed * 0.02f;
+		CameraBoom1->CameraLagSpeed = speed * 0.01f;
 	}
 
 	GetCharacterMovement()->MaxWalkSpeed = speed;
