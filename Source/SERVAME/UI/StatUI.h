@@ -41,7 +41,7 @@ class SERVAME_API UStatUI : public UUserWidget
 	EStatState state;
 
 	UPROPERTY(EditAnywhere)
-	TArray<UStatUI*> NextStat;
+	UStatUI* NextStat;
 
 	UPROPERTY(EditAnywhere)
 	EStateType Type;
@@ -51,6 +51,8 @@ class SERVAME_API UStatUI : public UUserWidget
 	UPlayerStatComponent* PlayerStatComp;
 	
 public:
+	int index;
+
 	virtual void NativeOnInitialized();
 	void ChangeState(EStatState changeState);
 
