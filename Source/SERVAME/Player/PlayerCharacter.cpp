@@ -78,7 +78,7 @@ APlayerCharacter::APlayerCharacter()
 	WeaponCollision->SetCollisionProfileName("Weapon");
 
 	ParryingCollision1 = CreateDefaultSubobject<UBoxComponent>(TEXT("Parrying Collision"));
-	ParryingCollision1->SetupAttachment(WeaponMesh);
+	ParryingCollision1->SetupAttachment(GetMesh());
 	ParryingCollision1->SetCollisionProfileName("Parrying");
 
 	WeaponOverlapStaticMeshCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Right Box"));
@@ -1982,7 +1982,7 @@ void APlayerCharacter::SetSpeed(float speed)
 	}
 	if (!IsGrab)
 	{
-		CameraBoom1->CameraLagSpeed = speed * 0.01f;
+		CameraBoom1->CameraLagSpeed = 6.0f;
 	}
 
 	GetCharacterMovement()->MaxWalkSpeed = speed;
@@ -2284,7 +2284,7 @@ void APlayerCharacter::OnParryingOverlapBegin(UPrimitiveComponent* OverlappedCom
 	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
 	Imotal = true;
 	//BossParryingSequncePlayer->Play();
-	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[15].ObjClass, GetActorLocation(), FRotator(90, 180, 0));
+	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[15].ObjClass, OtherComp->GetComponentLocation(), FRotator(90, 180, 0));
 	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
