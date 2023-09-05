@@ -380,7 +380,12 @@ void AJesusPlayerController::ChangeView()
 }
 
 void AJesusPlayerController::OpenMenu()
-{	
+{
+	if (CurrentSequncePlayer)
+	{
+		CurrentSequncePlayer->Stop();
+		return;
+	}
 	if (!GameInstance->MainMenuWidget->IsInViewport())
 	{
 		if (character->PlayerHUD->IsRender())
@@ -406,6 +411,12 @@ void AJesusPlayerController::OpenMenu()
 
 void AJesusPlayerController::CloseMenu()
 {
+	if (CurrentSequncePlayer)
+	{
+		CurrentSequncePlayer->Stop();
+		return;
+	}
+
 	if (!GameInstance->MainMenuWidget->IsInViewport())
 	{
 		if (character->PlayerHUD->IsRender())
