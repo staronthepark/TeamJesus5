@@ -23,6 +23,7 @@
 *.la
 *.a
 *.lib
+*.dll
 
 # Executables
 *.exe
@@ -45,7 +46,7 @@ SourceArt/**/*.png
 SourceArt/**/*.tga
 
 # Binary Files
-Binaries/*/*.pdb
+Binaries/*
 Plugins/*/Binaries/*
 
 # Builds
