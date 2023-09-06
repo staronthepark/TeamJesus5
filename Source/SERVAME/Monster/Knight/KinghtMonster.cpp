@@ -24,16 +24,38 @@ AKinghtMonster::AKinghtMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::IDLE, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(true, [&]()
 		{
+			if (TracePlayer)
+			{
+				StateType = AnimTypeToStateType[MonsterAnimationType::IDLE];
+				MonsterMoveEventIndex = 1;
+				KnightAnimInstance->BlendSpeed = WalkBlend;
+				KnightAnimInstance->Montage_Stop(0.25f, MontageMap[AnimationType]);
+
+				ChangeActionType(MonsterActionType::MOVE);
+				return;
+			}
+
 			KnightAnimInstance->BlendSpeed = IdleBlend;
 
-			if (AttackAnimationType != MonsterAnimationType::NONE && !TracePlayer)
+			if (AttackAnimationType != MonsterAnimationType::NONE)
 				StartAttackTrigger(AttackAnimationType);
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(false, [&]()
-		{
+		{	
+			if (TracePlayer)
+			{
+				StateType = AnimTypeToStateType[MonsterAnimationType::IDLE];
+				MonsterMoveEventIndex = 1;
+				KnightAnimInstance->BlendSpeed = WalkBlend;
+				KnightAnimInstance->Montage_Stop(0.25f, MontageMap[AnimationType]);
+				
+				ChangeActionType(MonsterActionType::MOVE);
+				return;
+			}
+
 			KnightAnimInstance->BlendSpeed = IdleBlend;
-			
-			if (AttackAnimationType != MonsterAnimationType::NONE && !TracePlayer)
+
+			if (AttackAnimationType != MonsterAnimationType::NONE)
 				StartAttackTrigger(AttackAnimationType);
 		});
 
@@ -51,7 +73,6 @@ AKinghtMonster::AKinghtMonster()
 	MonsterMoveMap.Add(0, [&]()
 		{
 			IsPatrol = true;
-			ChangeActionType(MonsterActionType::MOVE);
 			GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.CharacterOriginSpeed;
 			KnightAnimInstance->BlendSpeed = WalkBlend;
 			MonsterController->Patrol(PatrolActorArr[PatrolIndexCount]->GetActorLocation(), PatrolActorArr.Num());
@@ -62,6 +83,24 @@ AKinghtMonster::AKinghtMonster()
 				MonsterController->MoveWhenArrived(CirclePoints[CircleIndexCount]);
 		});
 
+	MontageEndEventMap.Add(MonsterAnimationType::IDLE, [&]()
+		{
+			if (PlayerCharacter && !TracePlayer)
+			{
+				StartAttackTrigger(AttackAnimationType);
+			}
+			else if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				KnightAnimInstance->BlendSpeed = WalkBlend;
+				ChangeActionType(MonsterActionType::MOVE);
+			}
+			else
+			{
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			}
+		});
+
 	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
 		{
 			WalkToRunBlend = false;
@@ -69,8 +108,8 @@ AKinghtMonster::AKinghtMonster()
 			if (TracePlayer)
 			{
 				MonsterMoveEventIndex = 1;
-				ChangeActionType(MonsterActionType::MOVE);
 				KnightAnimInstance->BlendSpeed = WalkBlend;
+				ChangeActionType(MonsterActionType::MOVE);
 			}
 			else
 			{
@@ -84,14 +123,13 @@ AKinghtMonster::AKinghtMonster()
 			if (TracePlayer)
 			{
 				MonsterMoveEventIndex = 1;
-				ChangeActionType(MonsterActionType::MOVE);
 				KnightAnimInstance->BlendSpeed = WalkBlend;
+				ChangeActionType(MonsterActionType::MOVE);
 			}
 			else
 			{
 				ChangeActionType(MonsterActionType::NONE);
 				ChangeMontageAnimation(MonsterAnimationType::IDLE);
-				KnightAnimInstance->BlendSpeed = IdleBlend;
 			}
 		});
 
@@ -100,8 +138,8 @@ AKinghtMonster::AKinghtMonster()
 			if (TracePlayer)
 			{
 				MonsterMoveEventIndex = 1;
+				KnightAnimInstance->BlendSpeed = WalkBlend;
 				ChangeActionType(MonsterActionType::MOVE);
-				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 			}
 			else
 			{
@@ -112,14 +150,9 @@ AKinghtMonster::AKinghtMonster()
 
 	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
 		{
-			if (IsPatrol)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("???????"));
-				KnightAnimInstance->BlendSpeed = WalkBlend;
-				return;
-			}
+			StateType = AnimTypeToStateType[MonsterAnimationType::IDLE];
 
-			if (CurrentDistance >= RunableDistance)
+			if (CurrentDistance >= RunableDistance && !IsPatrol)
 			{
 				ChangeActionType(MonsterActionType::RUN);
 			}
@@ -139,6 +172,13 @@ AKinghtMonster::AKinghtMonster()
 
 	MonsterTickEventMap.Add(MonsterActionType::RUN, [&]()
 		{
+			if (IsPatrol)
+			{
+				ChangeActionType(MonsterActionType::MOVE);
+				KnightAnimInstance->BlendSpeed = WalkBlend;
+				return;
+			}
+
 			RotateMap[PlayerCharacter != nullptr]();
 			MonsterMoveMap[MonsterMoveEventIndex]();
 
@@ -211,6 +251,9 @@ void AKinghtMonster::Tick(float DeltaTime)
 	if (MonsterController->FindPlayer)
 		IsPatrol = false;
 
+	if (MonsterController->FindPlayer && CurrentDistance > AttackRange && ActionType != MonsterActionType::ATTACK)
+		TracePlayer = true;
+
 	if (ActionType == MonsterActionType::RUN && CalcedDist != RunBlend && !IsPatrol)
 	{
 		if (WalkToRunBlend)
@@ -237,9 +280,6 @@ void AKinghtMonster::Tick(float DeltaTime)
 	}
 
 	SearchPlayer();
-
-	UE_LOG(LogTemp, Warning, TEXT("TracePlayer : %s"), TracePlayer ? TEXT("TRUE") : TEXT("FALSE"));
-	//UE_LOG(LogTemp, Warning, TEXT("IsPatrol : %s"), IsPatrol ? TEXT("TRUE") : TEXT("FALSE"));
 }
 
 void AKinghtMonster::RespawnCharacter()
