@@ -13,73 +13,23 @@ void UPlayerStatComponent::BeginPlay()
 
 	StrengthStatList[0].Func = [&]()
 	{
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK1].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK1].Damage * StrengthStatList[0].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK2].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK2].Damage * StrengthStatList[0].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK3].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK3].Damage * StrengthStatList[0].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK4].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK4].Damage * StrengthStatList[0].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK1].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK1].Damage * StrengthStatList[0].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK2].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK2].Damage * StrengthStatList[0].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK3].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK3].Damage * StrengthStatList[0].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::RUNPOWERATTACK].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::RUNPOWERATTACK].Damage * StrengthStatList[0].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::DODGEATTACK].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::DODGEATTACK].Damage * StrengthStatList[0].Value;
-		Owner->PlayerDataStruct.PlayerExecutionFirstDamage += Owner->PlayerDataStruct.PlayerExecutionFirstDamage * StrengthStatList[0].Value;
-		Owner->PlayerDataStruct.PlayerExecutionFirstDamage += Owner->PlayerDataStruct.PlayerExecutionSecondDamage * StrengthStatList[0].Value;
+		Owner->PlayerDataStruct.BaseDamage += Owner->PlayerDataStruct.BaseDamage * StrengthStatList[0].Value;
 	};
 	StrengthStatList[1].Func = [&]()
 	{
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK1].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK1].Damage * StrengthStatList[1].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK2].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK2].Damage * StrengthStatList[1].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK3].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK3].Damage * StrengthStatList[1].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK4].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK4].Damage * StrengthStatList[1].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK1].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK1].Damage * StrengthStatList[1].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK2].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK2].Damage * StrengthStatList[1].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK3].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK3].Damage * StrengthStatList[1].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::RUNPOWERATTACK].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::RUNPOWERATTACK].Damage * StrengthStatList[1].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::DODGEATTACK].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::DODGEATTACK].Damage * StrengthStatList[1].Value;
-		Owner->PlayerDataStruct.PlayerExecutionFirstDamage += Owner->PlayerDataStruct.PlayerExecutionFirstDamage * StrengthStatList[1].Value;
-		Owner->PlayerDataStruct.PlayerExecutionFirstDamage += Owner->PlayerDataStruct.PlayerExecutionSecondDamage * StrengthStatList[1].Value;
+		Owner->PlayerDataStruct.BaseDamage += Owner->PlayerDataStruct.BaseDamage * StrengthStatList[1].Value;
 	};
 	StrengthStatList[2].Func = [&]()
 	{
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK1].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK1].Damage * StrengthStatList[2].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK2].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK2].Damage * StrengthStatList[2].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK3].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK3].Damage * StrengthStatList[2].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK4].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK4].Damage * StrengthStatList[2].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK1].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK1].Damage * StrengthStatList[2].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK2].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK2].Damage * StrengthStatList[2].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK3].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK3].Damage * StrengthStatList[2].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::RUNPOWERATTACK].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::RUNPOWERATTACK].Damage * StrengthStatList[2].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::DODGEATTACK].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::DODGEATTACK].Damage * StrengthStatList[2].Value;
-		Owner->PlayerDataStruct.PlayerExecutionFirstDamage += Owner->PlayerDataStruct.PlayerExecutionFirstDamage * StrengthStatList[2].Value;
-		Owner->PlayerDataStruct.PlayerExecutionFirstDamage += Owner->PlayerDataStruct.PlayerExecutionSecondDamage * StrengthStatList[2].Value;
+		Owner->PlayerDataStruct.BaseDamage += Owner->PlayerDataStruct.BaseDamage * StrengthStatList[2].Value;
 	};
 	StrengthStatList[3].Func = [&]()
 	{
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK1].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK1].Damage * StrengthStatList[3].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK2].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK2].Damage * StrengthStatList[3].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK3].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK3].Damage * StrengthStatList[3].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK4].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK4].Damage * StrengthStatList[3].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK1].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK1].Damage * StrengthStatList[3].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK2].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK2].Damage * StrengthStatList[3].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK3].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK3].Damage * StrengthStatList[3].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::RUNPOWERATTACK].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::RUNPOWERATTACK].Damage * StrengthStatList[3].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::DODGEATTACK].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::DODGEATTACK].Damage * StrengthStatList[3].Value;
-		Owner->PlayerDataStruct.PlayerExecutionFirstDamage += Owner->PlayerDataStruct.PlayerExecutionFirstDamage * StrengthStatList[3].Value;
-		Owner->PlayerDataStruct.PlayerExecutionFirstDamage += Owner->PlayerDataStruct.PlayerExecutionSecondDamage * StrengthStatList[3].Value;
+		Owner->PlayerDataStruct.BaseDamage += Owner->PlayerDataStruct.BaseDamage * StrengthStatList[3].Value;
 	};
 	StrengthStatList[4].Func = [&]()
 	{
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK1].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK1].Damage * StrengthStatList[4].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK2].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK2].Damage * StrengthStatList[4].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK3].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK3].Damage * StrengthStatList[4].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK4].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::ATTACK4].Damage * StrengthStatList[4].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK1].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK1].Damage * StrengthStatList[4].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK2].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK2].Damage * StrengthStatList[4].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK3].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::POWERATTACK3].Damage * StrengthStatList[4].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::RUNPOWERATTACK].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::RUNPOWERATTACK].Damage * StrengthStatList[4].Value;
-		Owner->PlayerDataStruct.DamageList[AnimationType::DODGEATTACK].Damage += Owner->PlayerDataStruct.DamageList[AnimationType::DODGEATTACK].Damage * StrengthStatList[4].Value;
-		Owner->PlayerDataStruct.PlayerExecutionFirstDamage += Owner->PlayerDataStruct.PlayerExecutionFirstDamage * StrengthStatList[4].Value;
-		Owner->PlayerDataStruct.PlayerExecutionFirstDamage += Owner->PlayerDataStruct.PlayerExecutionSecondDamage * StrengthStatList[4].Value;
+		Owner->PlayerDataStruct.BaseDamage += Owner->PlayerDataStruct.BaseDamage * StrengthStatList[4].Value;
 	};
 
 	StaminaStatList[0].Func = [&]()

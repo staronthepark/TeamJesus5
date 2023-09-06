@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include <Components/ProgressBar.h>
 #include "GameFramework/Actor.h"
+#include <Components/Slider.h>
 #include "BaseUI.generated.h"
 
 /**
@@ -23,4 +24,6 @@ class SERVAME_API UBaseUI : public UUserWidget
 
 protected:
 	void ProgressDecrease(AActor* Actor, UProgressBar* ProgressBar, float _min, float _max, FTimerHandle& DelayTimerHandle, FTimerHandle& ProgressTimerHandle);
+
+	void ProgressIncrease(AActor* Actor, UProgressBar* ProgressBar, float _min, float _max, FTimerHandle& DelayTimerHandle, FTimerHandle& ProgressTimerHandle, USlider* slider);
 };

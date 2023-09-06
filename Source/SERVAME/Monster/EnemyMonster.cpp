@@ -53,6 +53,7 @@ AEnemyMonster::AEnemyMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::DASHATTACK1, MonsterStateType::BEFOREATTACK);
 
 	AnimTypeToStateType.Add(MonsterAnimationType::HIT, MonsterStateType::CANTACT);
+	AnimTypeToStateType.Add(MonsterAnimationType::BACKHIT, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::DEAD, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::DEADLOOP, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::EXECUTION, MonsterStateType::CANTACT);
@@ -141,6 +142,11 @@ AEnemyMonster::AEnemyMonster()
 		});
 
 	MonsterTickEventMap.Add(MonsterActionType::HIT, [&]()
+		{
+
+		});
+
+	MonsterTickEventMap.Add(MonsterActionType::RUN, [&]()
 		{
 
 		});
@@ -239,7 +245,7 @@ AEnemyMonster::AEnemyMonster()
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
-		{			
+		{					
 			if (TracePlayer)
 			{
 				MonsterMoveEventIndex = 1;
@@ -271,6 +277,22 @@ AEnemyMonster::AEnemyMonster()
 				ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			}
 		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::BACKHIT, [&]()
+		{
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+			}
+			else
+			{
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			}
+		});
+
 
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::IDLE, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(true, [&]()
@@ -391,6 +413,7 @@ AEnemyMonster::AEnemyMonster()
 				}
 			}
 		});
+
 	SetActionByRandomMap.Add(MonsterAnimationType::DASHATTACK1, [&](float percent)
 		{
 			if (percent <= 0.5f)
@@ -404,6 +427,7 @@ AEnemyMonster::AEnemyMonster()
 				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 			}
 		});
+
 	SetActionByRandomMap.Add(MonsterAnimationType::RANGEATTACK1, [&](float percent)
 		{
 			if (percent <= 0.8f)
@@ -634,7 +658,6 @@ void AEnemyMonster::ShotProjectile()
 {
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[4].ObjClass, GetActorLocation() + GetActorRotation().Vector() * 200.0f, GetActorRotation());
 }
-
 
 void AEnemyMonster::Rotate()
 {

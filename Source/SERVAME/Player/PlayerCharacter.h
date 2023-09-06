@@ -11,7 +11,6 @@
 #include "Containers/Queue.h"
 #include "..\UI\PlayerHUD.h"
 #include "..\UI\UserSettingUI.h"
-#include "..\JesusSaveGame.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "ActorSequenceComponent.h"
 #include "ActorSequencePlayer.h"
@@ -111,7 +110,8 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 		float ShieldHP;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MaxShieldHP;
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float BaseDamage;
 };
 
 UCLASS()

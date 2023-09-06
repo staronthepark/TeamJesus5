@@ -44,4 +44,7 @@ public:
 	FOnKnockBackEnd KnockBackEnd;
 	FOnSpawningBegin SpawningBegin;
 	FOnSpawningEnd SpawningEnd;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
+	float BlendSpeed = 0.f;
 };
