@@ -26,7 +26,7 @@ public:
 		USceneComponent* ParentComp;
 
 	UPROPERTY(Editanywhere)
-		UNiagaraComponent* NiagaraComp;
+		UNiagaraComponent* NiagaraComp1;
 
 	UPROPERTY(Editanywhere)
 		UStaticMeshComponent* ChangeMeshComp;
