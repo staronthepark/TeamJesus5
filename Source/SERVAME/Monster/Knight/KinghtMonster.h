@@ -65,13 +65,14 @@ public:
 	float RunableDistance = 1000.f;
 	UPROPERTY(EditAnyWhere, Category = "RunableDistance")
 	float AccelerationDist = 700.f;
-	float InterpolationTime = 0.0f;
 	float InterpolationDuration = 0.5f;
+	float InterpolationTime = 0.0f;
 	bool WalkToRunBlend;
 
 	bool StartRun;
 	float CalcedDist;
 	float Temp = 0.f;
+
 
 	const float IdleBlend = 0.f;
 	const float WalkBlend = 300.f;
