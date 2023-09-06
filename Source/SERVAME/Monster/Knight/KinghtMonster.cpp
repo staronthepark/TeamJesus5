@@ -12,9 +12,6 @@ AKinghtMonster::AKinghtMonster()
 	AttackTrigger = CreateDefaultSubobject<UKnightAttackTriggerComp>(TEXT("AttackTriggerCollision"));
 	AttackTrigger->SetupAttachment(GetMesh());
 
-	DashAttackTrigger = CreateDefaultSubobject<UKnightAttackTriggerComp>(TEXT("DashAttackTriggerCollision"));
-	DashAttackTrigger->SetupAttachment(GetMesh());
-
 	ParryingCollision1->SetupAttachment(GetMesh(), FName("B_WEAPON"));
 	SwordTrailComp->SetupAttachment(GetMesh(), FName("B_WEAPON"));
 	WeaponCollision->SetupAttachment(GetMesh(), FName("B_WEAPON"));
@@ -24,9 +21,37 @@ AKinghtMonster::AKinghtMonster()
 	KnightHeadMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("KnightHeadMesh"));
 	KnightHeadMesh->SetupAttachment(GetMesh(), FName("Bip001-Head"));
 
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::IDLE, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(true, [&]()
+		{
+			KnightAnimInstance->BlendSpeed = IdleBlend;
+
+			if (AttackAnimationType != MonsterAnimationType::NONE && CurrentDistance < AttackRange)
+				StartAttackTrigger(AttackAnimationType);
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(false, [&]()
+		{
+			KnightAnimInstance->BlendSpeed = IdleBlend;
+			
+			if (AttackAnimationType != MonsterAnimationType::NONE && CurrentDistance < AttackRange)
+				StartAttackTrigger(AttackAnimationType);
+		});
+
+	TargetDetectEventMap.Add(MonsterAttackType::MELEE, [&]()
+		{
+			ChangeActionType(MonsterActionType::MOVE);
+			KnightAnimInstance->BlendSpeed = IdleBlend;
+		});
+	TargetDetectEventMap.Add(MonsterAttackType::RANGE, [&]()
+		{
+			ChangeActionType(MonsterActionType::MOVE);
+			KnightAnimInstance->BlendSpeed = IdleBlend;
+		});
+
 	MonsterMoveMap.Add(0, [&]()
 		{
 			IsPatrol = true;
+			GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.CharacterOriginSpeed;
 			MonsterController->Patrol(PatrolActorArr[PatrolIndexCount]->GetActorLocation(), PatrolActorArr.Num());
 		});
 	MonsterMoveMap.Add(3, [&]()
@@ -35,24 +60,63 @@ AKinghtMonster::AKinghtMonster()
 				MonsterController->MoveWhenArrived(CirclePoints[CircleIndexCount]);
 		});
 
+	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
+		{
+			WalkToRunBlend = false;
+
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(MonsterActionType::MOVE);
+				KnightAnimInstance->BlendSpeed = WalkBlend;
+			}
+			else
+			{
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			}
+		});
+
 	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
+		{
+			if (CurrentDistance >= RunableDistance)
+			{
+				ChangeActionType(MonsterActionType::RUN);
+			}
+			else
+			{
+				Temp = 0.f;
+				CalcedDist = 0.f;
+				InterpolationTime = 0.f;
+				WalkToRunBlend = true;
+
+				GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.CharacterOriginSpeed;
+				KnightAnimInstance->BlendSpeed = WalkBlend;
+				RotateMap[PlayerCharacter != nullptr]();
+				MonsterMoveMap[MonsterMoveEventIndex]();
+			}
+		});
+
+	MonsterTickEventMap.Add(MonsterActionType::HIT, [&]()
+		{
+			//TODO : 블렌드 값 보간 해줘야함. 끝나자 마자 WalkBlend 값을 넣어버려서 끊겨 보임.
+			KnightAnimInstance->BlendSpeed = IdleBlend;
+		});
+
+	MonsterTickEventMap.Add(MonsterActionType::RUN, [&]()
 		{
 			RotateMap[PlayerCharacter != nullptr]();
 			MonsterMoveMap[MonsterMoveEventIndex]();
-		});
 
-	MontageEndEventMap.Add(MonsterAnimationType::FORWARDMOVE, [=]()
-		{
-			if (TracePlayer)
-			{
-				if(IsPatrol)
-					MonsterMoveEventIndex = 0;
-				else
-					MonsterMoveEventIndex = 1;
+			auto speed = FMath::Clamp(CalcedDist, 0.f, 600.f);
+			
+			if (speed > Temp)
+				Temp = speed;
 
-				ChangeActionType(MonsterActionType::MOVE);
-				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
-			}
+			KnightAnimInstance->BlendSpeed = Temp;
+			MonsterDataStruct.RunSpeed = FMath::Lerp(120.f, 240.f, (KnightAnimInstance->BlendSpeed - 300.f) / 300.f);
+
+			//KnightAnimInstance->Montage_Stop(0.25f, MontageMap[AnimationType]);
 		});
 
 	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
@@ -63,54 +127,15 @@ AKinghtMonster::AKinghtMonster()
 
 	SetActionByRandomMap.Add(MonsterAnimationType::DASHATTACK1, [&](float percent)
 		{
-			if (percent <= 0.7f)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("walk"));
 				MonsterMoveEventIndex = 1;
 				ChangeActionType(MonsterActionType::MOVE);
-				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("circlewalk"));
-				DrawCircle(PlayerCharacter->GetActorLocation());
-				CircleWalkEnd = false;
-				MonsterMoveEventIndex = 3;
-				DashAttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			
-				GetWorldTimerManager().SetTimer(CircleWalkTimerHandle, FTimerDelegate::CreateLambda([=]()
-					{					
-						if (MonsterDataStruct.CharacterHp > 0 && MonsterController->FindPlayer
-							&& AnimationType != MonsterAnimationType::EXECUTION && ActionType != MonsterActionType::ATTACK)
-						{
-							CircleWalkEnd = true;
-							MonsterMoveEventIndex = 1;
-							ChangeActionType(MonsterActionType::MOVE);
-							ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
-
-							DashAttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-						}
-						//GetWorldTimerManager().ClearTimer(CircleWalkTimerHandle);
-					}), CircleWalkMinTime, false);
-
-				ChangeActionType(MonsterActionType::MOVE);
-				ChangeMontageAnimation(MonsterAnimationType::LEFTMOVE);
-			}
+				KnightAnimInstance->BlendSpeed = WalkBlend;
 		});
 }
 
 void AKinghtMonster::BeginPlay()
 {
 	Super::BeginPlay(); 
-
-	const FTransform socket = GetMesh()->GetSocketTransform("Bip001-Spine2", ERelativeTransformSpace::RTS_World);
-	auto Armor = GetWorld()->SpawnActor(ArmorClass, &socket);
-
-	if (Armor != nullptr)
-	{
-		Armor->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "Bip001-Spine2");
-		KnightArmor = Cast<AKnightArmor>(Armor);
-	}
 
 	SetActive(true);
 
@@ -145,11 +170,33 @@ void AKinghtMonster::Tick(float DeltaTime)
 	if (IsInterpStart)
 		InterpMove();
 
-	if (MonsterController->FindPlayer && CircleWalkEnd == true)
-	{
+	if (MonsterController->FindPlayer)
 		IsPatrol = false;
-		MonsterMoveEventIndex = 1;
+
+	if (ActionType == MonsterActionType::RUN && CalcedDist != RunBlend)
+	{
+		if (WalkToRunBlend)
+		{
+			InterpolationTime += DeltaTime;
+			CalcedDist = FMath::Lerp(WalkBlend, RunBlend, InterpolationTime / InterpolationDuration);
+		}
+		else if (CurrentDistance >= AccelerationDist)
+		{
+			InterpolationTime += DeltaTime;
+			CalcedDist = FMath::Lerp(IdleBlend, WalkBlend, InterpolationTime / InterpolationDuration);
+		}
+		else
+		{
+			InterpolationTime = 0;
+			CalcedDist = RunBlend;
+		}
+
+		GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.RunSpeed;
 	}
+
+	SearchPlayer();
+
+	UE_LOG(LogTemp, Warning, TEXT("TracePlayer : %s"), TracePlayer ? TEXT("TRUE") : TEXT("FALSE"));
 }
 
 void AKinghtMonster::RespawnCharacter()
@@ -176,10 +223,7 @@ void AKinghtMonster::InterpEnd() { IsInterpStart = false; }
 
 void AKinghtMonster::KnockBackStart()
 {
-	if (!KnightArmor->IsBroke)
-		return;
-
-	GetWorld()->GetTimerManager().SetTimer(KnockBackTimerHandle, FTimerDelegate::CreateLambda([=]()
+/*	GetWorld()->GetTimerManager().SetTimer(KnockBackTimerHandle, FTimerDelegate::CreateLambda([=]()
 		{
 			IsKnockBack = false;
 			GetWorld()->GetTimerManager().ClearTimer(KnockBackTimerHandle);
@@ -194,12 +238,12 @@ void AKinghtMonster::KnockBackStart()
 
 	StopAnimMontage(MontageMap[AnimationType]); 
 	DeactivateAttackTrigger();
-	IsKnockBack = true; 
+	IsKnockBack = true;*/ 
 }
 
 void AKinghtMonster::KnockBackEmd() 
 { 
-	IsKnockBack = false; 
+	//IsKnockBack = false; 
 }
 
 void AKinghtMonster::SpawnBegin()
@@ -208,7 +252,6 @@ void AKinghtMonster::SpawnBegin()
 	StateType = MonsterStateType::CANTACT;
 	HitCollision->Deactivate();
 	AttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	DashAttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void AKinghtMonster::SpawnEnd()
@@ -217,14 +260,10 @@ void AKinghtMonster::SpawnEnd()
 	StateType = MonsterStateType::NONE;
 	HitCollision->Activate();
 	AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	DashAttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 void AKinghtMonster::Stun()
 {
-	//if (!KnightArmor->IsBroke)
-	//	return;
-	KnightArmor->ArmorDataStruct.ArmorHp = -1;
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
 	DeactivateSMOverlap();
@@ -241,10 +280,13 @@ void AKinghtMonster::ChangeMontageAnimation(MonsterAnimationType type)
 	}
 	else
 	{
-		KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
+		if (MontageMap.Contains(AnimationType))
+			KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 		AnimationType = type;
 		StateType = AnimTypeToStateType[type];
-		KnightAnimInstance->PlayMontage(MontageMap[type]);
+
+		if (MontageMap.Contains(type))
+			KnightAnimInstance->PlayMontage(MontageMap[type]);
 	}
 }
 
@@ -262,13 +304,11 @@ void AKinghtMonster::MonsterHitStop()
 void AKinghtMonster::ActivateAttackTrigger()
 {
 	AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	DashAttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 void AKinghtMonster::DeactivateAttackTrigger()
 {
 	AttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	DashAttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void AKinghtMonster::OnKnightTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -299,7 +339,9 @@ void AKinghtMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 	if (ActionType != MonsterActionType::ATTACK)
 	{
 		MonsterController->StopMovement();
-		KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
+
+		if (MontageMap.Contains(AnimationType))
+			KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 
 		float RandomValue = FMath::RandRange(0, 100) * 0.01f;
 		if (SetActionByRandomMap.Contains(AttackAnimType))
@@ -373,6 +415,23 @@ void AKinghtMonster::DrawCircle(FVector Center)
 	}
 }
 
+void AKinghtMonster::SearchPlayer()
+{
+	if (PlayerCharacter == nullptr)
+		return;
+
+	auto TargetLoc = PlayerCharacter->GetActorLocation() - GetActorLocation();
+	FVector Forward = GetActorForwardVector();
+	FVector Right = GetActorRightVector();
+	float ForwardSpeed = FVector::DotProduct(TargetLoc, Forward);
+	float RightSpeed = FVector::DotProduct(TargetLoc, Right);
+
+	if (ForwardSpeed > 0)
+		HitType = MonsterAnimationType::HIT;
+	else if (ForwardSpeed < 0)
+		HitType = MonsterAnimationType::BACKHIT;
+}
+
 float AKinghtMonster::Die(float Dm)
 {
 	if (MonsterDataStruct.CharacterHp <= 0)
@@ -401,8 +460,7 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	if (Spawning)
 		return DamageAmount;
 
-	if (KnightArmor->IsBroke)
-		Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	IsInterpStart = false;
 	DeactivateHitCollision();
@@ -410,22 +468,16 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	if (AnimationType == MonsterAnimationType::EXECUTION)
 		return 0.f;
 
-	if (!KnightArmor->IsBroke)
-	{
-		KnightArmor->ArmorDataStruct.ArmorHp -= DamageAmount;
-		AObjectPool& objectpool = AObjectPool::GetInstance();
-		objectpool.SpawnObject(objectpool.ObjectArray[38].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-		objectpool.SpawnObject(objectpool.ObjectArray[39].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-	}
-	else if (DamageAmount >= 30 && MonsterDataStruct.CharacterHp > 0)
+	if (DamageAmount >= 30 && MonsterDataStruct.CharacterHp > 0)
 	{
 		MonsterController->StopMovement();
 		KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 		if (MontageEndEventMap.Contains(AnimationType))
 			MontageEndEventMap[AnimationType]();
 		
+		//TODO : 앞 뒤 방향에 따른 피격
 		ChangeActionType(MonsterActionType::HIT);
-		ChangeMontageAnimation(MonsterAnimationType::HIT);
+		ChangeMontageAnimation(HitType);
 	}
 
 	return DamageAmount;
