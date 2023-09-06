@@ -21,8 +21,8 @@ UCLASS()
 class SERVAME_API UMainMenuUI : public UUserWidget
 {
 	GENERATED_BODY()
-		UPROPERTY(meta = (BindWidget))
-		UImage* RenderTargetImage;
+		//UPROPERTY(meta = (BindWidget))
+		//UImage* RenderTargetImage;
 
 	UPROPERTY(meta = (BindWidget))
 		UImage* StartBackgroundImage;
@@ -44,9 +44,9 @@ class SERVAME_API UMainMenuUI : public UUserWidget
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* MainMenuCloseAnimation;
 
-	ALevelSequenceActor* LevelSequenceActor;
-	UPROPERTY(EditAnywhere)
-		ULevelSequence* LevelSequence;
+	//ALevelSequenceActor* LevelSequenceActor;
+	//UPROPERTY(EditAnywhere)
+	//	ULevelSequence* LevelSequence;
 
 	//UPROPERTY(meta = (BindWidget))
 	//	UUserSettingUI* WBP_UserSettingUI;
@@ -59,7 +59,7 @@ class SERVAME_API UMainMenuUI : public UUserWidget
 	//UUserSettingUI* UserSettingUI;
 
 public:
-	ULevelSequencePlayer* LevelSequencePlayer;
+	/*ULevelSequencePlayer* LevelSequencePlayer;*/
 
 	UPROPERTY(meta = (BindWidget))
 		UButton* StartButton;

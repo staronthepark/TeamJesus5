@@ -66,7 +66,7 @@ void UMainMenuUI::UnhoverQuitButton()
 void UMainMenuUI::ClickStartButton()
 {
 	PlayAnimation(MainMenuCloseAnimation);
-	RenderTargetImage->SetVisibility(ESlateVisibility::Collapsed);
+	/*RenderTargetImage->SetVisibility(ESlateVisibility::Collapsed);*/
 	//if(LevelSequencePlayer)
 	//	LevelSequencePlayer->Play();
 }
