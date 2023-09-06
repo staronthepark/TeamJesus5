@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
+#include "NiagaraComponent.h"
 #include "FlowerActor.generated.h"
 
 UCLASS()
@@ -20,6 +21,12 @@ public:
 
 	UPROPERTY(Editanywhere)
 		UBoxComponent* TriggerComp;
+
+	UPROPERTY(Editanywhere)
+		USceneComponent* ParentComp;
+
+	UPROPERTY(Editanywhere)
+		UNiagaraComponent* NiagaraComp1;
 
 	UPROPERTY(Editanywhere)
 		UStaticMeshComponent* ChangeMeshComp;
