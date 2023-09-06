@@ -5,21 +5,13 @@
 
 void UJesusSaveGame::SaveLoc(FVector Vec)
 { 
-	PlayerLocStruct.PlayerLoc.X = Vec.X;
-	PlayerLocStruct.PlayerLoc.Y = Vec.Y;
-	PlayerLocStruct.PlayerLoc.Z = Vec.Z;
+	PlayerLoc = Vec;
 }
 
 void UJesusSaveGame::SaveRot(FRotator Rot) 
 {
-	PlayerRotStruct.PlayerRot.Pitch = Rot.Pitch;
-	PlayerRotStruct.PlayerRot.Yaw = Rot.Yaw;
-	PlayerRotStruct.PlayerRot.Roll = Rot.Roll;
+	PlayerRot = Rot;
 }
-
-void UJesusSaveGame::SaveHealCount(int Count) { HealCount = Count; }
-
-void UJesusSaveGame::SaveSavePoint() {	}
 
 void UJesusSaveGame::Save(UJesusSaveGame* Instance)
 {
@@ -36,17 +28,16 @@ void UJesusSaveGame::Save(UJesusSaveGame* Instance)
 	}
 }
 
-void UJesusSaveGame::Load(UJesusSaveGame* LoadInstance)
-{
-	//UJesusSaveGame* LoadInstance = Cast<UJesusSaveGame>(UGameplayStatics::CreateSaveGameObject(UJesusSaveGame::StaticClass()));
+//void UJesusSaveGame::SavePlayerData(FPlayerCharacterDataStruct data)
+//{
+//	PlayerData = data;
+//}
 
+UJesusSaveGame* UJesusSaveGame::Load(UJesusSaveGame* LoadInstance)
+{
 	LoadInstance->SaveSlotName = "JesusSave";
 	LoadInstance->SaveIndex = 0;
 
 	LoadInstance = Cast<UJesusSaveGame>(UGameplayStatics::LoadGameFromSlot(LoadInstance->SaveSlotName, LoadInstance->SaveIndex));
-
-	UE_LOG(LogTemp, Warning, TEXT("SaveName : %s"), *LoadInstance->SaveSlotName);
-	UE_LOG(LogTemp, Warning, TEXT("SaveLoc : (%f, %f, %f)"), LoadInstance->PlayerLocStruct.PlayerLoc.X, LoadInstance->PlayerLocStruct.PlayerLoc.Y, LoadInstance->PlayerLocStruct.PlayerLoc.Z);
-	UE_LOG(LogTemp, Warning, TEXT("SaveRot : [%f, %f, %f]"), LoadInstance->PlayerRotStruct.PlayerRot.Roll, LoadInstance->PlayerRotStruct.PlayerRot.Pitch, LoadInstance->PlayerRotStruct.PlayerRot.Yaw);
-	UE_LOG(LogTemp, Warning, TEXT("SaveHealCount : %d"), LoadInstance->HealCount);
+	return LoadInstance;
 }
