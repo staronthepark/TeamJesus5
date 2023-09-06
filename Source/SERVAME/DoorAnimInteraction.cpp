@@ -70,7 +70,8 @@ void ADoorAnimInteraction::EnableEvent()
 	SetActorTickEnabled(false);
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[26].ObjClass, GetActorLocation(), GetActorForwardVector().Rotation() + FRotator(0, 0, -20));
 	AnimInstance->DoorAnimationType = DoorAnimationType::OPEN;
-	Character->SetActorLocation(TriggerComp->GetComponentLocation());
+	//Character->SetActorLocation(TriggerComp->GetComponentLocation());
+	Character->SetActorLocation(FVector(0, 0, 0));
 	Character->YawRotation = FRotator::ZeroRotator;
 	Character->YawRotation = FRotator::ZeroRotator;
 	Character->CameraShake(Character->PlayerDoorCameraShake);
