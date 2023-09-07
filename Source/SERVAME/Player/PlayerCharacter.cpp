@@ -2220,33 +2220,37 @@ void APlayerCharacter::PlayerMovement()
 
 void APlayerCharacter::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {	
-	HitStop();
-
-	CameraShake(PlayerCameraShake);
 
 	AObjectPool& objectpool = AObjectPool::GetInstance();
 	objectpool.SpawnObject(objectpool.ObjectArray[17].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 
-	UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(Cast<ABaseCharacter>(OtherActor));
+	ABaseCharacter* character = Cast<ABaseCharacter>(OtherActor);
 
-	if (HitEffectRotatorList.Contains(AnimInstance->PlayerAnimationType))
+	if (character != nullptr)
 	{
-		objectpool.SpawnObject(objectpool.ObjectArray[0].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-		objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-		objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-		objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-		objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+		UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(character);
 
-		objectpool.SpawnObject(objectpool.ObjectArray[5].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-		objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
-	}
+		HitStop();
+		CameraShake(PlayerCameraShake);
 
-	if (PlayerDataStruct.DamageList.Contains(AnimInstance->PlayerAnimationType))
-	{
-		VibrateGamePad(PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].VibrateIntensity, PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].VibrateDuration);
-		OtherActor->TakeDamage(PlayerDataStruct.BaseDamage * PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].Damage, CharacterDamageEvent, nullptr, this);
-	}	
-		
+		if (HitEffectRotatorList.Contains(AnimInstance->PlayerAnimationType))
+		{
+			objectpool.SpawnObject(objectpool.ObjectArray[0].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+			objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+			objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+			objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+			objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+
+			objectpool.SpawnObject(objectpool.ObjectArray[5].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+			objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
+		}
+
+		if (PlayerDataStruct.DamageList.Contains(AnimInstance->PlayerAnimationType))
+		{
+			VibrateGamePad(PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].VibrateIntensity, PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].VibrateDuration);
+			OtherActor->TakeDamage(PlayerDataStruct.BaseDamage * PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].Damage, CharacterDamageEvent, nullptr, this);
+		}
+	}		
 }
 
 void APlayerCharacter::OnSMOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -2292,6 +2296,9 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 {
 	if (IsGrab)return;
 	
+	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
+
+	if (ExecutionCharacter == nullptr)return;
 
 	ShieldCount = 0;
 	PlayerHUD->ClearShield();
@@ -2307,7 +2314,6 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	Imotal = true;
 	ChangeActionType(ActionType::DEAD);	
 	ShieldOff();
-	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
 
 	if (TargetComp != nullptr)
 	{
