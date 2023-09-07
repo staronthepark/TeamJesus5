@@ -60,11 +60,15 @@ public:
 	UPROPERTY(EditAnywhere, Category = "CurrentEffect")
 	TObjectPtr<UNiagaraComponent> CurrentEffect;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DarkProjectile")
-	TObjectPtr<USphereComponent> DarkProjectileCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+	TObjectPtr<USphereComponent> ProjectileCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+	float Speed;
+	FVector MoveDir;
+	bool IsShot = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FogAttack")
-	TObjectPtr<USphereComponent> FogAttackCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+	TObjectPtr<USphereComponent> RangeAttackCollision;
 
 	UPROPERTY()
 	FDamageEvent DamageEvent;
@@ -76,9 +80,13 @@ public:
 	virtual void BeginPlay() override;
 	virtual void ReturnObject()override;
 
+	void ShotProjectile();
+
+	void SetCurrentEffect(EffectType type) { CurrentEffect->SetAsset(GetTypeEffect[type]); }
+
 	UFUNCTION()
-	void OnDarkprojectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnProjectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
-	void OnFogBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnRangeAttackBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 };

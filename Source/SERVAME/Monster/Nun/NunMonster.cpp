@@ -369,6 +369,9 @@ void ANunMonster::SingleHeal()
 	TargetKnight->MonsterHPWidget->SetHP(CurrentPercent);
 
 	KnightHpArr.Empty();
+
+	//auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+	//	FVector::ZeroVector, FRotator::ZeroRotator);
 }
 
 void ANunMonster::Stun()

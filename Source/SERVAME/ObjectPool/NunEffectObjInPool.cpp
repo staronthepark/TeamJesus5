@@ -11,39 +11,65 @@ ANunEffectObjInPool::ANunEffectObjInPool()
 	CurrentEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("CurrentEffect"));
 	CurrentEffect->SetupAttachment(RootComponent);
 
-	DarkProjectileCollision = CreateDefaultSubobject<USphereComponent>(TEXT("DarkProjectileCollision"));
-	DarkProjectileCollision->SetupAttachment(RootComponent);
+	ProjectileCollision = CreateDefaultSubobject<USphereComponent>(TEXT("AttackCollision"));
+	ProjectileCollision->SetupAttachment(RootComponent);
 
-	FogAttackCollision = CreateDefaultSubobject<USphereComponent>(TEXT("FogAttackCollision"));
-	FogAttackCollision->SetupAttachment(RootComponent);
+	RangeAttackCollision = CreateDefaultSubobject<USphereComponent>(TEXT("RangeAttackCollision"));
+	RangeAttackCollision->SetupAttachment(RootComponent);
 }
 
 void ANunEffectObjInPool::BeginPlay()
 {
-	DarkProjectileCollision->OnComponentBeginOverlap.AddDynamic(this, &ANunEffectObjInPool::OnDarkprojectileBeginOverlap);
-	DarkProjectileCollision->OnComponentBeginOverlap.AddDynamic(this, &ANunEffectObjInPool::OnFogBeginOverlap);
+	Super::BeginPlay();
 
-	CurrentEffect->SetAsset(GetTypeEffect[Type]);
+	SetActorTickEnabled(false);
+
+	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	RangeAttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	ProjectileCollision->OnComponentBeginOverlap.AddDynamic(this, &ANunEffectObjInPool::OnProjectileBeginOverlap);
+	RangeAttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ANunEffectObjInPool::OnRangeAttackBeginOverlap);
 }
 
 void ANunEffectObjInPool::Tick(float DeltaTime)
 {
+	if (IsShot)
+		SetActorLocation(GetActorLocation() += MoveDir * Speed * DeltaTime);
 }
 
 void ANunEffectObjInPool::SetActive(bool active)
 {
-	auto temp = GetTypeEffect[Type];
-	
+	Super::SetActive(active);
+
+	MoveDir = FVector::ZeroVector;
+
+	if (LifeTime > 0 && active)
+		GetWorldTimerManager().SetTimer(LifeTimer, this, &ANunEffectObjInPool::ReturnObject, LifeTime);
 }
 
 void ANunEffectObjInPool::ReturnObject()
 {
+	Super::ReturnObject();
+	SetActorTickEnabled(false);
 }
 
-void ANunEffectObjInPool::OnDarkprojectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ANunEffectObjInPool::ShotProjectile()
 {
+	IsShot = true;
 }
 
-void ANunEffectObjInPool::OnFogBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ANunEffectObjInPool::OnProjectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (CurrentEffect != nullptr)
+		CurrentEffect->Activate();
+
+	if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
+	{
+
+	}
+}
+
+void ANunEffectObjInPool::OnRangeAttackBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+
 }
