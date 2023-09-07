@@ -27,6 +27,13 @@ public:
 	UNumAnimInstance* NunAnimInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UNunDamageSphereTriggerComp* DamageSphereTriggerComp_a;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UNunDamageSphereTriggerComp* DamageSphereTriggerComp_b;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UNunDamageSphereTriggerComp* DamageSphereTriggerComp_c;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UNunAttackTriggerComp* AttackTrigger;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
@@ -51,14 +58,32 @@ public:
 	float MultiHealVal = 100.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
 	float HealRadius = 1000.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
+	float SelfHealCoolTime = 150.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
+	float SelfHealVal = 200.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DotAttackRange")
+	float DotRange = 1000.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DotAttackRange")
+	float Time = 15.f;
 
 	float TeleportDamageSum = 0.f;
 	float SpawnDamageSum = 0.f;
 
+	TArray<UNunDamageSphereTriggerComp*> DamageSphereArr;
+
+	//¼ö³à ½ºÅ³
 	void TelePort();
 	void SpawnKnight();
 	void SingleHeal();
 	void MultiHeal();
+	void SelfHeal();
+	void DotFloor();
+	void JudementAttack();
+
+	FTimerHandle SelfHealTimerHandle;
+	FTimerHandle DotTimerHandle;
 
 	UFUNCTION()
 	void OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

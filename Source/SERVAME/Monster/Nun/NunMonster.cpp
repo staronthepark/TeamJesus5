@@ -14,9 +14,19 @@
 #include "Engine/StaticMeshActor.h"
 #include "EngineUtils.h"
 #include "..\..\ObjectPool\NunEffectObjInPool.h"
+#include "..\..\NunDamageSphereTriggerComp.h"
 
 ANunMonster::ANunMonster()
 {
+	DamageSphereTriggerComp_a = CreateDefaultSubobject<UNunDamageSphereTriggerComp>(TEXT("DamageSphere_a"));
+	DamageSphereTriggerComp_a->SetupAttachment(GetMesh());
+	
+	DamageSphereTriggerComp_b = CreateDefaultSubobject<UNunDamageSphereTriggerComp>(TEXT("DamageSphere_b"));
+	DamageSphereTriggerComp_b->SetupAttachment(GetMesh());
+	
+	DamageSphereTriggerComp_c = CreateDefaultSubobject<UNunDamageSphereTriggerComp>(TEXT("DamageSphere_c"));
+	DamageSphereTriggerComp_c->SetupAttachment(GetMesh());
+
 	AttackTrigger = CreateDefaultSubobject<UNunAttackTriggerComp>(TEXT("AttackTriggerCollision"));
 	AttackTrigger->SetupAttachment(GetMesh());
 
@@ -108,8 +118,9 @@ ANunMonster::ANunMonster()
 			}
 			else if (percent < 0.5f)
 			{
-				ChangeActionType(MonsterActionType::ATTACK);
-				ChangeMontageAnimation(MonsterAnimationType::HEAL2);
+				DotFloor();
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			}
 		});
 
@@ -118,12 +129,42 @@ ANunMonster::ANunMonster()
 			if (percent >= 0.5)
 			{
 				ChangeActionType(MonsterActionType::ATTACK);
-				ChangeMontageAnimation(MonsterAnimationType::HEAL1);
+				ChangeMontageAnimation(MonsterAnimationType::HEAL2);
 			}
 			else if (percent < 0.5f)
 			{
-				ChangeActionType(MonsterActionType::ATTACK);
-				ChangeMontageAnimation(MonsterAnimationType::HEAL2);
+				if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
+					return;
+
+				MonsterDataStruct.CharacterHp += SelfHealVal;
+
+				if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
+					MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
+
+				float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
+				MonsterHPWidget->SetHP(CurrentPercent);
+
+				auto SpawnLoc = GetActorLocation();
+
+				auto HealPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+					SpawnLoc + FVector(0, 0, 200), FRotator::ZeroRotator);
+				auto HealDustPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+					SpawnLoc - FVector(0, 0, 165), FRotator::ZeroRotator);
+
+				auto HealEffect = Cast<ANunEffectObjInPool>(HealPoolObj);
+				auto HealDustEffect = Cast<ANunEffectObjInPool>(HealDustPoolObj);
+
+				HealEffect->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+				HealDustEffect->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+
+				HealEffect->SetCurrentEffect(EffectType::SINGLEHEAL);
+				HealDustEffect->SetCurrentEffect(EffectType::HEALDUST);
+
+				HealEffect->ActivateCurrentEffect();
+				HealDustEffect->ActivateCurrentEffect();
+
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			}
 		});
 
@@ -137,6 +178,14 @@ ANunMonster::ANunMonster()
 void ANunMonster::BeginPlay()
 {
 	Super::BeginPlay();
+
+	DamageSphereArr.Push(DamageSphereTriggerComp_a);
+	DamageSphereArr.Push(DamageSphereTriggerComp_b);
+	DamageSphereArr.Push(DamageSphereTriggerComp_c);
+
+	DamageSphereTriggerComp_a->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	DamageSphereTriggerComp_b->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	DamageSphereTriggerComp_c->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	NunAnimInstance = Cast<UNumAnimInstance>(GetMesh()->GetAnimInstance());
 	WeaponOverlapStaticMeshCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -164,6 +213,8 @@ void ANunMonster::Tick(float DeltaTime)
 void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	ActivateHpBar();
+
+	SelfHeal();
 
 	if (ActionType == MonsterActionType::DEAD)
 		return;
@@ -198,9 +249,9 @@ void ANunMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 	AttackAnimationType = AttackAnimType;
 
 	//TODO : 거리별 패턴을 위한 Map 생성해주기
-	if (CurrentDistance >= 1000.f)
+	if (CurrentDistance >= 600.f && CurrentDistance <= 1500.f)
 		AttackAnimationType = MonsterAnimationType::HEAL1;
-	else if(CurrentDistance >= 800.f)
+	else if(CurrentDistance >= 1500.f)
 		AttackAnimationType = MonsterAnimationType::HEAL2;
 
 	if (ActionType != MonsterActionType::ATTACK)
@@ -233,12 +284,9 @@ float ANunMonster::Die(float Dm)
 	if (MonsterDataStruct.CharacterHp <= 0)
 	{
 		Imotal = true;
-		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
-		//ChangeMontageAnimation(MonsterAnimationType::DEAD);
-		//AnimInstance->StopMontage(MontageMap[AnimationType]);
+		GetWorld()->GetTimerManager().ClearTimer(SelfHealTimerHandle);
 		ChangeActionType(MonsterActionType::DEAD);
 		StateType = MonsterStateType::CANTACT;
-		//PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
 		return Dm;
 	}
 
@@ -354,6 +402,73 @@ void ANunMonster::MultiHeal()
 			HealDustEffect->ActivateCurrentEffect();
 		}
 	}
+}
+
+void ANunMonster::SelfHeal()
+{
+	GetWorld()->GetTimerManager().SetTimer(SelfHealTimerHandle, FTimerDelegate::CreateLambda([=]()
+	{			
+			if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
+				return;
+
+			MonsterDataStruct.CharacterHp += SelfHealVal;
+
+			if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
+				MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
+
+			float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
+			MonsterHPWidget->SetHP(CurrentPercent);
+
+			auto SpawnLoc = GetActorLocation();
+
+			auto HealPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+				SpawnLoc + FVector(0, 0, 200), FRotator::ZeroRotator);
+			auto HealDustPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+				SpawnLoc - FVector(0, 0, 165), FRotator::ZeroRotator);
+
+			auto HealEffect = Cast<ANunEffectObjInPool>(HealPoolObj);
+			auto HealDustEffect = Cast<ANunEffectObjInPool>(HealDustPoolObj);
+
+			HealEffect->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+			HealDustEffect->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+
+			HealEffect->SetCurrentEffect(EffectType::SINGLEHEAL);
+			HealDustEffect->SetCurrentEffect(EffectType::HEALDUST);
+
+			HealEffect->ActivateCurrentEffect();
+			HealDustEffect->ActivateCurrentEffect();
+
+	}), SelfHealCoolTime,true);
+}
+
+void ANunMonster::DotFloor()
+{
+	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
+	if (NavSystem == nullptr)
+		return;
+
+	DamageSphereTriggerComp_a->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	DamageSphereTriggerComp_b->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	DamageSphereTriggerComp_c->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+	FNavLocation RandomLocation;
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (NavSystem->GetRandomPointInNavigableRadius(PlayerCharacter->GetActorLocation(), DotRange, RandomLocation))
+		{
+			FVector Temp = RandomLocation.Location;
+			auto Loc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
+			DamageSphereArr[i]->SetRelativeLocation(Loc);
+		}
+	}
+
+	//TODO : 콜리전 꺼주는 타이머 추가
+}
+
+void ANunMonster::JudementAttack()
+{
+
 }
 
 void ANunMonster::SingleHeal()
@@ -544,6 +659,8 @@ void ANunMonster::RespawnCharacter()
 
 	WeaponOpacity = 0.171653f;
 	MeshOpacity = 0.171653f;
+
+	SelfHeal();
 
 	ActivateHitCollision();
 	MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
