@@ -1,3 +1,5 @@
+#include "NunEffectObjInPool.h"
+#include "NunEffectObjInPool.h"
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
@@ -56,6 +58,16 @@ void ANunEffectObjInPool::ReturnObject()
 void ANunEffectObjInPool::ShotProjectile()
 {
 	IsShot = true;
+}
+
+void ANunEffectObjInPool::ActivateCurrentEffect()
+{
+	CurrentEffect->Activate();
+}
+
+void ANunEffectObjInPool::DeactivateCurrentEffect()
+{
+	CurrentEffect->Deactivate();
 }
 
 void ANunEffectObjInPool::OnProjectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

@@ -13,6 +13,7 @@
 #include <Kismet/KismetMathLibrary.h>
 #include "Engine/StaticMeshActor.h"
 #include "EngineUtils.h"
+#include "..\..\ObjectPool\NunEffectObjInPool.h"
 
 ANunMonster::ANunMonster()
 {
@@ -179,6 +180,13 @@ void ANunMonster::OnNunTargetDetectionEndOverlap(UPrimitiveComponent* Overlapped
 
 void ANunMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
+	UE_LOG(LogTemp, Warning, TEXT("StartAttackTrigger"));
+
+	if (!MonsterController->FindPlayer)
+		return;
+
+	UE_LOG(LogTemp, Warning, TEXT("1"));
+
 	if (NunAnimInstance == nullptr)
 	{
 		NunAnimInstance = Cast<UNumAnimInstance>(GetMesh()->GetAnimInstance());
@@ -201,10 +209,11 @@ void ANunMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 		NunAnimInstance->StopMontage(MontageMap[AnimationType]);
 
 		float RandomValue = FMath::RandRange(0, 100) * 0.01f;
-		if (SetActionByRandomMap.Contains(AttackAnimType))
+		if (SetActionByRandomMap.Contains(AttackAnimationType))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("SetActionByRandomMap"));
 			MonsterMoveEventIndex = 1;
-			SetActionByRandomMap[AttackAnimType](RandomValue);
+			SetActionByRandomMap[AttackAnimationType](RandomValue);
 		}
 	}
 }
@@ -272,15 +281,15 @@ void ANunMonster::SpawnKnight()
 void ANunMonster::MultiHeal()
 {
 	//스피어 콜라이더 만들어서 처리
-	FHitResult HitResult;
+	TArray<FHitResult> OutHits;
 	FCollisionQueryParams Params(NAME_None, false, this);
 
-	bool bResult = GetWorld()->SweepSingleByChannel(
-		OUT HitResult,
+	bool bResult = GetWorld()->SweepMultiByChannel(
+		OUT OutHits,
 		GetActorLocation(),
 		GetActorLocation(),
 		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel16,
+		ECollisionChannel::ECC_GameTraceChannel17,
 		FCollisionShape::MakeSphere(HealRadius),
 		Params);
 
@@ -297,28 +306,53 @@ void ANunMonster::MultiHeal()
 	CameraShake(PlayerCameraShake);
 	VibrateGamePad(1.0f, 0.5f);
 
-	if (bResult && HitResult.GetActor())
+	if (bResult)
 	{
-		auto Knight = Cast<AKinghtMonster>(HitResult.GetActor());
-		
-		if (Knight->MonsterDataStruct.CharacterHp <= 0)
+		for (auto HitActor : OutHits)
 		{
-			auto FoundIndex = KnightArr.Find(Knight);
+			auto Knight = Cast<AKinghtMonster>(HitActor.GetActor());
 
-			if (FoundIndex != -1)
+			if (Knight->MonsterDataStruct.CharacterHp <= 0)
 			{
-				KnightArr.RemoveAt(FoundIndex);
-				return;
+				auto FoundIndex = KnightArr.Find(Knight);
+
+				if (FoundIndex != -1)
+				{
+					KnightArr.RemoveAt(FoundIndex);
+					return;
+				}
 			}
+
+			if (Knight->MonsterDataStruct.CharacterHp >= Knight->MonsterDataStruct.CharacterMaxHp)
+				return;
+
+			Knight->MonsterDataStruct.CharacterHp += MultiHealVal;
+
+			if (Knight->MonsterDataStruct.CharacterHp > Knight->MonsterDataStruct.CharacterMaxHp)
+				Knight->MonsterDataStruct.CharacterHp = Knight->MonsterDataStruct.CharacterMaxHp;
+
+			float CurrentPercent = Knight->MonsterDataStruct.CharacterHp / Knight->MonsterDataStruct.CharacterMaxHp;
+			Knight->MonsterHPWidget->SetHP(CurrentPercent);
+
+			auto SpawnLoc = Knight->GetActorLocation();
+
+			auto HealPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+				SpawnLoc + FVector(0, 0, 100), FRotator::ZeroRotator);
+			auto HealDustPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+				SpawnLoc - FVector(0, 0, 65), FRotator::ZeroRotator);
+			
+			auto HealEffect = Cast<ANunEffectObjInPool>(HealPoolObj);
+			auto HealDustEffect = Cast<ANunEffectObjInPool>(HealDustPoolObj);
+		
+			HealEffect->AttachToComponent(Knight->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+			HealDustEffect->AttachToComponent(Knight->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+
+			HealEffect->SetCurrentEffect(EffectType::SINGLEHEAL);
+			HealDustEffect->SetCurrentEffect(EffectType::HEALDUST);
+			
+			HealEffect->ActivateCurrentEffect();
+			HealDustEffect->ActivateCurrentEffect();
 		}
-
-		Knight->MonsterDataStruct.CharacterHp += MultiHealVal;
-
-		if (Knight->MonsterDataStruct.CharacterHp > Knight->MonsterDataStruct.CharacterMaxHp)
-			Knight->MonsterDataStruct.CharacterHp = Knight->MonsterDataStruct.CharacterMaxHp;
-	
-		float CurrentPercent = Knight->MonsterDataStruct.CharacterHp / Knight->MonsterDataStruct.CharacterMaxHp;
-		Knight->MonsterHPWidget->SetHP(CurrentPercent);
 	}
 }
 
@@ -360,6 +394,9 @@ void ANunMonster::SingleHeal()
 
 	auto TargetKnight = KnightArr[index];
 
+	if (TargetKnight->MonsterDataStruct.CharacterHp >= TargetKnight->MonsterDataStruct.CharacterMaxHp)
+		return;
+
 	TargetKnight->MonsterDataStruct.CharacterHp += HealVal;
 
 	if (TargetKnight->MonsterDataStruct.CharacterHp > TargetKnight->MonsterDataStruct.CharacterMaxHp)
@@ -370,8 +407,24 @@ void ANunMonster::SingleHeal()
 
 	KnightHpArr.Empty();
 
-	//auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
-	//	FVector::ZeroVector, FRotator::ZeroRotator);
+	auto SpawnLoc = TargetKnight->GetActorLocation();
+
+	auto HealPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		SpawnLoc + FVector(0, 0, 100), FRotator::ZeroRotator);
+	auto HealDustPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		SpawnLoc - FVector(0, 0, 65), FRotator::ZeroRotator);
+
+	auto HealEffect = Cast<ANunEffectObjInPool>(HealPoolObj);
+	auto HealDustEffect = Cast<ANunEffectObjInPool>(HealDustPoolObj);
+
+	HealEffect->AttachToComponent(TargetKnight->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+	HealDustEffect->AttachToComponent(TargetKnight->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+
+	HealEffect->SetCurrentEffect(EffectType::SINGLEHEAL);
+	HealDustEffect->SetCurrentEffect(EffectType::HEALDUST);
+
+	HealEffect->ActivateCurrentEffect();
+	HealDustEffect->ActivateCurrentEffect();
 }
 
 void ANunMonster::Stun()
