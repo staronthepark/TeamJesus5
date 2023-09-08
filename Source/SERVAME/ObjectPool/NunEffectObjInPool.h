@@ -25,6 +25,7 @@ enum class EffectType : uint8
 	WORSHIPEFFECT,
 	JUDEMENTEFFECT,
 	DARKEFFECT,
+	DARKEFFECTHIT,
 	FOGEFFECT,
 	PRAYEFFECT,
 	PRAYHITEFFECT,
@@ -72,19 +73,22 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 	TObjectPtr<USphereComponent> RangeAttackCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+	float Delay = 1.f;
 
 	UPROPERTY()
 	FDamageEvent DamageEvent;
 
 	FTimerHandle LifeTimer;
 	FTimerHandle DotTimerHandle;
+	FTimerHandle ShotTimerHandle;
 
 	virtual void SetActive(bool active) override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
 	virtual void ReturnObject()override;
 
-	void ShotProjectile();
+	void ShotProjectile(ABaseCharacter* Player);
 
 	void SetCurrentEffect(EffectType type) { CurrentEffect->SetAsset(GetTypeEffect[type]); }
 

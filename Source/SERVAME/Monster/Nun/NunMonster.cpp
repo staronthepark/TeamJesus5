@@ -27,6 +27,8 @@ ANunMonster::ANunMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::SELFHEAL, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::WORSHIP, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::JUDEMENT, MonsterStateType::BEFOREATTACK);
+	AnimTypeToStateType.Add(MonsterAnimationType::DARK, MonsterStateType::BEFOREATTACK);
+	AnimTypeToStateType.Add(MonsterAnimationType::PRAY, MonsterStateType::BEFOREATTACK);
 
 	MonsterMoveMap.Add(1, [&]()
 		{
@@ -122,10 +124,33 @@ ANunMonster::ANunMonster()
 		{
 		});
 
-	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::DARK, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(true, [&]()
 		{
-			ChangeActionType(MonsterActionType::NONE);
-			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			UE_LOG(LogTemp, Warning, TEXT("DarkProjectile"));
+			//if (SpawnLocArr.IsEmpty())
+			//	return;
+
+			int RandomValue = FMath::RandRange(0, SpawnLocArr.Num());
+
+			auto DarkPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+			/*SpawnLocArr[RandomValue]->GetComponentLocation()*/GetActorLocation(), FRotator::ZeroRotator);
+
+			auto DarkObj = Cast<ANunEffectObjInPool>(DarkPoolObj);
+			DarkObj->SetCurrentEffect(EffectType::DARKEFFECT);
+			DarkObj->ActivateCurrentEffect();
+			DarkObj->ShotProjectile(PlayerCharacter);
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(false, [&]()
+		{
+		});
+
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::PRAY, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::PRAY].Add(true, [&]()
+		{
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::PRAY].Add(false, [&]()
+		{
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::HEAL1, [&]()
@@ -159,6 +184,18 @@ ANunMonster::ANunMonster()
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::WORSHIP, [&]()
+		{
+			ChangeActionType(MonsterActionType::NONE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::DARK, [&]()
+		{
+			ChangeActionType(MonsterActionType::NONE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::PRAY, [&]()
 		{
 			ChangeActionType(MonsterActionType::NONE);
 			ChangeMontageAnimation(MonsterAnimationType::IDLE);
@@ -198,18 +235,24 @@ ANunMonster::ANunMonster()
 			}
 		});
 
-
-	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
+	SetActionByRandomMap.Add(MonsterAnimationType::DARK, [&](float percent)
 		{
-			if (percent >= 0.5)
+			if (percent > 0.3)
 			{
 				ChangeActionType(MonsterActionType::ATTACK);
-				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
+				ChangeMontageAnimation(MonsterAnimationType::DARK);
 			}
-			else if (percent < 0.5f)
+			else if (percent >= 0.3f && percent < 0.7f)
 			{
+				//심판
 				ChangeActionType(MonsterActionType::ATTACK);
-				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
+				ChangeMontageAnimation(MonsterAnimationType::DARK);
+			}
+			else
+			{
+				//저주
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::DARK);
 			}
 		});
 
@@ -312,7 +355,9 @@ void ANunMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 	AttackAnimationType = AttackAnimType;
 
 	//TODO : 거리별 패턴을 위한 Map 생성해주기
-	if (CurrentDistance >= 600.f && CurrentDistance <= 1500.f)
+	if(CurrentDistance < 600.f)
+		AttackAnimationType = MonsterAnimationType::DARK;
+	else if (CurrentDistance >= 600.f && CurrentDistance <= 1500.f)
 		AttackAnimationType = MonsterAnimationType::HEAL1;
 	else if(CurrentDistance >= 1500.f)
 		AttackAnimationType = MonsterAnimationType::HEAL2;

@@ -10,7 +10,7 @@ ANunEffectObjInPool::ANunEffectObjInPool()
 	CurrentEffect->SetupAttachment(RootComponent);
 
 	ProjectileCollision = CreateDefaultSubobject<USphereComponent>(TEXT("AttackCollision"));
-	ProjectileCollision->SetupAttachment(RootComponent);
+	ProjectileCollision->SetupAttachment(CurrentEffect);
 
 	RangeAttackCollision = CreateDefaultSubobject<USphereComponent>(TEXT("RangeAttackCollision"));
 	RangeAttackCollision->SetupAttachment(RootComponent);
@@ -24,10 +24,6 @@ void ANunEffectObjInPool::BeginPlay()
 	Super::BeginPlay();
 
 	SetActorTickEnabled(false);
-
-	DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	RangeAttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	ProjectileCollision->OnComponentBeginOverlap.AddDynamic(this, &ANunEffectObjInPool::OnProjectileBeginOverlap);
 	RangeAttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ANunEffectObjInPool::OnRangeAttackBeginOverlap);
@@ -44,6 +40,8 @@ void ANunEffectObjInPool::SetActive(bool active)
 	Super::SetActive(active);
 
 	DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	RangeAttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	MoveDir = FVector::ZeroVector;
 
@@ -57,9 +55,15 @@ void ANunEffectObjInPool::ReturnObject()
 	SetActorTickEnabled(false);
 }
 
-void ANunEffectObjInPool::ShotProjectile()
+void ANunEffectObjInPool::ShotProjectile(ABaseCharacter* Player)
 {
-	IsShot = true;
+	GetWorld()->GetTimerManager().SetTimer(ShotTimerHandle, FTimerDelegate::CreateLambda([=]()
+	{		
+		MoveDir = Player->GetActorLocation() - GetActorLocation();
+		MoveDir.Normalize();
+		IsShot = true;
+		RangeAttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	}), Delay, false);
 }
 
 void ANunEffectObjInPool::ActivateCurrentEffect()
@@ -82,8 +86,14 @@ void ANunEffectObjInPool::DeactivateDamageSphere(float time)
 
 void ANunEffectObjInPool::OnProjectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (CurrentEffect != nullptr)
-		CurrentEffect->Activate();
+	if (Type == EffectType::DARKEFFECT)
+		CurrentEffect->SetAsset(GetTypeEffect[EffectType::DARKEFFECTHIT]);
+	else if(Type == EffectType::PRAYEFFECT)
+		CurrentEffect->SetAsset(GetTypeEffect[EffectType::PRAYHITEFFECT]);
+
+	CurrentEffect->Activate();
+
+	RangeAttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
 	{
