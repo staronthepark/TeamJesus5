@@ -53,6 +53,7 @@ void ADoorAnimInteraction::OnCloseDoorOverlapBegin(UPrimitiveComponent* Overlapp
 
 void ADoorAnimInteraction::EndSequence()
 {
+	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 	GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(Character, 100.0f);
 }
 
@@ -69,7 +70,7 @@ void ADoorAnimInteraction::EnableEvent()
 	SetActorTickEnabled(false);
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[26].ObjClass, GetActorLocation(), GetActorForwardVector().Rotation() + FRotator(0, 0, -20));
 	AnimInstance->DoorAnimationType = DoorAnimationType::OPEN;
-	Character->SetActorLocation(FVector(-4507.492188, -31.434, 133));
+	Character->SetActorLocation(TriggerComp->GetComponentLocation());
 	Character->YawRotation = FRotator::ZeroRotator;
 	Character->YawRotation = FRotator::ZeroRotator;
 	Character->CameraShake(Character->PlayerDoorCameraShake);
@@ -81,7 +82,6 @@ void ADoorAnimInteraction::EnableEvent()
 	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 	Character->ChangeMontageAnimation(AnimationType::DOOROPEN);
 	TriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	OpenDoorComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	BossRoomDoorOpenSequncePlayer->Play();
 	GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(CineCameraActor, 6.0f);
 

@@ -31,6 +31,7 @@ enum class MonsterAnimationType : uint8
 	ROTATERIGHT,
 
 	HIT,
+	BACKHIT,
 	DEAD,
 	DEADLOOP,
 	EXECUTION,

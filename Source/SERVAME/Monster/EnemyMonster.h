@@ -29,6 +29,7 @@ enum class MonsterActionType : uint8
 	ATTACK,
 	POWERATTACK,
 	MOVE,
+	RUN,
 	HIT,
 	DEAD,
 };
@@ -73,11 +74,13 @@ struct FMonsterDataStruct : public FCharacterBaseDataStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float PatrolSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float RotateSpeed;
+	float RotateSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float LockOnWalkSpeed;
+	float LockOnWalkSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int32 DropSoulCount;
+	int32 DropSoulCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float RunSpeed;
 };
 
 UCLASS()
@@ -142,6 +145,9 @@ public:
 
 	USkeletalMeshComponent* SkeletalMeshComp;
 	UStaticMeshComponent* SwordMeshComp;
+
+	UPROPERTY(EditAnyWhere, Category = "AttackRange")
+	float AttackRange = 100.f;
 
 	float WeaponOpacity;
 	float MeshOpacity;

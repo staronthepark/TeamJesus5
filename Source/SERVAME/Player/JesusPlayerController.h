@@ -97,6 +97,9 @@ public:
 
 	void ViewLog();
 
+	void Save();
+	void Load();
+
 	void OpenMenu();
 	void CloseMenu();
 	void TimeFast();

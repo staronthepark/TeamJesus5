@@ -238,6 +238,19 @@ void AJesusPlayerController::ViewLog()
 	}
 }
 
+void AJesusPlayerController::Save()
+{
+	GameInstance->SavePlayerInfo(character->GetActorLocation(), character->GetActorRotation());
+	UE_LOG(LogTemp, Error, TEXT("!@#!@#!@#!@#!@#!@#!@#!@#!@#"));
+}
+
+void AJesusPlayerController::Load()
+{
+	//character->PlayerDataStruct = GameInstance->LoadGame()->PlayerData;
+	character->SetActorLocation(GameInstance->LoadGame()->PlayerLoc);
+	character->SetActorRotation(GameInstance->LoadGame()->PlayerRot);
+}
+
 void AJesusPlayerController::PressLockon()
 {	
 	if (GameInstance->MainMenuWidget->IsInViewport())
@@ -380,7 +393,12 @@ void AJesusPlayerController::ChangeView()
 }
 
 void AJesusPlayerController::OpenMenu()
-{	
+{
+	if (CurrentSequncePlayer)
+	{
+		CurrentSequncePlayer->Stop();
+		return;
+	}
 	if (!GameInstance->MainMenuWidget->IsInViewport())
 	{
 		if (character->PlayerHUD->IsRender())
@@ -406,6 +424,12 @@ void AJesusPlayerController::OpenMenu()
 
 void AJesusPlayerController::CloseMenu()
 {
+	if (CurrentSequncePlayer)
+	{
+		CurrentSequncePlayer->Stop();
+		return;
+	}
+
 	if (!GameInstance->MainMenuWidget->IsInViewport())
 	{
 		if (character->PlayerHUD->IsRender())
@@ -488,4 +512,8 @@ void AJesusPlayerController::SetupInputComponent()
 	InputComponent->BindAction("Guide", IE_Pressed, this, &AJesusPlayerController::PressTab);
 
 	InputComponent->BindAction("Boss2", IE_Pressed, this, &AJesusPlayerController::Boss2);
+
+	InputComponent->BindAction("Save", IE_Pressed, this, &AJesusPlayerController::Save);
+	InputComponent->BindAction("Load", IE_Pressed, this, &AJesusPlayerController::Load);
+
 }
