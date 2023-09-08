@@ -27,13 +27,6 @@ public:
 	UNumAnimInstance* NunAnimInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UNunDamageSphereTriggerComp* DamageSphereTriggerComp_a;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UNunDamageSphereTriggerComp* DamageSphereTriggerComp_b;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UNunDamageSphereTriggerComp* DamageSphereTriggerComp_c;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UNunAttackTriggerComp* AttackTrigger;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
@@ -66,12 +59,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DotAttackRange")
 	float DotRange = 500;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DotAttackRange")
-	float Time = 15.f;
+	float DotTime = 15.f;
 
 	float TeleportDamageSum = 0.f;
 	float SpawnDamageSum = 0.f;
-
-	TArray<UNunDamageSphereTriggerComp*> DamageSphereArr;
 
 	//¼ö³à ½ºÅ³
 	void TelePort();
@@ -83,7 +74,6 @@ public:
 	void JudementAttack();
 
 	FTimerHandle SelfHealTimerHandle;
-	FTimerHandle DotTimerHandle;
 
 	UFUNCTION()
 	void OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

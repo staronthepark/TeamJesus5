@@ -18,15 +18,6 @@
 
 ANunMonster::ANunMonster()
 {
-	DamageSphereTriggerComp_a = CreateDefaultSubobject<UNunDamageSphereTriggerComp>(TEXT("DamageSphere_a"));
-	DamageSphereTriggerComp_a->SetupAttachment(GetMesh());
-	
-	DamageSphereTriggerComp_b = CreateDefaultSubobject<UNunDamageSphereTriggerComp>(TEXT("DamageSphere_b"));
-	DamageSphereTriggerComp_b->SetupAttachment(GetMesh());
-	
-	DamageSphereTriggerComp_c = CreateDefaultSubobject<UNunDamageSphereTriggerComp>(TEXT("DamageSphere_c"));
-	DamageSphereTriggerComp_c->SetupAttachment(GetMesh());
-
 	AttackTrigger = CreateDefaultSubobject<UNunAttackTriggerComp>(TEXT("AttackTriggerCollision"));
 	AttackTrigger->SetupAttachment(GetMesh());
 
@@ -260,14 +251,6 @@ ANunMonster::ANunMonster()
 void ANunMonster::BeginPlay()
 {
 	Super::BeginPlay();
-
-	DamageSphereArr.Push(DamageSphereTriggerComp_a);
-	DamageSphereArr.Push(DamageSphereTriggerComp_b);
-	DamageSphereArr.Push(DamageSphereTriggerComp_c);
-
-	DamageSphereTriggerComp_a->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	DamageSphereTriggerComp_b->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	DamageSphereTriggerComp_c->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	NunAnimInstance = Cast<UNumAnimInstance>(GetMesh()->GetAnimInstance());
 	WeaponOverlapStaticMeshCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -527,16 +510,9 @@ void ANunMonster::DotFloor()
 {
 	UE_LOG(LogTemp, Warning, TEXT("DotFloor"));
 
-	if (GetWorld()->GetTimerManager().IsTimerActive(DotTimerHandle))
-		return;
-
 	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
 	if (NavSystem == nullptr)
 		return;
-
-	DamageSphereTriggerComp_a->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	DamageSphereTriggerComp_b->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	DamageSphereTriggerComp_c->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	FNavLocation RandomLocation;
 
@@ -545,19 +521,19 @@ void ANunMonster::DotFloor()
 		if (NavSystem->GetRandomPointInNavigableRadius(GetActorLocation(), DotRange, RandomLocation))
 		{
 			FVector Temp = RandomLocation.Location;
-			auto Loc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
-			DamageSphereArr[i]->SetWorldLocation(Loc);
+			auto Loc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z - 87.f);
+
+			auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+				Loc, FRotator::ZeroRotator);
+			
+			auto NunEffect = Cast<ANunEffectObjInPool>(PoolObj);
+			NunEffect->DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			NunEffect->DamageSphereTriggerComp->bHiddenInGame = false;
+			NunEffect->SetCurrentEffect(EffectType::WORSHIPEFFECT);
+			NunEffect->ActivateCurrentEffect();
+			NunEffect->DeactivateDamageSphere(DotTime);
 		}
 	}
-
-	//TODO : 콜리전 꺼주는 타이머 추가
-	GetWorld()->GetTimerManager().SetTimer(DotTimerHandle, FTimerDelegate::CreateLambda([=]()
-		{
-			DamageSphereTriggerComp_a->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			DamageSphereTriggerComp_b->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			DamageSphereTriggerComp_c->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			GetWorld()->GetTimerManager().ClearTimer(DotTimerHandle);
-		}), Time, false);
 }
 
 void ANunMonster::JudementAttack()
@@ -583,13 +559,15 @@ void ANunMonster::SingleHeal()
 			RemoveIndex = KnightArr.Find(KnightArr[i]);
 		else 		
 			KnightHpArr.Push(KnightArr[i]->MonsterDataStruct.CharacterHp);
-		
 	}
 
 	if (RemoveIndex != -1)
+	{
 		KnightArr.RemoveAt(RemoveIndex);
+		KnightHpArr.RemoveAt(RemoveIndex);
+	}
 
-	if (KnightArr.IsEmpty())
+	if (*KnightArr.begin() == nullptr)
 		return;
 
 	Min = KnightHpArr[0];

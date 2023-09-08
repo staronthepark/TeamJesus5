@@ -42,6 +42,9 @@ class SERVAME_API ANunEffectObjInPool : public ABaseObjectInPool
 public:
 	ANunEffectObjInPool();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UNunDamageSphereTriggerComp* DamageSphereTriggerComp;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EffectType")
 	TMap<EffectType, UNiagaraSystem*> GetTypeEffect;
 
@@ -74,6 +77,7 @@ public:
 	FDamageEvent DamageEvent;
 
 	FTimerHandle LifeTimer;
+	FTimerHandle DotTimerHandle;
 
 	virtual void SetActive(bool active) override;
 	virtual void Tick(float DeltaTime) override;
@@ -86,6 +90,8 @@ public:
 
 	void ActivateCurrentEffect();
 	void DeactivateCurrentEffect();
+
+	void DeactivateDamageSphere(float time);
 
 	UFUNCTION()
 	void OnProjectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
