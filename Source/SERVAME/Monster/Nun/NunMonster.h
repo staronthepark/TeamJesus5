@@ -64,7 +64,7 @@ public:
 	float SelfHealVal = 200.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DotAttackRange")
-	float DotRange = 1000.f;
+	float DotRange = 500;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DotAttackRange")
 	float Time = 15.f;
 

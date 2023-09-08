@@ -19,6 +19,9 @@ enum class MonsterAnimationType : uint8
 	DASHATTACK1,
 	HEAL1,
 	HEAL2,
+	SELFHEAL,
+	WORSHIP,
+	JUDEMENT,
 	SPAWNKNIGHT,
 	SPAWNING,
 
