@@ -8,7 +8,6 @@
 #include <Components/Image.h>
 #include "Runtime/LevelSequence/Public/LevelSequence.h"
 #include "Runtime/LevelSequence/Public/LevelSequencePlayer.h"
-#include "LevelSequenceActor.h"
 #include "UserSettingUI.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -26,6 +25,18 @@ class SERVAME_API UMainMenuUI : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 		UImage* StartBackgroundImage;
+
+	UPROPERTY(meta = (BindWidget))
+		UImage* ContinueBackgroundImage;
+
+	UPROPERTY(meta = (BindWidget))
+		UButton* ContinueButton;
+
+	UPROPERTY(meta = (BindWidget))
+		UImage* OptionBackgroundImage;
+
+	UPROPERTY(meta = (BindWidget))
+		UButton* OptionButton;
 
 	//UPROPERTY(meta = (BindWidget))
 	//	UButton* SettingButton;
@@ -71,11 +82,23 @@ public:
 		void HoverStartButton();
 	//UFUNCTION()
 	//	void HoverSettingButton();
+
+	UFUNCTION()
+		void HoverContinueButton();
+
+	UFUNCTION()
+		void HoverOptionButton();
+
 	UFUNCTION()
 		void HoverQuitButton();
 
 	UFUNCTION()
 		void UnhoverStartButton();
+
+	UFUNCTION()
+		void UnhoverContinueButton();
+	UFUNCTION()
+		void UnhoverOptionButton();
 	//UFUNCTION()
 	//	void UnhoverSettingButton();
 	UFUNCTION()
@@ -86,9 +109,16 @@ public:
 	void ClickStartButton();
 	//UFUNCTION()
 	//void ClickSettingButton();
+
+	UFUNCTION()
+	void ClickContinueButton();
+
+	UFUNCTION()
+	void ClickOptionButton();
+
 	UFUNCTION()
 	void ClickQuitButton();
 
-	UFUNCTION()
-	void SequenceFinish();
+	//UFUNCTION()
+	//void SequenceFinish();
 };
