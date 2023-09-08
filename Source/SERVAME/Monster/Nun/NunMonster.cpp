@@ -384,7 +384,8 @@ void ANunMonster::SpawnKnight()
 		Knight->SetActorRotation(SpawnRot);
 		Knight->SpawnBegin();
 		Knight->ChangeMontageAnimation(MonsterAnimationType::SPAWNING);
-
+		Knight->MonsterController->FindPlayer = true;
+		Knight->ChangeActionType(MonsterActionType::MOVE);
 		KnightArr.Push(Knight);
 	}
 }
