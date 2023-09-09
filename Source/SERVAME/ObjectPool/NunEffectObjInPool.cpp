@@ -23,16 +23,21 @@ void ANunEffectObjInPool::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetActorTickEnabled(false);
-
 	ProjectileCollision->OnComponentBeginOverlap.AddDynamic(this, &ANunEffectObjInPool::OnProjectileBeginOverlap);
 	RangeAttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ANunEffectObjInPool::OnRangeAttackBeginOverlap);
 }
 
 void ANunEffectObjInPool::Tick(float DeltaTime)
 {
+	UE_LOG(LogTemp, Warning, TEXT("ssibar"));
+
 	if (IsShot)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("IsShot"));
 		SetActorLocation(GetActorLocation() += MoveDir * Speed * DeltaTime);
+	}
+	else
+		UE_LOG(LogTemp, Warning, TEXT("???"));
 }
 
 void ANunEffectObjInPool::SetActive(bool active)
@@ -68,11 +73,13 @@ void ANunEffectObjInPool::ShotProjectile(ABaseCharacter* Player)
 
 void ANunEffectObjInPool::ActivateCurrentEffect()
 {
+	SetActorTickEnabled(true);
 	CurrentEffect->Activate();
 }
 
 void ANunEffectObjInPool::DeactivateCurrentEffect()
 {
+	SetActorTickEnabled(false);
 	CurrentEffect->Deactivate();
 }
 
@@ -86,6 +93,8 @@ void ANunEffectObjInPool::DeactivateDamageSphere(float time)
 
 void ANunEffectObjInPool::OnProjectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	DeactivateCurrentEffect();
+
 	if (Type == EffectType::DARKEFFECT)
 		CurrentEffect->SetAsset(GetTypeEffect[EffectType::DARKEFFECTHIT]);
 	else if(Type == EffectType::PRAYEFFECT)

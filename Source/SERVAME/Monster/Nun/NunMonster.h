@@ -26,8 +26,21 @@ public:
 	UPROPERTY()
 	UNumAnimInstance* NunAnimInstance;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileLoc")
 	TArray<UBoxComponent*> SpawnLocArr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USceneComponent* ProjectileRootComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UBoxComponent* Loc1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UBoxComponent* Loc2;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UBoxComponent* Loc3;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UBoxComponent* Loc4;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UBoxComponent* Loc5;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UBoxComponent* Loc6;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UNunAttackTriggerComp* AttackTrigger;

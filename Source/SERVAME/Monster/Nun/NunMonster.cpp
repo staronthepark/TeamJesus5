@@ -21,6 +21,22 @@ ANunMonster::ANunMonster()
 	AttackTrigger = CreateDefaultSubobject<UNunAttackTriggerComp>(TEXT("AttackTriggerCollision"));
 	AttackTrigger->SetupAttachment(GetMesh());
 
+	ProjectileRootComp = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileRootComp"));
+	ProjectileRootComp->SetupAttachment(RootComponent);
+
+	Loc1 = CreateDefaultSubobject<UBoxComponent>(TEXT("Loc1"));
+	Loc1->SetupAttachment(ProjectileRootComp);
+	Loc2 = CreateDefaultSubobject<UBoxComponent>(TEXT("Loc2"));
+	Loc2->SetupAttachment(ProjectileRootComp);
+	Loc3 = CreateDefaultSubobject<UBoxComponent>(TEXT("Loc3"));
+	Loc3->SetupAttachment(ProjectileRootComp);
+	Loc4 = CreateDefaultSubobject<UBoxComponent>(TEXT("Loc4"));
+	Loc4->SetupAttachment(ProjectileRootComp);
+	Loc5 = CreateDefaultSubobject<UBoxComponent>(TEXT("Loc5"));
+	Loc5->SetupAttachment(ProjectileRootComp);
+	Loc6 = CreateDefaultSubobject<UBoxComponent>(TEXT("Loc6"));
+	Loc6->SetupAttachment(ProjectileRootComp);
+
 	AnimTypeToStateType.Add(MonsterAnimationType::HEAL1, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::HEAL2, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::SPAWNKNIGHT, MonsterStateType::BEFOREATTACK);
@@ -128,13 +144,13 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(true, [&]()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("DarkProjectile"));
-			//if (SpawnLocArr.IsEmpty())
-			//	return;
+			if (SpawnLocArr.IsEmpty())
+				return;
 
-			int RandomValue = FMath::RandRange(0, SpawnLocArr.Num());
+			int RandomValue = FMath::RandRange(0, SpawnLocArr.Num()-1);
 
 			auto DarkPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
-			/*SpawnLocArr[RandomValue]->GetComponentLocation()*/GetActorLocation(), FRotator::ZeroRotator);
+				SpawnLocArr[RandomValue]->GetComponentLocation(), FRotator::ZeroRotator);
 
 			auto DarkObj = Cast<ANunEffectObjInPool>(DarkPoolObj);
 			DarkObj->SetCurrentEffect(EffectType::DARKEFFECT);
@@ -294,6 +310,13 @@ ANunMonster::ANunMonster()
 void ANunMonster::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SpawnLocArr.Push(Loc1);
+	SpawnLocArr.Push(Loc2);
+	SpawnLocArr.Push(Loc3);
+	SpawnLocArr.Push(Loc4);
+	SpawnLocArr.Push(Loc5);
+	SpawnLocArr.Push(Loc6);
 
 	NunAnimInstance = Cast<UNumAnimInstance>(GetMesh()->GetAnimInstance());
 	WeaponOverlapStaticMeshCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
