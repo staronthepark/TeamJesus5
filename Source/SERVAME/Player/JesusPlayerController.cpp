@@ -247,8 +247,12 @@ void AJesusPlayerController::Save()
 void AJesusPlayerController::Load()
 {
 	//character->PlayerDataStruct = GameInstance->LoadGame()->PlayerData;
-	character->SetActorLocation(GameInstance->LoadGame()->PlayerLoc);
-	character->SetActorRotation(GameInstance->LoadGame()->PlayerRot);
+	if (GameInstance->SaveGameInstance != nullptr)
+	{
+		character->SetActorLocation(GameInstance->LoadGame()->PlayerLoc);
+		character->SetActorRotation(GameInstance->LoadGame()->PlayerRot);
+
+	}
 }
 
 void AJesusPlayerController::PressLockon()
