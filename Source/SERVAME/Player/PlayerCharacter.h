@@ -44,6 +44,7 @@ enum class ActionType : uint8
 	INTERACTION,
 	DEAD,
 	SHIELD,
+	SKILL,
 };
 
 UENUM(BlueprintType)
@@ -141,6 +142,8 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
 		UNiagaraComponent* ShieldEffectComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
+		UNiagaraComponent* SkillTrailComp;
 
 	FVector CamExecutionDirection;
 

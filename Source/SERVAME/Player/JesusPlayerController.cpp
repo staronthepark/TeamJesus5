@@ -396,6 +396,16 @@ void AJesusPlayerController::ChangeView()
 	character->ShoulderView(!character->IsShoulderView);
 }
 
+void AJesusPlayerController::PressSkill()
+{
+	character->InputEventMap[character->PlayerCurAction][ActionType::SKILL][true]();
+}
+
+void AJesusPlayerController::UnPressSkill()
+{
+	character->InputEventMap[character->PlayerCurAction][ActionType::SKILL][false]();
+}
+
 void AJesusPlayerController::OpenMenu()
 {
 	if (CurrentSequncePlayer)
@@ -519,5 +529,8 @@ void AJesusPlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("Save", IE_Pressed, this, &AJesusPlayerController::Save);
 	InputComponent->BindAction("Load", IE_Pressed, this, &AJesusPlayerController::Load);
+
+	InputComponent->BindAction("Skill", IE_Pressed, this, &AJesusPlayerController::PressSkill);
+	InputComponent->BindAction("Skill", IE_Released, this, &AJesusPlayerController::UnPressSkill);
 
 }

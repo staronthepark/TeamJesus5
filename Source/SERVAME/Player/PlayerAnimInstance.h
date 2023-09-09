@@ -81,6 +81,9 @@ enum class AnimationType : uint8
 
 	SHIELDATTACK,
 	SHIELDMOVE,
+
+	SKILL1,
+	SKILL2,
 };
 
 UCLASS()
