@@ -89,6 +89,10 @@ APlayerCharacter::APlayerCharacter()
 	SwordTrailComp->SetupAttachment(GetMesh(), FName("Weapon_bone"));
 	SwordTrailComp->SetCollisionProfileName("Sword Trail");
 
+	SkillTrailComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("SKill Trail"));
+	SkillTrailComp->SetupAttachment(GetMesh(), FName("Weapon_bone"));
+	SkillTrailComp->SetCollisionProfileName("Skill Trail");
+
 	ShieldEffectComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Shield Effect Comp"));
 	ShieldEffectComp->SetupAttachment(GetMesh(), FName("POINT_SHIELD"));
 	ShieldEffectComp->SetCollisionProfileName("Shield Effect Comp");
@@ -223,6 +227,8 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEnumToAnimTypeMap.Add(AnimationType::RUNATTACK, PlayerAction::BEFOREATTACK);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::RUNPOWERATTACK, PlayerAction::BEFOREATTACK);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::DODGEATTACK, PlayerAction::BEFOREATTACK);
+	PlayerEnumToAnimTypeMap.Add(AnimationType::SKILL1, PlayerAction::BEFOREATTACK);
+	PlayerEnumToAnimTypeMap.Add(AnimationType::SKILL2, PlayerAction::BEFOREATTACK);
 
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SAVESTART, PlayerAction::CANTACT);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SAVELOOP, PlayerAction::CANTACT);
@@ -468,6 +474,22 @@ APlayerCharacter::APlayerCharacter()
 			LocketSKMesh->SetVisibility(false);
 		});
 	NotifyBeginEndEventMap[AnimationType::GAMESTART].Add(true, [&]()
+		{
+		});
+
+	NotifyBeginEndEventMap.Add(AnimationType::SKILL1, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::SKILL1].Add(false, [&]()
+		{
+		});
+	NotifyBeginEndEventMap[AnimationType::SKILL1].Add(true, [&]()
+		{
+		});
+
+	NotifyBeginEndEventMap.Add(AnimationType::SKILL2, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::SKILL2].Add(false, [&]()
+		{
+		});
+	NotifyBeginEndEventMap[AnimationType::SKILL2].Add(true, [&]()
 		{
 		});
 
@@ -948,6 +970,12 @@ APlayerCharacter::APlayerCharacter()
 		{
 			ChangeMontageAnimation(AnimationType::SHIELDMOVE);
 		});
+	MontageEndEventMap.Add(AnimationType::SKILL1, [&]()
+		{
+		});
+	MontageEndEventMap.Add(AnimationType::SKILL2, [&]()
+		{
+		});
 
 	DodgeAnimationMap.Add(false, [&]()->AnimationType
 		{
@@ -1001,6 +1029,14 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::NONE].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::NONE].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::NONE].Add(ActionType::SHIELD, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::NONE].Add(ActionType::SKILL, TMap<bool, TFunction<void()>>());
+
+	InputEventMap[PlayerAction::NONE][ActionType::SKILL].Add(true, [&]()
+		{
+		});
+	InputEventMap[PlayerAction::NONE][ActionType::SKILL].Add(false, [&]()
+		{
+		});
 
 	InputEventMap[PlayerAction::NONE][ActionType::DODGE].Add(true, [&]()
 		{
@@ -1118,7 +1154,14 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::SHIELD, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::SKILL, TMap<bool, TFunction<void()>>());
 
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::SKILL].Add(true, [&]()
+		{
+		});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::SKILL].Add(false, [&]()
+		{
+		});
 	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::DODGE].Add(true,   []() {});
 	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::DODGE].Add(false,  []() {});
 	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::ATTACK].Add(true,  []() {});
@@ -1148,7 +1191,14 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::RUN].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::RUN].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::RUN].Add(ActionType::SHIELD, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::RUN].Add(ActionType::SKILL, TMap<bool, TFunction<void()>>());
 
+	InputEventMap[PlayerAction::RUN][ActionType::SKILL].Add(true, [&]()
+		{
+		});
+	InputEventMap[PlayerAction::RUN][ActionType::SKILL].Add(false, [&]()
+		{
+		});
 	InputEventMap[PlayerAction::RUN][ActionType::DODGE].Add(true, [&]()
 		{
 			Dodge();
@@ -1228,6 +1278,14 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::INTERACTION].Add(false, [&]() {});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::SHIELD].Add(true, InputEventMap[PlayerAction::NONE][ActionType::SHIELD][true]);
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::SHIELD].Add(false, InputEventMap[PlayerAction::NONE][ActionType::SHIELD][false]);
+	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::SKILL, TMap<bool, TFunction<void()>>());
+
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::SKILL].Add(true, [&]()
+		{
+		});
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::SKILL].Add(false, [&]()
+		{
+		});
 
 	InputEventMap.Add(PlayerAction::CANWALK, TMap<ActionType, TMap<bool, TFunction<void()>>>());
 	InputEventMap[PlayerAction::CANWALK].Add(ActionType::DODGE, TMap<bool, TFunction<void()>>());
@@ -1239,6 +1297,14 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANWALK].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::CANWALK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::CANWALK].Add(ActionType::SHIELD, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANWALK].Add(ActionType::SKILL, TMap<bool, TFunction<void()>>());
+
+	InputEventMap[PlayerAction::CANWALK][ActionType::SKILL].Add(true, [&]()
+		{
+		});
+	InputEventMap[PlayerAction::CANWALK][ActionType::SKILL].Add(false, [&]()
+		{
+		});
 
 	InputEventMap[PlayerAction::CANWALK][ActionType::DODGE].Add(true, [&]() {});
 	InputEventMap[PlayerAction::CANWALK][ActionType::DODGE].Add(false, [&]() {});
@@ -1283,7 +1349,14 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANTACT].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::CANTACT].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::CANTACT].Add(ActionType::SHIELD, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANTACT].Add(ActionType::SKILL, TMap<bool, TFunction<void()>>());
 
+	InputEventMap[PlayerAction::CANTACT][ActionType::SKILL].Add(true, [&]()
+		{
+		});
+	InputEventMap[PlayerAction::CANTACT][ActionType::SKILL].Add(false, [&]()
+		{
+		});
 	InputEventMap[PlayerAction::CANTACT][ActionType::DODGE].Add(true, [&]() {});
 	InputEventMap[PlayerAction::CANTACT][ActionType::DODGE].Add(false, [&]() {});
 	InputEventMap[PlayerAction::CANTACT][ActionType::ATTACK].Add(true, [&]() {});
@@ -1313,7 +1386,14 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::SHIELD, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::SKILL, TMap<bool, TFunction<void()>>());
 
+	InputEventMap[PlayerAction::CANATTACK][ActionType::SKILL].Add(true, [&]()
+		{
+		});
+	InputEventMap[PlayerAction::CANATTACK][ActionType::SKILL].Add(false, [&]()
+		{
+		});
 	InputEventMap[PlayerAction::CANATTACK][ActionType::DODGE].Add(true, [&]() {});
 	InputEventMap[PlayerAction::CANATTACK][ActionType::DODGE].Add(false, [&]() {});
 	InputEventMap[PlayerAction::CANATTACK][ActionType::ATTACK].Add(true, [&]()
@@ -1354,7 +1434,14 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::SPRINT].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::SPRINT].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::SPRINT].Add(ActionType::SHIELD, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::SPRINT].Add(ActionType::SKILL, TMap<bool, TFunction<void()>>());
 
+	InputEventMap[PlayerAction::SPRINT][ActionType::SKILL].Add(true, [&]()
+		{
+		});
+	InputEventMap[PlayerAction::SPRINT][ActionType::SKILL].Add(false, [&]()
+		{
+		});
 	InputEventMap[PlayerAction::SPRINT][ActionType::DODGE].Add(true, [&]()
 		{
 			Dodge();
@@ -2106,8 +2193,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	CameraDistanceToPlayer = FVector::Distance(FollowCamera->GetComponentLocation(), GetActorLocation());
 	CameraDistanceToPlayer = FMath::Clamp(CameraDistanceToPlayer, 40, 300);
-	PlayerSKMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 300));
-	WeaponMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 300));
+	PlayerSKMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 100));
+	WeaponMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 100));
 }
 
 float APlayerCharacter::GetPercent(float value, float min, float max)
