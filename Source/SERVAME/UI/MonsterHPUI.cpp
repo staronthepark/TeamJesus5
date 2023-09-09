@@ -14,13 +14,6 @@ void UMonsterHPUI::SetHP(float value)
 		Monster_HP_Bar_Y->SetPercent(value);
 }
 
-void UMonsterHPUI::IncreaseHPGradual(AActor* Actor, float value)
-{
-	value = FMath::Clamp(value, 0.0f, 1.0f);
-	HP_White_P->SetValue(value);
-	ProgressIncrease(Actor, Monster_HP_Bar, 0, value, HpDelayTimerHandle, HpProgressTimerHandle, HP_White_P);
-}
-
 void UMonsterHPUI::DecreaseHPGradual(AActor* Actor, float value)
 {
 	value = FMath::Clamp(value, 0.0f, 1.0f);

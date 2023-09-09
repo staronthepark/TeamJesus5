@@ -152,12 +152,10 @@ AEnemyMonster::AEnemyMonster()
 		});
 
 	MonsterTickEventMap.Add(MonsterActionType::DEAD, [&]()
-		{
-			SkeletalMeshComp->SetScalarParameterValueOnMaterials("Opacity", MeshOpacity -= fDeltaTime * 0.25f);
-			SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity  -= fDeltaTime * 0.25f);
-
-			if (WeaponOpacity < 0.0f)
+		{	
+			if (MeshOpacity < 0.0f)
 			{
+				SetActive(false);
 				SetActorHiddenInGame(true);
 				SetActorEnableCollision(false);
 				SetActorTickEnabled(false);
@@ -202,9 +200,9 @@ AEnemyMonster::AEnemyMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
 		{
-			ChangeMontageAnimation(MonsterAnimationType::DEADLOOP);
-			IsStun = true;
-			CanExecution = true;
+			//ChangeMontageAnimation(MonsterAnimationType::DEADLOOP);
+			//IsStun = true;
+			//CanExecution = true;
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::DEADLOOP, [&]()
@@ -709,13 +707,10 @@ float AEnemyMonster::Die(float Dm)
 {
 	if (MonsterDataStruct.CharacterHp <= 0)
 	{
+		DeactivateHitCollision();
 		Imotal = true;
-		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
-		//ChangeMontageAnimation(MonsterAnimationType::DEAD);
-		//AnimInstance->StopMontage(MontageMap[AnimationType]);
 		ChangeActionType(MonsterActionType::DEAD);
 		StateType = MonsterStateType::CANTACT;
-		//PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
 		return Dm;
 	}
 
