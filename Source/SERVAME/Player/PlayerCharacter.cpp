@@ -105,9 +105,6 @@ APlayerCharacter::APlayerCharacter()
 	ShieldEffectComp->SetupAttachment(GetMesh(), FName("POINT_SHIELD"));
 	ShieldEffectComp->SetCollisionProfileName("Shield Effect Comp");
 
-	PlayerMaxAttackIndex.Add(ActionType::ATTACK, 4);
-	PlayerMaxAttackIndex.Add(ActionType::POWERATTACK, 3);
-	PlayerMaxAttackIndex.Add(ActionType::SKILL, 2);
 
 	ForwardRotation.Add(TArray<float>());
 	ForwardRotation[0].Add(-45.0f);
@@ -494,21 +491,25 @@ APlayerCharacter::APlayerCharacter()
 	NotifyBeginEndEventMap[AnimationType::SKILL1].Add(false, [&]()
 		{
 
+			DeactivateRightWeapon();
 			SkillTrailComp->SetVisibility(false);
 			SkillAuraComp->SetVisibility(false);
 		});
 	NotifyBeginEndEventMap[AnimationType::SKILL1].Add(true, [&]()
 		{
+			SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		});
 
 	NotifyBeginEndEventMap.Add(AnimationType::SKILL2, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::SKILL2].Add(false, [&]()
 		{
+			DeactivateRightWeapon();
 			SkillTrailComp->SetVisibility(false);
 			SkillAuraComp->SetVisibility(false);
 		});
 	NotifyBeginEndEventMap[AnimationType::SKILL2].Add(true, [&]()
 		{
+			SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		});
 
 	PlayerActionTickMap.Add(PlayerAction::NONE, TMap<ActionType, TFunction<void()>>());
@@ -1636,6 +1637,13 @@ void APlayerCharacter::BeginPlay()
 		PlayerHUD = Cast<UPlayerHUD>(CreateWidget(GetWorld(), PlayerUIClass));		
 	}
 
+	if (!PlayerMaxAttackIndex.Contains(ActionType::ATTACK))
+	{
+		PlayerMaxAttackIndex.Add(ActionType::ATTACK, 4);
+		PlayerMaxAttackIndex.Add(ActionType::POWERATTACK, 3);
+		PlayerMaxAttackIndex.Add(ActionType::SKILL, 2);
+	}
+
 
 	if (IsValid(PlayerUIClass))
 	{
@@ -1688,6 +1696,7 @@ void APlayerCharacter::BeginPlay()
 
 	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SwordTrailComp->Deactivate();
+	SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	DeactivateSMOverlap();
 	DeactivateRightWeapon();
 
@@ -1704,6 +1713,7 @@ void APlayerCharacter::BeginPlay()
 	PlayerHUD->SetShield(ShieldCount);
 
 	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnWeaponOverlapBegin);
+	SkillCollisionComp->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnWeaponOverlapBegin);
 	ExecutionTrigger->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnExecutionOverlapBegin);
 	ExecutionTrigger->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnExecutionOverlapEnd);
 	ParryingCollision1->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnParryingOverlapBegin);
@@ -2480,6 +2490,8 @@ void APlayerCharacter::ActivateSMOverlap()
 void APlayerCharacter::DeactivateRightWeapon()
 {
 	Super::DeactivateRightWeapon();
+	SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 }
 
 void APlayerCharacter::DeactivateSMOverlap()
