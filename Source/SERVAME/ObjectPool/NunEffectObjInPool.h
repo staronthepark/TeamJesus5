@@ -90,7 +90,7 @@ public:
 
 	void ShotProjectile(ABaseCharacter* Player);
 
-	void SetCurrentEffect(EffectType type) { CurrentEffect->SetAsset(GetTypeEffect[type]); }
+	void SetCurrentEffect(EffectType type);
 
 	void ActivateCurrentEffect();
 	void DeactivateCurrentEffect();

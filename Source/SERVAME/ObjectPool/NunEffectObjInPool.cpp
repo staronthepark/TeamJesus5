@@ -3,6 +3,8 @@
 
 ANunEffectObjInPool::ANunEffectObjInPool()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	RootComp = CreateDefaultSubobject<USceneComponent>("SceneComp");
 	RootComponent = RootComp;
 
@@ -29,15 +31,8 @@ void ANunEffectObjInPool::BeginPlay()
 
 void ANunEffectObjInPool::Tick(float DeltaTime)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ssibar"));
-
 	if (IsShot)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("IsShot"));
 		SetActorLocation(GetActorLocation() += MoveDir * Speed * DeltaTime);
-	}
-	else
-		UE_LOG(LogTemp, Warning, TEXT("???"));
 }
 
 void ANunEffectObjInPool::SetActive(bool active)
@@ -62,13 +57,20 @@ void ANunEffectObjInPool::ReturnObject()
 
 void ANunEffectObjInPool::ShotProjectile(ABaseCharacter* Player)
 {
+	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
 	GetWorld()->GetTimerManager().SetTimer(ShotTimerHandle, FTimerDelegate::CreateLambda([=]()
 	{		
 		MoveDir = Player->GetActorLocation() - GetActorLocation();
 		MoveDir.Normalize();
 		IsShot = true;
-		RangeAttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	}), Delay, false);
+}
+
+void ANunEffectObjInPool::SetCurrentEffect(EffectType type)
+{
+	Type = type;
+	CurrentEffect->SetAsset(GetTypeEffect[type]);
 }
 
 void ANunEffectObjInPool::ActivateCurrentEffect()
@@ -80,7 +82,7 @@ void ANunEffectObjInPool::ActivateCurrentEffect()
 void ANunEffectObjInPool::DeactivateCurrentEffect()
 {
 	SetActorTickEnabled(false);
-	CurrentEffect->Deactivate();
+	CurrentEffect->DeactivateImmediate();
 }
 
 void ANunEffectObjInPool::DeactivateDamageSphere(float time)
@@ -102,7 +104,7 @@ void ANunEffectObjInPool::OnProjectileBeginOverlap(UPrimitiveComponent* Overlapp
 
 	CurrentEffect->Activate();
 
-	RangeAttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
 	{

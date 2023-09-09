@@ -147,7 +147,7 @@ ANunMonster::ANunMonster()
 			if (SpawnLocArr.IsEmpty())
 				return;
 
-			int RandomValue = FMath::RandRange(0, SpawnLocArr.Num()-1);
+			int RandomValue = FMath::RandRange(0, SpawnLocArr.Num() - 1);
 
 			auto DarkPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
 				SpawnLocArr[RandomValue]->GetComponentLocation(), FRotator::ZeroRotator);
@@ -156,6 +156,7 @@ ANunMonster::ANunMonster()
 			DarkObj->SetCurrentEffect(EffectType::DARKEFFECT);
 			DarkObj->ActivateCurrentEffect();
 			DarkObj->ShotProjectile(PlayerCharacter);
+			DarkObj->SetActorTickEnabled(true);
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(false, [&]()
 		{
@@ -339,6 +340,8 @@ void ANunMonster::BeginPlay()
 void ANunMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	UE_LOG(LogTemp, Warning, TEXT("%f"), CurrentDistance);
 }
 
 void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
