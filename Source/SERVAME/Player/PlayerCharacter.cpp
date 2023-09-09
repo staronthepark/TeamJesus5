@@ -2106,8 +2106,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	CameraDistanceToPlayer = FVector::Distance(FollowCamera->GetComponentLocation(), GetActorLocation());
 	CameraDistanceToPlayer = FMath::Clamp(CameraDistanceToPlayer, 40, 300);
-	PlayerSKMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 300));
-	WeaponMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 300));
+	PlayerSKMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 100));
+	WeaponMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 100));
 }
 
 float APlayerCharacter::GetPercent(float value, float min, float max)
