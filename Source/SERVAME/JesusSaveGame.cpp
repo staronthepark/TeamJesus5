@@ -28,16 +28,14 @@ void UJesusSaveGame::Save(UJesusSaveGame* Instance)
 	}
 }
 
-//void UJesusSaveGame::SavePlayerData(FPlayerCharacterDataStruct data)
-//{
-//	PlayerData = data;
-//}
-
 UJesusSaveGame* UJesusSaveGame::Load(UJesusSaveGame* LoadInstance)
 {
-	LoadInstance->SaveSlotName = "JesusSave";
-	LoadInstance->SaveIndex = 0;
+	if (LoadInstance != nullptr)
+	{
+		LoadInstance->SaveSlotName = "JesusSave";
+		LoadInstance->SaveIndex = 0;
 
-	LoadInstance = Cast<UJesusSaveGame>(UGameplayStatics::LoadGameFromSlot(LoadInstance->SaveSlotName, LoadInstance->SaveIndex));
+		LoadInstance = Cast<UJesusSaveGame>(UGameplayStatics::LoadGameFromSlot(LoadInstance->SaveSlotName, LoadInstance->SaveIndex));
+	}
 	return LoadInstance;
 }

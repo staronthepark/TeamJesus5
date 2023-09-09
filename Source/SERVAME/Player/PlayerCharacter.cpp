@@ -2296,6 +2296,9 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 {
 	if (IsGrab)return;
 	
+	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
+
+	if (ExecutionCharacter == nullptr)return;
 
 	ShieldCount = 0;
 	PlayerHUD->ClearShield();
@@ -2311,7 +2314,6 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	Imotal = true;
 	ChangeActionType(ActionType::DEAD);	
 	ShieldOff();
-	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
 
 	if (TargetComp != nullptr)
 	{

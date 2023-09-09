@@ -24,24 +24,3 @@ void UBaseUI::ProgressDecrease(AActor* Actor,UProgressBar* ProgressBar, float _m
 		}, 1.0f, false);
 }
 
-void UBaseUI::ProgressIncrease(AActor* Actor, UProgressBar* ProgressBar, float _min, float _max, FTimerHandle& DelayTimerHandle, FTimerHandle& ProgressTimerHandle, USlider* slider)
-{
-	if (TempProgressBar != ProgressBar)
-		TempProgressBar = ProgressBar;
-	min = _min;
-	max = _max;
-
-	FTimerManager& TimerManager = Actor->GetWorld()->GetTimerManager();
-	if (TimerManager.IsTimerActive(DelayTimerHandle))
-		TimerManager.ClearTimer(DelayTimerHandle);
-
-	TimerManager.SetTimer(DelayTimerHandle, [&]() {
-		TimerManager.SetTimer(ProgressTimerHandle, [&]() {
-			float value = TempProgressBar->Percent;
-			TempProgressBar->SetPercent(value += 0.01f);
-			slider->SetValue(value += 0.01f);
-			if (value < min || value > max)
-				TimerManager.ClearTimer(ProgressTimerHandle);
-			}, 0.01f, true);
-		}, 1.0f, false);
-}

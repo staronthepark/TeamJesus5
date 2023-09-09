@@ -99,4 +99,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MyInstance, meta = (AllowPrivateAccess = "true"))
 		float BodyBlendAlpha;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MyInstance, meta = (AllowPrivateAccess = "true"))
+		float PlayerTargetMoveSpeed;
 };

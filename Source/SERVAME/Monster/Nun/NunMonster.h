@@ -26,6 +26,9 @@ public:
 	UPROPERTY()
 	UNumAnimInstance* NunAnimInstance;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileLoc")
+	TArray<UBoxComponent*> SpawnLocArr;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UNunAttackTriggerComp* AttackTrigger;
 
@@ -51,14 +54,29 @@ public:
 	float MultiHealVal = 100.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
 	float HealRadius = 1000.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
+	float SelfHealCoolTime = 150.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
+	float SelfHealVal = 200.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DotAttackRange")
+	float DotRange = 500;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DotAttackRange")
+	float DotTime = 15.f;
 
 	float TeleportDamageSum = 0.f;
 	float SpawnDamageSum = 0.f;
 
+	//¼ö³à ½ºÅ³
 	void TelePort();
 	void SpawnKnight();
 	void SingleHeal();
 	void MultiHeal();
+	void SelfHeal();
+	void DotFloor();
+	void JudementAttack();
+
+	FTimerHandle SelfHealTimerHandle;
 
 	UFUNCTION()
 	void OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

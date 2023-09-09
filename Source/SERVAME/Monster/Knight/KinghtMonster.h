@@ -73,10 +73,13 @@ public:
 	float CalcedDist;
 	float Temp = 0.f;
 
+	bool CanCancle = true;
 
 	const float IdleBlend = 0.f;
 	const float WalkBlend = 300.f;
 	const float RunBlend = 600.f;
+
+	bool MinusOpacity = false;
 
 	//Notify
 	void InterpStart();
@@ -85,6 +88,8 @@ public:
 	void KnockBackEmd();
 	void SpawnBegin();
 	void SpawnEnd();
+	void OnHitCancle();
+	void OffHitCancle();
 
 private:
 

@@ -155,6 +155,8 @@ public:
 	float CurrentDistance;	
 	float DiagonalSpeed;
 
+	float OpactiyDeltaTime;
+	
 	int32 MonsterMoveEventIndex;
 	int32 MonsterRandomMove;
 	int CircleIndexCount = 1;
@@ -172,6 +174,8 @@ public:
 	bool IsPatrol = false;
 
 	AActor* otherActor;
+
+	FTimerHandle MonsterDeadTimer;
 
 protected:
 	TMap<int, TFunction<void()>> MonsterMoveMap;

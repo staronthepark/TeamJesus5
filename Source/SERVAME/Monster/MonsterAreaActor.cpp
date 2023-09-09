@@ -36,6 +36,7 @@ void AMonsterAreaActor::EndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	for (auto Monster : MonsterArr)
 	{
 		Monster->IsPatrol = true;
+		Monster->MonsterController->FindPlayer = false;
 		Monster->MonsterMoveEventIndex = 0;
 	}
 }
