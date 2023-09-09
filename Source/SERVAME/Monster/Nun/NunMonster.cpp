@@ -45,6 +45,7 @@ ANunMonster::ANunMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::JUDEMENT, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::DARK, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::PRAY, MonsterStateType::BEFOREATTACK);
+	AnimTypeToStateType.Add(MonsterAnimationType::CURSE, MonsterStateType::BEFOREATTACK);
 
 	MonsterMoveMap.Add(1, [&]()
 		{
@@ -98,6 +99,15 @@ ANunMonster::ANunMonster()
 			JudementAttack();
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::JUDEMENT].Add(false, [&]()
+		{
+		});
+
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::CURSE, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::CURSE].Add(true, [&]()
+		{
+			Curse();
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::CURSE].Add(false, [&]()
 		{
 		});
 
@@ -218,6 +228,11 @@ ANunMonster::ANunMonster()
 			ChangeMontageAnimation(MonsterAnimationType::IDLE);
 		});
 
+	MontageEndEventMap.Add(MonsterAnimationType::CURSE, [&]()
+		{
+			ChangeActionType(MonsterActionType::NONE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		});
 
 	MonsterTickEventMap.Add(MonsterActionType::NONE, [&]()
 		{
@@ -263,13 +278,13 @@ ANunMonster::ANunMonster()
 			{
 				//심판
 				ChangeActionType(MonsterActionType::ATTACK);
-				ChangeMontageAnimation(MonsterAnimationType::DARK);
+				ChangeMontageAnimation(MonsterAnimationType::JUDEMENT);
 			}
 			else
 			{
 				//저주
 				ChangeActionType(MonsterActionType::ATTACK);
-				ChangeMontageAnimation(MonsterAnimationType::DARK);
+				ChangeMontageAnimation(MonsterAnimationType::CURSE);
 			}
 		});
 
@@ -601,6 +616,9 @@ void ANunMonster::DotFloor()
 			auto NunEffect = Cast<ANunEffectObjInPool>(PoolObj);
 			NunEffect->DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			NunEffect->DamageSphereTriggerComp->bHiddenInGame = false;
+			NunEffect->DamageSphereTriggerComp->Count = 10000;
+			NunEffect->DamageSphereTriggerComp->Damage = 20.f;
+			NunEffect->DamageSphereTriggerComp->DamageTime = 1.f;
 			NunEffect->SetCurrentEffect(EffectType::WORSHIPEFFECT);
 			NunEffect->ActivateCurrentEffect();
 			NunEffect->DeactivateDamageSphere(DotTime);
@@ -610,7 +628,36 @@ void ANunMonster::DotFloor()
 
 void ANunMonster::JudementAttack()
 {
+	UE_LOG(LogTemp, Warning, TEXT("JudementAttack"));
 
+	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
+	if (NavSystem == nullptr)
+		return;
+
+	FNavLocation RandomLocation;
+
+	if (NavSystem->GetRandomPointInNavigableRadius(GetActorLocation(), JudementRange, RandomLocation))
+	{
+		FVector Temp = RandomLocation.Location;
+		auto Loc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z - 87.f);
+
+		auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+			Loc, FRotator::ZeroRotator);
+
+		auto NunEffect = Cast<ANunEffectObjInPool>(PoolObj);
+		NunEffect->DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		NunEffect->DamageSphereTriggerComp->bHiddenInGame = false;
+		NunEffect->DamageSphereTriggerComp->Count = 1;
+		NunEffect->DamageSphereTriggerComp->Damage = 50.f;
+		NunEffect->DamageSphereTriggerComp->DamageTime = 1.f;
+		NunEffect->SetCurrentEffect(EffectType::JUDEMENTEFFECT);
+		NunEffect->ActivateCurrentEffect();
+		NunEffect->DeactivateDamageSphere(JudementTime);
+	}
+}
+
+void ANunMonster::Curse()
+{
 }
 
 void ANunMonster::SingleHeal()

@@ -72,15 +72,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
 	float SelfHealVal = 200.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DotAttackRange")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DotAttack")
 	float DotRange = 500;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DotAttackRange")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DotAttack")
 	float DotTime = 15.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JudementAttack")
+	float JudementRange = 500;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JudementAttack")
+	float JudementTime = 15.f;
 
 	float TeleportDamageSum = 0.f;
 	float SpawnDamageSum = 0.f;
 
-	//수녀 스킬
+	//수녀 a타입 스킬
 	void TelePort();
 	void SpawnKnight();
 	void SingleHeal();
@@ -88,6 +93,9 @@ public:
 	void SelfHeal();
 	void DotFloor();
 	void JudementAttack();
+	void Curse();
+
+	//수녀 b타입 스킬
 
 	FTimerHandle SelfHealTimerHandle;
 
