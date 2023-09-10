@@ -295,6 +295,8 @@ void AKinghtMonster::RespawnCharacter()
 {
 	Super::RespawnCharacter();
 
+	TracePlayer = false;
+	MonsterController->FindPlayer = false;
 	IsPatrol = true;
 	MonsterMoveEventIndex = 0;
 	ChangeActionType(MonsterActionType::MOVE);
