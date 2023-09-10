@@ -297,6 +297,7 @@ void AKinghtMonster::RespawnCharacter()
 
 	IsPatrol = true;
 	MonsterMoveEventIndex = 0;
+	ChangeActionType(MonsterActionType::MOVE);
 
 	WeaponOpacity = 0.171653f;
 	MeshOpacity = 0.171653f;
