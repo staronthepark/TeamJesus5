@@ -144,6 +144,11 @@ private:
 		UNiagaraComponent* ShieldEffectComp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
 		UNiagaraComponent* SkillTrailComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
+		UNiagaraComponent* SkillAuraComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
+		UBoxComponent* SkillCollisionComp;
 
 	FVector CamExecutionDirection;
 
@@ -372,6 +377,8 @@ public:
 	void BasicAttack();
 
 	void PowerAttack();
+
+	void SkillAttack();
 
 	void FadeIn();
 

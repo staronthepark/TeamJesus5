@@ -77,6 +77,10 @@ APlayerCharacter::APlayerCharacter()
 	WeaponCollision->SetupAttachment(WeaponMesh);
 	WeaponCollision->SetCollisionProfileName("Weapon");
 
+	SkillCollisionComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Skill Collision"));
+	SkillCollisionComp->SetupAttachment(WeaponMesh);
+	SkillCollisionComp->SetCollisionProfileName("Skill Collision");
+
 	ParryingCollision1 = CreateDefaultSubobject<UBoxComponent>(TEXT("Parrying Collision"));
 	ParryingCollision1->SetupAttachment(GetMesh());
 	ParryingCollision1->SetCollisionProfileName("Parrying");
@@ -93,12 +97,14 @@ APlayerCharacter::APlayerCharacter()
 	SkillTrailComp->SetupAttachment(GetMesh(), FName("Weapon_bone"));
 	SkillTrailComp->SetCollisionProfileName("Skill Trail");
 
+	SkillAuraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("SKill Aura"));
+	SkillAuraComp->SetupAttachment(GetMesh(), FName("Weapon_bone"));
+	SkillAuraComp->SetCollisionProfileName("Skill Aura");
+
 	ShieldEffectComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Shield Effect Comp"));
 	ShieldEffectComp->SetupAttachment(GetMesh(), FName("POINT_SHIELD"));
 	ShieldEffectComp->SetCollisionProfileName("Shield Effect Comp");
 
-	PlayerMaxAttackIndex.Add(ActionType::ATTACK, 4);
-	PlayerMaxAttackIndex.Add(ActionType::POWERATTACK, 3);
 
 	ForwardRotation.Add(TArray<float>());
 	ForwardRotation[0].Add(-45.0f);
@@ -136,6 +142,10 @@ APlayerCharacter::APlayerCharacter()
 	IntToEnumMap[ActionType::POWERATTACK].Add(0, AnimationType::POWERATTACK1);
 	IntToEnumMap[ActionType::POWERATTACK].Add(1, AnimationType::POWERATTACK2);
 	IntToEnumMap[ActionType::POWERATTACK].Add(2, AnimationType::POWERATTACK3);
+
+	IntToEnumMap.Add(ActionType::SKILL, TMap<int32, AnimationType>());
+	IntToEnumMap[ActionType::SKILL].Add(0, AnimationType::SKILL1);
+	IntToEnumMap[ActionType::SKILL].Add(1, AnimationType::SKILL2);
 
 	DodgeDirection.Add(TArray<AnimationType>());
 	DodgeDirection[0].Add(AnimationType::BATTLEDODGE);
@@ -480,17 +490,26 @@ APlayerCharacter::APlayerCharacter()
 	NotifyBeginEndEventMap.Add(AnimationType::SKILL1, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::SKILL1].Add(false, [&]()
 		{
+
+			DeactivateRightWeapon();
+			SkillTrailComp->SetVisibility(false);
+			SkillAuraComp->SetVisibility(false);
 		});
 	NotifyBeginEndEventMap[AnimationType::SKILL1].Add(true, [&]()
 		{
+			SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		});
 
 	NotifyBeginEndEventMap.Add(AnimationType::SKILL2, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::SKILL2].Add(false, [&]()
 		{
+			DeactivateRightWeapon();
+			SkillTrailComp->SetVisibility(false);
+			SkillAuraComp->SetVisibility(false);
 		});
 	NotifyBeginEndEventMap[AnimationType::SKILL2].Add(true, [&]()
 		{
+			SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		});
 
 	PlayerActionTickMap.Add(PlayerAction::NONE, TMap<ActionType, TFunction<void()>>());
@@ -972,9 +991,13 @@ APlayerCharacter::APlayerCharacter()
 		});
 	MontageEndEventMap.Add(AnimationType::SKILL1, [&]()
 		{
+			ComboAttackEnd();
+			CheckInputKey();
 		});
 	MontageEndEventMap.Add(AnimationType::SKILL2, [&]()
 		{
+			ComboAttackEnd();
+			CheckInputKey();
 		});
 
 	DodgeAnimationMap.Add(false, [&]()->AnimationType
@@ -1033,6 +1056,7 @@ APlayerCharacter::APlayerCharacter()
 
 	InputEventMap[PlayerAction::NONE][ActionType::SKILL].Add(true, [&]()
 		{
+			SkillAttack();
 		});
 	InputEventMap[PlayerAction::NONE][ActionType::SKILL].Add(false, [&]()
 		{
@@ -1195,6 +1219,7 @@ APlayerCharacter::APlayerCharacter()
 
 	InputEventMap[PlayerAction::RUN][ActionType::SKILL].Add(true, [&]()
 		{
+			SkillAttack();
 		});
 	InputEventMap[PlayerAction::RUN][ActionType::SKILL].Add(false, [&]()
 		{
@@ -1282,6 +1307,7 @@ APlayerCharacter::APlayerCharacter()
 
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::SKILL].Add(true, [&]()
 		{
+			SkillAttack();
 		});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::SKILL].Add(false, [&]()
 		{
@@ -1550,6 +1576,29 @@ APlayerCharacter::APlayerCharacter()
 		{
 
 		});
+
+	PlayerEventFuncMap.Add(AnimationType::SKILL1, TMap<bool, TFunction<void()>>());
+	PlayerEventFuncMap[AnimationType::SKILL1].Add(true, [&]()
+		{
+			SkillTrailComp->SetVisibility(true);
+			SkillAuraComp->SetVisibility(true);
+		});
+	PlayerEventFuncMap[AnimationType::SKILL1].Add(false, [&]()
+		{
+
+		});
+
+	PlayerEventFuncMap.Add(AnimationType::SKILL2, TMap<bool, TFunction<void()>>());
+	PlayerEventFuncMap[AnimationType::SKILL2].Add(true, [&]()
+		{
+			SkillTrailComp->SetVisibility(true);
+			SkillAuraComp->SetVisibility(true);
+
+		});
+	PlayerEventFuncMap[AnimationType::SKILL2].Add(false, [&]()
+		{
+
+		});
 }
 
 APlayerCharacter::~APlayerCharacter()
@@ -1586,6 +1635,13 @@ void APlayerCharacter::BeginPlay()
 	if (IsValid(PlayerUIClass))
 	{
 		PlayerHUD = Cast<UPlayerHUD>(CreateWidget(GetWorld(), PlayerUIClass));		
+	}
+
+	if (!PlayerMaxAttackIndex.Contains(ActionType::ATTACK))
+	{
+		PlayerMaxAttackIndex.Add(ActionType::ATTACK, 4);
+		PlayerMaxAttackIndex.Add(ActionType::POWERATTACK, 3);
+		PlayerMaxAttackIndex.Add(ActionType::SKILL, 2);
 	}
 
 
@@ -1640,6 +1696,7 @@ void APlayerCharacter::BeginPlay()
 
 	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SwordTrailComp->Deactivate();
+	SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	DeactivateSMOverlap();
 	DeactivateRightWeapon();
 
@@ -1649,10 +1706,14 @@ void APlayerCharacter::BeginPlay()
 	GameStartSequncePlayer->Play();
 	GameStartSequncePlayer->Pause();
 
+	SkillAuraComp->SetVisibility(false);
+	SkillTrailComp->SetVisibility(false);
+
 	ShieldCount = 3;
 	PlayerHUD->SetShield(ShieldCount);
 
 	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnWeaponOverlapBegin);
+	SkillCollisionComp->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnWeaponOverlapBegin);
 	ExecutionTrigger->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnExecutionOverlapBegin);
 	ExecutionTrigger->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnExecutionOverlapEnd);
 	ParryingCollision1->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnParryingOverlapBegin);
@@ -2382,7 +2443,7 @@ void APlayerCharacter::OnParryingOverlapBegin(UPrimitiveComponent* OverlappedCom
 void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (IsGrab)return;
-	
+	if (IsExecute) return;
 	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
 
 	if (ExecutionCharacter == nullptr)return;
@@ -2429,6 +2490,8 @@ void APlayerCharacter::ActivateSMOverlap()
 void APlayerCharacter::DeactivateRightWeapon()
 {
 	Super::DeactivateRightWeapon();
+	SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 }
 
 void APlayerCharacter::DeactivateSMOverlap()
@@ -2489,6 +2552,20 @@ void APlayerCharacter::PowerAttack()
 		{
 			Imotal = false;
 			PlayerAttackType = ActionType::POWERATTACK;
+			ComboAttackStart();
+			CanNextAttack = false;
+		}
+	}
+}
+
+void APlayerCharacter::SkillAttack()
+{
+	if (CanNextAttack)
+	{
+		if (UseStamina(PlayerUseStaminaMap[ActionType::SKILL]))
+		{
+			Imotal = false;
+			PlayerAttackType = ActionType::SKILL;
 			ComboAttackStart();
 			CanNextAttack = false;
 		}
