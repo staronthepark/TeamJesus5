@@ -247,9 +247,6 @@ void AKinghtMonster::Tick(float DeltaTime)
 
 	Super::Tick(DeltaTime);
 
-	if (testtest)
-		return;
-
 	if (IsInterpStart)
 		InterpMove();
 
@@ -297,6 +294,9 @@ void AKinghtMonster::Tick(float DeltaTime)
 void AKinghtMonster::RespawnCharacter()
 {
 	Super::RespawnCharacter();
+
+	IsPatrol = true;
+	MonsterMoveEventIndex = 0;
 
 	WeaponOpacity = 0.171653f;
 	MeshOpacity = 0.171653f;
@@ -423,7 +423,7 @@ void AKinghtMonster::OnKnightTargetDetectionBeginOverlap(UPrimitiveComponent* Ov
 {
 	//TODO : 
 	//소환되자 마자 플레이어 추격 하도록 변경?
-	ActivateHpBar();
+	//ActivateHpBar();
 
 	if (ActionType == MonsterActionType::DEAD)
 		return;
