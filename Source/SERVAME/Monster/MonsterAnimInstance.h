@@ -22,6 +22,7 @@ enum class MonsterAnimationType : uint8
 	SELFHEAL,
 	WORSHIP,
 	JUDEMENT,
+	CURSE,
 	DARK,
 	PRAY,
 	SPAWNKNIGHT,

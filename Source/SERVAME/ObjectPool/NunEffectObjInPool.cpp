@@ -3,6 +3,8 @@
 
 ANunEffectObjInPool::ANunEffectObjInPool()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	RootComp = CreateDefaultSubobject<USceneComponent>("SceneComp");
 	RootComponent = RootComp;
 
@@ -22,8 +24,6 @@ ANunEffectObjInPool::ANunEffectObjInPool()
 void ANunEffectObjInPool::BeginPlay()
 {
 	Super::BeginPlay();
-
-	SetActorTickEnabled(false);
 
 	ProjectileCollision->OnComponentBeginOverlap.AddDynamic(this, &ANunEffectObjInPool::OnProjectileBeginOverlap);
 	RangeAttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ANunEffectObjInPool::OnRangeAttackBeginOverlap);
@@ -57,23 +57,32 @@ void ANunEffectObjInPool::ReturnObject()
 
 void ANunEffectObjInPool::ShotProjectile(ABaseCharacter* Player)
 {
+	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
 	GetWorld()->GetTimerManager().SetTimer(ShotTimerHandle, FTimerDelegate::CreateLambda([=]()
 	{		
 		MoveDir = Player->GetActorLocation() - GetActorLocation();
 		MoveDir.Normalize();
 		IsShot = true;
-		RangeAttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	}), Delay, false);
+}
+
+void ANunEffectObjInPool::SetCurrentEffect(EffectType type)
+{
+	Type = type;
+	CurrentEffect->SetAsset(GetTypeEffect[type]);
 }
 
 void ANunEffectObjInPool::ActivateCurrentEffect()
 {
+	SetActorTickEnabled(true);
 	CurrentEffect->Activate();
 }
 
 void ANunEffectObjInPool::DeactivateCurrentEffect()
 {
-	CurrentEffect->Deactivate();
+	SetActorTickEnabled(false);
+	CurrentEffect->DeactivateImmediate();
 }
 
 void ANunEffectObjInPool::DeactivateDamageSphere(float time)
@@ -86,6 +95,8 @@ void ANunEffectObjInPool::DeactivateDamageSphere(float time)
 
 void ANunEffectObjInPool::OnProjectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	DeactivateCurrentEffect();
+
 	if (Type == EffectType::DARKEFFECT)
 		CurrentEffect->SetAsset(GetTypeEffect[EffectType::DARKEFFECTHIT]);
 	else if(Type == EffectType::PRAYEFFECT)
@@ -93,7 +104,7 @@ void ANunEffectObjInPool::OnProjectileBeginOverlap(UPrimitiveComponent* Overlapp
 
 	CurrentEffect->Activate();
 
-	RangeAttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
 	{
