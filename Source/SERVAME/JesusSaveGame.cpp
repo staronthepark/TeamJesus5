@@ -18,24 +18,15 @@ void UJesusSaveGame::Save(UJesusSaveGame* Instance)
 	Instance->SaveSlotName = "JesusSave";
 	Instance->SaveIndex = 0;
 
-	if (UGameplayStatics::SaveGameToSlot(Instance, Instance->SaveSlotName, Instance->SaveIndex))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Save Succed!"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Save Failed!"));
-	}
+	UGameplayStatics::SaveGameToSlot(Instance, Instance->SaveSlotName, Instance->SaveIndex);
 }
 
 UJesusSaveGame* UJesusSaveGame::Load(UJesusSaveGame* LoadInstance)
 {
-	if (LoadInstance != nullptr)
-	{
-		LoadInstance->SaveSlotName = "JesusSave";
-		LoadInstance->SaveIndex = 0;
+	LoadInstance->SaveSlotName = "JesusSave";
+	LoadInstance->SaveIndex = 0;
 
-		LoadInstance = Cast<UJesusSaveGame>(UGameplayStatics::LoadGameFromSlot(LoadInstance->SaveSlotName, LoadInstance->SaveIndex));
-	}
+	LoadInstance = Cast<UJesusSaveGame>(UGameplayStatics::LoadGameFromSlot(LoadInstance->SaveSlotName, LoadInstance->SaveIndex));
+
 	return LoadInstance;
 }
