@@ -27,6 +27,7 @@ enum class MonsterAnimationType : uint8
 	PRAY,
 	SPAWNKNIGHT,
 	SPAWNING,
+	REVIVE,
 
 	FORWARDMOVE,
 	LEFTMOVE,
