@@ -81,6 +81,9 @@ enum class AnimationType : uint8
 
 	SHIELDATTACK,
 	SHIELDMOVE,
+
+	SKILL1,
+	SKILL2,
 };
 
 UCLASS()
@@ -99,4 +102,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MyInstance, meta = (AllowPrivateAccess = "true"))
 		float BodyBlendAlpha;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MyInstance, meta = (AllowPrivateAccess = "true"))
+		float PlayerTargetMoveSpeed;
 };

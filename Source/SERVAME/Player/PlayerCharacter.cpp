@@ -77,8 +77,12 @@ APlayerCharacter::APlayerCharacter()
 	WeaponCollision->SetupAttachment(WeaponMesh);
 	WeaponCollision->SetCollisionProfileName("Weapon");
 
+	SkillCollisionComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Skill Collision"));
+	SkillCollisionComp->SetupAttachment(WeaponMesh);
+	SkillCollisionComp->SetCollisionProfileName("Skill Collision");
+
 	ParryingCollision1 = CreateDefaultSubobject<UBoxComponent>(TEXT("Parrying Collision"));
-	ParryingCollision1->SetupAttachment(WeaponMesh);
+	ParryingCollision1->SetupAttachment(GetMesh());
 	ParryingCollision1->SetCollisionProfileName("Parrying");
 
 	WeaponOverlapStaticMeshCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Right Box"));
@@ -89,12 +93,18 @@ APlayerCharacter::APlayerCharacter()
 	SwordTrailComp->SetupAttachment(GetMesh(), FName("Weapon_bone"));
 	SwordTrailComp->SetCollisionProfileName("Sword Trail");
 
+	SkillTrailComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("SKill Trail"));
+	SkillTrailComp->SetupAttachment(GetMesh(), FName("Weapon_bone"));
+	SkillTrailComp->SetCollisionProfileName("Skill Trail");
+
+	SkillAuraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("SKill Aura"));
+	SkillAuraComp->SetupAttachment(GetMesh(), FName("Weapon_bone"));
+	SkillAuraComp->SetCollisionProfileName("Skill Aura");
+
 	ShieldEffectComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Shield Effect Comp"));
 	ShieldEffectComp->SetupAttachment(GetMesh(), FName("POINT_SHIELD"));
 	ShieldEffectComp->SetCollisionProfileName("Shield Effect Comp");
 
-	PlayerMaxAttackIndex.Add(ActionType::ATTACK, 4);
-	PlayerMaxAttackIndex.Add(ActionType::POWERATTACK, 3);
 
 	ForwardRotation.Add(TArray<float>());
 	ForwardRotation[0].Add(-45.0f);
@@ -111,7 +121,7 @@ APlayerCharacter::APlayerCharacter()
 	ForwardRotation[2].Add(-180.0f);
 	ForwardRotation[2].Add(135.0f);
 
-	HitEffectRotatorList.Add(AnimationType::ATTACK1, FRotator(50, 90.0f, 0));
+	HitEffectRotatorList.Add(AnimationType::ATTACK1, FRotator(50, 90.0f, 0)   );
 	HitEffectRotatorList.Add(AnimationType::ATTACK2, FRotator(0, -90.0f, 0.0f));
 	HitEffectRotatorList.Add(AnimationType::ATTACK3, FRotator(0.0f, 180.0f, 0.0f));
 	HitEffectRotatorList.Add(AnimationType::ATTACK4, FRotator(0, -90.0f, 0.0f));
@@ -121,6 +131,8 @@ APlayerCharacter::APlayerCharacter()
 	HitEffectRotatorList.Add(AnimationType::RUNATTACK, FRotator(0, 90.0f, 0.0f));
 	HitEffectRotatorList.Add(AnimationType::RUNPOWERATTACK, FRotator(0.0f, 90.0f, 0.0f));
 	HitEffectRotatorList.Add(AnimationType::DODGEATTACK, FRotator(0, 180.0f, 0.0f));
+	HitEffectRotatorList.Add(AnimationType::SKILL1, FRotator(50, 90.0f, 0)   );
+	HitEffectRotatorList.Add(AnimationType::SKILL2, FRotator(0, -90.0f, 0.0f));
 
 	IntToEnumMap.Add(ActionType::ATTACK, TMap<int32, AnimationType>());
 	IntToEnumMap[ActionType::ATTACK].Add(0, AnimationType::ATTACK1);
@@ -132,6 +144,10 @@ APlayerCharacter::APlayerCharacter()
 	IntToEnumMap[ActionType::POWERATTACK].Add(0, AnimationType::POWERATTACK1);
 	IntToEnumMap[ActionType::POWERATTACK].Add(1, AnimationType::POWERATTACK2);
 	IntToEnumMap[ActionType::POWERATTACK].Add(2, AnimationType::POWERATTACK3);
+
+	IntToEnumMap.Add(ActionType::SKILL, TMap<int32, AnimationType>());
+	IntToEnumMap[ActionType::SKILL].Add(0, AnimationType::SKILL1);
+	IntToEnumMap[ActionType::SKILL].Add(1, AnimationType::SKILL2);
 
 	DodgeDirection.Add(TArray<AnimationType>());
 	DodgeDirection[0].Add(AnimationType::BATTLEDODGE);
@@ -223,6 +239,8 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEnumToAnimTypeMap.Add(AnimationType::RUNATTACK, PlayerAction::BEFOREATTACK);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::RUNPOWERATTACK, PlayerAction::BEFOREATTACK);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::DODGEATTACK, PlayerAction::BEFOREATTACK);
+	PlayerEnumToAnimTypeMap.Add(AnimationType::SKILL1, PlayerAction::BEFOREATTACK);
+	PlayerEnumToAnimTypeMap.Add(AnimationType::SKILL2, PlayerAction::BEFOREATTACK);
 
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SAVESTART, PlayerAction::CANTACT);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SAVELOOP, PlayerAction::CANTACT);
@@ -469,6 +487,33 @@ APlayerCharacter::APlayerCharacter()
 		});
 	NotifyBeginEndEventMap[AnimationType::GAMESTART].Add(true, [&]()
 		{
+		});
+
+	NotifyBeginEndEventMap.Add(AnimationType::SKILL1, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::SKILL1].Add(false, [&]()
+		{
+
+			DeactivateRightWeapon();
+			SkillTrailComp->SetVisibility(false);
+			SkillAuraComp->Deactivate();
+			SkillAuraComp->SetVisibility(false);
+		});
+	NotifyBeginEndEventMap[AnimationType::SKILL1].Add(true, [&]()
+		{
+			SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		});
+
+	NotifyBeginEndEventMap.Add(AnimationType::SKILL2, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::SKILL2].Add(false, [&]()
+		{
+			DeactivateRightWeapon();
+			SkillTrailComp->SetVisibility(false);
+			SkillAuraComp->Deactivate();
+			SkillAuraComp->SetVisibility(false);
+		});
+	NotifyBeginEndEventMap[AnimationType::SKILL2].Add(true, [&]()
+		{
+			SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		});
 
 	PlayerActionTickMap.Add(PlayerAction::NONE, TMap<ActionType, TFunction<void()>>());
@@ -948,6 +993,16 @@ APlayerCharacter::APlayerCharacter()
 		{
 			ChangeMontageAnimation(AnimationType::SHIELDMOVE);
 		});
+	MontageEndEventMap.Add(AnimationType::SKILL1, [&]()
+		{
+			ComboAttackEnd();
+			CheckInputKey();
+		});
+	MontageEndEventMap.Add(AnimationType::SKILL2, [&]()
+		{
+			ComboAttackEnd();
+			CheckInputKey();
+		});
 
 	DodgeAnimationMap.Add(false, [&]()->AnimationType
 		{
@@ -1001,6 +1056,15 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::NONE].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::NONE].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::NONE].Add(ActionType::SHIELD, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::NONE].Add(ActionType::SKILL, TMap<bool, TFunction<void()>>());
+
+	InputEventMap[PlayerAction::NONE][ActionType::SKILL].Add(true, [&]()
+		{
+			SkillAttack();
+		});
+	InputEventMap[PlayerAction::NONE][ActionType::SKILL].Add(false, [&]()
+		{
+		});
 
 	InputEventMap[PlayerAction::NONE][ActionType::DODGE].Add(true, [&]()
 		{
@@ -1118,7 +1182,14 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::SHIELD, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::BEFOREATTACK].Add(ActionType::SKILL, TMap<bool, TFunction<void()>>());
 
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::SKILL].Add(true, [&]()
+		{
+		});
+	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::SKILL].Add(false, [&]()
+		{
+		});
 	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::DODGE].Add(true,   []() {});
 	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::DODGE].Add(false,  []() {});
 	InputEventMap[PlayerAction::BEFOREATTACK][ActionType::ATTACK].Add(true,  []() {});
@@ -1148,7 +1219,15 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::RUN].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::RUN].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::RUN].Add(ActionType::SHIELD, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::RUN].Add(ActionType::SKILL, TMap<bool, TFunction<void()>>());
 
+	InputEventMap[PlayerAction::RUN][ActionType::SKILL].Add(true, [&]()
+		{
+			SkillAttack();
+		});
+	InputEventMap[PlayerAction::RUN][ActionType::SKILL].Add(false, [&]()
+		{
+		});
 	InputEventMap[PlayerAction::RUN][ActionType::DODGE].Add(true, [&]()
 		{
 			Dodge();
@@ -1228,6 +1307,15 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::INTERACTION].Add(false, [&]() {});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::SHIELD].Add(true, InputEventMap[PlayerAction::NONE][ActionType::SHIELD][true]);
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::SHIELD].Add(false, InputEventMap[PlayerAction::NONE][ActionType::SHIELD][false]);
+	InputEventMap[PlayerAction::AFTERATTACK].Add(ActionType::SKILL, TMap<bool, TFunction<void()>>());
+
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::SKILL].Add(true, [&]()
+		{
+			SkillAttack();
+		});
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::SKILL].Add(false, [&]()
+		{
+		});
 
 	InputEventMap.Add(PlayerAction::CANWALK, TMap<ActionType, TMap<bool, TFunction<void()>>>());
 	InputEventMap[PlayerAction::CANWALK].Add(ActionType::DODGE, TMap<bool, TFunction<void()>>());
@@ -1239,6 +1327,14 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANWALK].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::CANWALK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::CANWALK].Add(ActionType::SHIELD, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANWALK].Add(ActionType::SKILL, TMap<bool, TFunction<void()>>());
+
+	InputEventMap[PlayerAction::CANWALK][ActionType::SKILL].Add(true, [&]()
+		{
+		});
+	InputEventMap[PlayerAction::CANWALK][ActionType::SKILL].Add(false, [&]()
+		{
+		});
 
 	InputEventMap[PlayerAction::CANWALK][ActionType::DODGE].Add(true, [&]() {});
 	InputEventMap[PlayerAction::CANWALK][ActionType::DODGE].Add(false, [&]() {});
@@ -1283,7 +1379,14 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANTACT].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::CANTACT].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::CANTACT].Add(ActionType::SHIELD, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANTACT].Add(ActionType::SKILL, TMap<bool, TFunction<void()>>());
 
+	InputEventMap[PlayerAction::CANTACT][ActionType::SKILL].Add(true, [&]()
+		{
+		});
+	InputEventMap[PlayerAction::CANTACT][ActionType::SKILL].Add(false, [&]()
+		{
+		});
 	InputEventMap[PlayerAction::CANTACT][ActionType::DODGE].Add(true, [&]() {});
 	InputEventMap[PlayerAction::CANTACT][ActionType::DODGE].Add(false, [&]() {});
 	InputEventMap[PlayerAction::CANTACT][ActionType::ATTACK].Add(true, [&]() {});
@@ -1313,7 +1416,14 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::SHIELD, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::SKILL, TMap<bool, TFunction<void()>>());
 
+	InputEventMap[PlayerAction::CANATTACK][ActionType::SKILL].Add(true, [&]()
+		{
+		});
+	InputEventMap[PlayerAction::CANATTACK][ActionType::SKILL].Add(false, [&]()
+		{
+		});
 	InputEventMap[PlayerAction::CANATTACK][ActionType::DODGE].Add(true, [&]() {});
 	InputEventMap[PlayerAction::CANATTACK][ActionType::DODGE].Add(false, [&]() {});
 	InputEventMap[PlayerAction::CANATTACK][ActionType::ATTACK].Add(true, [&]()
@@ -1354,7 +1464,14 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::SPRINT].Add(ActionType::HEAL, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::SPRINT].Add(ActionType::INTERACTION, TMap<bool, TFunction<void()>>());
 	InputEventMap[PlayerAction::SPRINT].Add(ActionType::SHIELD, TMap<bool, TFunction<void()>>());
+	InputEventMap[PlayerAction::SPRINT].Add(ActionType::SKILL, TMap<bool, TFunction<void()>>());
 
+	InputEventMap[PlayerAction::SPRINT][ActionType::SKILL].Add(true, [&]()
+		{
+		});
+	InputEventMap[PlayerAction::SPRINT][ActionType::SKILL].Add(false, [&]()
+		{
+		});
 	InputEventMap[PlayerAction::SPRINT][ActionType::DODGE].Add(true, [&]()
 		{
 			Dodge();
@@ -1442,14 +1559,14 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEventFuncMap[AnimationType::EXECUTIONBOSS].Add(true, [&]()
 		{
 			ComboAttackEnd();
-			ExecutionCharacter->TakeDamage(PlayerDataStruct.PlayerExecutionFirstDamage, CharacterDamageEvent, nullptr, this);
+			ExecutionCharacter->TakeDamage(PlayerDataStruct.BaseDamage * PlayerDataStruct.PlayerExecutionFirstDamage, CharacterDamageEvent, nullptr, this);
 			VibrateGamePad(0.4f, 0.4f);
 			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 		});
 	PlayerEventFuncMap[AnimationType::EXECUTIONBOSS].Add(false, [&]()
 		{
 			UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(ExecutionCharacter);
-			ExecutionCharacter->TakeDamage(PlayerDataStruct.PlayerExecutionSecondDamage, CharacterDamageEvent, nullptr, this);
+			ExecutionCharacter->TakeDamage(PlayerDataStruct.BaseDamage * PlayerDataStruct.PlayerExecutionSecondDamage, CharacterDamageEvent, nullptr, this);
 			VibrateGamePad(0.4f, 0.4f);
 			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 		});
@@ -1460,6 +1577,31 @@ APlayerCharacter::APlayerCharacter()
 			UGameplayStatics::SetGlobalTimeDilation(this, 1.0f);
 		});
 	PlayerEventFuncMap[AnimationType::EOSTOEXECUTION].Add(false , [&]()
+		{
+
+		});
+
+	PlayerEventFuncMap.Add(AnimationType::SKILL1, TMap<bool, TFunction<void()>>());
+	PlayerEventFuncMap[AnimationType::SKILL1].Add(true, [&]()
+		{
+			SkillTrailComp->SetVisibility(true);
+			SkillAuraComp->SetVisibility(true);
+			SkillAuraComp->Activate();
+		});
+	PlayerEventFuncMap[AnimationType::SKILL1].Add(false, [&]()
+		{
+
+		});
+
+	PlayerEventFuncMap.Add(AnimationType::SKILL2, TMap<bool, TFunction<void()>>());
+	PlayerEventFuncMap[AnimationType::SKILL2].Add(true, [&]()
+		{
+			SkillTrailComp->SetVisibility(true);
+			SkillAuraComp->SetVisibility(true);
+			SkillAuraComp->Activate();
+
+		});
+	PlayerEventFuncMap[AnimationType::SKILL2].Add(false, [&]()
 		{
 
 		});
@@ -1499,6 +1641,13 @@ void APlayerCharacter::BeginPlay()
 	if (IsValid(PlayerUIClass))
 	{
 		PlayerHUD = Cast<UPlayerHUD>(CreateWidget(GetWorld(), PlayerUIClass));		
+	}
+
+	if (!PlayerMaxAttackIndex.Contains(ActionType::ATTACK))
+	{
+		PlayerMaxAttackIndex.Add(ActionType::ATTACK, 4);
+		PlayerMaxAttackIndex.Add(ActionType::POWERATTACK, 3);
+		PlayerMaxAttackIndex.Add(ActionType::SKILL, 2);
 	}
 
 
@@ -1553,6 +1702,7 @@ void APlayerCharacter::BeginPlay()
 
 	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SwordTrailComp->Deactivate();
+	SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	DeactivateSMOverlap();
 	DeactivateRightWeapon();
 
@@ -1562,10 +1712,14 @@ void APlayerCharacter::BeginPlay()
 	GameStartSequncePlayer->Play();
 	GameStartSequncePlayer->Pause();
 
+	SkillAuraComp->Deactivate();
+	SkillTrailComp->SetVisibility(false);
+
 	ShieldCount = 3;
 	PlayerHUD->SetShield(ShieldCount);
 
 	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnWeaponOverlapBegin);
+	SkillCollisionComp->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnWeaponOverlapBegin);
 	ExecutionTrigger->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnExecutionOverlapBegin);
 	ExecutionTrigger->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnExecutionOverlapEnd);
 	ParryingCollision1->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnParryingOverlapBegin);
@@ -1697,6 +1851,12 @@ void APlayerCharacter::RestoreStat()
 	PlayerHUD->SetHP(PlayerDataStruct.CharacterHp / PlayerDataStruct.CharacterMaxHp);
 	CurHealCount = PlayerDataStruct.MaxHealCount;
 	PlayerHUD->ChangeHealCount(CurHealCount);
+	UCombatManager& combatmanager = UCombatManager::GetInstance();
+
+	for (int32 i = 0; i < combatmanager.MonsterInfoArray.Num(); i++)
+	{
+		combatmanager.MonsterInfoArray[i]->RespawnCharacter();
+	}
 }
 
 void APlayerCharacter::MoveSpawnLocation(FVector Location)
@@ -1976,7 +2136,7 @@ void APlayerCharacter::SetSpeed(float speed)
 	}
 	if (!IsGrab)
 	{
-		CameraBoom1->CameraLagSpeed = speed * 0.02f;
+		CameraBoom1->CameraLagSpeed = 6.0f;
 	}
 
 	GetCharacterMovement()->MaxWalkSpeed = speed;
@@ -2100,8 +2260,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	CameraDistanceToPlayer = FVector::Distance(FollowCamera->GetComponentLocation(), GetActorLocation());
 	CameraDistanceToPlayer = FMath::Clamp(CameraDistanceToPlayer, 40, 300);
-	PlayerSKMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 300));
-	WeaponMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 300));
+	PlayerSKMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 100));
+	WeaponMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 100));
 }
 
 float APlayerCharacter::GetPercent(float value, float min, float max)
@@ -2136,12 +2296,7 @@ void APlayerCharacter::RespawnCharacter()
 
 	RestoreStat();
 
-	UCombatManager& combatmanager = UCombatManager::GetInstance();
-
-	for (int32 i = 0; i < combatmanager.MonsterInfoArray.Num(); i++)
-	{
-		combatmanager.MonsterInfoArray[i]->RespawnCharacter();
-	}
+	
 	SetSpeed(SpeedMap[false][false]);
 }
 
@@ -2219,33 +2374,37 @@ void APlayerCharacter::PlayerMovement()
 
 void APlayerCharacter::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {	
-	HitStop();
 
-	CameraShake(PlayerCameraShake);
+	ABaseCharacter* character = Cast<ABaseCharacter>(OtherActor);
 
-	AObjectPool& objectpool = AObjectPool::GetInstance();
-	objectpool.SpawnObject(objectpool.ObjectArray[17].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-
-	UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(Cast<ABaseCharacter>(OtherActor));
-
-	if (HitEffectRotatorList.Contains(AnimInstance->PlayerAnimationType))
+	if (character != nullptr)
 	{
-		objectpool.SpawnObject(objectpool.ObjectArray[0].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-		objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-		objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-		objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-		objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+		AObjectPool& objectpool = AObjectPool::GetInstance();
+		UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(character);
 
-		objectpool.SpawnObject(objectpool.ObjectArray[5].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-		objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
-	}
+		HitStop();
+		CameraShake(PlayerCameraShake);
+		objectpool.SpawnObject(objectpool.ObjectArray[17].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 
-	if (PlayerDataStruct.DamageList.Contains(AnimInstance->PlayerAnimationType))
-	{
-		VibrateGamePad(PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].VibrateIntensity, PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].VibrateDuration);
-		OtherActor->TakeDamage(PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].Damage, CharacterDamageEvent, nullptr, this);
-	}	
-		
+		if (HitEffectRotatorList.Contains(AnimInstance->PlayerAnimationType))
+		{
+			objectpool.SpawnObject(objectpool.ObjectArray[0].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+			objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+			objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+			objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+			objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+			objectpool.SpawnObject(objectpool.ObjectArray[42].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator::ZeroRotator);
+
+			objectpool.SpawnObject(objectpool.ObjectArray[5].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+			objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
+		}
+
+		if (PlayerDataStruct.DamageList.Contains(AnimInstance->PlayerAnimationType))
+		{
+			VibrateGamePad(PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].VibrateIntensity, PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].VibrateDuration);
+			OtherActor->TakeDamage(PlayerDataStruct.BaseDamage * PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].Damage, CharacterDamageEvent, nullptr, this);
+		}
+	}		
 }
 
 void APlayerCharacter::OnSMOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -2283,14 +2442,17 @@ void APlayerCharacter::OnParryingOverlapBegin(UPrimitiveComponent* OverlappedCom
 	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
 	Imotal = true;
 	//BossParryingSequncePlayer->Play();
-	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[15].ObjClass, GetActorLocation(), FRotator(90, 180, 0));
+	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[15].ObjClass, OtherComp->GetComponentLocation(), FRotator(90, 180, 0));
 	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (IsGrab)return;
-	
+	if (IsExecute) return;
+	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
+
+	if (ExecutionCharacter == nullptr)return;
 
 	ShieldCount = 0;
 	PlayerHUD->ClearShield();
@@ -2306,7 +2468,6 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	Imotal = true;
 	ChangeActionType(ActionType::DEAD);	
 	ShieldOff();
-	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
 
 	if (TargetComp != nullptr)
 	{
@@ -2335,6 +2496,10 @@ void APlayerCharacter::ActivateSMOverlap()
 void APlayerCharacter::DeactivateRightWeapon()
 {
 	Super::DeactivateRightWeapon();
+	SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SkillAuraComp->Deactivate();
+	SkillAuraComp->SetVisibility(false);
+	SkillTrailComp->SetVisibility(false);
 }
 
 void APlayerCharacter::DeactivateSMOverlap()
@@ -2395,6 +2560,20 @@ void APlayerCharacter::PowerAttack()
 		{
 			Imotal = false;
 			PlayerAttackType = ActionType::POWERATTACK;
+			ComboAttackStart();
+			CanNextAttack = false;
+		}
+	}
+}
+
+void APlayerCharacter::SkillAttack()
+{
+	if (CanNextAttack)
+	{
+		if (UseStamina(PlayerUseStaminaMap[ActionType::SKILL]))
+		{
+			Imotal = false;
+			PlayerAttackType = ActionType::SKILL;
 			ComboAttackStart();
 			CanNextAttack = false;
 		}

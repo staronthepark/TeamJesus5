@@ -22,6 +22,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UBoxTriggerComp* TriggerComp;
+	bool IsActive;
 
 	TArray<UParticleSystemComponent*>ParticleArray;
 

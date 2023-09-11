@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include <Components/ProgressBar.h>
 #include "GameFramework/Actor.h"
+#include <Components/Slider.h>
 #include "BaseUI.generated.h"
 
 /**

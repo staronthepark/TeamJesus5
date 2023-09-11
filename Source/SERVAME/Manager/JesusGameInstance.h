@@ -7,10 +7,8 @@
 #include "Engine/DataTable.h"
 #include "Components/WidgetComponent.h"
 #include "..\UI\DebugLogWidget.h"
-#include "..\Player\PlayerAnimInstance.h"
 #include "..\UI\MainMenuUI.h"
 #include <Engine/PostProcessVolume.h>
-
 #include "JesusGameInstance.generated.h"
 
 USTRUCT(BlueprintType)
@@ -40,13 +38,6 @@ class SERVAME_API UJesusGameInstance : public UGameInstance
 
 public:
 		UJesusGameInstance();
-		void InitInstance();
-		void InitDefaultSetting();
-		virtual void Init();
-
-		void SetPostProcessBrightness(float value);
-		float GetPostProcessBrightness();
-		void SetLanguage(Language value);
 
 		FStartSetting PlayerOptionSetting;
 
@@ -64,4 +55,15 @@ public:
 
 		UPROPERTY()
 		Language language;
+
+
+		float GetPostProcessBrightness();
+
+		void InitInstance();
+		void InitDefaultSetting();
+		void SetLanguage(Language value);
+		void SetPostProcessBrightness(float value);
+		//void SavePlayerInfo(FVector Location, FRotator Rotation);
+
+		virtual void Init();
 };

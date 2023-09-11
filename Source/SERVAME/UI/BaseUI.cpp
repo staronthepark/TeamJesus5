@@ -23,3 +23,4 @@ void UBaseUI::ProgressDecrease(AActor* Actor,UProgressBar* ProgressBar, float _m
 			}, 0.01f, true);
 		}, 1.0f, false);
 }
+

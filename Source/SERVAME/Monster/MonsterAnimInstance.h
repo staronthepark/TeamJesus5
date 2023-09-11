@@ -19,8 +19,15 @@ enum class MonsterAnimationType : uint8
 	DASHATTACK1,
 	HEAL1,
 	HEAL2,
+	SELFHEAL,
+	WORSHIP,
+	JUDEMENT,
+	CURSE,
+	DARK,
+	PRAY,
 	SPAWNKNIGHT,
 	SPAWNING,
+	REVIVE,
 
 	FORWARDMOVE,
 	LEFTMOVE,
@@ -31,6 +38,7 @@ enum class MonsterAnimationType : uint8
 	ROTATERIGHT,
 
 	HIT,
+	BACKHIT,
 	DEAD,
 	DEADLOOP,
 	EXECUTION,

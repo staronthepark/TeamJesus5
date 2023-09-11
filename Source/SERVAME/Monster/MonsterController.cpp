@@ -1,5 +1,7 @@
 #include "MonsterController.h"
 #include "EnemyMonster.h"
+#include "Knight/KinghtMonster.h"
+#include <Kismet/KismetMathLibrary.h>
 
 AMonsterController::AMonsterController()
 {
@@ -76,6 +78,28 @@ void AMonsterController::MoveWhenArrived(FVector Location)
 	}
 }
 
+void AMonsterController::Patrol(FVector Location, int PatrolArrNum)
+{
+	IsArrived = false;
+
+	auto type = MoveToLocation(Location);
+
+	FRotator ToTarget = UKismetMathLibrary::FindLookAtRotation(Monster->GetActorLocation(), Location);
+	FRotator RealToTarget = FRotator(0.f, ToTarget.Yaw, 0.f);
+
+	FRotator LookAtRotation = FMath::RInterpTo(Monster->GetActorRotation(), RealToTarget, GetWorld()->DeltaTimeSeconds, 3.f);
+	Monster->SetActorRotation(LookAtRotation);
+
+	if (type == EPathFollowingRequestResult::AlreadyAtGoal)
+	{
+		IsArrived = true;
+		Monster->PatrolIndexCount++;
+
+		if (Monster->PatrolIndexCount >= PatrolArrNum)
+			Monster->PatrolIndexCount = 0;
+	}
+}
+
 void AMonsterController::OnTargetPerceptionUpdated_Delegate(AActor* Actor, FAIStimulus Stimulus)
 {
 	switch (Stimulus.Type)
@@ -131,12 +155,23 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 	}
 	else
 	{
-		if (Monster->MyMonsterType == MonsterType::NUN)
-			return;
-
 		UE_LOG(LogTemp, Warning, TEXT("LostPlayer"));
-		Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
 		FindPlayer = false;
+
+		if (Monster->MyMonsterType == MonsterType::KNIGHT)
+		{
+			auto Knight = Cast<AKinghtMonster>(Monster);
+
+			Knight->MonsterMoveEventIndex = 0;
+			Knight->ChangeActionType(MonsterActionType::MOVE);
+			Knight->KnightAnimInstance->BlendSpeed = Knight->WalkBlend;
+			Knight->WalkToRunBlend = false;
+		}
+		else
+		{
+			Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			Monster->MonsterMoveEventIndex = 1;
+		}
 	}
 }
 

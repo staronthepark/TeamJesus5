@@ -73,6 +73,9 @@ public:
 
 	void ChangeView();
 
+	void PressSkill();
+	void UnPressSkill();
+
 	void PressMoveBack();
 	void UnPressMoveBack();
 
@@ -96,6 +99,9 @@ public:
 	void UnPressInteraction();
 
 	void ViewLog();
+
+	void Save();
+	void Load();
 
 	void OpenMenu();
 	void CloseMenu();

@@ -40,7 +40,7 @@ void APlaySequenceTriggerActor::EndTriggerEvent()
 void APlaySequenceTriggerActor::EnableEvent()
 {
 	Super::EnableEvent();
-
+	if (IsActive)return;
 	//Boss->BossAnimInstance->StopAllMontages(0.f);
 
 	SequncePlayer->Play();
@@ -49,7 +49,10 @@ void APlaySequenceTriggerActor::EnableEvent()
 	Character->AxisY = 1;
 	Character->PlayerHUD->SetVisibility(ESlateVisibility::Collapsed);
 
-	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
+	AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+
+	controller->CurrentSequncePlayer = SequncePlayer;
+	controller->EnableInput(GetWorld()->GetFirstPlayerController());
 
 	if (TriggerOnlyOnce)
 		TriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -60,6 +63,5 @@ void APlaySequenceTriggerActor::EndSequence()
 	//Boss->BossAnimInstance->IsSequenceEnd = true;
 	//Boss->BossAnimInstance->ResumeMontage(Boss->GetCurrentMontage());
 	GetWorld()->GetFirstPlayerController()->SetViewTarget(Character);
-	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 	Character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
 }

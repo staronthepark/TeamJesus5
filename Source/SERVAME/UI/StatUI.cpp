@@ -1,23 +1,28 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "StatUI.h"
 
 void UStatUI::NativeOnInitialized()
 {
+	PlayerStatComp = Cast<UPlayerStatComponent>(GetWorld()->GetFirstPlayerController()->GetOwner()->GetComponentByClass(UPlayerStatComponent::StaticClass()));
+	
 	Button->OnClicked.AddDynamic(this, &UStatUI::OnButtonClicked);
-	TypeAnimation.Add(EStateType::str, [&]() {
+	TypeAnimation.Add(EStateType::str, [&](int32 index) {
+		PlayerStatComp->StrengthStatList[index].Func();
+		});
+	TypeAnimation.Add(EStateType::stamina, [&](int32 index) {
+		PlayerStatComp->StaminaStatList[index].Func();
 
 		});
-	TypeAnimation.Add(EStateType::stamina, [&]() {
+	TypeAnimation.Add(EStateType::hp, [&](int32 index) {
+		PlayerStatComp->HpStatList[index].Func();
 
 		});
-	TypeAnimation.Add(EStateType::hp, [&]() {
-
+	TypeAnimation.Add(EStateType::shield, [&](int32 index) {
+		PlayerStatComp->ShieldStatList[index].Func();
 		});
-	TypeAnimation.Add(EStateType::shield, [&]() {
 
-		});
+	index = 0;
 }
 
 void UStatUI::ChangeState(EStatState changeState)
@@ -33,11 +38,13 @@ void UStatUI::OnButtonClicked()
 	if(state == EStatState::can)
 	{
 		state = EStatState::activated;
-		TypeAnimation[Type]();
+		if (NextStat == NULL)
+			return;
+		NextStat->index = index + 1;
+		TypeAnimation[Type](index);
 
-		for (int i = 0; i < NextStat.Num(); i++)
-		{
-			NextStat[i]->ChangeState(EStatState::can);
-		}
+
+		NextStat->ChangeState(EStatState::can);
+
 	}
 }

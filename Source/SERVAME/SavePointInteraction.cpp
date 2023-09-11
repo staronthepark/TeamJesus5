@@ -12,9 +12,6 @@ void ASavePointInteraction::BeginPlay()
 {
 	Super::BeginPlay();
 
-	IsActive = false;
-
-
 	TArray<UActorComponent *>array = GetComponentsByTag(UStaticMeshComponent::StaticClass(), "Flesh");
 	
 	DissolveValue = 1.0f;
@@ -30,7 +27,7 @@ void ASavePointInteraction::BeginPlay()
 	for (int32 i = 0; i < array.Num(); i++)
 	{
 		ParticleCompArray.Add(Cast<UParticleSystemComponent>(array[i]));
-		ParticleCompArray[i]->SetActive(false, false);
+		ParticleCompArray[i]->SetActive(IsActive, IsActive);
 	}
 }
 

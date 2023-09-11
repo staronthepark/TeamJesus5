@@ -8,7 +8,7 @@ void UMonsterHPUI::SetHP(float value)
 	value = FMath::Clamp(value, 0.0f, 1.0f);
 
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
-	Monster_HP_Bar_Y->SetPercent(value);
+	Monster_HP_Bar->SetPercent(value);
 	HP_White_P->SetValue(value);
 	if (!TimerManager.IsTimerActive(HpDelayTimerHandle) && !TimerManager.IsTimerActive(HpProgressTimerHandle))
 		Monster_HP_Bar_Y->SetPercent(value);

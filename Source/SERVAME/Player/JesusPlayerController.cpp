@@ -1,5 +1,6 @@
 #include "..\Boss_1\JesusBoss.h"
 #include "Kismet/GameplayStatics.h"
+#include "../JesusSaveGame.h"
 #include "GameFramework/GameUserSettings.h"
 #include "JesusPlayerController.h"
 
@@ -238,6 +239,16 @@ void AJesusPlayerController::ViewLog()
 	}
 }
 
+void AJesusPlayerController::Save()
+{
+	UJesusSaveGame::GetInstance().Save(character);
+}
+
+void AJesusPlayerController::Load()
+{
+	UJesusSaveGame::GetInstance().Load(character);
+}
+
 void AJesusPlayerController::PressLockon()
 {	
 	if (GameInstance->MainMenuWidget->IsInViewport())
@@ -379,8 +390,23 @@ void AJesusPlayerController::ChangeView()
 	character->ShoulderView(!character->IsShoulderView);
 }
 
+void AJesusPlayerController::PressSkill()
+{
+	character->InputEventMap[character->PlayerCurAction][ActionType::SKILL][true]();
+}
+
+void AJesusPlayerController::UnPressSkill()
+{
+	character->InputEventMap[character->PlayerCurAction][ActionType::SKILL][false]();
+}
+
 void AJesusPlayerController::OpenMenu()
-{	
+{
+	if (CurrentSequncePlayer)
+	{
+		CurrentSequncePlayer->Stop();
+		return;
+	}
 	if (!GameInstance->MainMenuWidget->IsInViewport())
 	{
 		if (character->PlayerHUD->IsRender())
@@ -406,6 +432,12 @@ void AJesusPlayerController::OpenMenu()
 
 void AJesusPlayerController::CloseMenu()
 {
+	if (CurrentSequncePlayer)
+	{
+		CurrentSequncePlayer->Stop();
+		return;
+	}
+
 	if (!GameInstance->MainMenuWidget->IsInViewport())
 	{
 		if (character->PlayerHUD->IsRender())
@@ -488,4 +520,11 @@ void AJesusPlayerController::SetupInputComponent()
 	InputComponent->BindAction("Guide", IE_Pressed, this, &AJesusPlayerController::PressTab);
 
 	InputComponent->BindAction("Boss2", IE_Pressed, this, &AJesusPlayerController::Boss2);
+
+	InputComponent->BindAction("Save", IE_Pressed, this, &AJesusPlayerController::Save);
+	InputComponent->BindAction("Load", IE_Pressed, this, &AJesusPlayerController::Load);
+
+	InputComponent->BindAction("Skill", IE_Pressed, this, &AJesusPlayerController::PressSkill);
+	InputComponent->BindAction("Skill", IE_Released, this, &AJesusPlayerController::UnPressSkill);
+
 }

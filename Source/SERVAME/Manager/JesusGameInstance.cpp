@@ -5,6 +5,7 @@
 #include "Engine/PostProcessVolume.h"
 #include "GameFramework/GameUserSettings.h"
 #include "SoundManager.h"
+#include "../JesusSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 
 #define LOW 0
@@ -21,8 +22,7 @@ UJesusGameInstance::UJesusGameInstance()
 		DebugLogWidgetClass = DLW.Class;
 	MainMenuWidgetClass = ASD.Class;
 }
-//#include "HardwareInfo.h"
-//#include "GenericPlatform/GenericPlatformMisc.h"
+
 void UJesusGameInstance::InitInstance()
 {
 	if (IsValid(DebugLogWidgetClass))
@@ -30,15 +30,10 @@ void UJesusGameInstance::InitInstance()
 		DebugLogWidget = Cast<UDebugLogWidget>(CreateWidget(GetWorld(), DebugLogWidgetClass));
 	}
 
-	//FGenericPlatformMisc::benchmark();
-
 	MainMenuWidget = Cast<UMainMenuUI>(CreateWidget(GetWorld(), MainMenuWidgetClass));
 
 	ASoundManager::GetInstance().Init();
 	ASoundManager::GetInstance().StartBGMSound();
-
-	
-	//MainMenuWidget->AddToViewport();
 }
 
 void UJesusGameInstance::InitDefaultSetting()
@@ -63,63 +58,49 @@ void UJesusGameInstance::InitDefaultSetting()
 	}
 }
 
+//void UJesusGameInstance::SavePlayerInfo(FVector Location, FRotator Rotation)
+//{
+//	if(SaveGameInstance == nullptr)
+//	SaveGameInstance = Cast<UJesusSaveGame>(UGameplayStatics::CreateSaveGameObject(UJesusSaveGame::StaticClass()));
+//	SaveGameInstance->SaveLoc(Location);
+//	SaveGameInstance->SaveRot(Rotation);
+//  SaveGameInstance->SavePlayerData(Data);
+//	SaveGameInstance->Save(SaveGameInstance);
+//}
+//
+//UJesusSaveGame* UJesusGameInstance::LoadGame()
+//{	
+//	return SaveGameInstance->Load(SaveGameInstance);
+//}
+
 void UJesusGameInstance::Init()
 {
 	UGameUserSettings* setting = GEngine->GetGameUserSettings();
 	if (setting)
 	{
-		setting->RunHardwareBenchmark();
-		
-		float GPU = setting->GetLastGPUBenchmarkResult() / 190;
-		
-		UE_LOG(LogTemp, Error, TEXT("%f"), GPU);
+		//setting->RunHardwareBenchmark();
+		//
+		//float GPU = setting->GetLastGPUBenchmarkResult() / 190;
+		//
+		//UE_LOG(LogTemp, Error, TEXT("%f"), GPU);
 		
 		setting->SetFrameRateLimit(60);
 		setting->SetVSyncEnabled(false);
 		
 		setting->SetResolutionScaleValue(100);
 
-		//if (GPU >= 3)
-		{
-			setting->SetPostProcessingQuality(3);
-			setting->SetShadowQuality(3);
-			setting->SetGlobalIlluminationQuality(3);
-			setting->SetVisualEffectQuality(3);
+		setting->SetPostProcessingQuality(3);
+		setting->SetShadowQuality(3);
+		setting->SetGlobalIlluminationQuality(3);
+		setting->SetVisualEffectQuality(3);
 
 
-			setting->SetReflectionQuality(3);
-			setting->SetTextureQuality(3);
-			setting->SetFoliageQuality(3);
-			setting->SetShadingQuality(3);
-			setting->SetViewDistanceQuality(3);
-			setting->SetAntiAliasingQuality(3);
-		}
-		//else
-		//{
-		//	setting->SetPostProcessingQuality(HIGH);
-		//	setting->SetShadowQuality(HIGH);
-		//	setting->SetGlobalIlluminationQuality(HIGH);
-		//	setting->SetReflectionQuality(HIGH);
-		//	setting->SetVisualEffectQuality(HIGH);
-		//	setting->SetTextureQuality(MIDDLE);
-		//	setting->SetFoliageQuality(MIDDLE);
-		//	setting->SetShadingQuality(MIDDLE);
-		//	setting->SetViewDistanceQuality(MIDDLE);
-		//	setting->SetAntiAliasingQuality(MIDDLE);
-		//}
-		//else if(GPU <= 290)
-		//{
-		//	setting->SetPostProcessingQuality(HIGH);
-		//	setting->SetShadowQuality(HIGH);
-		//	setting->SetGlobalIlluminationQuality(HIGH);
-		//	setting->SetReflectionQuality(HIGH);
-		//	setting->SetVisualEffectQuality(HIGH);
-		//	setting->SetTextureQuality(MIDDLE);
-		//	setting->SetFoliageQuality(MIDDLE);
-		//	setting->SetShadingQuality(MIDDLE);
-		//	setting->SetViewDistanceQuality(MIDDLE);
-		//	setting->SetAntiAliasingQuality(MIDDLE);
-		//}
+		setting->SetReflectionQuality(3);
+		setting->SetTextureQuality(3);
+		setting->SetFoliageQuality(3);
+		setting->SetShadingQuality(3);
+		setting->SetViewDistanceQuality(3);
+		setting->SetAntiAliasingQuality(3);
 		
 		setting->ApplySettings(true);
 	}

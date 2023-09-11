@@ -4,28 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+#include "../SERVAME/Player/PlayerCharacter.h"
+#include "../SERVAME/BaseTriggerActor.h"
 #include "JesusSaveGame.generated.h"
-
-USTRUCT(BlueprintType)
-struct FPlayerLocStruct
-{
-	GENERATED_USTRUCT_BODY()
-
-public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
-	FVector PlayerLoc;
-};
-
-USTRUCT(BlueprintType)
-struct FPlayerRotStruct
-{
-	GENERATED_USTRUCT_BODY()
-
-public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
-	FRotator PlayerRot;
-};
-
 
 UCLASS()
 class SERVAME_API UJesusSaveGame : public USaveGame
@@ -33,25 +14,37 @@ class SERVAME_API UJesusSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
+	UJesusSaveGame();
+
+	/*
+	*  ¿µÈ¥ °¹¼ö, È­ÅêºÒ, Æ®¸®°Å ÄÆ¾À ½ÇÇà, Á×Àº º¸½º, ¹® °³¹æ ¿©ºÎ, °ÔÀÓ ¼³Á¤, ÂïÀº ½ºÅÝ,¾ÆÀÌÅÛ, 
+	*/
+
+	static UJesusSaveGame* Instance;
+	static UJesusSaveGame& GetInstance();
+
+	TArray<ABaseTriggerActor> TriggerActor;
+
+	UJesusSaveGame* SaveInstance;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
 	FString SaveSlotName;	//Save game data file name
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
 	int32 SaveIndex;	//Save game data file index
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
-	FPlayerLocStruct PlayerLocStruct;
+	FVector PlayerLoc;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
-	FPlayerRotStruct PlayerRotStruct;
+	FRotator PlayerRot;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
-	int HealCount;
-	
+		FPlayerCharacterDataStruct PlayerData;
+		
 public:
-	void SaveLoc(FVector Vec);
-	void SaveRot(FRotator Rot);
-	void SaveHealCount(int Count);
-	void SaveSavePoint();
-	void Save(UJesusSaveGame* Instance);
-	void Load(UJesusSaveGame* LoadInstance);
+
+
+	void Save(APlayerCharacter* Player);
+
+	UJesusSaveGame* Load(APlayerCharacter* Player);
 };

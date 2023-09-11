@@ -29,6 +29,7 @@ enum class MonsterActionType : uint8
 	ATTACK,
 	POWERATTACK,
 	MOVE,
+	RUN,
 	HIT,
 	DEAD,
 };
@@ -73,11 +74,13 @@ struct FMonsterDataStruct : public FCharacterBaseDataStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float PatrolSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float RotateSpeed;
+	float RotateSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float LockOnWalkSpeed;
+	float LockOnWalkSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int32 DropSoulCount;
+	int32 DropSoulCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float RunSpeed;
 };
 
 UCLASS()
@@ -86,8 +89,6 @@ class SERVAME_API AEnemyMonster : public ABaseCharacter
 	GENERATED_BODY()
 	
 public:
-
-	bool testtest = false;
 
 	AEnemyMonster();
 
@@ -143,15 +144,21 @@ public:
 	USkeletalMeshComponent* SkeletalMeshComp;
 	UStaticMeshComponent* SwordMeshComp;
 
+	UPROPERTY(EditAnyWhere, Category = "AttackRange")
+	float AttackRange = 100.f;
+
 	float WeaponOpacity;
 	float MeshOpacity;
 
 	float CurrentDistance;	
 	float DiagonalSpeed;
 
+	float OpactiyDeltaTime;
+	
 	int32 MonsterMoveEventIndex;
 	int32 MonsterRandomMove;
 	int CircleIndexCount = 1;
+	int PatrolIndexCount = 0;
 
 	bool IsDetect;
 	bool TracePlayer;
@@ -161,7 +168,12 @@ public:
 	bool asd = false;
 	bool asd2 = false;
 
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	bool IsPatrol = false;
+
 	AActor* otherActor;
+
+	FTimerHandle MonsterDeadTimer;
 
 protected:
 	TMap<int, TFunction<void()>> MonsterMoveMap;

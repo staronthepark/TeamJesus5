@@ -11,7 +11,6 @@
 #include "Containers/Queue.h"
 #include "..\UI\PlayerHUD.h"
 #include "..\UI\UserSettingUI.h"
-#include "..\JesusSaveGame.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "ActorSequenceComponent.h"
 #include "ActorSequencePlayer.h"
@@ -45,6 +44,7 @@ enum class ActionType : uint8
 	INTERACTION,
 	DEAD,
 	SHIELD,
+	SKILL,
 };
 
 UENUM(BlueprintType)
@@ -111,7 +111,8 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 		float ShieldHP;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MaxShieldHP;
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float BaseDamage;
 };
 
 UCLASS()
@@ -141,6 +142,13 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
 		UNiagaraComponent* ShieldEffectComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
+		UNiagaraComponent* SkillTrailComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
+		UNiagaraComponent* SkillAuraComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
+		UBoxComponent* SkillCollisionComp;
 
 	FVector CamExecutionDirection;
 
@@ -369,6 +377,8 @@ public:
 	void BasicAttack();
 
 	void PowerAttack();
+
+	void SkillAttack();
 
 	void FadeIn();
 
