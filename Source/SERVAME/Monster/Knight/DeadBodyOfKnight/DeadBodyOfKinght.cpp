@@ -3,3 +3,19 @@
 
 #include "DeadBodyOfKinght.h"
 
+ADeadBodyOfKinght::ADeadBodyOfKinght()
+{
+}
+
+void ADeadBodyOfKinght::BeginPlay()
+{
+	Super::BeginPlay();
+
+	MyMonsterType = MonsterType::DEADBODYOFKNIGHT;
+}
+
+void ADeadBodyOfKinght::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}

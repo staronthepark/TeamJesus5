@@ -64,6 +64,8 @@ APersistentKnight::APersistentKnight()
 void APersistentKnight::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MyMonsterType = MonsterType::PERSISTENTKNIGHT;
 }
 
 void APersistentKnight::Tick(float DeltaTime)
@@ -81,6 +83,7 @@ float APersistentKnight::Die(float Dm)
 			KnightHeadSkeletalMesh->SetCollisionProfileName("Ragdoll");
 			KnightHeadSkeletalMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 			KnightHeadSkeletalMesh->AddImpulseToAllBodiesBelow(AddVec * Strength);
+			//KnightHeadSkeletalMesh->AddImpulse(AddVec * Strength, FName(TEXT("...")));
 			KnightHeadSkeletalMesh->SetSimulatePhysics(true);
 			KnightHeadSkeletalMesh->SetEnableGravity(true);
 
