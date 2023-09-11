@@ -218,6 +218,15 @@ void AKinghtMonster::BeginPlay()
 {
 	Super::BeginPlay(); 
 
+	if(IsPatrol)
+	{
+		TracePlayer = false;
+		MonsterController->FindPlayer = false;
+		IsPatrol = true;
+		MonsterMoveEventIndex = 0;
+		ChangeActionType(MonsterActionType::MOVE);
+	}
+
 	SetActive(true);
 
 	PlayerCharacter = nullptr;
