@@ -59,6 +59,12 @@ APersistentKnight::APersistentKnight()
 			ChangeActionType(MonsterActionType::NONE);
 			ChangeMontageAnimation(MonsterAnimationType::IDLE);
 		});
+
+	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
+		{
+			ChangeActionType(MonsterActionType::ATTACK);
+			ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
+		});
 }
 
 void APersistentKnight::BeginPlay()

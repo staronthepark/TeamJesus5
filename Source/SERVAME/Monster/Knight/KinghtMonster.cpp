@@ -583,6 +583,9 @@ float AKinghtMonster::Die(float Dm)
 
 float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	if (Imotal)
+		return DamageAmount;
+
 	if (Spawning)
 		return DamageAmount;
 

@@ -469,10 +469,13 @@ void AEnemyMonster::BeginPlay()
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 
 	AnimInstance = Cast<UMonsterAnimInstance>(GetMesh()->GetAnimInstance());
-
-	AnimationType = MonsterAnimationType::IDLE;
-	ChangeActionType(MonsterActionType::NONE);
-	ChangeMontageAnimation(MonsterAnimationType::IDLE);
+	
+	if (MyMonsterType != MonsterType::DEADBODYOFKNIGHT)
+	{
+		AnimationType = MonsterAnimationType::IDLE;
+		ChangeActionType(MonsterActionType::NONE);
+		ChangeMontageAnimation(MonsterAnimationType::IDLE);
+	}
 
 	SkeletalMeshComp = GetMesh();
 	SwordMeshComp = Cast<UStaticMeshComponent>(GetComponentByClass(UStaticMeshComponent::StaticClass()));

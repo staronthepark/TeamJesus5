@@ -22,3 +22,4 @@ void UKnightAnimInstance::AnimNotify_SpawningEnd() { SpawningEnd.Broadcast(); }
 void UKnightAnimInstance::AnimNotify_OnHitCancle() { CanHitCancle.Broadcast(); }
 
 void UKnightAnimInstance::AnimNotify_OffHitCancle() { CantHitCancle.Broadcast(); }
+
