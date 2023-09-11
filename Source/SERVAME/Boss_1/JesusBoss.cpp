@@ -1052,55 +1052,30 @@ AJesusBoss::AJesusBoss()
 			ChangeMontageAnimation(BossAnimationType::POWERHIT);
 		}));
 
-	//HitMap.Add(ActionType::SKILL1, TFunction<void()>([=]()
-	//	{
-	//		if (IsStun)
-	//			return;
-
-	//		if (HitCount >= 2)
-	//			return;
-
-	//		HitCount++;
-
-	//		AObjectPool& objectpool = AObjectPool::GetInstance();
-	//		for (int32 i = 0; i < BossDataStruct.DropSoulCount; i++)
-	//		{
-	//			float x = FMath::RandRange(-300.0f, 300.0f);
-	//			float y = FMath::RandRange(-300.0f, 300.0f);
-	//			float z = FMath::RandRange(-300.0f, 300.0f);
-
-	//			FVector location = GetActorLocation() + FVector(x * 0.1f, y * 0.1f, z * 0.1f);
-	//			FRotator rotation = GetActorRotation() + FRotator(x, y, z);
-
-	//			objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
-	//		}
-	//		ChangeMontageAnimation(BossAnimationType::POWERHIT);
-	//	}));
-
-	//HitMap.Add(ActionType::SKILL2, TFunction<void()>([=]()
-	//	{
-	//		if (IsStun)
-	//			return;
-
-	//		if (HitCount >= 2)
-	//			return;
-
-	//		HitCount++;
-
-	//		AObjectPool& objectpool = AObjectPool::GetInstance();
-	//		for (int32 i = 0; i < BossDataStruct.DropSoulCount; i++)
-	//		{
-	//			float x = FMath::RandRange(-300.0f, 300.0f);
-	//			float y = FMath::RandRange(-300.0f, 300.0f);
-	//			float z = FMath::RandRange(-300.0f, 300.0f);
-
-	//			FVector location = GetActorLocation() + FVector(x * 0.1f, y * 0.1f, z * 0.1f);
-	//			FRotator rotation = GetActorRotation() + FRotator(x, y, z);
-
-	//			objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
-	//		}
-	//		ChangeMontageAnimation(BossAnimationType::POWERHIT);
-	//	}));
+	 HitMap.Add(ActionType::SKILL, TFunction<void()>([=]()
+	 	{
+	 		if (IsStun)
+	 			return;
+	 
+	 		if (HitCount >= 2)
+	 			return;
+	 
+	 		HitCount++;
+	 
+	 		AObjectPool& objectpool = AObjectPool::GetInstance();
+	 		for (int32 i = 0; i < BossDataStruct.DropSoulCount; i++)
+	 		{
+	 			float x = FMath::RandRange(-300.0f, 300.0f);
+	 			float y = FMath::RandRange(-300.0f, 300.0f);
+	 			float z = FMath::RandRange(-300.0f, 300.0f);
+	 
+	 			FVector location = GetActorLocation() + FVector(x * 0.1f, y * 0.1f, z * 0.1f);
+	 			FRotator rotation = GetActorRotation() + FRotator(x, y, z);
+	 
+	 			objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
+	 		}
+	 		ChangeMontageAnimation(BossAnimationType::POWERHIT);
+	 	}));
 
 	//============================================================================================
 
