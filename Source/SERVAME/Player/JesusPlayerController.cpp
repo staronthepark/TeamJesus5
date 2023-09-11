@@ -241,12 +241,12 @@ void AJesusPlayerController::ViewLog()
 
 void AJesusPlayerController::Save()
 {
-	UJesusSaveGame::GetInstance().Save();
+	UJesusSaveGame::GetInstance().Save(character);
 }
 
 void AJesusPlayerController::Load()
 {
-	UJesusSaveGame::GetInstance().Load();
+	UJesusSaveGame::GetInstance().Load(character);
 }
 
 void AJesusPlayerController::PressLockon()

@@ -18,11 +18,10 @@ UJesusSaveGame& UJesusSaveGame::GetInstance()
 	return *Instance;
 }
 
-void UJesusSaveGame::Save()
+void UJesusSaveGame::Save(APlayerCharacter* Player)
 {
-	UJesusSaveGame* SaveInstance = Cast<UJesusSaveGame>(UGameplayStatics::CreateSaveGameObject(UJesusSaveGame::StaticClass()));
+	SaveInstance = Cast<UJesusSaveGame>(UGameplayStatics::CreateSaveGameObject(UJesusSaveGame::StaticClass()));
 
-	APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetOwner());
 	PlayerData = Player->PlayerDataStruct;
 	PlayerLoc = Player->GetActorLocation();
 	PlayerRot = Player->GetActorRotation();
@@ -33,19 +32,16 @@ void UJesusSaveGame::Save()
 	UGameplayStatics::SaveGameToSlot(SaveInstance, SaveInstance->SaveSlotName, SaveInstance->SaveIndex);
 }
 
-UJesusSaveGame* UJesusSaveGame::Load()
+UJesusSaveGame* UJesusSaveGame::Load(APlayerCharacter* Player)
 {
-	UJesusSaveGame* LoadInstance = Cast<UJesusSaveGame>(UGameplayStatics::CreateSaveGameObject(UJesusSaveGame::StaticClass()));
+	SaveInstance = Cast<UJesusSaveGame>(UGameplayStatics::CreateSaveGameObject(UJesusSaveGame::StaticClass()));
+	SaveInstance->SaveSlotName = "JesusSave";
+	SaveInstance->SaveIndex = 0;
+	SaveInstance = Cast<UJesusSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveInstance->SaveSlotName, SaveInstance->SaveIndex));
 
-	LoadInstance->SaveSlotName = "JesusSave";
-	LoadInstance->SaveIndex = 0;
+	Player->PlayerDataStruct   = SaveInstance->PlayerData;
+	Player->GetActorLocation() = SaveInstance->PlayerLoc ;
+	Player->GetActorRotation() = SaveInstance->PlayerRot ;
 
-	LoadInstance = Cast<UJesusSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("JesusSave"), 0));
-
-	APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetOwner());
-	Player->PlayerDataStruct   = LoadInstance->PlayerData;
-	Player->GetActorLocation() = LoadInstance->PlayerLoc ;
-	Player->GetActorRotation() = LoadInstance->PlayerRot ;
-
-	return LoadInstance;
+	return SaveInstance;
 }

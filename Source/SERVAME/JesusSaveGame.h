@@ -25,6 +25,8 @@ public:
 
 	TArray<ABaseTriggerActor> TriggerActor;
 
+	UJesusSaveGame* SaveInstance;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
 	FString SaveSlotName;	//Save game data file name
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
@@ -38,9 +40,11 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
 		FPlayerCharacterDataStruct PlayerData;
-
-	
+		
 public:
-	void Save();
-	UJesusSaveGame* Load();
+
+
+	void Save(APlayerCharacter* Player);
+
+	UJesusSaveGame* Load(APlayerCharacter* Player);
 };
