@@ -690,9 +690,8 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 		return 0;
 	}
 
-	//MonsterHpWidget->Hp->SetVisibility(ESlateVisibility::Visible);
-	//MonsterHpWidget->HpBG->SetVisibility(ESlateVisibility::Visible);
-	//GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
+	ActivateHpBar();
+	GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
 
 	DeactivateHitCollision();
 
@@ -739,9 +738,6 @@ void AEnemyMonster::PlayExecutionAnimation()
 void AEnemyMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (testtest)
-		return;
 
 	fDeltaTime = DeltaTime;
 

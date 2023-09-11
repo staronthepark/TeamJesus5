@@ -90,8 +90,6 @@ class SERVAME_API AEnemyMonster : public ABaseCharacter
 	
 public:
 
-	bool testtest = false;
-
 	AEnemyMonster();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

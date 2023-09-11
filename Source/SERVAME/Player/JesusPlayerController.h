@@ -73,6 +73,9 @@ public:
 
 	void ChangeView();
 
+	void PressSkill();
+	void UnPressSkill();
+
 	void PressMoveBack();
 	void UnPressMoveBack();
 
