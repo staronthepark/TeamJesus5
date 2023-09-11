@@ -1,5 +1,6 @@
 #include "..\Boss_1\JesusBoss.h"
 #include "Kismet/GameplayStatics.h"
+#include "../JesusSaveGame.h"
 #include "GameFramework/GameUserSettings.h"
 #include "JesusPlayerController.h"
 
@@ -240,10 +241,12 @@ void AJesusPlayerController::ViewLog()
 
 void AJesusPlayerController::Save()
 {
+	UJesusSaveGame::GetInstance().Save();
 }
 
 void AJesusPlayerController::Load()
 {
+	UJesusSaveGame::GetInstance().Load();
 }
 
 void AJesusPlayerController::PressLockon()

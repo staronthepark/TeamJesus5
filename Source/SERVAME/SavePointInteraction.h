@@ -21,7 +21,6 @@ class SERVAME_API ASavePointInteraction : public AInteractionActor
 public:
 	ASavePointInteraction();
 
-	bool IsActive;
 
 	float DissolveValue;
 

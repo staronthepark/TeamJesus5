@@ -3,35 +3,49 @@
 #include "JesusSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 
-void UJesusSaveGame::SavePlayerData(FPlayerCharacterDataStruct data)
+UJesusSaveGame* UJesusSaveGame::Instance = nullptr;
+UJesusSaveGame::UJesusSaveGame()
 {
-	PlayerData = data;
+	Instance = this;
 }
 
-void UJesusSaveGame::SaveLoc(FVector Vec)
-{ 
-	PlayerLoc = Vec;
+UJesusSaveGame& UJesusSaveGame::GetInstance()
+{
+	if (Instance == nullptr)
+	{
+		Instance = NewObject<UJesusSaveGame>();
+	}
+	return *Instance;
 }
 
-void UJesusSaveGame::SaveRot(FRotator Rot) 
+void UJesusSaveGame::Save()
 {
-	PlayerRot = Rot;
+	UJesusSaveGame* SaveInstance = Cast<UJesusSaveGame>(UGameplayStatics::CreateSaveGameObject(UJesusSaveGame::StaticClass()));
+
+	APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetOwner());
+	PlayerData = Player->PlayerDataStruct;
+	PlayerLoc = Player->GetActorLocation();
+	PlayerRot = Player->GetActorRotation();
+
+	SaveInstance->SaveSlotName = "JesusSave";
+	SaveInstance->SaveIndex = 0;
+
+	UGameplayStatics::SaveGameToSlot(SaveInstance, SaveInstance->SaveSlotName, SaveInstance->SaveIndex);
 }
 
-void UJesusSaveGame::Save(UJesusSaveGame* Instance)
+UJesusSaveGame* UJesusSaveGame::Load()
 {
-	Instance->SaveSlotName = "JesusSave";
-	Instance->SaveIndex = 0;
+	UJesusSaveGame* LoadInstance = Cast<UJesusSaveGame>(UGameplayStatics::CreateSaveGameObject(UJesusSaveGame::StaticClass()));
 
-	UGameplayStatics::SaveGameToSlot(Instance, Instance->SaveSlotName, Instance->SaveIndex);
-}
-
-UJesusSaveGame* UJesusSaveGame::Load(UJesusSaveGame* LoadInstance)
-{
 	LoadInstance->SaveSlotName = "JesusSave";
 	LoadInstance->SaveIndex = 0;
 
-	LoadInstance = Cast<UJesusSaveGame>(UGameplayStatics::LoadGameFromSlot(LoadInstance->SaveSlotName, LoadInstance->SaveIndex));
+	LoadInstance = Cast<UJesusSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("JesusSave"), 0));
+
+	APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetOwner());
+	Player->PlayerDataStruct   = LoadInstance->PlayerData;
+	Player->GetActorLocation() = LoadInstance->PlayerLoc ;
+	Player->GetActorRotation() = LoadInstance->PlayerRot ;
 
 	return LoadInstance;
 }

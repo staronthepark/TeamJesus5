@@ -40,7 +40,7 @@ void APlaySequenceTriggerActor::EndTriggerEvent()
 void APlaySequenceTriggerActor::EnableEvent()
 {
 	Super::EnableEvent();
-
+	if (IsActive)return;
 	//Boss->BossAnimInstance->StopAllMontages(0.f);
 
 	SequncePlayer->Play();
