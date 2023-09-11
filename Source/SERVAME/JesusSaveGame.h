@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+#include "../SERVAME/Player/PlayerCharacter.h"
 #include "JesusSaveGame.generated.h"
 
 UCLASS()
@@ -23,12 +24,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
 	FRotator PlayerRot;
 
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
-	//	FPlayerCharacterDataStruct PlayerData;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
+		FPlayerCharacterDataStruct PlayerData;
 
 	
 public:
-	//void SavePlayerData(FPlayerCharacterDataStruct data);
+	void SavePlayerData(FPlayerCharacterDataStruct data);
 	void SaveLoc(FVector Vec);
 	void SaveRot(FRotator Rot);
 	void Save(UJesusSaveGame* Instance);

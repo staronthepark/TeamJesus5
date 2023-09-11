@@ -3,6 +3,11 @@
 #include "JesusSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 
+void UJesusSaveGame::SavePlayerData(FPlayerCharacterDataStruct data)
+{
+	PlayerData = data;
+}
+
 void UJesusSaveGame::SaveLoc(FVector Vec)
 { 
 	PlayerLoc = Vec;

@@ -240,19 +240,10 @@ void AJesusPlayerController::ViewLog()
 
 void AJesusPlayerController::Save()
 {
-	GameInstance->SavePlayerInfo(character->GetActorLocation(), character->GetActorRotation());
-	UE_LOG(LogTemp, Error, TEXT("!@#!@#!@#!@#!@#!@#!@#!@#!@#"));
 }
 
 void AJesusPlayerController::Load()
 {
-	//character->PlayerDataStruct = GameInstance->LoadGame()->PlayerData;
-	if (GameInstance->SaveGameInstance != nullptr)
-	{
-		character->SetActorLocation(GameInstance->LoadGame()->PlayerLoc);
-		character->SetActorRotation(GameInstance->LoadGame()->PlayerRot);
-
-	}
 }
 
 void AJesusPlayerController::PressLockon()
