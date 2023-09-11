@@ -121,7 +121,7 @@ APlayerCharacter::APlayerCharacter()
 	ForwardRotation[2].Add(-180.0f);
 	ForwardRotation[2].Add(135.0f);
 
-	HitEffectRotatorList.Add(AnimationType::ATTACK1, FRotator(50, 90.0f, 0));
+	HitEffectRotatorList.Add(AnimationType::ATTACK1, FRotator(50, 90.0f, 0)   );
 	HitEffectRotatorList.Add(AnimationType::ATTACK2, FRotator(0, -90.0f, 0.0f));
 	HitEffectRotatorList.Add(AnimationType::ATTACK3, FRotator(0.0f, 180.0f, 0.0f));
 	HitEffectRotatorList.Add(AnimationType::ATTACK4, FRotator(0, -90.0f, 0.0f));
@@ -131,6 +131,8 @@ APlayerCharacter::APlayerCharacter()
 	HitEffectRotatorList.Add(AnimationType::RUNATTACK, FRotator(0, 90.0f, 0.0f));
 	HitEffectRotatorList.Add(AnimationType::RUNPOWERATTACK, FRotator(0.0f, 90.0f, 0.0f));
 	HitEffectRotatorList.Add(AnimationType::DODGEATTACK, FRotator(0, 180.0f, 0.0f));
+	HitEffectRotatorList.Add(AnimationType::SKILL1, FRotator(50, 90.0f, 0)   );
+	HitEffectRotatorList.Add(AnimationType::SKILL2, FRotator(0, -90.0f, 0.0f));
 
 	IntToEnumMap.Add(ActionType::ATTACK, TMap<int32, AnimationType>());
 	IntToEnumMap[ActionType::ATTACK].Add(0, AnimationType::ATTACK1);
@@ -2369,17 +2371,16 @@ void APlayerCharacter::PlayerMovement()
 void APlayerCharacter::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {	
 
-	AObjectPool& objectpool = AObjectPool::GetInstance();
-	objectpool.SpawnObject(objectpool.ObjectArray[17].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-
 	ABaseCharacter* character = Cast<ABaseCharacter>(OtherActor);
 
 	if (character != nullptr)
 	{
+		AObjectPool& objectpool = AObjectPool::GetInstance();
 		UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(character);
 
 		HitStop();
 		CameraShake(PlayerCameraShake);
+		objectpool.SpawnObject(objectpool.ObjectArray[17].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 
 		if (HitEffectRotatorList.Contains(AnimInstance->PlayerAnimationType))
 		{
@@ -2388,6 +2389,7 @@ void APlayerCharacter::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedCompo
 			objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
 			objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
 			objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+			objectpool.SpawnObject(objectpool.ObjectArray[42].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator::ZeroRotator);
 
 			objectpool.SpawnObject(objectpool.ObjectArray[5].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
 			objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
@@ -2491,7 +2493,8 @@ void APlayerCharacter::DeactivateRightWeapon()
 {
 	Super::DeactivateRightWeapon();
 	SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
+	SkillAuraComp->SetVisibility(false);
+	SkillTrailComp->SetVisibility(false);
 }
 
 void APlayerCharacter::DeactivateSMOverlap()
