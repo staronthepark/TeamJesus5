@@ -25,6 +25,10 @@ void ADoorAnimInteraction::BeginPlay()
 
 	CineCameraActor = Cast<ACineCameraActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ACineCameraActor::StaticClass()));
 
+	if(IsActive)
+		AnimInstance->DoorAnimationType = DoorAnimationType::KEEPOPEN;
+
+
 	BossRoomDoorOpenSequncePlayer->OnFinished.AddDynamic(this, &ADoorAnimInteraction::EndSequence);
 	CloseDoorComp->OnComponentBeginOverlap.AddDynamic(this, &ADoorAnimInteraction::OnCloseDoorOverlapBegin);
 	OpenDoorComp->OnComponentEndOverlap.AddDynamic(this, &ADoorAnimInteraction::OnOpenDoorOverlapEnd);
@@ -84,7 +88,7 @@ void ADoorAnimInteraction::EnableEvent()
 	TriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	BossRoomDoorOpenSequncePlayer->Play();
 	GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(CineCameraActor, 6.0f);
-
+	IsActive = true;
 	
 	for (int i = 0; i < ParticleArray.Num(); i++)
 	{

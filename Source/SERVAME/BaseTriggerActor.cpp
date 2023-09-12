@@ -3,6 +3,7 @@
 ABaseTriggerActor::ABaseTriggerActor()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	IsActive = false;
 }
 
 void ABaseTriggerActor::BeginPlay()
@@ -27,6 +28,7 @@ void ABaseTriggerActor::BeginTriggerEvent()
 void ABaseTriggerActor::EndTriggerEvent()
 {
 	IsOverlap = false;
+	IsActive = true;
 }
 
 void ABaseTriggerActor::EnableEvent()

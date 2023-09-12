@@ -3,30 +3,45 @@
 #include "JesusSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 
-void UJesusSaveGame::SaveLoc(FVector Vec)
-{ 
-	PlayerLoc = Vec;
+UJesusSaveGame* UJesusSaveGame::Instance = nullptr;
+UJesusSaveGame::UJesusSaveGame()
+{
+	Instance = this;
 }
 
-void UJesusSaveGame::SaveRot(FRotator Rot) 
+UJesusSaveGame& UJesusSaveGame::GetInstance()
 {
-	PlayerRot = Rot;
+	if (Instance == nullptr)
+	{
+		Instance = NewObject<UJesusSaveGame>();
+	}
+	return *Instance;
 }
 
-void UJesusSaveGame::Save(UJesusSaveGame* Instance)
+void UJesusSaveGame::Save(APlayerCharacter* Player)
 {
-	Instance->SaveSlotName = "JesusSave";
-	Instance->SaveIndex = 0;
+	SaveInstance = Cast<UJesusSaveGame>(UGameplayStatics::CreateSaveGameObject(UJesusSaveGame::StaticClass()));
 
-	UGameplayStatics::SaveGameToSlot(Instance, Instance->SaveSlotName, Instance->SaveIndex);
+	PlayerData = Player->PlayerDataStruct;
+	PlayerLoc = Player->GetActorLocation();
+	PlayerRot = Player->GetActorRotation();
+
+	SaveInstance->SaveSlotName = "JesusSave";
+	SaveInstance->SaveIndex = 0;
+
+	UGameplayStatics::SaveGameToSlot(SaveInstance, SaveInstance->SaveSlotName, SaveInstance->SaveIndex);
 }
 
-UJesusSaveGame* UJesusSaveGame::Load(UJesusSaveGame* LoadInstance)
+UJesusSaveGame* UJesusSaveGame::Load(APlayerCharacter* Player)
 {
-	LoadInstance->SaveSlotName = "JesusSave";
-	LoadInstance->SaveIndex = 0;
+	SaveInstance = Cast<UJesusSaveGame>(UGameplayStatics::CreateSaveGameObject(UJesusSaveGame::StaticClass()));
+	SaveInstance->SaveSlotName = "JesusSave";
+	SaveInstance->SaveIndex = 0;
+	SaveInstance = Cast<UJesusSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveInstance->SaveSlotName, SaveInstance->SaveIndex));
 
-	LoadInstance = Cast<UJesusSaveGame>(UGameplayStatics::LoadGameFromSlot(LoadInstance->SaveSlotName, LoadInstance->SaveIndex));
+	Player->PlayerDataStruct   = SaveInstance->PlayerData;
+	Player->GetActorLocation() = SaveInstance->PlayerLoc ;
+	Player->GetActorRotation() = SaveInstance->PlayerRot ;
 
-	return LoadInstance;
+	return SaveInstance;
 }

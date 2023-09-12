@@ -58,20 +58,20 @@ void UJesusGameInstance::InitDefaultSetting()
 	}
 }
 
-void UJesusGameInstance::SavePlayerInfo(FVector Location, FRotator Rotation)
-{
-	if(SaveGameInstance == nullptr)
-	SaveGameInstance = Cast<UJesusSaveGame>(UGameplayStatics::CreateSaveGameObject(UJesusSaveGame::StaticClass()));
-	SaveGameInstance->SaveLoc(Location);
-	SaveGameInstance->SaveRot(Rotation);
-//	SaveGameInstance->SavePlayerData(Data);
-	SaveGameInstance->Save(SaveGameInstance);
-}
-
-UJesusSaveGame* UJesusGameInstance::LoadGame()
-{	
-	return SaveGameInstance->Load(SaveGameInstance);
-}
+//void UJesusGameInstance::SavePlayerInfo(FVector Location, FRotator Rotation)
+//{
+//	if(SaveGameInstance == nullptr)
+//	SaveGameInstance = Cast<UJesusSaveGame>(UGameplayStatics::CreateSaveGameObject(UJesusSaveGame::StaticClass()));
+//	SaveGameInstance->SaveLoc(Location);
+//	SaveGameInstance->SaveRot(Rotation);
+//  SaveGameInstance->SavePlayerData(Data);
+//	SaveGameInstance->Save(SaveGameInstance);
+//}
+//
+//UJesusSaveGame* UJesusGameInstance::LoadGame()
+//{	
+//	return SaveGameInstance->Load(SaveGameInstance);
+//}
 
 void UJesusGameInstance::Init()
 {

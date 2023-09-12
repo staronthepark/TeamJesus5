@@ -1,5 +1,6 @@
 #include "..\Boss_1\JesusBoss.h"
 #include "Kismet/GameplayStatics.h"
+#include "../JesusSaveGame.h"
 #include "GameFramework/GameUserSettings.h"
 #include "JesusPlayerController.h"
 
@@ -240,19 +241,12 @@ void AJesusPlayerController::ViewLog()
 
 void AJesusPlayerController::Save()
 {
-	GameInstance->SavePlayerInfo(character->GetActorLocation(), character->GetActorRotation());
-	UE_LOG(LogTemp, Error, TEXT("!@#!@#!@#!@#!@#!@#!@#!@#!@#"));
+	UJesusSaveGame::GetInstance().Save(character);
 }
 
 void AJesusPlayerController::Load()
 {
-	//character->PlayerDataStruct = GameInstance->LoadGame()->PlayerData;
-	if (GameInstance->SaveGameInstance != nullptr)
-	{
-		character->SetActorLocation(GameInstance->LoadGame()->PlayerLoc);
-		character->SetActorRotation(GameInstance->LoadGame()->PlayerRot);
-
-	}
+	UJesusSaveGame::GetInstance().Load(character);
 }
 
 void AJesusPlayerController::PressLockon()

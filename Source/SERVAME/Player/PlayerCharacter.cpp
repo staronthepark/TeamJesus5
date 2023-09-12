@@ -495,6 +495,7 @@ APlayerCharacter::APlayerCharacter()
 
 			DeactivateRightWeapon();
 			SkillTrailComp->SetVisibility(false);
+			SkillAuraComp->Deactivate();
 			SkillAuraComp->SetVisibility(false);
 		});
 	NotifyBeginEndEventMap[AnimationType::SKILL1].Add(true, [&]()
@@ -507,6 +508,7 @@ APlayerCharacter::APlayerCharacter()
 		{
 			DeactivateRightWeapon();
 			SkillTrailComp->SetVisibility(false);
+			SkillAuraComp->Deactivate();
 			SkillAuraComp->SetVisibility(false);
 		});
 	NotifyBeginEndEventMap[AnimationType::SKILL2].Add(true, [&]()
@@ -1584,6 +1586,7 @@ APlayerCharacter::APlayerCharacter()
 		{
 			SkillTrailComp->SetVisibility(true);
 			SkillAuraComp->SetVisibility(true);
+			SkillAuraComp->Activate();
 		});
 	PlayerEventFuncMap[AnimationType::SKILL1].Add(false, [&]()
 		{
@@ -1595,6 +1598,7 @@ APlayerCharacter::APlayerCharacter()
 		{
 			SkillTrailComp->SetVisibility(true);
 			SkillAuraComp->SetVisibility(true);
+			SkillAuraComp->Activate();
 
 		});
 	PlayerEventFuncMap[AnimationType::SKILL2].Add(false, [&]()
@@ -1708,7 +1712,7 @@ void APlayerCharacter::BeginPlay()
 	GameStartSequncePlayer->Play();
 	GameStartSequncePlayer->Pause();
 
-	SkillAuraComp->SetVisibility(false);
+	SkillAuraComp->Deactivate();
 	SkillTrailComp->SetVisibility(false);
 
 	ShieldCount = 3;
@@ -2493,6 +2497,7 @@ void APlayerCharacter::DeactivateRightWeapon()
 {
 	Super::DeactivateRightWeapon();
 	SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SkillAuraComp->Deactivate();
 	SkillAuraComp->SetVisibility(false);
 	SkillTrailComp->SetVisibility(false);
 }

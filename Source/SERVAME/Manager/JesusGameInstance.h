@@ -8,7 +8,6 @@
 #include "Components/WidgetComponent.h"
 #include "..\UI\DebugLogWidget.h"
 #include "..\UI\MainMenuUI.h"
-#include "../JesusSaveGame.h"
 #include <Engine/PostProcessVolume.h>
 #include "JesusGameInstance.generated.h"
 
@@ -57,8 +56,6 @@ public:
 		UPROPERTY()
 		Language language;
 
-		UPROPERTY()
-			UJesusSaveGame* SaveGameInstance;
 
 		float GetPostProcessBrightness();
 
@@ -66,8 +63,7 @@ public:
 		void InitDefaultSetting();
 		void SetLanguage(Language value);
 		void SetPostProcessBrightness(float value);
-		void SavePlayerInfo(FVector Location, FRotator Rotation);
-		UJesusSaveGame* LoadGame();
+		//void SavePlayerInfo(FVector Location, FRotator Rotation);
 
 		virtual void Init();
 };
