@@ -442,6 +442,7 @@ void AKinghtMonster::OnKnightTargetDetectionBeginOverlap(UPrimitiveComponent* Ov
 	if (PlayerCharacter == nullptr)
 	{
 		PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
+		Super::PlayerCharacter = PlayerCharacter;
 	}
 }
 

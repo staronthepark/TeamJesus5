@@ -39,6 +39,7 @@ ADeadBodyOfKinght::ADeadBodyOfKinght()
 
 	MontageEndEventMap.Add(MonsterAnimationType::REVIVE, [&]()
 		{
+			StopAnimMontage(MontageMap[AnimationType]);
 			Imotal = false;
 			Reviving = false;
 			StateType = MonsterStateType::NONE;
@@ -52,8 +53,11 @@ ADeadBodyOfKinght::ADeadBodyOfKinght()
 			ActivateRightWeapon();
 			ParryingCollision1->Activate();
 
-			ChangeActionType(MonsterActionType::NONE);
-			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+			MonsterMoveEventIndex = 1;
+			ChangeActionType(MonsterActionType::MOVE);
+			KnightAnimInstance->BlendSpeed = WalkBlend;
 		});
 }
 
