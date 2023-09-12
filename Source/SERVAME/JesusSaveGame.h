@@ -6,6 +6,7 @@
 #include "GameFramework/SaveGame.h"
 #include "../SERVAME/Player/PlayerCharacter.h"
 #include "../SERVAME/BaseTriggerActor.h"
+#include "../SERVAME/Manager/JesusGameInstance.h"
 #include "JesusSaveGame.generated.h"
 
 UCLASS()
@@ -46,10 +47,14 @@ public:
 		
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
 		bool IsPhaseTwo;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
+		TMap<int32, bool>SavedTriggerActor;
+
 public:
 
 
-	void Save(APlayerCharacter* Player);
+	void Save(APlayerCharacter* Player, UJesusGameInstance* Instance);
 
-	UJesusSaveGame* Load(APlayerCharacter* Player);
+	UJesusSaveGame* Load(APlayerCharacter* Player, UJesusGameInstance* Instance);
 };

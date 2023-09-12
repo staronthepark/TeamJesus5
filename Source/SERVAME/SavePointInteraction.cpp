@@ -8,6 +8,7 @@ ASavePointInteraction::ASavePointInteraction()
 
 }
 
+
 void ASavePointInteraction::BeginPlay()
 {
 	Super::BeginPlay();
@@ -27,6 +28,14 @@ void ASavePointInteraction::BeginPlay()
 	for (int32 i = 0; i < array.Num(); i++)
 	{
 		ParticleCompArray.Add(Cast<UParticleSystemComponent>(array[i]));
+		ParticleCompArray[i]->SetActive(IsActive, IsActive);
+	}
+}
+
+void ASavePointInteraction::Init()
+{
+	for (int32 i = 0; i < ParticleCompArray.Num(); i++)
+	{
 		ParticleCompArray[i]->SetActive(IsActive, IsActive);
 	}
 }
@@ -66,11 +75,8 @@ void ASavePointInteraction::EnableEvent()
 		Character->AxisY = 1;
 		Character->Imotal = true;
 		Character->ChangeMontageAnimation(AnimationType::SAVESTART);
-	}
-	else
-	{
 		AObjectPool& objectpool = AObjectPool::GetInstance();
-		objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass,  GetActorLocation() + FVector(0, 0, 150.0f), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, GetActorLocation() + FVector(0, 0, 150.0f), FRotator::ZeroRotator);
 		objectpool.SpawnObject(objectpool.ObjectArray[23].ObjClass, GetActorLocation() + FVector(0, 0, 200.0f), FRotator::ZeroRotator);
 		IsActive = true;
 
@@ -78,6 +84,9 @@ void ASavePointInteraction::EnableEvent()
 		{
 			ParticleCompArray[i]->SetActive(true, false);
 		}
+	}
+	else
+	{
 		Character->Imotal = true;
 		Character->ChangeMontageAnimation(AnimationType::ACTIVESAVEPOINT);
 	}

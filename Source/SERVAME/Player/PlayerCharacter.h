@@ -434,6 +434,8 @@ public:
 
 	void SetSoul(int32 value);
 
+	void LoadFile();
+
 	UFUNCTION()
 		void PlayStartAnimation();
 

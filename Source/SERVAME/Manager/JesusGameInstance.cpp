@@ -6,7 +6,6 @@
 #include "GameFramework/GameUserSettings.h"
 #include "SoundManager.h"
 #include "../JesusSaveGame.h"
-#include "../BaseTriggerActor.h"
 #include "Kismet/GameplayStatics.h"
 
 #define LOW 0
@@ -96,7 +95,7 @@ void UJesusGameInstance::Init()
 		ABaseTriggerActor* TriggerActorCast = Cast<ABaseTriggerActor>(TriggerActor);
 		if (TriggerActorCast)
 		{
-
+			SavedTriggerActor.Add(TriggerActorCast->Index, TriggerActorCast);
 		}
 	}
 }

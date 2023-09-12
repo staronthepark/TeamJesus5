@@ -17,19 +17,26 @@ protected:
 
 	bool IsOverlap;
 
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool AutoActive;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UBoxTriggerComp* TriggerComp;
-	bool IsActive;
 
 	TArray<UParticleSystemComponent*>ParticleArray;
 
 public:	
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 Index;
+
+	UPROPERTY(EditAnywhere)
+	bool IsActive;
+
 	ABaseTriggerActor();
 
+	virtual void Init();
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginTriggerEvent();

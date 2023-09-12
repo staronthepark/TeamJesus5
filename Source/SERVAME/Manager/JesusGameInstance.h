@@ -9,6 +9,7 @@
 #include "..\UI\DebugLogWidget.h"
 #include "..\UI\MainMenuUI.h"
 #include <Engine/PostProcessVolume.h>
+#include "../BaseTriggerActor.h"
 #include "JesusGameInstance.generated.h"
 
 USTRUCT(BlueprintType)
@@ -55,6 +56,8 @@ public:
 
 		UPROPERTY()
 		Language language;
+
+		TMap<int32, ABaseTriggerActor*>SavedTriggerActor;
 
 
 		float GetPostProcessBrightness();

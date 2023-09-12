@@ -1731,7 +1731,7 @@ void APlayerCharacter::BeginPlay()
 	ShieldAttackOverlap->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnShieldOverlapBegin);
 	
 	ShoulderView(IsShoulderView);
-	UJesusSaveGame::GetInstance().Load(this);
+	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 2.0f);
 	ASoundManager::GetInstance().Init();
 	ASoundManager::GetInstance().StartBGMSound(IsPhaseTwo);
 }
@@ -1861,7 +1861,7 @@ void APlayerCharacter::RestoreStat()
 	{
 		combatmanager.MonsterInfoArray[i]->RespawnCharacter();
 	}
-	UJesusSaveGame::GetInstance().Save(this);
+	UJesusSaveGame::GetInstance().Save(this, GameInstance);
 }
 
 void APlayerCharacter::MoveSpawnLocation(FVector Location)
@@ -1873,7 +1873,7 @@ void APlayerCharacter::MoveSpawnLocation(FVector Location)
 	SetActorLocation(Location);
 	SpawnLocation = Location;
 	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
-	UJesusSaveGame::GetInstance().Save(this);
+	UJesusSaveGame::GetInstance().Save(this, GameInstance);
 
 	if (IsLockOn)
 		LockOn();
@@ -2698,6 +2698,12 @@ void APlayerCharacter::SetSoul(int32 value)
 	{
 		SetShieldHP(PlayerDataStruct.MaxShieldHP);
 	}
+}
+
+void APlayerCharacter::LoadFile()
+{
+	UJesusSaveGame::GetInstance().Load(this, GameInstance);
+
 }
 
 void APlayerCharacter::PlayStartAnimation()

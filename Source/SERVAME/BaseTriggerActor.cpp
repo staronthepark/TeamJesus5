@@ -6,6 +6,10 @@ ABaseTriggerActor::ABaseTriggerActor()
 	IsActive = false;
 }
 
+void ABaseTriggerActor::Init()
+{
+}
+
 void ABaseTriggerActor::BeginPlay()
 {
 	Super::BeginPlay();
