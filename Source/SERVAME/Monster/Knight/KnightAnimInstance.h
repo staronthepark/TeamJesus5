@@ -55,6 +55,7 @@ public:
 	FOnSpawningEnd SpawningEnd;
 	FOnCanHitCancle CanHitCancle;
 	FOnCantHitCancle CantHitCancle;
+
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
 	float BlendSpeed = 0.f;
 };

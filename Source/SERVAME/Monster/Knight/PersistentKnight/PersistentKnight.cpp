@@ -7,6 +7,9 @@
 
 APersistentKnight::APersistentKnight()
 {
+	KnightHeadSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("KnightHeadSkeletalMesh"));
+	KnightHeadSkeletalMesh->SetupAttachment(GetMesh(), FName("Bip001-Head"));
+
 	AnimTypeToStateType.Add(MonsterAnimationType::REVIVE, MonsterStateType::CANTACT);
 
 	MonsterTickEventMap.Add(MonsterActionType::NONE, [&]()
@@ -56,11 +59,19 @@ APersistentKnight::APersistentKnight()
 			ChangeActionType(MonsterActionType::NONE);
 			ChangeMontageAnimation(MonsterAnimationType::IDLE);
 		});
+
+	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
+		{
+			ChangeActionType(MonsterActionType::ATTACK);
+			ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
+		});
 }
 
 void APersistentKnight::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MyMonsterType = MonsterType::PERSISTENTKNIGHT;
 }
 
 void APersistentKnight::Tick(float DeltaTime)
@@ -75,11 +86,12 @@ float APersistentKnight::Die(float Dm)
 		if (IsFirstDie)
 		{	
 			//머리 날리기
-			KnightHeadMesh->SetCollisionProfileName("Ragdoll");
-			KnightHeadMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-			KnightHeadMesh->SetSimulatePhysics(true);
-			KnightHeadMesh->SetEnableGravity(true);
-			KnightHeadMesh->AddImpulse(AddVec);
+			KnightHeadSkeletalMesh->SetCollisionProfileName("Ragdoll");
+			KnightHeadSkeletalMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+			KnightHeadSkeletalMesh->AddImpulseToAllBodiesBelow(AddVec * Strength);
+			//KnightHeadSkeletalMesh->AddImpulse(AddVec * Strength, FName(TEXT("...")));
+			KnightHeadSkeletalMesh->SetSimulatePhysics(true);
+			KnightHeadSkeletalMesh->SetEnableGravity(true);
 
 			Imotal = true;
 			DeactivateHpBar();

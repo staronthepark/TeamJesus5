@@ -218,6 +218,15 @@ void AKinghtMonster::BeginPlay()
 {
 	Super::BeginPlay(); 
 
+	if(IsPatrol)
+	{
+		TracePlayer = false;
+		MonsterController->FindPlayer = false;
+		IsPatrol = true;
+		MonsterMoveEventIndex = 0;
+		ChangeActionType(MonsterActionType::MOVE);
+	}
+
 	SetActive(true);
 
 	PlayerCharacter = nullptr;
@@ -433,6 +442,7 @@ void AKinghtMonster::OnKnightTargetDetectionBeginOverlap(UPrimitiveComponent* Ov
 	if (PlayerCharacter == nullptr)
 	{
 		PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
+		Super::PlayerCharacter = PlayerCharacter;
 	}
 }
 
@@ -574,6 +584,9 @@ float AKinghtMonster::Die(float Dm)
 
 float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	if (Imotal)
+		return DamageAmount;
+
 	if (Spawning)
 		return DamageAmount;
 

@@ -17,8 +17,17 @@ class SERVAME_API APersistentKnight : public AKinghtMonster
 public:
 	APersistentKnight();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USkeletalMeshComponent* KnightHeadSkeletalMesh;
+
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Die")
 	FVector AddVec;
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Die")
+	float Strength = 100.f;
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Die")
+	FRotator RotVal;
+	FRotator StartVal;
+
 	bool IsFirstDie = true;
 	bool Reviving = false;
 
