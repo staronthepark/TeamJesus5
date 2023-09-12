@@ -28,9 +28,9 @@ void ABaseTriggerActor::BeginTriggerEvent()
 void ABaseTriggerActor::EndTriggerEvent()
 {
 	IsOverlap = false;
-	IsActive = true;
 }
 
 void ABaseTriggerActor::EnableEvent()
 {
+	IsActive = true;
 }

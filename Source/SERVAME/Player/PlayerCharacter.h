@@ -267,6 +267,7 @@ public:
 		UPlayerAnimInstance* AnimInstance;
 
 
+
 	ActionType CurActionType;
 	ActionType PlayerAttackType;
 

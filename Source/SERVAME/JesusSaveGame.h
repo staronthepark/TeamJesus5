@@ -17,7 +17,7 @@ public:
 	UJesusSaveGame();
 
 	/*
-	*  영혼 갯수, 화톳불, 트리거 컷씬 실행, 죽은 보스, 문 개방 여부, 게임 설정, 찍은 스텟,아이템, 
+	*  영혼 갯수, 화톳불, 트리거 컷씬 실행, 죽은 보스, 문 개방 여부, 찍은 스텟,아이템
 	*/
 
 	static UJesusSaveGame* Instance;
@@ -26,6 +26,9 @@ public:
 	TArray<ABaseTriggerActor> TriggerActor;
 
 	UJesusSaveGame* SaveInstance;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
+		FName LevelToLoad;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
 	FString SaveSlotName;	//Save game data file name
@@ -41,6 +44,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
 		FPlayerCharacterDataStruct PlayerData;
 		
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
+		bool IsPhaseTwo;
 public:
 
 

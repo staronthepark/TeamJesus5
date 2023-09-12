@@ -6,6 +6,7 @@
 #include "GameFramework/GameUserSettings.h"
 #include "SoundManager.h"
 #include "../JesusSaveGame.h"
+#include "../BaseTriggerActor.h"
 #include "Kismet/GameplayStatics.h"
 
 #define LOW 0
@@ -32,14 +33,10 @@ void UJesusGameInstance::InitInstance()
 
 	MainMenuWidget = Cast<UMainMenuUI>(CreateWidget(GetWorld(), MainMenuWidgetClass));
 
-	ASoundManager::GetInstance().Init();
-	ASoundManager::GetInstance().StartBGMSound();
 }
 
 void UJesusGameInstance::InitDefaultSetting()
 {
-	
-
 	PlayerOptionSetting.Gamma = 0.2f;
 	PlayerOptionSetting.DPI = 40.0f;
 
@@ -54,24 +51,8 @@ void UJesusGameInstance::InitDefaultSetting()
 			PostProcessSettings->AutoExposureMinBrightness = PlayerOptionSetting.Gamma;
 			break;
 		}
-
 	}
 }
-
-//void UJesusGameInstance::SavePlayerInfo(FVector Location, FRotator Rotation)
-//{
-//	if(SaveGameInstance == nullptr)
-//	SaveGameInstance = Cast<UJesusSaveGame>(UGameplayStatics::CreateSaveGameObject(UJesusSaveGame::StaticClass()));
-//	SaveGameInstance->SaveLoc(Location);
-//	SaveGameInstance->SaveRot(Rotation);
-//  SaveGameInstance->SavePlayerData(Data);
-//	SaveGameInstance->Save(SaveGameInstance);
-//}
-//
-//UJesusSaveGame* UJesusGameInstance::LoadGame()
-//{	
-//	return SaveGameInstance->Load(SaveGameInstance);
-//}
 
 void UJesusGameInstance::Init()
 {
@@ -103,6 +84,20 @@ void UJesusGameInstance::Init()
 		setting->SetAntiAliasingQuality(3);
 		
 		setting->ApplySettings(true);
+	}
+
+	TArray<AActor*> ActorsToFind;
+	if (UWorld* World = GetWorld())
+	{
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseTriggerActor::StaticClass(), ActorsToFind);
+	}
+	for (AActor* TriggerActor : ActorsToFind)
+	{
+		ABaseTriggerActor* TriggerActorCast = Cast<ABaseTriggerActor>(TriggerActor);
+		if (TriggerActorCast)
+		{
+
+		}
 	}
 }
 
