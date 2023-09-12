@@ -90,5 +90,6 @@ void ADeadBodyOfKinght::OnTriggerBegin(UPrimitiveComponent* OverlappedComponent,
 {
 	ChangeActionType(MonsterActionType::NONE);
 	ChangeMontageAnimation(MonsterAnimationType::REVIVE);
+	Trigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
