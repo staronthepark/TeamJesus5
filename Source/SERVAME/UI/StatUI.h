@@ -13,6 +13,23 @@
  */
 
 UENUM()
+enum class EButtonState : uint8
+{
+	normal		UMETA(DisplayName = "Normal"),
+	hovered		UMETA(DisplayName = "Hovered"),
+	pressed		UMETA(DisplayName = "Pressed")
+};
+
+USTRUCT(BlueprintType)
+struct SERVAME_API FStatButtonTexture
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+		UTexture2D* Texture;
+};
+
+UENUM()
 enum class EStatState : uint8
 {
 	closed		UMETA(DisplayName = "Closed"),
@@ -34,14 +51,26 @@ class SERVAME_API UStatUI : public UUserWidget
 {
 	GENERATED_BODY()
 
-	UPROPERTY(meta = (BindWidget))
-	UButton* Button;
+	UPROPERTY(EditAnywhere)
+	class UPlayerStatUI* ParentUI;
+
+	UPROPERTY(EditAnywhere)
+	TMap<EButtonState, FStatButtonTexture> ButtonStates;
+
+	UPROPERTY(EditAnywhere)
+	TArray<UImage*> Lines;
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* LineTexture;
 
 	UPROPERTY(EditAnywhere)
 	EStatState state;
 
 	UPROPERTY(EditAnywhere)
 	UStatUI* NextStat;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* ActiveBackground;
 
 	UPROPERTY(EditAnywhere)
 	EStateType Type;
@@ -51,12 +80,22 @@ class SERVAME_API UStatUI : public UUserWidget
 	UPlayerStatComponent* PlayerStatComp;
 	
 public:
+	UPROPERTY(meta = (BindWidget))
+	UButton* Button;
+
 	int index;
 
-	virtual void NativeOnInitialized();
+	virtual void NativeConstruct();
 	void ChangeState(EStatState changeState);
 
 
 	UFUNCTION()
 	void OnButtonClicked();
+
+	UFUNCTION()
+	void OnButtonUnclicked();
+
+	UFUNCTION()
+	void Actvate();
+
 };
