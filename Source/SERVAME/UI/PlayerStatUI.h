@@ -12,7 +12,6 @@
 /**
  * 
  */
-
 USTRUCT(BlueprintType)
 struct SERVAME_API FStatButtonExplainTextures
 {
@@ -33,9 +32,20 @@ class SERVAME_API UPlayerStatUI : public UUserWidget
 {
 	GENERATED_BODY()
 
-
-	UPROPERTY(EditAnywhere)
 	TArray<UStatUI*> StrButtons;
+
+	UPROPERTY(meta = (BindWidget))
+	UStatUI* StrButton0;
+	
+	UPROPERTY(meta = (BindWidget))
+	UStatUI* StrButton1;
+	
+	UPROPERTY(meta = (BindWidget))
+	UStatUI* StrButton2;
+	
+	UPROPERTY(meta = (BindWidget))
+	UStatUI* StrButton3;
+	
 
 	UPROPERTY(EditAnywhere)
 	TArray<UStatUI*> StaminaButtons;
@@ -84,4 +94,7 @@ public:
 
 	UFUNCTION()
 	void OnShieldButtonClicked();
+
+	UFUNCTION()
+	void OnPurchaseButtonClicked();
 };

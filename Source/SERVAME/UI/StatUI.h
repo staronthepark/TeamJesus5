@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include <Components/Button.h>
 #include "../Player/PlayerStatComponent.h"
+
 #include "StatUI.generated.h"
 
 /**
@@ -51,8 +52,6 @@ class SERVAME_API UStatUI : public UUserWidget
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
-	class UPlayerStatUI* ParentUI;
 
 	UPROPERTY(EditAnywhere)
 	TMap<EButtonState, FStatButtonTexture> ButtonStates;
@@ -80,12 +79,15 @@ class SERVAME_API UStatUI : public UUserWidget
 	UPlayerStatComponent* PlayerStatComp;
 	
 public:
+
+	class UPlayerStatUI* ParentUI;
+
 	UPROPERTY(meta = (BindWidget))
 	UButton* Button;
 
 	int index;
 
-	virtual void NativeConstruct();
+	virtual void NativeOnInitialized();
 	void ChangeState(EStatState changeState);
 
 
@@ -96,6 +98,6 @@ public:
 	void OnButtonUnclicked();
 
 	UFUNCTION()
-	void Actvate();
+	void Activate();
 
 };

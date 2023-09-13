@@ -1,10 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "StatUI.h"
+#include "PlayerStatUI.h"
 
-
-void UStatUI::NativeConstruct()
+void UStatUI::NativeOnInitialized()
 {
+	Super::NativeOnInitialized();
+
 	PlayerStatComp = Cast<UPlayerStatComponent>(GetWorld()->GetFirstPlayerController()->GetPawn()->GetComponentByClass(UPlayerStatComponent::StaticClass()));
 	
 	Button->OnClicked.AddDynamic(this, &UStatUI::OnButtonClicked);
@@ -43,10 +45,7 @@ void UStatUI::OnButtonClicked()
 
 	if(state == EStatState::can)
 	{
-		if (ParentUI->SelectedButton != nullptr)
-			ParentUI->OnButtonUnclicked();
 		ParentUI->SelectedButton = this;
-		ActiveBackground->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 }
 
@@ -55,9 +54,10 @@ void UStatUI::OnButtonUnclicked()
 	ActiveBackground->SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void UStatUI::Actvate()
+void UStatUI::Activate()
 {
 	state = EStatState::activated;
+	ActiveBackground->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	TypeAnimation[Type](index);
 
 	for (int i = 0; i < Lines.Num(); i++)
