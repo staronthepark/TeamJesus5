@@ -1023,6 +1023,10 @@ AJesusBoss2::AJesusBoss2()
 			}
 		}));
 
+	BoneMap.Add(Boss2BoneRotateType::TURNHEAD, TFunction<void()>([=]()
+		{
+		}));
+
 	//=======================================보스 공격 콜리전 부위별로 켜줌=========================================
 
 	CollisionMap.Add(Boss2CollisionType::HEAD, TFunction<void(bool)>([=](bool OnOff)

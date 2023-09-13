@@ -7,6 +7,7 @@
 #include "Runtime/AIModule/Classes/Perception/AISenseConfig_Sight.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 ABoss2AIController::ABoss2AIController(const FObjectInitializer& ObjectInitializer)
 {
@@ -50,10 +51,13 @@ void ABoss2AIController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	//Boss2->GetCharacterMovement()->bUseControllerDesiredRotation = true;
 
+
 	if (Boss2->IsLockOn)
 	{
 		GetBlackboardComponent()->SetValueAsBool(FName(TEXT("IsLockOn")), true);
 		Boss2->GetCharacterMovement()->bUseControllerDesiredRotation = true;
+		Boss2->Boss2AnimInstance->CurrentBoneType = Boss2BoneRotateType::TURNHEAD;
+		Boss2->Boss2AnimInstance->LookAtPos = Boss2->PlayerCharacter->GetActorLocation();
 	}
 	else
 	{
