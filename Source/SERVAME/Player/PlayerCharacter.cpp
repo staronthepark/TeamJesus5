@@ -12,6 +12,7 @@
 #include "Engine/EngineTypes.h"
 #include "..\Manager\SoundManager.h"
 #include "JesusPlayerController.h"
+#include "../JesusSaveGame.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "..\UI\PlayerHUD.h"
 
@@ -1730,6 +1731,9 @@ void APlayerCharacter::BeginPlay()
 	ShieldAttackOverlap->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnShieldOverlapBegin);
 	
 	ShoulderView(IsShoulderView);
+	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 2.0f);
+	ASoundManager::GetInstance().Init();
+	ASoundManager::GetInstance().StartBGMSound(IsPhaseTwo);
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -1857,6 +1861,7 @@ void APlayerCharacter::RestoreStat()
 	{
 		combatmanager.MonsterInfoArray[i]->RespawnCharacter();
 	}
+	UJesusSaveGame::GetInstance().Save(this, GameInstance);
 }
 
 void APlayerCharacter::MoveSpawnLocation(FVector Location)
@@ -1868,6 +1873,7 @@ void APlayerCharacter::MoveSpawnLocation(FVector Location)
 	SetActorLocation(Location);
 	SpawnLocation = Location;
 	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
+	UJesusSaveGame::GetInstance().Save(this, GameInstance);
 
 	if (IsLockOn)
 		LockOn();
@@ -2275,10 +2281,7 @@ void APlayerCharacter::RespawnCharacter()
 	Super::RespawnCharacter();
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::FadeOut, 4.0f);
 
-	if(!IsPhaseTwo)
-	ASoundManager::GetInstance().StartBGMSound();
-	else
-		ASoundManager::GetInstance().PlaySoundWithCymbalSound(2);
+	ASoundManager::GetInstance().StartBGMSound(IsPhaseTwo);
 
 	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 
@@ -2695,6 +2698,12 @@ void APlayerCharacter::SetSoul(int32 value)
 	{
 		SetShieldHP(PlayerDataStruct.MaxShieldHP);
 	}
+}
+
+void APlayerCharacter::LoadFile()
+{
+	UJesusSaveGame::GetInstance().Load(this, GameInstance);
+
 }
 
 void APlayerCharacter::PlayStartAnimation()

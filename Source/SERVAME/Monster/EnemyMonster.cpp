@@ -182,8 +182,8 @@ AEnemyMonster::AEnemyMonster()
 						PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
 						PlayerCharacter->GetFirstTarget();	
 
-						if (MyMonsterType == MonsterType::TUTORIAL && PlayerCharacter->IsAlive())
-							PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::soul, true);
+						//if (MyMonsterType == MonsterType::TUTORIAL && PlayerCharacter->IsAlive())
+						//	PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::soul, true);
 
 						if (PlayerCharacter->TargetComp == nullptr)
 						{
@@ -383,32 +383,32 @@ AEnemyMonster::AEnemyMonster()
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
 
-				if (MyMonsterType == MonsterType::TUTORIAL && !asd2 && PlayerCharacter->IsAlive())
-				{
-					PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::dodge, true);
-					asd2 = true;
-					return;
-				}
-				else if (MyMonsterType == MonsterType::TUTORIAL && PlayerCharacter->IsAlive())
-				{
-					PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::shield, true);
-				}
+				//if (MyMonsterType == MonsterType::TUTORIAL && !asd2 && PlayerCharacter->IsAlive())
+				//{
+				//	PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::dodge, true);
+				//	asd2 = true;
+				//	return;
+				//}
+				//else if (MyMonsterType == MonsterType::TUTORIAL && PlayerCharacter->IsAlive())
+				//{
+				//	PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::shield, true);
+				//}
 			}
 			else if (percent < 0.5f)
 			{
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::POWERATTACK1);
 
-				if (MyMonsterType == MonsterType::TUTORIAL && !asd && PlayerCharacter->IsAlive())
-				{
-					PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::parrying, true);
-					asd = true;
-					return;
-				}
-				else if (MyMonsterType == MonsterType::TUTORIAL && PlayerCharacter->IsAlive())
-				{
-					PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::shieldattack, true);
-				}
+				//if (MyMonsterType == MonsterType::TUTORIAL && !asd && PlayerCharacter->IsAlive())
+				//{
+				//	PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::parrying, true);
+				//	asd = true;
+				//	return;
+				//}
+				//else if (MyMonsterType == MonsterType::TUTORIAL && PlayerCharacter->IsAlive())
+				//{
+				//	PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::shieldattack, true);
+				//}
 			}
 		});
 
@@ -469,10 +469,13 @@ void AEnemyMonster::BeginPlay()
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 
 	AnimInstance = Cast<UMonsterAnimInstance>(GetMesh()->GetAnimInstance());
-
-	AnimationType = MonsterAnimationType::IDLE;
-	ChangeActionType(MonsterActionType::NONE);
-	ChangeMontageAnimation(MonsterAnimationType::IDLE);
+	
+	if (MyMonsterType != MonsterType::DEADBODYOFKNIGHT)
+	{
+		AnimationType = MonsterAnimationType::IDLE;
+		ChangeActionType(MonsterActionType::NONE);
+		ChangeMontageAnimation(MonsterAnimationType::IDLE);
+	}
 
 	SkeletalMeshComp = GetMesh();
 	SwordMeshComp = Cast<UStaticMeshComponent>(GetComponentByClass(UStaticMeshComponent::StaticClass()));
@@ -524,13 +527,13 @@ void AEnemyMonster::ActivateHpBar()
 
 void AEnemyMonster::TickOverlap()
 {
-	if (PlayerCharacter == nullptr && otherActor != nullptr)
-	{
-		PlayerCharacter = Cast<APlayerCharacter>(otherActor);
-		//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
-		if (MyMonsterType == MonsterType::TUTORIAL && PlayerCharacter->IsAlive())
-			PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::camera, true);
-	}
+	//if (PlayerCharacter == nullptr && otherActor != nullptr)
+	//{
+	//	PlayerCharacter = Cast<APlayerCharacter>(otherActor);
+	//	//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
+	//	if (MyMonsterType == MonsterType::TUTORIAL && PlayerCharacter->IsAlive())
+	//		PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::camera, true);
+	//}
 
 	if (!MonsterController->FindPlayer)
 		return;
@@ -617,8 +620,8 @@ void AEnemyMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, 
 	//MonsterHPWidget->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
 
 	//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
-	if (MyMonsterType == MonsterType::TUTORIAL && PlayerCharacter->IsAlive())
-		PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
+	//if (MyMonsterType == MonsterType::TUTORIAL && PlayerCharacter->IsAlive())
+	//	PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
 
 	Stun();
 

@@ -4,6 +4,17 @@
 #include "DoorAnimInteraction.h"
 
 
+void ADoorAnimInteraction::Init()
+{
+	if (IsActive)
+	{
+		AnimInstance = Cast<UDoorAnimInstance>(MeshComp->GetAnimInstance());
+		AnimInstance->DoorAnimationType = DoorAnimationType::KEEPOPEN;
+		TriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	}
+}
+
 void ADoorAnimInteraction::BeginPlay()
 {
 	Super::BeginPlay();
@@ -25,13 +36,11 @@ void ADoorAnimInteraction::BeginPlay()
 
 	CineCameraActor = Cast<ACineCameraActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ACineCameraActor::StaticClass()));
 
-	if(IsActive)
-		AnimInstance->DoorAnimationType = DoorAnimationType::KEEPOPEN;
-
 
 	BossRoomDoorOpenSequncePlayer->OnFinished.AddDynamic(this, &ADoorAnimInteraction::EndSequence);
 	CloseDoorComp->OnComponentBeginOverlap.AddDynamic(this, &ADoorAnimInteraction::OnCloseDoorOverlapBegin);
 	OpenDoorComp->OnComponentEndOverlap.AddDynamic(this, &ADoorAnimInteraction::OnOpenDoorOverlapEnd);
+
 }
 
 void ADoorAnimInteraction::BeginTriggerEvent()

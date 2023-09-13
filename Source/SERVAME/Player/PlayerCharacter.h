@@ -267,6 +267,7 @@ public:
 		UPlayerAnimInstance* AnimInstance;
 
 
+
 	ActionType CurActionType;
 	ActionType PlayerAttackType;
 
@@ -432,6 +433,8 @@ public:
 	void ShieldAttack();
 
 	void SetSoul(int32 value);
+
+	void LoadFile();
 
 	UFUNCTION()
 		void PlayStartAnimation();

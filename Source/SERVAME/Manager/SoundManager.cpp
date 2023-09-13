@@ -132,16 +132,24 @@ float ASoundManager::GetVoiceVolume()
 	return VoiceVolume;
 }
 
-void ASoundManager::StartBGMSound()
+void ASoundManager::StartBGMSound(bool IsPhaseTwo)
 {
+
 	for (int32 i = 0; i < BGMAudioCompArray.Num(); i++)
 	{
 		BGMAudioCompArray[i]->SetPaused(true);
 	}
+	GetWorldTimerManager().SetTimer(TempoTimer, this, &ASoundManager::PlayNextBGMSound, MaxTempoTime);
+
+
+	if (IsPhaseTwo)
+	{
+		ASoundManager::GetInstance().PlaySoundWithCymbalSound(2);
+		return;
+	}
 	CurrentIndex = 0;
 	BGMAudioCompArray[0]->SetPaused(false);
 	BGMAudioCompArray[0]->Play(10.8f);
-	GetWorldTimerManager().SetTimer(TempoTimer, this, &ASoundManager::PlayNextBGMSound, MaxTempoTime);
 }
 
 void ASoundManager::PlayNextBGMSound()
