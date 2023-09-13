@@ -6,6 +6,7 @@
 #include "GameFramework/SaveGame.h"
 #include "../SERVAME/Player/PlayerCharacter.h"
 #include "../SERVAME/BaseTriggerActor.h"
+#include "../SERVAME/Manager/JesusGameInstance.h"
 #include "JesusSaveGame.generated.h"
 
 UCLASS()
@@ -17,7 +18,7 @@ public:
 	UJesusSaveGame();
 
 	/*
-	*  ¿µÈ¥ °¹¼ö, È­ÅêºÒ, Æ®¸®°Å ÄÆ¾À ½ÇÇà, Á×Àº º¸½º, ¹® °³¹æ ¿©ºÎ, °ÔÀÓ ¼³Á¤, ÂïÀº ½ºÅÝ,¾ÆÀÌÅÛ, 
+	*  ¿µÈ¥ °¹¼ö, È­ÅêºÒ, Æ®¸®°Å ÄÆ¾À ½ÇÇà, Á×Àº º¸½º, ¹® °³¹æ ¿©ºÎ, ÂïÀº ½ºÅÝ,¾ÆÀÌÅÛ
 	*/
 
 	static UJesusSaveGame* Instance;
@@ -26,6 +27,9 @@ public:
 	TArray<ABaseTriggerActor> TriggerActor;
 
 	UJesusSaveGame* SaveInstance;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
+		FName LevelToLoad;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
 	FString SaveSlotName;	//Save game data file name
@@ -41,10 +45,16 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
 		FPlayerCharacterDataStruct PlayerData;
 		
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
+		bool IsPhaseTwo;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
+		TMap<int32, bool>SavedTriggerActor;
+
 public:
 
 
-	void Save(APlayerCharacter* Player);
+	void Save(APlayerCharacter* Player, UJesusGameInstance* Instance);
 
-	UJesusSaveGame* Load(APlayerCharacter* Player);
+	UJesusSaveGame* Load(APlayerCharacter* Player, UJesusGameInstance* Instance);
 };

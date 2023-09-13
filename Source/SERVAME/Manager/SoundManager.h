@@ -65,7 +65,7 @@ public:
 	float GetSFXVolume();
 	float GetVoiceVolume();
 
-	void StartBGMSound();
+	void StartBGMSound(bool IsPhaseTwo);
 	void PlayNextBGMSound();
 	void PlayDrumSound();
 	void PlaySoundWithCymbalSound(int32 Index);

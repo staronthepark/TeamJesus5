@@ -13,6 +13,16 @@ void AInteractionActor::BeginPlay()
 
 	Character = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 	SetActorTickEnabled(false);
+	TickFuncMap.Add(true, TMap<bool, TFunction<void(AInteractionActor * actor)>>());
+	TickFuncMap[true].Add(true, [](AInteractionActor* actor)
+		{
+			actor->EnableEvent();
+			actor->Character->IsInteraction = false;
+		});
+	TickFuncMap[true].Add(false, [](AInteractionActor* actor) {});
+	TickFuncMap.Add(false, TMap<bool, TFunction<void(AInteractionActor * actor)>>());
+	TickFuncMap[false].Add(true, [](AInteractionActor* actor) {});
+	TickFuncMap[false].Add(false, [](AInteractionActor* actor) {});
 	Init();
 }
 
@@ -43,14 +53,4 @@ void AInteractionActor::EnableEvent()
 
 void AInteractionActor::Init()
 {
-	TickFuncMap.Add(true, TMap<bool, TFunction<void(AInteractionActor * actor)>>());
-	TickFuncMap[true].Add(true, [](AInteractionActor* actor)
-		{
-			actor->EnableEvent();
-			actor->Character->IsInteraction = false;
-		});
-	TickFuncMap[true].Add(false, [](AInteractionActor* actor) {});
-	TickFuncMap.Add(false, TMap<bool, TFunction<void(AInteractionActor * actor)>>());
-	TickFuncMap[false].Add(true, [](AInteractionActor* actor) {});
-	TickFuncMap[false].Add(false, [](AInteractionActor* actor) {});
 }

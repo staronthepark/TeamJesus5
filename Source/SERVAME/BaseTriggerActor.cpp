@@ -6,6 +6,10 @@ ABaseTriggerActor::ABaseTriggerActor()
 	IsActive = false;
 }
 
+void ABaseTriggerActor::Init()
+{
+}
+
 void ABaseTriggerActor::BeginPlay()
 {
 	Super::BeginPlay();
@@ -28,9 +32,9 @@ void ABaseTriggerActor::BeginTriggerEvent()
 void ABaseTriggerActor::EndTriggerEvent()
 {
 	IsOverlap = false;
-	IsActive = true;
 }
 
 void ABaseTriggerActor::EnableEvent()
 {
+	IsActive = true;
 }
