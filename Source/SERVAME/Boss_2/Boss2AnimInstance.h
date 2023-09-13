@@ -84,13 +84,10 @@ public:
 	FRotator RArmBoneRotateVal = FRotator::ZeroRotator;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
-	FRotator LClavicle = FRotator::ZeroRotator;
-
-	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
-	FRotator RClavicle = FRotator::ZeroRotator;
-
-	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	FVector LookAtPos;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	float Alpha;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	Boss2BoneRotateType CurrentBoneType;
