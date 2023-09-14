@@ -2252,7 +2252,7 @@ void APlayerCharacter::LookTarget()
 	UE_LOG(LogTemp, Warning, TEXT("%f"), AnimInstance->HeadBoneRotateValue);
 
 	if (AnimInstance->PlayerAnimationType != AnimationType::BATTLEDODGE
-		&& AnimInstance->PlayerAnimationType != AnimationType::SPRINT
+		&& AnimInstance->PlayerAnimationType != AnimationType::SPRINT 
 		&& AnimInstance->PlayerAnimationType != AnimationType::DEADLOOP
 		&& AnimInstance->PlayerAnimationType != AnimationType::DEADLOOP2)
 		YawRotation.Yaw = GetController()->GetControlRotation().Yaw;
