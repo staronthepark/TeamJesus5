@@ -108,6 +108,9 @@ struct FBoss2Action : public FTableRowBase
 
 	UPROPERTY(EditAnywhere)
 	bool HitCancel;
+	UPROPERTY(EditAnywhere)
+		bool TurnHead;
+
 
 	UPROPERTY(EditAnywhere)
 	float Distance;
@@ -140,6 +143,9 @@ public:
 	bool CanContinuity;
 	bool HitCancel;
 	float Distance;
+
+	bool TurnHead;
+
 	bool IsExcute = false;
 
 	bool operator==(const Boss2ActionTemp& other) const
@@ -175,6 +181,9 @@ public:
 	UPROPERTY()
 	UBoss2AnimInstance* Boss2AnimInstance;
 
+	UPROPERTY(EditAnywhere, Category = "asdfasdf")
+	FVector Test;
+
 	UPROPERTY(EditAnywhere, Category = "Cross")
 	int CrossCount;
 	UPROPERTY(EditAnywhere, Category = "Cross")
@@ -204,6 +213,7 @@ public:
 	FRotator LArmBoneRotVal;
 	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
 	FRotator RArmBoneRotVal;
+
 
 	UPROPERTY(EditAnywhere, Category = "BoneRatationVal")
 	float Time;

@@ -111,7 +111,7 @@ AJesusBoss2::AJesusBoss2()
 		}));
 
 	MontageStartMap.Add(Boss2AnimationType::IDLE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
-		{
+		{			
 		}));
 	MontageEndMap.Add(Boss2AnimationType::IDLE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
@@ -156,6 +156,7 @@ AJesusBoss2::AJesusBoss2()
 				return;
 
 			UE_LOG(LogTemp, Warning, TEXT("Timer SET"));
+			
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
 			Boss2->DrawCircle(Boss2->PlayerCharacter->GetActorLocation());
@@ -372,6 +373,7 @@ AJesusBoss2::AJesusBoss2()
 			auto RightHandSocket = Boss2->GetMesh()->GetSocketLocation(FName("RHand"));
 			auto PoolObject = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[35].ObjClass,
 				RightHandSocket, FRotator::ZeroRotator);
+			
 			Boss2->StonePoolObj = Cast<AStoneObjectInPool>(PoolObject);
 			Boss2->StonePoolObj->SceneComp->AttachToComponent(Boss2->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("RHand"));
 			Boss2->IsAttackMontageEnd = false;
@@ -1023,6 +1025,43 @@ AJesusBoss2::AJesusBoss2()
 			}
 		}));
 
+	BoneMap.Add(Boss2BoneRotateType::TURNHEAD, TFunction<void()>([=]()
+		{
+			if (AIController->IsPerception)
+			{
+				if (GetTypeFromMetaData(StartMontage) == Boss2AnimationType::LEFT_TURN_ATTACK ||
+					GetTypeFromMetaData(StartMontage) == Boss2AnimationType::RIGHT_TURN_ATTACK ||
+					GetTypeFromMetaData(StartMontage) == Boss2AnimationType::IDLE ||
+					GetTypeFromMetaData(StartMontage) == Boss2AnimationType::FOWARDWALK)
+				{
+					Boss2AnimInstance->LookAtPos = PlayerCharacter->GetActorLocation();
+					if (Boss2AnimInstance->Alpha < 1)
+						Boss2AnimInstance->Alpha += GetWorld()->DeltaTimeSeconds;
+
+					FMath::Clamp(Boss2AnimInstance->Alpha, 0, 1);
+					return;
+				}
+
+
+				if (CurrentActionTemp.TurnHead)
+				{
+					Boss2AnimInstance->LookAtPos = PlayerCharacter->GetActorLocation();
+					if (Boss2AnimInstance->Alpha < 1)
+						Boss2AnimInstance->Alpha += GetWorld()->DeltaTimeSeconds;
+					
+					FMath::Clamp(Boss2AnimInstance->Alpha, 0, 1);
+				}
+				else
+				{
+					Boss2AnimInstance->LookAtPos = PlayerCharacter->GetActorLocation();
+					if (Boss2AnimInstance->Alpha > 0)
+						Boss2AnimInstance->Alpha -= GetWorld()->DeltaTimeSeconds;
+
+					FMath::Clamp(Boss2AnimInstance->Alpha, 0, 1);
+				}
+			}
+		}));
+
 	//=======================================보스 공격 콜리전 부위별로 켜줌=========================================
 
 	CollisionMap.Add(Boss2CollisionType::HEAD, TFunction<void(bool)>([=](bool OnOff)
@@ -1576,11 +1615,13 @@ void AJesusBoss2::SpawnInit()
 	BossDataStruct.CharacterHp = BossDataStruct.CharacterMaxHp;
 	BossDataStruct.CharacterOriginSpeed = 60.f;
 	AIController->BossUI->SetHP(1);
+	AIController->IsPerception = false;
 	IsDead = false;
 	CanMove = true;
 	IsLockOn = true;
 	Boss2AnimInstance->IsStart = true;
 	CrossEvent = false;
+
 
 	//패턴 확률 초기화
 	InitPercentageMap[Boss2AttackType::B2_MELEE]();

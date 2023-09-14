@@ -41,6 +41,8 @@ enum class Boss2BoneRotateType : uint8
 	HEAD = 0,
 	LEFTARM,
 	RIGHTARM,
+	TURNHEAD,
+
 };
 
 DECLARE_MULTICAST_DELEGATE(FOnCrossFall);
@@ -61,6 +63,7 @@ UCLASS()
 class SERVAME_API UBoss2AnimInstance : public UBaseAnimInstance
 {
 	GENERATED_BODY()
+
 public:
 	UBoss2AnimInstance();
 
@@ -81,6 +84,12 @@ public:
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	FRotator RArmBoneRotateVal = FRotator::ZeroRotator;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	FVector LookAtPos;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	float Alpha;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	Boss2BoneRotateType CurrentBoneType;

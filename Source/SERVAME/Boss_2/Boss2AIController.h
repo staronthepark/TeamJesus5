@@ -12,6 +12,7 @@
 #include "..\UI\BossUI.h"
 #include "Boss2AIController.generated.h"
 
+
 /**
  * 
  */
@@ -50,6 +51,9 @@ public:
 	bool TestBool = false;
 
 	bool IsArrived = false;
+
+
+	bool IsPerception = false;
 
 protected:
 	virtual void BeginPlay() override;
