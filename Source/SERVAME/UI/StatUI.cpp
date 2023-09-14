@@ -1,12 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "StatUI.h"
+#include "PlayerStatUI.h"
 
 void UStatUI::NativeOnInitialized()
 {
-	PlayerStatComp = Cast<UPlayerStatComponent>(GetWorld()->GetFirstPlayerController()->GetOwner()->GetComponentByClass(UPlayerStatComponent::StaticClass()));
+	Super::NativeOnInitialized();
+
+	PlayerStatComp = Cast<UPlayerStatComponent>(GetWorld()->GetFirstPlayerController()->GetPawn()->GetComponentByClass(UPlayerStatComponent::StaticClass()));
 	
 	Button->OnClicked.AddDynamic(this, &UStatUI::OnButtonClicked);
+
 	TypeAnimation.Add(EStateType::str, [&](int32 index) {
 		PlayerStatComp->StrengthStatList[index].Func();
 		});
@@ -23,6 +27,10 @@ void UStatUI::NativeOnInitialized()
 		});
 
 	index = 0;
+
+	Button->WidgetStyle.Normal.SetResourceObject(ButtonStates.Find(EButtonState::normal)->Texture);
+	Button->WidgetStyle.Hovered.SetResourceObject(ButtonStates.Find(EButtonState::hovered)->Texture);
+	Button->WidgetStyle.Pressed.SetResourceObject(ButtonStates.Find(EButtonState::pressed)->Texture);
 }
 
 void UStatUI::ChangeState(EStatState changeState)
@@ -37,14 +45,26 @@ void UStatUI::OnButtonClicked()
 
 	if(state == EStatState::can)
 	{
-		state = EStatState::activated;
-		if (NextStat == NULL)
-			return;
-		NextStat->index = index + 1;
-		TypeAnimation[Type](index);
-
-
-		NextStat->ChangeState(EStatState::can);
-
+		ParentUI->SelectedButton = this;
 	}
+}
+
+void UStatUI::OnButtonUnclicked()
+{
+	ActiveBackground->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UStatUI::Activate()
+{
+	state = EStatState::activated;
+	ActiveBackground->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	TypeAnimation[Type](index);
+
+	for (int i = 0; i < Lines.Num(); i++)
+		Lines[i]->SetBrushFromTexture(LineTexture, true);
+
+	if (NextStat == NULL)
+		return;
+	NextStat->index = index + 1;
+	NextStat->ChangeState(EStatState::can);
 }
