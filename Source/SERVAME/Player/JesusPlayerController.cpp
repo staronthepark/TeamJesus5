@@ -241,7 +241,9 @@ void AJesusPlayerController::ViewLog()
 
 void AJesusPlayerController::Save()
 {
-	UJesusSaveGame::GetInstance().Save(character, character->GameInstance);
+	UJesusSaveGame::GetInstance().Delete();
+
+	//UJesusSaveGame::GetInstance().Save(character, character->GameInstance);
 }
 
 void AJesusPlayerController::Load()

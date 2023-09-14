@@ -55,6 +55,6 @@ public:
 
 
 	void Save(APlayerCharacter* Player, UJesusGameInstance* Instance);
-
+	void Delete();
 	UJesusSaveGame* Load(APlayerCharacter* Player, UJesusGameInstance* Instance);
 };
