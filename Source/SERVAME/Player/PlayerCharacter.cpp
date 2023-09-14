@@ -2223,16 +2223,18 @@ void APlayerCharacter::LookTarget()
 	{
 		return;
 	}
+
 	TargetDirection = TargetComp->GetComponentLocation() - FVector(0, 0, 100) - GetActorLocation();
 	Difference = FRotationMatrix::MakeFromX(TargetDirection).Rotator();
 	GetController()->SetControlRotation(FMath::Lerp(GetController()->GetControlRotation(), Difference, fDeltaTime * 2.0f));
 
-	//PlayerSKMesh->getskele
 	FRotator rotation = FRotationMatrix::MakeFromX(TargetComp->GetComponentLocation() - HeadBoneLocation->GetComponentLocation()).Rotator();
 
-	AnimInstance->HeadBoneRotate.Yaw = rotation.Yaw;
-	if (AnimInstance->HeadBoneRotate.Yaw <= -25.0f)AnimInstance->HeadBoneRotate.Yaw = -25.0f;
-	else if (AnimInstance->HeadBoneRotate.Yaw >= 25.0f)AnimInstance->HeadBoneRotate.Yaw = 25.0f;
+
+	FVector TargetDir = (TargetComp->GetComponentLocation() - GetActorLocation());
+	FVector Cross = FVector::CrossProduct(GetActorRotation().Vector(), TargetDir);
+
+	AnimInstance->HeadBoneRotateAlpha = Cross.Z < 0.f ? 1 : 0;
 
 
 	//UE_LOG(LogTemp, Warning, TEXT("%f"), GetController()->GetControlRotation().Yaw);
