@@ -1353,6 +1353,9 @@ void AJesusBoss2::SetMetaData()
 
 Boss2AnimationType AJesusBoss2::GetTypeFromMetaData(UAnimMontage* Montage)
 {
+	if (Montage == nullptr)
+		return Boss2AnimationType::NONE;
+
 	auto MetaDataArr = Montage->GetMetaData();
 
 	if (MetaDataArr.Num() == 0)
@@ -1988,7 +1991,7 @@ void AJesusBoss2::OnStart()
 		StartEnd.Value = false;
 
 		StartMontage = GetCurrentMontage();
-		//UE_LOG(LogTemp, Warning, TEXT("Start : %s"), *StartMontage->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("Boss2 Start : %s"), *StartMontage->GetName());
 		MontageStartMap[GetTypeFromMetaData(StartMontage)](this);
 	}
 }
