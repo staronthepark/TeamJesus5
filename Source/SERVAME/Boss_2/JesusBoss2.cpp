@@ -32,8 +32,6 @@ AJesusBoss2::AJesusBoss2()
 	LeftArmLockOnWidgetComp->SetupAttachment(GetMesh(), FName("Bip001-L-UpperArm"));
 	RightLockOnWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget3"));
 	RightLockOnWidgetComp->SetupAttachment(GetMesh(), FName("Bip001-R-UpperArm"));
-	HipLockOnWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget4"));
-	HipLockOnWidgetComp->SetupAttachment(GetMesh(), FName("Bip001-Pelvis"));
 
 	LeftAtkCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Boss Left Hand"));
 	LeftAtkCollision->SetupAttachment(GetMesh(),FName("LHand"));
@@ -98,10 +96,6 @@ AJesusBoss2::AJesusBoss2()
 	LockOnTargetRArm = CreateDefaultSubobject<USphereComponent>(TEXT("LockOnRArm"));
 	LockOnTargetRArm->SetupAttachment(RightLockOnWidgetComp);
 	LockOnTargetRArm->SetCollisionProfileName("LockOnTarget");
-
-	LockOnTargetHip = CreateDefaultSubobject<USphereComponent>(TEXT("LockOnHip"));
-	LockOnTargetHip->SetupAttachment(HipLockOnWidgetComp);
-	LockOnTargetHip->SetCollisionProfileName("LockOnTarget");
 
 	MontageStartMap.Add(Boss2AnimationType::NONE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
@@ -1127,10 +1121,6 @@ AJesusBoss2::AJesusBoss2()
 		{
 			return RightArmLockOnWidget;
 		}));
-	LockonWidgetMap.Add(LockOnTargetHip, TFunction<UMonsterWidget* ()>([=]()
-		{
-			return HipLockOnWidget;
-		}));
 }
 
 AJesusBoss2::~AJesusBoss2()
@@ -1199,8 +1189,6 @@ void AJesusBoss2::BeginPlay()
 	LeftArmLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Collapsed);
 	RightArmLockOnWidget = Cast<UMonsterWidget>(RightLockOnWidgetComp->GetWidget());
 	RightArmLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Collapsed);
-	HipLockOnWidget = Cast<UMonsterWidget>(HipLockOnWidgetComp->GetWidget());
-	HipLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Collapsed);
 
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
