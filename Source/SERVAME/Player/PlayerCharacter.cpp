@@ -537,6 +537,16 @@ APlayerCharacter::APlayerCharacter()
 			SetPlayerForwardRotAndDir();
 			SetPlayerRightRotAndDir();
 			LockOnCameraSettingMap[IsLockOn || IsGrab]();
+
+			if (TargetComp != nullptr)
+			{
+				FVector TargetDir = (TargetComp->GetComponentLocation() - GetActorLocation());
+				FVector Cross = FVector::CrossProduct(GetActorRotation().Vector(), TargetDir);
+
+				AnimInstance->HeadBoneRotateValue = FMath::Lerp(AnimInstance->HeadBoneRotateValue, Cross.Z < 0.f ? 0 : 1, fDeltaTime * 2.0f);
+				AnimInstance->HeadBoneRotate.Yaw = FMath::Lerp(AnimInstance->HeadBoneRotate.Yaw, AnimInstance->HeadBoneRotateValue * 50.0f - 25.0f, fDeltaTime * 2.0f);
+			}
+
 			//LockOnCameraSettingMap[true](character);
 			PlayerMovement();
 
@@ -680,6 +690,15 @@ APlayerCharacter::APlayerCharacter()
 	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::INTERACTION, [&]() {});
 	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::MOVE, [&]()
 		{
+			if (TargetComp != nullptr)
+			{
+				FVector TargetDir = (TargetComp->GetComponentLocation() - GetActorLocation());
+				FVector Cross = FVector::CrossProduct(GetActorRotation().Vector(), TargetDir);
+
+				AnimInstance->HeadBoneRotateValue = FMath::Lerp(AnimInstance->HeadBoneRotateValue, Cross.Z < 0.f ? 0 : 1, fDeltaTime * 2.0f);
+				AnimInstance->HeadBoneRotate.Yaw = FMath::Lerp(AnimInstance->HeadBoneRotate.Yaw, AnimInstance->HeadBoneRotateValue * 50.0f - 25.0f, fDeltaTime * 2.0f);
+			}
+
 			PlayerDataStruct.PlayerStamina = FMath::Clamp(PlayerDataStruct.PlayerStamina -= PlayerDataStruct.PlayerRunStamina * fDeltaTime, 0.0f, 100.0f);
 			PlayerHUD->DecreaseStaminaGradual(this, PlayerDataStruct.PlayerStamina / PlayerDataStruct.MaxStamina);
 			if (PlayerDataStruct.PlayerStamina <= 0)
@@ -2230,12 +2249,6 @@ void APlayerCharacter::LookTarget()
 	FRotator rotation = FRotationMatrix::MakeFromX(TargetComp->GetComponentLocation() - HeadBoneLocation->GetComponentLocation()).Rotator();
 
 
-	FVector TargetDir = (TargetComp->GetComponentLocation() - GetActorLocation());
-	FVector Cross = FVector::CrossProduct(GetActorRotation().Vector(), TargetDir);
-
-	AnimInstance->HeadBoneRotateValue = FMath::Lerp(AnimInstance->HeadBoneRotateValue, Cross.Z < 0.f ? 1 : 0, fDeltaTime * 2.0f);
-
-
 	UE_LOG(LogTemp, Warning, TEXT("%f"), AnimInstance->HeadBoneRotateValue);
 
 	if (AnimInstance->PlayerAnimationType != AnimationType::BATTLEDODGE
@@ -2252,7 +2265,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	fDeltaTime = DeltaTime;
 	ChangeTargetTime += fDeltaTime;
 
-	
+	AnimInstance->HeadBoneRotate.Yaw = FMath::Lerp(AnimInstance->HeadBoneRotate.Yaw, 0.0f, fDeltaTime * 2.0f);
 	PlayerActionTickMap[PlayerCurAction][CurActionType]();
 
 	LookTarget();
