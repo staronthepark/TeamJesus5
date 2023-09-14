@@ -1353,9 +1353,6 @@ void AJesusBoss2::SetMetaData()
 
 Boss2AnimationType AJesusBoss2::GetTypeFromMetaData(UAnimMontage* Montage)
 {
-	if (Montage == nullptr)
-		return Boss2AnimationType::NONE;
-
 	auto MetaDataArr = Montage->GetMetaData();
 
 	if (MetaDataArr.Num() == 0)
