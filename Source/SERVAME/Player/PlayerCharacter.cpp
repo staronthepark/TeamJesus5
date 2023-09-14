@@ -2234,7 +2234,7 @@ void APlayerCharacter::LookTarget()
 	FVector TargetDir = (TargetComp->GetComponentLocation() - GetActorLocation());
 	FVector Cross = FVector::CrossProduct(GetActorRotation().Vector(), TargetDir);
 
-	AnimInstance->HeadBoneRotateAlpha = Cross.Z < 0.f ? 1 : 0;
+	AnimInstance->HeadBoneRotateAlpha = FMath::Lerp(AnimInstance->HeadBoneRotateAlpha, Cross.Z < 0.f ? 1 : 0, fDeltaTime * 2.0f);
 
 
 	//UE_LOG(LogTemp, Warning, TEXT("%f"), GetController()->GetControlRotation().Yaw);
