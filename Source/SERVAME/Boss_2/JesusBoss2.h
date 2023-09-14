@@ -108,9 +108,9 @@ struct FBoss2Action : public FTableRowBase
 
 	UPROPERTY(EditAnywhere)
 	bool HitCancel;
+	
 	UPROPERTY(EditAnywhere)
-		bool TurnHead;
-
+	bool TurnHead;
 
 	UPROPERTY(EditAnywhere)
 	float Distance;

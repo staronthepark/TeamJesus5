@@ -92,6 +92,12 @@ public:
 	float Alpha;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	FVector NeckLookAtPos;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	float NeckAlpha;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	Boss2BoneRotateType CurrentBoneType;
 
 protected:

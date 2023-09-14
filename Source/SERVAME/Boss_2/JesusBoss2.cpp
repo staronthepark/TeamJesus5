@@ -1035,20 +1035,29 @@ AJesusBoss2::AJesusBoss2()
 					GetTypeFromMetaData(StartMontage) == Boss2AnimationType::FOWARDWALK)
 				{
 					Boss2AnimInstance->LookAtPos = PlayerCharacter->GetActorLocation();
+
+					if (Boss2AnimInstance->NeckAlpha < 1)
+						Boss2AnimInstance->NeckAlpha += GetWorld()->DeltaTimeSeconds;
+
 					if (Boss2AnimInstance->Alpha < 1)
 						Boss2AnimInstance->Alpha += GetWorld()->DeltaTimeSeconds;
 
+					FMath::Clamp(Boss2AnimInstance->NeckAlpha, 0, 1);
 					FMath::Clamp(Boss2AnimInstance->Alpha, 0, 1);
 					return;
 				}
 
-
 				if (CurrentActionTemp.TurnHead)
 				{
 					Boss2AnimInstance->LookAtPos = PlayerCharacter->GetActorLocation();
+
+					if(Boss2AnimInstance->NeckAlpha<1)
+						Boss2AnimInstance->NeckAlpha += GetWorld()->DeltaTimeSeconds;
+
 					if (Boss2AnimInstance->Alpha < 1)
 						Boss2AnimInstance->Alpha += GetWorld()->DeltaTimeSeconds;
 					
+					FMath::Clamp(Boss2AnimInstance->NeckAlpha, 0, 1);
 					FMath::Clamp(Boss2AnimInstance->Alpha, 0, 1);
 				}
 				else
