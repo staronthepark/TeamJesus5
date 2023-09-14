@@ -59,6 +59,7 @@ UJesusSaveGame* UJesusSaveGame::Load(APlayerCharacter* Player, UJesusGameInstanc
 		Player->PlayerDataStruct = SaveInstance->PlayerData;
 		Player->SetActorLocation(SaveInstance->PlayerLoc);
 		Player->SetActorRotation(SaveInstance->PlayerRot);
+		Player->YawRotation.Yaw = SaveInstance->PlayerRot.Yaw;
 		Player->IsPhaseTwo = SaveInstance->IsPhaseTwo;
 
 		for (int32 i = 0; i < 20; i++)
