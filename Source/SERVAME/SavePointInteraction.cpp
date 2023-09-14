@@ -30,6 +30,8 @@ void ASavePointInteraction::BeginPlay()
 		ParticleCompArray.Add(Cast<UParticleSystemComponent>(array[i]));
 		ParticleCompArray[i]->SetActive(IsActive, IsActive);
 	}
+
+	Init();
 }
 
 void ASavePointInteraction::Init()

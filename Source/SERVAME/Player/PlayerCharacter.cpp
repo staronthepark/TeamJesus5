@@ -1731,7 +1731,7 @@ void APlayerCharacter::BeginPlay()
 	ShieldAttackOverlap->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnShieldOverlapBegin);
 	
 	ShoulderView(IsShoulderView);
-	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 2.0f);
+	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.5f);
 	ASoundManager::GetInstance().Init();
 	ASoundManager::GetInstance().StartBGMSound(IsPhaseTwo);
 }
