@@ -41,6 +41,7 @@ enum class Boss2BoneRotateType : uint8
 	HEAD = 0,
 	LEFTARM,
 	RIGHTARM,
+	TURNHEAD,
 };
 
 DECLARE_MULTICAST_DELEGATE(FOnCrossFall);
@@ -81,6 +82,12 @@ public:
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	FRotator RArmBoneRotateVal = FRotator::ZeroRotator;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	FVector LookAtPos;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	float Alpha;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	Boss2BoneRotateType CurrentBoneType;

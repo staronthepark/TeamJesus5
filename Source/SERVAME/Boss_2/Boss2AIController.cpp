@@ -7,6 +7,7 @@
 #include "Runtime/AIModule/Classes/Perception/AISenseConfig_Sight.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 ABoss2AIController::ABoss2AIController(const FObjectInitializer& ObjectInitializer)
 {
@@ -49,6 +50,11 @@ void ABoss2AIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	//Boss2->GetCharacterMovement()->bUseControllerDesiredRotation = true;
+
+	if (!Boss2->IsStartBoneRot /*&& IsPerception*/)
+	{
+		Boss2->Boss2AnimInstance->CurrentBoneType = Boss2BoneRotateType::TURNHEAD;
+	}
 
 	if (Boss2->IsLockOn)
 	{
@@ -147,6 +153,7 @@ void ABoss2AIController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 	UE_LOG(LogTemp, Log, TEXT("OnPerception"));
 	//Boss->SetAnimState(Stimulus.WasSuccessfullySensed());
 	SetFocus(Stimulus.WasSuccessfullySensed() ? Player : nullptr);
+	IsPerception = true;
 }
 
 void ABoss2AIController::MoveWhenArrived(FVector Location)
