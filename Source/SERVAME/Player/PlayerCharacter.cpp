@@ -544,7 +544,7 @@ APlayerCharacter::APlayerCharacter()
 				FVector Cross = FVector::CrossProduct(GetActorRotation().Vector(), TargetDir);
 
 				AnimInstance->HeadBoneRotateValue = FMath::Lerp(AnimInstance->HeadBoneRotateValue, Cross.Z < 0.f ? 0 : 1, fDeltaTime * 2.0f);
-				AnimInstance->HeadBoneRotate.Yaw = FMath::Lerp(AnimInstance->HeadBoneRotate.Yaw, AnimInstance->HeadBoneRotateValue * 50.0f - 25.0f, fDeltaTime * 2.0f);
+				AnimInstance->HeadBoneRotate.Yaw = FMath::Lerp(AnimInstance->HeadBoneRotate.Yaw, AnimInstance->HeadBoneRotateValue * 70.0f - 35.0f, fDeltaTime * 2.0f);
 			}
 
 			//LockOnCameraSettingMap[true](character);
@@ -696,7 +696,7 @@ APlayerCharacter::APlayerCharacter()
 				FVector Cross = FVector::CrossProduct(GetActorRotation().Vector(), TargetDir);
 
 				AnimInstance->HeadBoneRotateValue = FMath::Lerp(AnimInstance->HeadBoneRotateValue, Cross.Z < 0.f ? 0 : 1, fDeltaTime * 2.0f);
-				AnimInstance->HeadBoneRotate.Yaw = FMath::Lerp(AnimInstance->HeadBoneRotate.Yaw, AnimInstance->HeadBoneRotateValue * 50.0f - 25.0f, fDeltaTime * 2.0f);
+				AnimInstance->HeadBoneRotate.Yaw = FMath::Lerp(AnimInstance->HeadBoneRotate.Yaw, AnimInstance->HeadBoneRotateValue * 70 - 35.0f, fDeltaTime * 2.0f);
 			}
 
 			PlayerDataStruct.PlayerStamina = FMath::Clamp(PlayerDataStruct.PlayerStamina -= PlayerDataStruct.PlayerRunStamina * fDeltaTime, 0.0f, 100.0f);
