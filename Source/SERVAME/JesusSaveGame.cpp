@@ -47,6 +47,11 @@ void UJesusSaveGame::Save(APlayerCharacter* Player, UJesusGameInstance* GameInst
 	}
 }
 
+void UJesusSaveGame::Delete()
+{
+	UGameplayStatics::DeleteGameInSlot(TEXT("JesusSave"), 0);
+}
+
 UJesusSaveGame* UJesusSaveGame::Load(APlayerCharacter* Player, UJesusGameInstance* GameInstance)
 {
 	SaveInstance = Cast<UJesusSaveGame>(UGameplayStatics::CreateSaveGameObject(UJesusSaveGame::StaticClass()));
