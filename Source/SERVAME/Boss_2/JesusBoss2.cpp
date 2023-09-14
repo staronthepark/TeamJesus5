@@ -1029,6 +1029,7 @@ AJesusBoss2::AJesusBoss2()
 					GetTypeFromMetaData(StartMontage) == Boss2AnimationType::FOWARDWALK)
 				{
 					Boss2AnimInstance->LookAtPos = PlayerCharacter->GetActorLocation();
+					Boss2AnimInstance->NeckLookAtPos = PlayerCharacter->GetActorLocation();
 
 					if (Boss2AnimInstance->NeckAlpha < 1)
 						Boss2AnimInstance->NeckAlpha += GetWorld()->DeltaTimeSeconds;
@@ -1044,6 +1045,7 @@ AJesusBoss2::AJesusBoss2()
 				if (CurrentActionTemp.TurnHead)
 				{
 					Boss2AnimInstance->LookAtPos = PlayerCharacter->GetActorLocation();
+					Boss2AnimInstance->NeckLookAtPos = PlayerCharacter->GetActorLocation();
 
 					if(Boss2AnimInstance->NeckAlpha<1)
 						Boss2AnimInstance->NeckAlpha += GetWorld()->DeltaTimeSeconds;
