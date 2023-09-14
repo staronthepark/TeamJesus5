@@ -13,7 +13,8 @@
 				"ActorSequence",
 				"Engine",
 				"AIModule",
-				"CoreUObject"
+				"CoreUObject",
+				"UMG"
 			]
 		}
 	],
