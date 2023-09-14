@@ -51,6 +51,8 @@ public:
 
 	bool IsArrived = false;
 
+	bool IsPerception = false;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
