@@ -84,7 +84,6 @@ void UBTService_2_BossActionDecision::PushAction(TArray<TEnumAsByte<Boss2ActionT
 		ActionTemp.CanContinuity = Boss2->GetActionData(*Boss2ActionName)->CanContinuity;
 		ActionTemp.HitCancel = Boss2->GetActionData(*Boss2ActionName)->HitCancel;
 		ActionTemp.Distance = Boss2->GetActionData(*Boss2ActionName)->Distance;
-		ActionTemp.TurnHead = Boss2->GetActionData(*Boss2ActionName)->TurnHead;
 
 		Boss2->AddArrMap[ActionTemp.AttackType](&ActionTemp);
 	}
