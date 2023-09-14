@@ -52,8 +52,7 @@ void ABoss2AIController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	//Boss2->GetCharacterMovement()->bUseControllerDesiredRotation = true;
 
-
-	if (!Boss2->IsStartBoneRot /*&& IsPerception*/)
+	if (!Boss2->IsStartBoneRot && IsPerception)
 	{
 		Boss2->Boss2AnimInstance->CurrentBoneType = Boss2BoneRotateType::TURNHEAD;
 	}
