@@ -2138,7 +2138,7 @@ void AJesusBoss::OnStart()
 		StartEnd.Value = false;
 		
 		StartMontage = GetCurrentMontage();
-		UE_LOG(LogTemp, Warning, TEXT("Start : %s"), *StartMontage->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("Start : %s"), *StartMontage->GetName());
 		MontageStartMap[GetTypeFromMetaData(StartMontage)](this);
 	}
 }
