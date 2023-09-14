@@ -1708,7 +1708,6 @@ void APlayerCharacter::BeginPlay()
 	DeactivateRightWeapon();
 
 	AnimInstance->BodyBlendAlpha = 1.0f;
-	AnimInstance->HeadBoneRotate = FRotator(0, 0, 0);
 
 	GameStartSequncePlayer->Play();
 	GameStartSequncePlayer->Pause();
@@ -2234,10 +2233,10 @@ void APlayerCharacter::LookTarget()
 	FVector TargetDir = (TargetComp->GetComponentLocation() - GetActorLocation());
 	FVector Cross = FVector::CrossProduct(GetActorRotation().Vector(), TargetDir);
 
-	AnimInstance->HeadBoneRotateAlpha = FMath::Lerp(AnimInstance->HeadBoneRotateAlpha, Cross.Z < 0.f ? 1 : 0, fDeltaTime * 2.0f);
+	AnimInstance->HeadBoneRotateValue = FMath::Lerp(AnimInstance->HeadBoneRotateValue, Cross.Z < 0.f ? 1 : 0, fDeltaTime * 2.0f);
 
 
-	//UE_LOG(LogTemp, Warning, TEXT("%f"), GetController()->GetControlRotation().Yaw);
+	UE_LOG(LogTemp, Warning, TEXT("%f"), AnimInstance->HeadBoneRotateValue);
 
 	if (AnimInstance->PlayerAnimationType != AnimationType::BATTLEDODGE
 		&& AnimInstance->PlayerAnimationType != AnimationType::SPRINT
