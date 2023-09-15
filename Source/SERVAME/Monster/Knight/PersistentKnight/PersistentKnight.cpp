@@ -4,6 +4,7 @@
 
 #include "PersistentKnight.h"
 #include "..\KnightAttackTriggerComp.h"
+#include "KnightHeadAnimInstance.h"
 
 APersistentKnight::APersistentKnight()
 {
@@ -85,11 +86,14 @@ float APersistentKnight::Die(float Dm)
 	{
 		if (IsFirstDie)
 		{	
+			auto HeadAnimInstance = Cast<UKnightHeadAnimInstance>(KnightHeadSkeletalMesh->GetAnimInstance());
+			HeadAnimInstance->Rot = RotVal;
+
 			//머리 날리기
 			KnightHeadSkeletalMesh->SetCollisionProfileName("Ragdoll");
 			KnightHeadSkeletalMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-			KnightHeadSkeletalMesh->AddImpulseToAllBodiesBelow(AddVec * Strength);
-			//KnightHeadSkeletalMesh->AddImpulse(AddVec * Strength, FName(TEXT("...")));
+			KnightHeadSkeletalMesh->AddImpulseToAllBodiesBelow(AddVec * Strength/*, FName(TEXT("B_Helmet_spin")*/);
+			KnightHeadSkeletalMesh->AddImpulseToAllBodiesBelow(FVector(-20,0,0) * Strength, FName(TEXT("B_Helmet_spin")));
 			KnightHeadSkeletalMesh->SetSimulatePhysics(true);
 			KnightHeadSkeletalMesh->SetEnableGravity(true);
 
