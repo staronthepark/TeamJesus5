@@ -22,10 +22,6 @@ AJesusBoss2::AJesusBoss2()
 	Boss2HitCollision->SetupAttachment(GetMesh(), FName("LockOn_Bone"));
 	Boss2HitCollision->SetCollisionProfileName("AIHit");
 
-	Boss2BodyCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Boss2 Body Collision"));
-	Boss2BodyCollision->SetupAttachment(GetMesh(), FName("Bip001-Spine2"));
-	Boss2BodyCollision->SetCollisionProfileName("AIPhysics");
-
 	HeadLockOnWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget"));
 	HeadLockOnWidgetComp->SetupAttachment(GetMesh(), FName("Bip001-Head"));
 	LeftArmLockOnWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget2"));
@@ -1834,22 +1830,27 @@ void AJesusBoss2::DrawCircle(FVector Center)
 void AJesusBoss2::ActivateLFOverlap()
 {
 	LeftFingerOverlapCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[12].ObjClass, LeftFingerOverlapCollision->GetComponentLocation(), FRotator(90, 0, 0));
+	GetWorldTimerManager().SetTimer(SMOverlapTimerHandler, this, &AJesusBoss2::ActivateLFOverlap, 0.02f);
 }
 
 void AJesusBoss2::ActivateRFOverlap()
 {
 	RightFingerOverlapCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[12].ObjClass, RightFingerOverlapCollision->GetComponentLocation(), FRotator(90, 0, 0));
+	GetWorldTimerManager().SetTimer(SMOverlapTimerHandler, this, &AJesusBoss2::ActivateRFOverlap, 0.02f);
 }
 
 void AJesusBoss2::DeactivateLFOverlap()
 {
 	LeftFingerOverlapCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
+	GetWorldTimerManager().ClearTimer(SMOverlapTimerHandler);
 }
 
 void AJesusBoss2::DeactivateRFOverlap()
 {
 	RightFingerOverlapCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetWorldTimerManager().ClearTimer(SMOverlapTimerHandler);
 }
 
 void AJesusBoss2::SetBoneHead(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

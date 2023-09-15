@@ -1596,6 +1596,17 @@ bool AJesusBoss::IsAlive()
 	return false;
 }
 
+void AJesusBoss::ActivateSMOverlap()
+{
+	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[12].ObjClass, WeaponOverlapStaticMeshCollision->GetComponentLocation(), FRotator(90, 0, 0));
+	GetWorldTimerManager().SetTimer(SMOverlapTimerHandler, this, &AJesusBoss::ActivateSMOverlap, 0.02f);
+}
+
+void AJesusBoss::DeactivateSMOverlap()
+{
+	GetWorldTimerManager().ClearTimer(SMOverlapTimerHandler);
+}
+
 void AJesusBoss::SpawnInit()
 {
 	//½ºÅÝ
@@ -1932,12 +1943,12 @@ void AJesusBoss::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 
 void AJesusBoss::OnSMOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	SwordVFXSpawn();
+	//SwordVFXSpawn();
 }
 
 void AJesusBoss::OnSMOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	GetWorldTimerManager().ClearTimer(SMOverlapTimerHandler);
+	//GetWorldTimerManager().ClearTimer(SMOverlapTimerHandler);
 }
 
 void AJesusBoss::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

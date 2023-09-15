@@ -472,6 +472,8 @@ public:
 	virtual void ActivateLockOnImage(bool value, UPrimitiveComponent* comp) override;
 	virtual void Stun()override;
 	virtual bool IsAlive()override;
+	virtual void ActivateSMOverlap(); 
+	virtual void DeactivateSMOverlap();
 
 protected:
 	virtual void BeginPlay() override;
