@@ -72,7 +72,8 @@ void ABoss2AIController::Tick(float DeltaTime)
 	{
 		if (DetectedActorArr.Num() >= 1)
 		{
-			GetBlackboardComponent()->SetValueAsBool(FName(TEXT("IsDetected")), true);
+			if (Boss2->Boss2AnimInstance->IsStart)
+				GetBlackboardComponent()->SetValueAsBool(FName(TEXT("IsDetected")), true);
 			
 			if (!IsUIActivate.Exchange(true))
 			{
@@ -128,13 +129,6 @@ void ABoss2AIController::OnPossess(APawn* InPawn)
 		}
 	}
 	
-	if (Boss2 != nullptr)
-	{
-		Boss2->CanMove = true;
-		Boss2->IsLockOn = true;
-		Boss2->Boss2AnimInstance->IsStart = true;
-	}
-
 	AIPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ABoss2AIController::OnPerception);
 }
 
@@ -155,6 +149,9 @@ void ABoss2AIController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 	//Boss->SetAnimState(Stimulus.WasSuccessfullySensed());
 	SetFocus(Stimulus.WasSuccessfullySensed() ? Player : nullptr);
 	IsPerception = true;
+	
+	if (!Boss2->Boss2AnimInstance->IsStart)
+		Boss2->ChangeMontageAnimation(Boss2AnimationType::START);
 }
 
 void ABoss2AIController::MoveWhenArrived(FVector Location)

@@ -104,6 +104,18 @@ AJesusBoss2::AJesusBoss2()
 		{
 		}));
 
+	MontageStartMap.Add(Boss2AnimationType::START, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{	
+		}));
+	MontageEndMap.Add(Boss2AnimationType::START, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->Boss2AnimInstance->IsStart = true;
+			Boss2->CanMove = true;
+			Boss2->IsLockOn = true;
+			Boss2->IsAttackMontageEnd = true;
+			Boss2->IsAttacking = false;
+		}));
+
 	MontageStartMap.Add(Boss2AnimationType::IDLE, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{			
 		}));
@@ -1177,6 +1189,10 @@ void AJesusBoss2::BeginPlay()
 {
 	Super::BeginPlay();
 
+	Boss2AnimInstance->IsStart = false;
+	CanMove = false;
+	IsLockOn = false;
+
 	DeactivateTrail();
 
 	SetMetaData();
@@ -1217,12 +1233,6 @@ void AJesusBoss2::BeginPlay()
 	RightFingerOverlapCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	UCombatManager::GetInstance().MonsterInfoArray.Add(this);
-
-
-	//임시로 변수 설정
-	CanMove = true;
-	IsLockOn = true;
-	Boss2AnimInstance->IsStart = true;
 
 	SetActive(false);
 	UCombatManager::GetInstance().Boss2 = this;
@@ -1618,7 +1628,7 @@ void AJesusBoss2::SpawnInit()
 	IsDead = false;
 	CanMove = true;
 	IsLockOn = true;
-	Boss2AnimInstance->IsStart = true;
+	Boss2AnimInstance->IsStart = false;
 	CrossEvent = false;
 
 
