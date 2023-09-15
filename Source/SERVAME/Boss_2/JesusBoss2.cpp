@@ -22,6 +22,10 @@ AJesusBoss2::AJesusBoss2()
 	Boss2HitCollision->SetupAttachment(GetMesh(), FName("LockOn_Bone"));
 	Boss2HitCollision->SetCollisionProfileName("AIHit");
 
+	Boss2BodyCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Boss2 Body Collision"));
+	Boss2BodyCollision->SetupAttachment(RootComponent);
+	Boss2BodyCollision->SetCollisionProfileName("AIPhysics");
+
 	HeadLockOnWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget"));
 	HeadLockOnWidgetComp->SetupAttachment(GetMesh(), FName("Bip001-Head"));
 	LeftArmLockOnWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOn Widget2"));
@@ -1656,6 +1660,7 @@ void AJesusBoss2::OffHitCollision()
 void AJesusBoss2::SlerpJump()
 {
 	GetCapsuleComponent()->SetCollisionProfileName("IgnorePlayer");
+	Boss2BodyCollision->SetCollisionProfileName("IgnorePlayer");
 	JumpMoveStart = true;
 	DeactivateHitCollision();
 }
@@ -1664,6 +1669,7 @@ void AJesusBoss2::SlerpJumpEnd()
 {
 	JumpMoveStart = false;
 	GetCapsuleComponent()->SetCollisionProfileName("AIPhysics");
+	Boss2BodyCollision->SetCollisionProfileName("BlockAll");
 	ActivateHitCollision();
 }
 
