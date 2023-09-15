@@ -87,7 +87,19 @@ float APersistentKnight::Die(float Dm)
 		if (IsFirstDie)
 		{	
 			auto HeadAnimInstance = Cast<UKnightHeadAnimInstance>(KnightHeadSkeletalMesh->GetAnimInstance());
-			HeadAnimInstance->Rot = RotVal;
+
+			GetWorld()->GetTimerManager().SetTimer(HeadTimer, FTimerDelegate::CreateLambda([=]()
+				{
+					GetWorld()->GetTimerManager().SetTimer(EndTimer, FTimerDelegate::CreateLambda([=]()
+						{
+							GetWorld()->GetTimerManager().ClearTimer(HeadTimer);
+						}), RotateTime, false);
+
+					HeadAnimInstance->Rot += RotVal + FRotator(AddVal.Pitch, AddVal.Yaw, AddVal.Roll);
+					
+				}), RotateTickTime, true);
+
+
 
 			//머리 날리기
 			KnightHeadSkeletalMesh->SetCollisionProfileName("Ragdoll");
