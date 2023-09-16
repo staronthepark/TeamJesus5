@@ -1,5 +1,6 @@
 #include "..\NunDamageSphereTriggerComp.h"
 #include "NunEffectObjInPool.h"
+#include <Kismet/KismetMathLibrary.h>
 
 ANunEffectObjInPool::ANunEffectObjInPool()
 {
@@ -83,6 +84,36 @@ void ANunEffectObjInPool::ShotProjectile(FVector Target)
 		}), Delay, false);
 }
 
+void ANunEffectObjInPool::ShotProjectile(bool val, FVector Target)
+{
+	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	
+	GetWorld()->GetTimerManager().SetTimer(ShotTimerHandle, FTimerDelegate::CreateLambda([=]()
+		{
+			IsCurve = val;
+			TargetLoc = Target;
+			MidPointCalc();
+			CurveControlPoint();
+		}), Delay, false);
+}
+
+void ANunEffectObjInPool::MidPointCalc()
+{
+	auto Loc = TargetLoc - GetActorLocation();
+	auto RandVal = FMath::RandRange(MinCurveRadius, MaxCurveRadius);
+	MidPoint = (Loc * RandVal) + GetActorLocation();
+}
+
+void ANunEffectObjInPool::CurveControlPoint()
+{
+	auto Val = UKismetMathLibrary::FindLookAtRotation(MidPoint,TargetLoc);
+	FVector X_Vec, Y_Vec, Z_Vec;
+	UKismetMathLibrary::BreakRotIntoAxes(Val, X_Vec, Y_Vec, Z_Vec);
+
+	auto AddVal = UKismetMathLibrary::Add_VectorFloat(Y_Vec, FMath::RandRange(MinCurveRadius, MaxCurveRadius));
+
+}
+
 void ANunEffectObjInPool::SetCurrentEffect(EffectType type)
 {
 	Type = type;
@@ -112,6 +143,11 @@ void ANunEffectObjInPool::DeactivateDamageSphere(float time)
 void ANunEffectObjInPool::OnProjectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	DeactivateCurrentEffect();
+
+	if (Type == EffectType::NONE)
+		return;
+
+	IsCurve = false;
 
 	Type = GetBurstEffectType[Type];
 

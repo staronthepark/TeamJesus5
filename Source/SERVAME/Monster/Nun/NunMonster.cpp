@@ -156,22 +156,22 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::DARK, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(true, [&]()
 		{
-			//UE_LOG(LogTemp, Warning, TEXT("DarkProjectile"));
-			//if (SpawnLocArr.IsEmpty())
-			//	return;
+			/*UE_LOG(LogTemp, Warning, TEXT("DarkProjectile"));
+			if (SpawnLocArr.IsEmpty())
+				return;
 
-			//int RandomValue = FMath::RandRange(0, SpawnLocArr.Num() - 1);
+			int RandomValue = FMath::RandRange(0, SpawnLocArr.Num() - 1);
 
-			//auto DarkPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
-			//	SpawnLocArr[RandomValue]->GetComponentLocation(), FRotator::ZeroRotator);
+			auto DarkPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+				SpawnLocArr[RandomValue]->GetComponentLocation(), FRotator::ZeroRotator);
 
-			//auto DarkObj = Cast<ANunEffectObjInPool>(DarkPoolObj);
-			//DarkObj->SetCurrentEffect(EffectType::DARKEFFECT);
-			//DarkObj->ActivateCurrentEffect();
-			//DarkObj->ShotProjectile(PlayerCharacter);
-			//DarkObj->SetActorTickEnabled(true);
+			auto DarkObj = Cast<ANunEffectObjInPool>(DarkPoolObj);
+			DarkObj->SetCurrentEffect(EffectType::DARKEFFECT);
+			DarkObj->ActivateCurrentEffect();
+			DarkObj->ShotProjectile(PlayerCharacter);
+			DarkObj->SetActorTickEnabled(true);*/
 
-			CrystalAttack();
+			PrayAttack();
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(false, [&]()
 		{
@@ -665,6 +665,8 @@ void ANunMonster::Curse()
 
 void ANunMonster::CrystalAttack()
 {
+	UE_LOG(LogTemp, Warning, TEXT("CrystalAttack"));
+
 	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
 	if (NavSystem == nullptr)
 		return;
@@ -697,6 +699,30 @@ void ANunMonster::FogAttack()
 
 void ANunMonster::PrayAttack()
 {
+	UE_LOG(LogTemp, Warning, TEXT("PrayAttack"));
+
+	if (SpawnLocArr.IsEmpty())
+		return;
+
+	GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, FTimerDelegate::CreateLambda([&]()
+		{
+			auto DarkPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+			SpawnLocArr[PraySpawnCount]->GetComponentLocation(), FRotator::ZeroRotator);
+
+			auto PrayObj = Cast<ANunEffectObjInPool>(DarkPoolObj);
+			PrayObj->SetCurrentEffect(EffectType::DARKEFFECT);
+			PrayObj->ActivateCurrentEffect();
+			PrayObj->ShotProjectile(true, PlayerCharacter->GetActorLocation());
+			PrayObj->SetActorTickEnabled(true);
+		
+			++PraySpawnCount;
+
+			if (PraySpawnCount >= SpawnLocArr.Num())
+			{
+				PraySpawnCount = 0;
+				GetWorld()->GetTimerManager().ClearTimer(DelayTimerHandle);
+			}
+		}), PrayObjSpawnDelay, true);
 }
 
 void ANunMonster::FragmentsAttack()

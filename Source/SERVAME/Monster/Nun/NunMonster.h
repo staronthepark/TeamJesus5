@@ -90,6 +90,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CrystalAttack")
 	int CrystalCount = 10;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PrayAttack")
+	float PrayObjSpawnDelay = 0.2f;
+	int PraySpawnCount = 0;
+
 	float TeleportDamageSum = 0.f;
 	float SpawnDamageSum = 0.f;
 
@@ -111,6 +115,7 @@ public:
 	void IllusionAttack();
 
 	FTimerHandle SelfHealTimerHandle;
+	FTimerHandle DelayTimerHandle;
 
 	UFUNCTION()
 	void OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
