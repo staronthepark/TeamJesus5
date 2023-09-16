@@ -26,7 +26,15 @@ public:
 	float Strength = 100.f;
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Die")
 	FRotator RotVal;
-	FRotator StartVal;
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Die")
+	FRotator AddVal;
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Die")
+	float RotateTickTime;
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Die")
+	float RotateTime;
+
+	FTimerHandle HeadTimer;
+	FTimerHandle EndTimer;
 
 	bool IsFirstDie = true;
 	bool Reviving = false;

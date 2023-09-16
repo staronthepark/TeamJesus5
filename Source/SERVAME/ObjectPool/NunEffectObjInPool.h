@@ -33,6 +33,8 @@ enum class EffectType : uint8
 	FRAGMENTEFFECT_BURST,
 	JUDGEMENTEFFECT,
 	SALVATIONEFFECT,
+	CRYSTALEFFECT,
+	CRYSTALEFFECT_BUSRT,
 };
 
 UCLASS()
@@ -75,6 +77,27 @@ public:
 	TObjectPtr<USphereComponent> RangeAttackCollision;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 	float Delay = 1.f;
+	 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Curve")
+	bool IsCurve = false;	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Curve")
+	FVector TargetLoc;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Curve")
+	FVector MidPoint;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Curve")
+	FVector CurvePoint;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Curve")
+	float MinCurveRadius = 40.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Curve")
+	float MaxCurveRadius = 400.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Curve")
+	float MinCurvePointDistance = 0.2f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Curve")
+	float MaxCurvePointDistance = 0.8f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Curve")
+	float MinAngle = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Curve")
+	float MaxAngle = 360.f;
 
 	UPROPERTY()
 	FDamageEvent DamageEvent;
@@ -83,12 +106,19 @@ public:
 	FTimerHandle DotTimerHandle;
 	FTimerHandle ShotTimerHandle;
 
+	TMap<EffectType, EffectType> GetBurstEffectType;
+
 	virtual void SetActive(bool active) override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
 	virtual void ReturnObject()override;
 
 	void ShotProjectile(ABaseCharacter* Player);
+	void ShotProjectile(FVector Target);
+	void ShotProjectile(bool val, FVector Target);
+
+	void MidPointCalc();
+	void CurveControlPoint();
 
 	void SetCurrentEffect(EffectType type);
 

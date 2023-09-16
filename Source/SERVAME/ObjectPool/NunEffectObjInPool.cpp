@@ -1,5 +1,6 @@
 #include "..\NunDamageSphereTriggerComp.h"
 #include "NunEffectObjInPool.h"
+#include <Kismet/KismetMathLibrary.h>
 
 ANunEffectObjInPool::ANunEffectObjInPool()
 {
@@ -19,6 +20,10 @@ ANunEffectObjInPool::ANunEffectObjInPool()
 
 	DamageSphereTriggerComp = CreateDefaultSubobject<UNunDamageSphereTriggerComp>(TEXT("DamageSphere_a"));
 	DamageSphereTriggerComp->SetupAttachment(RootComponent);
+
+	GetBurstEffectType.Add(EffectType::DARKEFFECT, EffectType::DARKEFFECTHIT);
+	GetBurstEffectType.Add(EffectType::PRAYEFFECT, EffectType::PRAYHITEFFECT);
+	GetBurstEffectType.Add(EffectType::CRYSTALEFFECT, EffectType::CRYSTALEFFECT_BUSRT);
 }
 
 void ANunEffectObjInPool::BeginPlay()
@@ -67,6 +72,48 @@ void ANunEffectObjInPool::ShotProjectile(ABaseCharacter* Player)
 	}), Delay, false);
 }
 
+void ANunEffectObjInPool::ShotProjectile(FVector Target)
+{
+	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+	GetWorld()->GetTimerManager().SetTimer(ShotTimerHandle, FTimerDelegate::CreateLambda([=]()
+		{
+			MoveDir = Target - GetActorLocation();
+			MoveDir.Normalize();
+			IsShot = true;
+		}), Delay, false);
+}
+
+void ANunEffectObjInPool::ShotProjectile(bool val, FVector Target)
+{
+	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	
+	GetWorld()->GetTimerManager().SetTimer(ShotTimerHandle, FTimerDelegate::CreateLambda([=]()
+		{
+			IsCurve = val;
+			TargetLoc = Target;
+			MidPointCalc();
+			CurveControlPoint();
+		}), Delay, false);
+}
+
+void ANunEffectObjInPool::MidPointCalc()
+{
+	auto Loc = TargetLoc - GetActorLocation();
+	auto RandVal = FMath::RandRange(MinCurveRadius, MaxCurveRadius);
+	MidPoint = (Loc * RandVal) + GetActorLocation();
+}
+
+void ANunEffectObjInPool::CurveControlPoint()
+{
+	auto Val = UKismetMathLibrary::FindLookAtRotation(MidPoint,TargetLoc);
+	FVector X_Vec, Y_Vec, Z_Vec;
+	UKismetMathLibrary::BreakRotIntoAxes(Val, X_Vec, Y_Vec, Z_Vec);
+
+	auto AddVal = UKismetMathLibrary::Add_VectorFloat(Y_Vec, FMath::RandRange(MinCurveRadius, MaxCurveRadius));
+
+}
+
 void ANunEffectObjInPool::SetCurrentEffect(EffectType type)
 {
 	Type = type;
@@ -97,11 +144,14 @@ void ANunEffectObjInPool::OnProjectileBeginOverlap(UPrimitiveComponent* Overlapp
 {
 	DeactivateCurrentEffect();
 
-	if (Type == EffectType::DARKEFFECT)
-		CurrentEffect->SetAsset(GetTypeEffect[EffectType::DARKEFFECTHIT]);
-	else if(Type == EffectType::PRAYEFFECT)
-		CurrentEffect->SetAsset(GetTypeEffect[EffectType::PRAYHITEFFECT]);
+	if (Type == EffectType::NONE)
+		return;
 
+	IsCurve = false;
+
+	Type = GetBurstEffectType[Type];
+
+	CurrentEffect->SetAsset(GetTypeEffect[Type]);
 	CurrentEffect->Activate();
 
 	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);

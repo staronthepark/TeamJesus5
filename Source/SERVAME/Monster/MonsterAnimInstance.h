@@ -43,6 +43,7 @@ enum class MonsterAnimationType : uint8
 	DEADLOOP,
 	EXECUTION,
 	STARTDEAD,
+	PARRYING,
 };
 /**
  * 

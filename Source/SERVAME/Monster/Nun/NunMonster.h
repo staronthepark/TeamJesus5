@@ -43,6 +43,9 @@ public:
 	UBoxComponent* Loc6;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UBoxComponent* CrystalSpawnLoc;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UNunAttackTriggerComp* AttackTrigger;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
@@ -82,6 +85,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JudementAttack")
 	float JudementTime = 15.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CrystalAttack")
+	float CrystalRange = 400.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CrystalAttack")
+	int CrystalCount = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PrayAttack")
+	float PrayObjSpawnDelay = 0.2f;
+	int PraySpawnCount = 0;
+
 	float TeleportDamageSum = 0.f;
 	float SpawnDamageSum = 0.f;
 
@@ -96,8 +108,14 @@ public:
 	void Curse();
 
 	//수녀 b타입 스킬
+	void CrystalAttack();
+	void FogAttack();
+	void PrayAttack();
+	void FragmentsAttack();
+	void IllusionAttack();
 
 	FTimerHandle SelfHealTimerHandle;
+	FTimerHandle DelayTimerHandle;
 
 	UFUNCTION()
 	void OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
