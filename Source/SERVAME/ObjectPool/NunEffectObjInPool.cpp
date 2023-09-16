@@ -19,6 +19,10 @@ ANunEffectObjInPool::ANunEffectObjInPool()
 
 	DamageSphereTriggerComp = CreateDefaultSubobject<UNunDamageSphereTriggerComp>(TEXT("DamageSphere_a"));
 	DamageSphereTriggerComp->SetupAttachment(RootComponent);
+
+	GetBurstEffectType.Add(EffectType::DARKEFFECT, EffectType::DARKEFFECTHIT);
+	GetBurstEffectType.Add(EffectType::PRAYEFFECT, EffectType::PRAYHITEFFECT);
+	GetBurstEffectType.Add(EffectType::CRYSTALEFFECT, EffectType::CRYSTALEFFECT_BUSRT);
 }
 
 void ANunEffectObjInPool::BeginPlay()
@@ -67,6 +71,18 @@ void ANunEffectObjInPool::ShotProjectile(ABaseCharacter* Player)
 	}), Delay, false);
 }
 
+void ANunEffectObjInPool::ShotProjectile(FVector Target)
+{
+	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+	GetWorld()->GetTimerManager().SetTimer(ShotTimerHandle, FTimerDelegate::CreateLambda([=]()
+		{
+			MoveDir = Target - GetActorLocation();
+			MoveDir.Normalize();
+			IsShot = true;
+		}), Delay, false);
+}
+
 void ANunEffectObjInPool::SetCurrentEffect(EffectType type)
 {
 	Type = type;
@@ -97,11 +113,9 @@ void ANunEffectObjInPool::OnProjectileBeginOverlap(UPrimitiveComponent* Overlapp
 {
 	DeactivateCurrentEffect();
 
-	if (Type == EffectType::DARKEFFECT)
-		CurrentEffect->SetAsset(GetTypeEffect[EffectType::DARKEFFECTHIT]);
-	else if(Type == EffectType::PRAYEFFECT)
-		CurrentEffect->SetAsset(GetTypeEffect[EffectType::PRAYHITEFFECT]);
+	Type = GetBurstEffectType[Type];
 
+	CurrentEffect->SetAsset(GetTypeEffect[Type]);
 	CurrentEffect->Activate();
 
 	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);

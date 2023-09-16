@@ -33,6 +33,8 @@ enum class EffectType : uint8
 	FRAGMENTEFFECT_BURST,
 	JUDGEMENTEFFECT,
 	SALVATIONEFFECT,
+	CRYSTALEFFECT,
+	CRYSTALEFFECT_BUSRT,
 };
 
 UCLASS()
@@ -83,12 +85,15 @@ public:
 	FTimerHandle DotTimerHandle;
 	FTimerHandle ShotTimerHandle;
 
+	TMap<EffectType, EffectType> GetBurstEffectType;
+
 	virtual void SetActive(bool active) override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
 	virtual void ReturnObject()override;
 
 	void ShotProjectile(ABaseCharacter* Player);
+	void ShotProjectile(FVector Target);
 
 	void SetCurrentEffect(EffectType type);
 

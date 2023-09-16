@@ -37,6 +37,9 @@ ANunMonster::ANunMonster()
 	Loc6 = CreateDefaultSubobject<UBoxComponent>(TEXT("Loc6"));
 	Loc6->SetupAttachment(ProjectileRootComp);
 
+	CrystalSpawnLoc = CreateDefaultSubobject<UBoxComponent>(TEXT("CrystalLoc"));
+	CrystalSpawnLoc->SetupAttachment(ProjectileRootComp);
+
 	AnimTypeToStateType.Add(MonsterAnimationType::HEAL1, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::HEAL2, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::SPAWNKNIGHT, MonsterStateType::BEFOREATTACK);
@@ -153,20 +156,22 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::DARK, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(true, [&]()
 		{
-			UE_LOG(LogTemp, Warning, TEXT("DarkProjectile"));
-			if (SpawnLocArr.IsEmpty())
-				return;
+			//UE_LOG(LogTemp, Warning, TEXT("DarkProjectile"));
+			//if (SpawnLocArr.IsEmpty())
+			//	return;
 
-			int RandomValue = FMath::RandRange(0, SpawnLocArr.Num() - 1);
+			//int RandomValue = FMath::RandRange(0, SpawnLocArr.Num() - 1);
 
-			auto DarkPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
-				SpawnLocArr[RandomValue]->GetComponentLocation(), FRotator::ZeroRotator);
+			//auto DarkPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+			//	SpawnLocArr[RandomValue]->GetComponentLocation(), FRotator::ZeroRotator);
 
-			auto DarkObj = Cast<ANunEffectObjInPool>(DarkPoolObj);
-			DarkObj->SetCurrentEffect(EffectType::DARKEFFECT);
-			DarkObj->ActivateCurrentEffect();
-			DarkObj->ShotProjectile(PlayerCharacter);
-			DarkObj->SetActorTickEnabled(true);
+			//auto DarkObj = Cast<ANunEffectObjInPool>(DarkPoolObj);
+			//DarkObj->SetCurrentEffect(EffectType::DARKEFFECT);
+			//DarkObj->ActivateCurrentEffect();
+			//DarkObj->ShotProjectile(PlayerCharacter);
+			//DarkObj->SetActorTickEnabled(true);
+
+			CrystalAttack();
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(false, [&]()
 		{
@@ -655,6 +660,50 @@ void ANunMonster::JudementAttack()
 }
 
 void ANunMonster::Curse()
+{
+}
+
+void ANunMonster::CrystalAttack()
+{
+	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
+	if (NavSystem == nullptr)
+		return;
+
+	FNavLocation RandomLocation;
+
+	auto PlayerLoc = PlayerCharacter->GetActorLocation();
+
+	for (int i = 0; i < CrystalCount; i++)
+	{
+		if (NavSystem->GetRandomPointInNavigableRadius(PlayerLoc, CrystalRange, RandomLocation))
+		{
+			FVector Temp = RandomLocation.Location;
+
+			auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+				CrystalSpawnLoc->GetComponentLocation(), FRotator::ZeroRotator);
+			auto CrystalEffect = Cast<ANunEffectObjInPool>(PoolObj);
+
+			CrystalEffect->SetCurrentEffect(EffectType::CRYSTALEFFECT);
+			CrystalEffect->ActivateCurrentEffect();
+			CrystalEffect->ShotProjectile(Temp);
+			CrystalEffect->SetActorTickEnabled(true);
+		}
+	}
+}
+
+void ANunMonster::FogAttack()
+{
+}
+
+void ANunMonster::PrayAttack()
+{
+}
+
+void ANunMonster::FragmentsAttack()
+{
+}
+
+void ANunMonster::IllusionAttack()
 {
 }
 
