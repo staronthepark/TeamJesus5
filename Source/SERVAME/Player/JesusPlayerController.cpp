@@ -407,6 +407,7 @@ void AJesusPlayerController::OpenMenu()
 	if (CurrentSequncePlayer)
 	{
 		CurrentSequncePlayer->Stop();
+		character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
 		return;
 	}
 	if (!GameInstance->MainMenuWidget->IsInViewport())
@@ -437,6 +438,7 @@ void AJesusPlayerController::CloseMenu()
 	if (CurrentSequncePlayer)
 	{
 		CurrentSequncePlayer->Stop();
+		character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
 		return;
 	}
 
