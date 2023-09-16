@@ -58,7 +58,7 @@ AEnemyMonster::AEnemyMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::DEADLOOP, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::EXECUTION, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::SPAWNING, MonsterStateType::CANTACT);
-
+	AnimTypeToStateType.Add(MonsterAnimationType::PARRYING, MonsterStateType::CANTACT);
 
 	RandomRotateMap.Add(0, [&]()
 		{
@@ -197,6 +197,11 @@ AEnemyMonster::AEnemyMonster()
 				}
 			}
 		});	
+
+	MontageEndEventMap.Add(MonsterAnimationType::PARRYING, [&]()
+		{
+			ActivateRightWeapon();
+		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
 		{
@@ -676,13 +681,13 @@ void AEnemyMonster::Rotate()
 
 void AEnemyMonster::Stun()
 {
-	CanExecution = true;
+	//CanExecution = true;
 	AnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
 	DeactivateSMOverlap();
 	ParryingCollision1->Deactivate();
 	DeactivateRightWeapon();
-	ChangeMontageAnimation(MonsterAnimationType::DEAD);
+	ChangeMontageAnimation(MonsterAnimationType::PARRYING);
 }
 
 float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
