@@ -1749,9 +1749,8 @@ void APlayerCharacter::BeginPlay()
 	ShieldAttackOverlap->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnShieldOverlapBegin);
 	
 	ShoulderView(IsShoulderView);
-	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.5f);
+	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
 	ASoundManager::GetInstance().Init();
-	ASoundManager::GetInstance().StartBGMSound(IsPhaseTwo);
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -2718,7 +2717,9 @@ void APlayerCharacter::SetSoul(int32 value)
 void APlayerCharacter::LoadFile()
 {
 	UJesusSaveGame::GetInstance().Load(this, GameInstance);
-
+	ASoundManager::GetInstance().StartBGMSound(IsPhaseTwo);
+	if(IsPhaseTwo)
+		UCombatManager::GetInstance().Boss2->SetActive(true);
 }
 
 void APlayerCharacter::PlayStartAnimation()
