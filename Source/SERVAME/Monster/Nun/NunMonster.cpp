@@ -274,12 +274,12 @@ ANunMonster::ANunMonster()
 
 	SetActionByRandomMap.Add(MonsterAnimationType::DARK, [&](float percent)
 		{
-			if (percent > 0.3)
+			if (percent <= 0.3)
 			{
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::DARK);
 			}
-			else if (percent >= 0.3f && percent < 0.7f)
+			else if (percent > 0.3f && percent < 0.7f)
 			{
 				//½ÉÆÇ
 				ChangeActionType(MonsterActionType::ATTACK);
@@ -650,10 +650,10 @@ void ANunMonster::JudementAttack()
 		auto NunEffect = Cast<ANunEffectObjInPool>(PoolObj);
 		NunEffect->DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		NunEffect->DamageSphereTriggerComp->bHiddenInGame = false;
-		NunEffect->DamageSphereTriggerComp->Count = 1;
+		NunEffect->DamageSphereTriggerComp->MaxCount = 1;
 		NunEffect->DamageSphereTriggerComp->Damage = 50.f;
 		NunEffect->DamageSphereTriggerComp->DamageTime = 1.f;
-		NunEffect->SetCurrentEffect(EffectType::JUDEMENTEFFECT);
+		NunEffect->SetCurrentEffect(EffectType::JUDGEMENTEFFECT);
 		NunEffect->ActivateCurrentEffect();
 		NunEffect->DeactivateDamageSphere(JudementTime);
 	}
@@ -661,6 +661,8 @@ void ANunMonster::JudementAttack()
 
 void ANunMonster::Curse()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Curse"));
+
 }
 
 void ANunMonster::CrystalAttack()
@@ -710,11 +712,11 @@ void ANunMonster::PrayAttack()
 			SpawnLocArr[PraySpawnCount]->GetComponentLocation(), FRotator::ZeroRotator);
 
 			auto PrayObj = Cast<ANunEffectObjInPool>(DarkPoolObj);
-			PrayObj->SetCurrentEffect(EffectType::DARKEFFECT);
+			PrayObj->SetCurrentEffect(EffectType::PRAYEFFECT);
 			PrayObj->ActivateCurrentEffect();
 			PrayObj->ShotProjectile(true, PlayerCharacter->GetActorLocation());
 			PrayObj->SetActorTickEnabled(true);
-		
+			PrayObj->Speed = 1000.f;
 			++PraySpawnCount;
 
 			if (PraySpawnCount >= SpawnLocArr.Num())
