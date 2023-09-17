@@ -475,6 +475,7 @@ void ANunMonster::SpawnKnight()
 		Knight->ChangeMontageAnimation(MonsterAnimationType::SPAWNING);
 		Knight->MonsterController->FindPlayer = true;
 		Knight->ChangeActionType(MonsterActionType::MOVE);
+		Knight->MonsterMoveEventIndex = 1;
 		KnightArr.Push(Knight);
 	}
 }
@@ -697,6 +698,19 @@ void ANunMonster::CrystalAttack()
 
 void ANunMonster::FogAttack()
 {
+	auto Loc = GetActorLocation();
+
+	auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		GetActorLocation(), FRotator::ZeroRotator);
+	auto FogEffect = Cast<ANunEffectObjInPool>(PoolObj);
+
+	FogEffect->SetCurrentEffect(EffectType::FOGEFFECT);
+	FogEffect->ActivateCurrentEffect();
+	FogEffect->DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	FogEffect->DamageSphereTriggerComp->MaxCount = 1;
+	FogEffect->DamageSphereTriggerComp->Damage = 50.f;
+	FogEffect->DamageSphereTriggerComp->DamageTime = 1.f;
+	FogEffect->DeactivateDamageSphere(1.f);
 }
 
 void ANunMonster::PrayAttack()
@@ -896,6 +910,7 @@ void ANunMonster::TelePort()
 
 	ChangeActionType(MonsterActionType::NONE);
 	ChangeMontageAnimation(MonsterAnimationType::IDLE);
+	FogAttack();
 }
 
 void ANunMonster::CheckMontageEndNotify()
