@@ -3,6 +3,19 @@
 
 #include "InterpNotifyState.h"
 
+UInterpNotifyState::UInterpNotifyState()
+{
+	InterpFucn.Add(InterpType::LERP, TFunction<FVector(ABaseCharacter*)>([=](ABaseCharacter* Temp)
+		{						
+			return FVector();
+		}));
+
+	InterpFucn.Add(InterpType::LERP, TFunction<FVector(ABaseCharacter*)>([=](ABaseCharacter* Temp)
+		{
+			return FVector();
+		}));
+}
+
 void UInterpNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
 {
 	if (MeshComp && MeshComp->GetOwner())
@@ -16,7 +29,6 @@ void UInterpNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequ
 					val->IsArrived = false;
 					val->LastPlayerLoc = val->PlayerCharacter->GetActorLocation();
 				});
-
 		}
 	}
 }
