@@ -26,7 +26,7 @@ enum class EExitSettings : uint8
 USTRUCT(BlueprintType)
 struct SERVAME_API FExitTextures
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
 		UTexture2D* KorTexture;
@@ -38,15 +38,16 @@ UCLASS()
 class SERVAME_API UGameExitUI : public UUserWidget
 {
 	GENERATED_BODY()
+
 	UPROPERTY(meta = (BindWidget))
-		UImage* PanelBackground;
+	class UImage* PanelBackground;
 	UPROPERTY(meta = (BindWidget))
-		UButton* YesButton;
+	UButton* YesButton;
 	UPROPERTY(meta = (BindWidget))
-		UButton* NoButton;
+	UButton* NoButton;
 
 	UPROPERTY(EditAnywhere)
-		TMap<EExitSettings, FExitTextures> ImageTextures;
+	TMap<EExitSettings, FExitTextures> ImageTextures;
 
 public:
 	virtual void NativeOnInitialized() override;
