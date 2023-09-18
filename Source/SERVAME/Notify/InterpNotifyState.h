@@ -10,6 +10,14 @@
 /**
  * 
  */
+
+UENUM()
+enum InterpType
+{
+	LERP,
+	VINTERP_TO,
+};
+
 UCLASS()
 class SERVAME_API UInterpNotifyState : public UBossBaseNotifyState
 {
@@ -18,7 +26,13 @@ class SERVAME_API UInterpNotifyState : public UBossBaseNotifyState
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation);
 	virtual void NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime);
 
+	TMap<InterpType, TFunction<FVector(ABaseCharacter* Temp)>> InterpFucn;
+
 public:
+	UInterpNotifyState();
+
 	UPROPERTY(EditAnywhere)
 	float InterpVal;
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<InterpType> Type;	
 };
