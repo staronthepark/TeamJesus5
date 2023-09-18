@@ -5,15 +5,7 @@
 
 UInterpNotifyState::UInterpNotifyState()
 {
-	InterpFucn.Add(InterpType::LERP, TFunction<FVector(ABaseCharacter*)>([=](ABaseCharacter* Temp)
-		{						
-			return FVector();
-		}));
 
-	InterpFucn.Add(InterpType::LERP, TFunction<FVector(ABaseCharacter*)>([=](ABaseCharacter* Temp)
-		{
-			return FVector();
-		}));
 }
 
 void UInterpNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)

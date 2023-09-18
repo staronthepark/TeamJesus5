@@ -72,6 +72,12 @@ AKinghtMonster::AKinghtMonster()
 
 	MonsterMoveMap.Add(0, [&]()
 		{
+			if (!IsPatrol)
+			{
+				MonsterMoveEventIndex = 1;
+				return;
+			}
+
 			if(PatrolActorArr.IsEmpty())
 				MonsterMoveEventIndex = 1;
 
@@ -392,7 +398,7 @@ void AKinghtMonster::Stun()
 	DeactivateSMOverlap();
 	ParryingCollision1->Deactivate();
 	DeactivateRightWeapon();
-	ChangeMontageAnimation(MonsterAnimationType::DEAD);
+	ChangeMontageAnimation(MonsterAnimationType::PARRYING);
 }
 
 void AKinghtMonster::ChangeMontageAnimation(MonsterAnimationType type)
