@@ -1749,6 +1749,21 @@ void APlayerCharacter::BeginPlay()
 	ShieldAttackOverlap->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnShieldOverlapBegin);
 	
 	ShoulderView(IsShoulderView);
+
+	TArray<AActor*> ActorsToFind;
+	if (UWorld* World = GetWorld())
+	{
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseTriggerActor::StaticClass(), ActorsToFind);
+	}
+	for (AActor* TriggerActor : ActorsToFind)
+	{
+		ABaseTriggerActor* TriggerActorCast = Cast<ABaseTriggerActor>(TriggerActor);
+		if (TriggerActorCast)
+		{
+			GameInstance->SavedTriggerActor.Add(TriggerActorCast->Index, TriggerActorCast);
+		}
+	}
+
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
 	ASoundManager::GetInstance().Init();
 }
@@ -2720,6 +2735,7 @@ void APlayerCharacter::LoadFile()
 	ASoundManager::GetInstance().StartBGMSound(IsPhaseTwo);
 	if(IsPhaseTwo)
 		UCombatManager::GetInstance().Boss2->SetActive(true);
+	PlayerDataStruct.ShieldHP = PlayerDataStruct.MaxShieldHP;
 }
 
 void APlayerCharacter::PlayStartAnimation()
