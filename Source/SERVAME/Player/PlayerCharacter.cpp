@@ -1888,9 +1888,9 @@ void APlayerCharacter::MoveSpawnLocation(FVector Location)
 	SetActorRotation(FRotator(0, 0, 0));
 	YawRotation = FRotator(0, 0, 0);
 	SetActorLocation(Location);
-	SpawnLocation = Location;
+	//SpawnLocation = Location;
 	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
-	UJesusSaveGame::GetInstance().Save(this, GameInstance);
+	//UJesusSaveGame::GetInstance().Save(this, GameInstance);
 
 	if (IsLockOn)
 		LockOn();
@@ -2757,6 +2757,7 @@ void APlayerCharacter::PlayerDead(bool IsFly)
 	ChangeActionType(ActionType::DEAD);
 	MontageBlendInTime = 0.0f;
 	IsFly ? ChangeMontageAnimation(AnimationType::DEADLOOP2) : ChangeMontageAnimation(AnimationType::DEAD);
+	IsPhaseTwo = false;
 }
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
