@@ -169,6 +169,10 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		}
 		else
 		{
+			if (Monster->MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
+			{
+				return;
+			}
 			Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			Monster->MonsterMoveEventIndex = 1;
 		}
