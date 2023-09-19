@@ -427,6 +427,8 @@ public:
 
 	void CheckInputKey();
 
+	bool CanActivate(int32 SoulCount);
+
 	void SetSpeed(float speed);
 
 	void ShieldOff();
