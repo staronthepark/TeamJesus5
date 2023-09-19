@@ -1917,8 +1917,7 @@ void AJesusBoss::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	
 		//UE_LOG(LogTemp, Warning, TEXT("DAMAGE : %d"), Damage);
 		OtherActor->TakeDamage(Damage, DamageEvent, GetController(), this);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 	
 		if (HitEffectRotatorList.Contains(Type))

@@ -2158,6 +2158,16 @@ void APlayerCharacter::CheckInputKey()
 	}
 }
 
+bool APlayerCharacter::CanActivate(int32 SoulCount)
+{
+	if (SoulCount > PlayerDataStruct.SoulCount)
+	{
+		PlayerDataStruct.SoulCount -= SoulCount;
+		return true;
+	}
+	return false;
+}
+
 void APlayerCharacter::SetSpeed(float speed)
 {
 	if (speed == PlayerDataStruct.PlayerWalkSpeed && !IsGrab)

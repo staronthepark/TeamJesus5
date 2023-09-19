@@ -10,116 +10,218 @@ void UPlayerStatComponent::BeginPlay()
 	Super::BeginPlay();
 
 	Owner = Cast<APlayerCharacter>(GetOwner());
-
-	StrengthStatList[0].Func = [&]()
+	
+	StrengthStatList[0].Func = [&]()-> bool
 	{
-		Owner->PlayerDataStruct.BaseDamage += Owner->PlayerDataStruct.BaseDamage * StrengthStatList[0].Value;
-		Owner->PlayerDataStruct.StrengthIndex++;
+		if (Owner->CanActivate(StrengthStatList[Owner->PlayerDataStruct.StrengthIndex].SoulCost))
+		{
+			Owner->PlayerDataStruct.BaseDamage += Owner->PlayerDataStruct.BaseDamage * StrengthStatList[Owner->PlayerDataStruct.StrengthIndex].Value;
+			Owner->PlayerDataStruct.StrengthIndex++;
+			return true;
+		}
+		return false;
 	};
-	StrengthStatList[1].Func = [&]()
+	StrengthStatList[1].Func = [&]()-> bool
 	{
-		Owner->PlayerDataStruct.BaseDamage += Owner->PlayerDataStruct.BaseDamage * StrengthStatList[1].Value;
-		Owner->PlayerDataStruct.StrengthIndex++;
+		if (Owner->CanActivate(StrengthStatList[Owner->PlayerDataStruct.StrengthIndex].SoulCost))
+		{
+			Owner->PlayerDataStruct.BaseDamage += Owner->PlayerDataStruct.BaseDamage * StrengthStatList[Owner->PlayerDataStruct.StrengthIndex].Value;
+			Owner->PlayerDataStruct.StrengthIndex++;
+			return true;
+		}
+		return false;
 	};
-	StrengthStatList[2].Func = [&]()
+	StrengthStatList[2].Func = [&]()-> bool
 	{
-		Owner->PlayerDataStruct.BaseDamage += Owner->PlayerDataStruct.BaseDamage * StrengthStatList[2].Value;
-		Owner->PlayerDataStruct.StrengthIndex++;
+		if (Owner->CanActivate(StrengthStatList[Owner->PlayerDataStruct.StrengthIndex].SoulCost))
+		{
+			Owner->PlayerDataStruct.BaseDamage += Owner->PlayerDataStruct.BaseDamage * StrengthStatList[Owner->PlayerDataStruct.StrengthIndex].Value;
+			Owner->PlayerDataStruct.StrengthIndex++;
+			return true;
+		}
+		return false;
 	};
-	StrengthStatList[3].Func = [&]()
+	StrengthStatList[3].Func = [&]()-> bool
 	{
-		Owner->PlayerDataStruct.BaseDamage += Owner->PlayerDataStruct.BaseDamage * StrengthStatList[3].Value;
-		Owner->PlayerDataStruct.StrengthIndex++;
+		if (Owner->CanActivate(StrengthStatList[Owner->PlayerDataStruct.StrengthIndex].SoulCost))
+		{
+			Owner->PlayerDataStruct.BaseDamage += Owner->PlayerDataStruct.BaseDamage * StrengthStatList[Owner->PlayerDataStruct.StrengthIndex].Value;
+			Owner->PlayerDataStruct.StrengthIndex++;
+			return true;
+		}
+		return false;
 	};
-	StrengthStatList[4].Func = [&]()
+	StrengthStatList[4].Func = [&]()-> bool
 	{
-		Owner->PlayerDataStruct.BaseDamage += Owner->PlayerDataStruct.BaseDamage * StrengthStatList[4].Value;
-		Owner->PlayerDataStruct.StrengthIndex++;
-	};
-
-	StaminaStatList[0].Func = [&]()
-	{
-		Owner->PlayerDataStruct.MaxStamina += Owner->PlayerDataStruct.MaxStamina * StaminaStatList[0].Value;
-		Owner->PlayerDataStruct.StaminaIndex++;
-	};
-	StaminaStatList[1].Func = [&]()
-	{
-		Owner->PlayerDataStruct.MaxStamina += Owner->PlayerDataStruct.MaxStamina * StaminaStatList[1].Value;
-		Owner->PlayerDataStruct.StaminaIndex++;
-	};
-	StaminaStatList[2].Func = [&]()
-	{
-		Owner->PlayerDataStruct.MaxStamina += Owner->PlayerDataStruct.MaxStamina * StaminaStatList[2].Value;
-		Owner->PlayerDataStruct.StaminaIndex++;
-	};
-	StaminaStatList[3].Func = [&]()
-	{
-		Owner->PlayerUseStaminaMap[ActionType::DODGE] -= Owner->PlayerUseStaminaMap[ActionType::DODGE] * StaminaStatList[3].Value;
-		Owner->PlayerUseStaminaMap[ActionType::ATTACK] -= Owner->PlayerUseStaminaMap[ActionType::ATTACK] * StaminaStatList[3].Value;
-		Owner->PlayerUseStaminaMap[ActionType::POWERATTACK] -= Owner->PlayerUseStaminaMap[ActionType::POWERATTACK] * StaminaStatList[3].Value;
-		Owner->PlayerUseStaminaMap[ActionType::PARRING] -= Owner->PlayerUseStaminaMap[ActionType::PARRING] * StaminaStatList[3].Value;
-		Owner->PlayerUseStaminaMap[ActionType::SHIELD] -= Owner->PlayerUseStaminaMap[ActionType::SHIELD] * StaminaStatList[3].Value;
-		Owner->PlayerDataStruct.StaminaIndex++;
-	};
-	StaminaStatList[4].Func = [&]()
-	{
-		Owner->PlayerUseStaminaMap[ActionType::DODGE] -= Owner->PlayerUseStaminaMap[ActionType::DODGE] * StaminaStatList[4].Value;
-		Owner->PlayerUseStaminaMap[ActionType::ATTACK] -= Owner->PlayerUseStaminaMap[ActionType::ATTACK] * StaminaStatList[4].Value;
-		Owner->PlayerUseStaminaMap[ActionType::POWERATTACK] -= Owner->PlayerUseStaminaMap[ActionType::POWERATTACK] * StaminaStatList[4].Value;
-		Owner->PlayerUseStaminaMap[ActionType::PARRING] -= Owner->PlayerUseStaminaMap[ActionType::PARRING] * StaminaStatList[4].Value;
-		Owner->PlayerUseStaminaMap[ActionType::SHIELD] -= Owner->PlayerUseStaminaMap[ActionType::SHIELD] * StaminaStatList[4].Value;
-		Owner->PlayerDataStruct.StaminaIndex++;
+		if (Owner->CanActivate(StrengthStatList[Owner->PlayerDataStruct.StrengthIndex].SoulCost))
+		{
+			Owner->PlayerDataStruct.BaseDamage += Owner->PlayerDataStruct.BaseDamage * StrengthStatList[Owner->PlayerDataStruct.StrengthIndex].Value;
+			Owner->PlayerDataStruct.StrengthIndex++;
+			return true;
+		}
+		return false;
 	};
 
-	HpStatList[0].Func = [&]()
+	StaminaStatList[0].Func = [&]()-> bool
 	{
-		Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[0].Value;
-		Owner->PlayerDataStruct.HPIndex++;
+		if (Owner->CanActivate(StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].SoulCost))
+		{
+			Owner->PlayerDataStruct.MaxStamina += Owner->PlayerDataStruct.MaxStamina * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
+			Owner->PlayerDataStruct.StaminaIndex++;
+			return true;
+		}
+		return false;
 	};
-	HpStatList[1].Func = [&]()
+	StaminaStatList[1].Func = [&]()-> bool
 	{
-		Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[1].Value;
-		Owner->PlayerDataStruct.HPIndex++;
+		if (Owner->CanActivate(StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].SoulCost))
+		{
+			Owner->PlayerDataStruct.MaxStamina += Owner->PlayerDataStruct.MaxStamina * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
+			Owner->PlayerDataStruct.StaminaIndex++;
+			return true;
+		}
+		return false;
 	};
-	HpStatList[2].Func = [&]()
+	StaminaStatList[2].Func = [&]()-> bool
 	{
-		Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[2].Value;
-		Owner->PlayerDataStruct.HPIndex++;
+		if (Owner->CanActivate(StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].SoulCost))
+		{
+			Owner->PlayerDataStruct.MaxStamina += Owner->PlayerDataStruct.MaxStamina * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
+			Owner->PlayerDataStruct.StaminaIndex++;
+			return true;
+		}
+		return false;
 	};
-	HpStatList[3].Func = [&]()
+	StaminaStatList[3].Func = [&]()-> bool
 	{
-		Owner->PlayerDataStruct.PlayerHealValue += Owner->PlayerDataStruct.PlayerHealValue * HpStatList[3].Value;
-		Owner->PlayerDataStruct.HPIndex++;
+		if (Owner->CanActivate(StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].SoulCost))
+		{
+
+			Owner->PlayerUseStaminaMap[ActionType::DODGE] -= Owner->PlayerUseStaminaMap[ActionType::DODGE] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
+			Owner->PlayerUseStaminaMap[ActionType::ATTACK] -= Owner->PlayerUseStaminaMap[ActionType::ATTACK] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
+			Owner->PlayerUseStaminaMap[ActionType::POWERATTACK] -= Owner->PlayerUseStaminaMap[ActionType::POWERATTACK] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
+			Owner->PlayerUseStaminaMap[ActionType::PARRING] -= Owner->PlayerUseStaminaMap[ActionType::PARRING] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
+			Owner->PlayerUseStaminaMap[ActionType::SHIELD] -= Owner->PlayerUseStaminaMap[ActionType::SHIELD] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
+			Owner->PlayerDataStruct.StaminaIndex++;
+			return true;
+		}
+		return false;
+
 	};
-	HpStatList[4].Func = [&]()
+	StaminaStatList[4].Func = [&]()-> bool
 	{
-		Owner->PlayerDataStruct.MaxHealCount += 1;
-		Owner->PlayerDataStruct.HPIndex++;
+		if (Owner->CanActivate(StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].SoulCost))
+		{
+			Owner->PlayerUseStaminaMap[ActionType::DODGE] -= Owner->PlayerUseStaminaMap[ActionType::DODGE] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
+			Owner->PlayerUseStaminaMap[ActionType::ATTACK] -= Owner->PlayerUseStaminaMap[ActionType::ATTACK] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
+			Owner->PlayerUseStaminaMap[ActionType::POWERATTACK] -= Owner->PlayerUseStaminaMap[ActionType::POWERATTACK] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
+			Owner->PlayerUseStaminaMap[ActionType::PARRING] -= Owner->PlayerUseStaminaMap[ActionType::PARRING] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
+			Owner->PlayerUseStaminaMap[ActionType::SHIELD] -= Owner->PlayerUseStaminaMap[ActionType::SHIELD] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
+			Owner->PlayerDataStruct.StaminaIndex++;
+			return true;
+		}
+		return false;
 	};
 
-	ShieldStatList[0].Func = [&]()
+	HpStatList[0].Func = [&]()-> bool
 	{
-		Owner->PlayerDataStruct.SoulBonusCount += ShieldStatList[0].Value;
-		Owner->PlayerDataStruct.ShieldIndex++;
+		if (Owner->CanActivate(HpStatList[Owner->PlayerDataStruct.HPIndex].SoulCost))
+		{
+			Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
+			Owner->PlayerDataStruct.HPIndex++;
+			return true;
+		}
+		return false;
 	};
-	ShieldStatList[1].Func = [&]()
+	HpStatList[1].Func = [&]()-> bool
 	{
-		Owner->PlayerDataStruct.SoulBonusCount += ShieldStatList[1].Value;
-		Owner->PlayerDataStruct.ShieldIndex++;
+		if (Owner->CanActivate(HpStatList[Owner->PlayerDataStruct.HPIndex].SoulCost))
+		{
+			Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
+			Owner->PlayerDataStruct.HPIndex++;
+			return true;
+		}
+		return false;
 	};
-	ShieldStatList[2].Func = [&]()
+	HpStatList[2].Func = [&]()-> bool
 	{
-		Owner->PlayerDataStruct.SoulBonusCount += ShieldStatList[2].Value;
-		Owner->PlayerDataStruct.ShieldIndex++;
+		if (Owner->CanActivate(HpStatList[Owner->PlayerDataStruct.HPIndex].SoulCost))
+		{
+			Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
+			Owner->PlayerDataStruct.HPIndex++;
+			return true;
+		}
+		return false;
 	};
-	ShieldStatList[3].Func = [&]()
+	HpStatList[3].Func = [&]()-> bool
 	{
-		Owner->PlayerDataStruct.SkillSoulCost = ShieldStatList[3].Value;
-		Owner->PlayerDataStruct.ShieldIndex++;
+		if (Owner->CanActivate(HpStatList[Owner->PlayerDataStruct.HPIndex].SoulCost))
+		{
+			Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
+			Owner->PlayerDataStruct.HPIndex++;
+			return true;
+		}
+		return false;
 	};
-	ShieldStatList[4].Func = [&]()
+	HpStatList[4].Func = [&]()-> bool
 	{
-		Owner->PlayerDataStruct.ShieldSoulCost = ShieldStatList[4].Value;
-		Owner->PlayerDataStruct.ShieldIndex++;
+		if (Owner->CanActivate(HpStatList[Owner->PlayerDataStruct.HPIndex].SoulCost))
+		{
+			Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
+			Owner->PlayerDataStruct.HPIndex++;
+			return true;
+		}
+		return false;
+	};
+
+	ShieldStatList[0].Func = [&]()-> bool
+	{
+		if (Owner->CanActivate(ShieldStatList[Owner->PlayerDataStruct.ShieldIndex].SoulCost))
+		{
+			Owner->PlayerDataStruct.SoulBonusCount += ShieldStatList[Owner->PlayerDataStruct.ShieldIndex].Value;
+			Owner->PlayerDataStruct.ShieldIndex++;
+			return true;
+		}
+		return false;
+	};
+	ShieldStatList[1].Func = [&]()-> bool
+	{
+		if (Owner->CanActivate(ShieldStatList[Owner->PlayerDataStruct.ShieldIndex].SoulCost))
+		{
+			Owner->PlayerDataStruct.SoulBonusCount += ShieldStatList[Owner->PlayerDataStruct.ShieldIndex].Value;
+			Owner->PlayerDataStruct.ShieldIndex++;
+			return true;
+		}
+		return false;
+	};
+	ShieldStatList[2].Func = [&]()-> bool
+	{
+		if (Owner->CanActivate(ShieldStatList[Owner->PlayerDataStruct.ShieldIndex].SoulCost))
+		{
+			Owner->PlayerDataStruct.SoulBonusCount += ShieldStatList[Owner->PlayerDataStruct.ShieldIndex].Value;
+			Owner->PlayerDataStruct.ShieldIndex++;
+			return true;
+		}
+		return false;
+	};
+	ShieldStatList[3].Func = [&]()-> bool
+	{
+		if (Owner->CanActivate(ShieldStatList[Owner->PlayerDataStruct.ShieldIndex].SoulCost))
+		{
+			Owner->PlayerDataStruct.SkillSoulCost = ShieldStatList[Owner->PlayerDataStruct.ShieldIndex].Value;
+			Owner->PlayerDataStruct.ShieldIndex++;
+			return true;
+		}
+		return false;
+	};
+	ShieldStatList[4].Func = [&]()-> bool
+	{
+		if (Owner->CanActivate(ShieldStatList[Owner->PlayerDataStruct.ShieldIndex].SoulCost))
+		{
+			Owner->PlayerDataStruct.ShieldSoulCost = ShieldStatList[Owner->PlayerDataStruct.ShieldIndex].Value;
+			Owner->PlayerDataStruct.ShieldIndex++;
+			return true;
+		}
+		return false;
 	};
 }

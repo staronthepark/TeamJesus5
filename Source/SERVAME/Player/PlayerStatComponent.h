@@ -18,7 +18,7 @@ struct FPlayerStatInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float Value;
 
-	TFunction<void()> Func;
+	TFunction<bool()> Func;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
