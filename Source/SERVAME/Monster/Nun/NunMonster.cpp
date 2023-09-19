@@ -1104,14 +1104,20 @@ void ANunMonster::TelePort()
 	auto Temp1 = Cast<ANunEffectObjInPool>(TeleportInObj);
 	Temp1->SetCurrentEffect(EffectType::TELEPORT_IN);
 	Temp1->ActivateCurrentEffect();
+
+	SetActive(false);
 	GetMesh()->SetVisibility(false);
-	
+	DeactivateHitCollision();
+
 	GetWorld()->GetTimerManager().SetTimer(TeleportTimer, FTimerDelegate::CreateLambda([=]()
 		{
 			srand(time(NULL));
 			auto Num = rand() % TeleportArr.Num();
 			SetActorLocation(TeleportArr[Num]->GetActorLocation());
+
+			SetActive(true);
 			GetMesh()->SetVisibility(true);
+			ActivateHitCollision();
 
 			auto TeleportOutObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
 				GetActorLocation(), FRotator::ZeroRotator);
