@@ -427,11 +427,11 @@ void ANunMonster::Tick(float DeltaTime)
 
 	//텔레포트 이펙트 확인용
 	//사용할 때 텔레포트 함수의 플레이어 락온 부분 주석치고 사용할 것.
-	//if (test)
-	//{
-	//	TelePort();
-	//	test = false;
-	//}
+	if (test)
+	{
+		TelePort();
+		test = false;
+	}
 }
 
 void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -1025,8 +1025,8 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 
 void ANunMonster::TelePort()
 {
-	if (PlayerCharacter->IsLockOn)
-		PlayerCharacter->LockOn();
+	//if (PlayerCharacter->IsLockOn)
+	//	PlayerCharacter->LockOn();
 
 	auto TeleportInObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
 		GetActorLocation(), FRotator::ZeroRotator);
@@ -1034,21 +1034,23 @@ void ANunMonster::TelePort()
 	Temp1->SetCurrentEffect(EffectType::TELEPORT_IN);
 	Temp1->ActivateCurrentEffect();
 	
-	srand(time(NULL));
+	GetWorld()->GetTimerManager().SetTimer(TeleportTimer, FTimerDelegate::CreateLambda([=]()
+		{
+			srand(time(NULL));
+			auto Num = rand() % TeleportArr.Num();
+			SetActorLocation(TeleportArr[Num]->GetActorLocation());
 
-	auto Num = rand() % TeleportArr.Num();
+			auto TeleportOutObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+				GetActorLocation(), FRotator::ZeroRotator);
+			auto Temp2 = Cast<ANunEffectObjInPool>(TeleportOutObj);
+			Temp2->SetCurrentEffect(EffectType::TELEPORT_OUT);
+			Temp2->ActivateCurrentEffect();
 
-	SetActorLocation(TeleportArr[Num]->GetActorLocation());
-
-	auto TeleportOutObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
-		GetActorLocation(), FRotator::ZeroRotator);
-	auto Temp2 = Cast<ANunEffectObjInPool>(TeleportOutObj);
-	Temp2->SetCurrentEffect(EffectType::TELEPORT_OUT);
-	Temp2->ActivateCurrentEffect();
-
-	ChangeActionType(MonsterActionType::NONE);
-	ChangeMontageAnimation(MonsterAnimationType::IDLE);
-	FogAttack();
+			ChangeActionType(MonsterActionType::NONE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			FogAttack();
+			GetWorld()->GetTimerManager().ClearTimer(TeleportTimer);
+		}), TeleportDelayVal, false);
 }
 
 void ANunMonster::CheckMontageEndNotify()
