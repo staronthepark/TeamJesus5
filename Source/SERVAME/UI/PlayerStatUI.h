@@ -45,6 +45,9 @@ class SERVAME_API UPlayerStatUI : public UUserWidget
 	
 	UPROPERTY(meta = (BindWidget))
 	UStatUI* StrButton3;
+
+	UPROPERTY(meta = (BindWidget))
+	UStatUI* StrButton4;
 	
 
 	TArray<UStatUI*> StaminaButtons;
@@ -61,6 +64,9 @@ class SERVAME_API UPlayerStatUI : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 		UStatUI* StaminaButton3;
 
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* StaminaButton4;
+
 	TArray<UStatUI*> HpButtons;
 
 	UPROPERTY(meta = (BindWidget))
@@ -75,6 +81,9 @@ class SERVAME_API UPlayerStatUI : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 		UStatUI* HpButton3;
 
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* HpButton4;
+
 	TArray<UStatUI*> ShieldButtons;
 
 	UPROPERTY(meta = (BindWidget))
@@ -88,6 +97,9 @@ class SERVAME_API UPlayerStatUI : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 		UStatUI* ShieldButton3;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* ShieldButton4;
 
 	UPROPERTY(EditAnywhere)
 	TMap<EStateType, FStatButtonExplainTextures> ExplainTextures;
