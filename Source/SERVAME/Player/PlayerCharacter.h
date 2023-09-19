@@ -189,6 +189,8 @@ public:
 
 	int ShieldCount;
 
+	FName SaveMapName;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraSpringArm")
 		USpringArmComponent* CameraBoom1;
 
@@ -435,6 +437,8 @@ public:
 	void SetSoul(int32 value);
 
 	void LoadFile();
+
+	void LoadMap();
 
 	UFUNCTION()
 		void PlayStartAnimation();
