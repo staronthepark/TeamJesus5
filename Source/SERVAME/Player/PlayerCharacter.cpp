@@ -2156,7 +2156,7 @@ void APlayerCharacter::CheckInputKey()
 
 bool APlayerCharacter::CanActivate(int32 SoulCount)
 {
-	if (SoulCount >= PlayerDataStruct.SoulCount)
+	if (SoulCount <= PlayerDataStruct.SoulCount)
 	{
 		SetSoul(-SoulCount);
 		return true;
