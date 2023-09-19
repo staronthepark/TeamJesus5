@@ -1184,7 +1184,6 @@ void AJesusBoss2::PostInitializeComponents()
 		Boss2AnimInstance->OnRightLockOn.AddUObject(this, &AJesusBoss2::RightLockOn);
 		Boss2AnimInstance->OnRightLockOff.AddUObject(this, &AJesusBoss2::RightLockOff);
 
-
 		Boss2AnimInstance->OnMontageEnded.AddDynamic(this, &AJesusBoss2::GetEndedMontage);
 	}
 }
@@ -1513,8 +1512,7 @@ void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 			return;
 		
 		OtherActor->TakeDamage(Damage, DamageEvent, GetController(), this);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 	}
 }
