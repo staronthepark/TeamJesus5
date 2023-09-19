@@ -99,8 +99,13 @@ AEnemyMonster::AEnemyMonster()
 		});
 	CheckDIstanceMap.Add(true, [&]()
 		{
-			if(PlayerCharacter != nullptr)
+			if (PlayerCharacter != nullptr)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("asdfasdfasd"));
 				CurrentDistance = FVector::Distance(GetActorLocation(), PlayerCharacter->GetActorLocation());
+			}
+			else
+				UE_LOG(LogTemp, Warning, TEXT("?????????"));
 		});
 
 	MonsterTickEventMap.Add(MonsterActionType::NONE, [&]()
