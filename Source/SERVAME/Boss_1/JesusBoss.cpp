@@ -1903,8 +1903,7 @@ void AJesusBoss::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		Player->SetShieldHP(-BossDataStruct.DamageList[Type]);
 		CameraShake(PlayerCameraShake);
 		VibrateGamePad(0.4f, 0.4f);
-		objectpool.SpawnObject(objectpool.ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		objectpool.SpawnObject(objectpool.ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 		objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 		return;
 	}

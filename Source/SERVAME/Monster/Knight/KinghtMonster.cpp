@@ -72,15 +72,6 @@ AKinghtMonster::AKinghtMonster()
 
 	MonsterMoveMap.Add(0, [&]()
 		{
-			if (!IsPatrol)
-			{
-				MonsterMoveEventIndex = 1;
-				return;
-			}
-
-			if(PatrolActorArr.IsEmpty())
-				MonsterMoveEventIndex = 1;
-
 			IsPatrol = true;
 			GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.CharacterOriginSpeed;
 			KnightAnimInstance->BlendSpeed = WalkBlend;
@@ -398,7 +389,7 @@ void AKinghtMonster::Stun()
 	DeactivateSMOverlap();
 	ParryingCollision1->Deactivate();
 	DeactivateRightWeapon();
-	ChangeMontageAnimation(MonsterAnimationType::PARRYING);
+	ChangeMontageAnimation(MonsterAnimationType::DEAD);
 }
 
 void AKinghtMonster::ChangeMontageAnimation(MonsterAnimationType type)
