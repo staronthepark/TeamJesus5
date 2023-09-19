@@ -2736,6 +2736,9 @@ void APlayerCharacter::ShieldAttack()
 void APlayerCharacter::SetSoul(int32 value)
 {
 	PlayerDataStruct.SoulCount += value;
+
+	value < 0 ? PlayerHUD->DecreaseSoulGradual(this, PlayerDataStruct.SoulCount / PlayerDataStruct.MaxSoulCount) : 
+		PlayerHUD->SetSoul(PlayerDataStruct.SoulCount / PlayerDataStruct.MaxSoulCount);		
 }
 
 void APlayerCharacter::LoadFile()
@@ -2745,6 +2748,8 @@ void APlayerCharacter::LoadFile()
 	ASoundManager::GetInstance().StartBGMSound(IsPhaseTwo);
 	if(IsPhaseTwo)
 		UCombatManager::GetInstance().Boss2->SetActive(true);
+
+	SetSoul(PlayerDataStruct.SoulCount);
 }
 
 void APlayerCharacter::LoadMap()

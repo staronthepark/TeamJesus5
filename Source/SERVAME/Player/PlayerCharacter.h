@@ -78,6 +78,8 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TMap<AnimationType, FPlayerDamageInfo>DamageList;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 MaxSoulCount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 MaxHealCount;
