@@ -30,6 +30,9 @@ enum class MonsterAnimationType : uint8
 	SPAWNING,
 	REVIVE,
 	FRAGMENT,
+	CRYSTAL,
+	ILLUSION,
+	JUEMENT_GROUND,
 
 	FORWARDMOVE,
 	LEFTMOVE,
