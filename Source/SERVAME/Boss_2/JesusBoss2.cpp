@@ -1591,12 +1591,6 @@ FVector AJesusBoss2::Lerp(const FVector& start, const FVector& end, const float 
 	return NewLoc;
 }
 
-FVector AJesusBoss2::VLerp(const FVector& start, const FVector& end, const float t)
-{
-	FVector NewLoc = FMath::VInterpTo(start, end, GetWorld()->DeltaTimeSeconds, t);
-	return NewLoc;
-}
-
 Boss2ActionTemp AJesusBoss2::GetRandomPattern(float Dist)
 {
 	if (Dist >= RangeAtk)

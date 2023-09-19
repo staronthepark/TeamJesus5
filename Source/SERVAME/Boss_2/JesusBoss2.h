@@ -473,7 +473,6 @@ public:
 	void SetLockOn() { AttackLockOn = true; }
 	void SetLockOff() { AttackLockOn = false; LastPlayerLoc = PlayerCharacter->GetActorLocation(); }
 	FVector Lerp(const FVector& start, const FVector& end, const float t);
-	FVector VLerp(const FVector& start, const FVector& end, const float t);
 	Boss2ActionTemp GetRandomPattern(float Dist);
 	void SpawnInit();
 	void StartBoneRot();

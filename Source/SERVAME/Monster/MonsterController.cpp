@@ -169,6 +169,13 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		}
 		else
 		{
+			if (Monster->MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("????????????"));
+				Monster->ChangeMontageAnimation(MonsterAnimationType::STARTDEAD);
+				return;
+			}
+			UE_LOG(LogTemp, Warning, TEXT("ssiabiaisadsdiaasdi"));
 			Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			Monster->MonsterMoveEventIndex = 1;
 		}

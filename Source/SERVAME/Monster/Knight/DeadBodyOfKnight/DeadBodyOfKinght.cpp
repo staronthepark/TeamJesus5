@@ -34,6 +34,7 @@ ADeadBodyOfKinght::ADeadBodyOfKinght()
 
 	MontageEndEventMap.Add(MonsterAnimationType::STARTDEAD, [&]()
 		{	
+			UE_LOG(LogTemp, Warning, TEXT("START_DAED"));
 			ChangeMontageAnimation(MonsterAnimationType::STARTDEAD);
 		});
 

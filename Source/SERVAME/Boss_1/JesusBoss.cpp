@@ -1438,12 +1438,6 @@ FVector AJesusBoss::Lerp(const FVector& start, const FVector& end, const float t
 	return NewLoc;
 }
 
-FVector AJesusBoss::VLerp(const FVector& start, const FVector& end, const float t)
-{
-	FVector NewLoc = FMath::VInterpTo(start, end, GetWorld()->DeltaTimeSeconds, t);
-	return NewLoc;
-}
-
 void AJesusBoss::ChangeHitStatus()
 {
 	CurrentStatus = HIT;
