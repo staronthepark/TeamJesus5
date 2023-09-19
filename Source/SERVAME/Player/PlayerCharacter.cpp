@@ -2324,12 +2324,14 @@ void APlayerCharacter::RespawnCharacter()
 	YawRotation = SpawnRotation;
 	ChangeActionType(ActionType::NONE);
 	ChangeMontageAnimation(AnimationType::IDLE);
+
 	AxisX = 1;
 	AxisY = 1;
 
 	RestoreStat();
 
-	
+	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
+
 	SetSpeed(SpeedMap[false][false]);
 }
 
