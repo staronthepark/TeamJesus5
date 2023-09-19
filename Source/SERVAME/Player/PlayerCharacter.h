@@ -121,6 +121,12 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 		int32 HPIndex;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 ShieldIndex;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 SoulBonusCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float SkillSoulCost;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float ShieldSoulCost;
 };
 
 UCLASS()

@@ -99,22 +99,27 @@ void UPlayerStatComponent::BeginPlay()
 
 	ShieldStatList[0].Func = [&]()
 	{
+		Owner->PlayerDataStruct.SoulBonusCount += ShieldStatList[0].Value;
 		Owner->PlayerDataStruct.ShieldIndex++;
 	};
 	ShieldStatList[1].Func = [&]()
 	{
+		Owner->PlayerDataStruct.SoulBonusCount += ShieldStatList[1].Value;
 		Owner->PlayerDataStruct.ShieldIndex++;
 	};
 	ShieldStatList[2].Func = [&]()
 	{
+		Owner->PlayerDataStruct.SoulBonusCount += ShieldStatList[2].Value;
 		Owner->PlayerDataStruct.ShieldIndex++;
 	};
 	ShieldStatList[3].Func = [&]()
 	{
+		Owner->PlayerDataStruct.SkillSoulCost = ShieldStatList[3].Value;
 		Owner->PlayerDataStruct.ShieldIndex++;
 	};
 	ShieldStatList[4].Func = [&]()
 	{
+		Owner->PlayerDataStruct.ShieldSoulCost = ShieldStatList[4].Value;
 		Owner->PlayerDataStruct.ShieldIndex++;
 	};
 }
