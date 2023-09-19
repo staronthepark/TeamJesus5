@@ -144,7 +144,6 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 
 	auto Dist = FVector::Distance(Player->GetActorLocation(), Monster->GetActorLocation());
 
-	//퍼셉션 시야각 거리 - 100
 	if (Dist <= PerceptionSight)
 	{
 		if (GetTeamAttitudeTowards(*Actor) == ETeamAttitude::Hostile)
@@ -171,11 +170,9 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		{
 			if (Monster->MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("????????????"));
 				Monster->ChangeMontageAnimation(MonsterAnimationType::STARTDEAD);
 				return;
 			}
-			UE_LOG(LogTemp, Warning, TEXT("ssiabiaisadsdiaasdi"));
 			Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			Monster->MonsterMoveEventIndex = 1;
 		}

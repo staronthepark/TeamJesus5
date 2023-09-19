@@ -21,6 +21,7 @@ ANunEffectObjInPool::ANunEffectObjInPool()
 	DamageSphereTriggerComp = CreateDefaultSubobject<UNunDamageSphereTriggerComp>(TEXT("DamageSphere_a"));
 	DamageSphereTriggerComp->SetupAttachment(RootComponent);
 
+	GetBurstEffectType.Add(EffectType::NONE, EffectType::DARKEFFECTHIT);
 	GetBurstEffectType.Add(EffectType::DARKEFFECT, EffectType::DARKEFFECTHIT);
 	GetBurstEffectType.Add(EffectType::PRAYEFFECT, EffectType::PRAYHITEFFECT);
 	GetBurstEffectType.Add(EffectType::CRYSTALEFFECT, EffectType::CRYSTALEFFECT_BUSRT);
@@ -54,12 +55,12 @@ void ANunEffectObjInPool::Tick(float DeltaTime)
 
 		if (GetActorLocation() == TargetLoc)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("GetActorLocation() == TargetLoc"));
 			IsCurve = false;
+			//CurrentEffect->SetAsset(GetTypeEffect[GetBurstEffectType[Type]]);
+			//CurrentEffect->Activate();
 
-			CurrentEffect->SetAsset(GetTypeEffect[GetBurstEffectType[Type]]);
-			CurrentEffect->Activate();
-
-			ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
 		}
 	}
 }

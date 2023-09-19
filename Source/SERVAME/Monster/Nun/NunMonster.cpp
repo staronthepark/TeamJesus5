@@ -360,6 +360,8 @@ void ANunMonster::BeginPlay()
 void ANunMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//UE_LOG(LogTemp, Warning, TEXT("%f"), CurrentDistance);
 }
 
 void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -435,6 +437,7 @@ float ANunMonster::Die(float Dm)
 {
 	if (MonsterDataStruct.CharacterHp <= 0)
 	{
+		IsDie = true;
 		Imotal = true;
 		GetWorld()->GetTimerManager().ClearTimer(SelfHealTimerHandle);
 		ChangeActionType(MonsterActionType::DEAD);
@@ -564,6 +567,9 @@ void ANunMonster::SelfHeal()
 {
 	GetWorld()->GetTimerManager().SetTimer(SelfHealTimerHandle, FTimerDelegate::CreateLambda([=]()
 	{			
+			if (IsDie)
+				return;
+
 			if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
 				return;
 
@@ -728,8 +734,8 @@ void ANunMonster::PrayAttack()
 			auto PrayObj = Cast<ANunEffectObjInPool>(DarkPoolObj);
 			PrayObj->SetCurrentEffect(EffectType::PRAYEFFECT);
 			PrayObj->ActivateCurrentEffect();
-			PrayObj->ShotProjectile(true, PlayerCharacter->GetActorLocation());
 			PrayObj->SetActorTickEnabled(true);
+			PrayObj->ShotProjectile(true, PlayerCharacter->GetActorLocation());
 			PrayObj->Speed = 1000.f;
 			++PraySpawnCount;
 
@@ -943,6 +949,7 @@ void ANunMonster::RespawnCharacter()
 	WeaponOpacity = 0.171653f;
 	MeshOpacity = 0.171653f;
 
+	IsDie = false;
 	SelfHeal();
 
 	ActivateHitCollision();
