@@ -1162,7 +1162,7 @@ APlayerCharacter::APlayerCharacter()
 
 	InputEventMap[PlayerAction::NONE][ActionType::SHIELD].Add(true, [&]()
 		{
-			if (PlayerDataStruct.SoulCount <= 0)return;
+			if (PlayerDataStruct.SoulCount <= 0 || !CanShieldDeploy)return;
 			AxisY != 1 || AxisX != 1 ? ChangeActionType(ActionType::MOVE) : ChangeActionType(ActionType::NONE);
 
 			IsCollisionCamera = false;
@@ -2088,14 +2088,14 @@ void APlayerCharacter::Run()
 
 void APlayerCharacter::SetShieldHP(float HP)
 {
-	//PlayerDataStruct.ShieldHP = FMath::Clamp(PlayerDataStruct.ShieldHP += HP, 0, PlayerDataStruct.MaxShieldHP);
-	if (HP < 0)
-	{
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[38].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
-	}
+	SetSoul(HP * PlayerDataStruct.ShieldDecreaseSoulPercent);
+
+	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[38].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
+	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
+
 	if (PlayerDataStruct.SoulCount <= 0)
 	{
+		PlayerDataStruct.SoulCount = 0;
 		PlayerHUD->ClearShield();
 		IsGrab = false;
 		VibrateGamePad(0.4f, 0.4f);
@@ -2114,6 +2114,11 @@ void APlayerCharacter::RecoverStamina()
 	PlayerDataStruct.PlayerStamina = FMath::Clamp(PlayerDataStruct.PlayerStamina += fDeltaTime * PlayerDataStruct.StaminaRecovery, 0.0f, 100.0f);
 	PlayerHUD->SetStamina(PlayerDataStruct.PlayerStamina / PlayerDataStruct.MaxStamina);
 	GameInstance->DebugLogWidget->T_PlayerStamina->SetText(FText::AsNumber(PlayerDataStruct.PlayerStamina));
+}
+
+void APlayerCharacter::RecoverShield()
+{
+	CanShieldDeploy = true;
 }
 
 bool APlayerCharacter::UseStamina(float value)
@@ -2498,6 +2503,10 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[39].ObjClass, ShieldMeshComp->GetComponentLocation(), GetActorRotation() + FRotator(0, 90, 0));
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 	IsExecute = true;
+	CanShieldDeploy = false;
+
+
+	GetWorldTimerManager().SetTimer(ShieldCoolDownTimer, this, &APlayerCharacter::RecoverShield, PlayerDataStruct.ShieldCoolDown);
 
 	//ShieldCoolDown
 
