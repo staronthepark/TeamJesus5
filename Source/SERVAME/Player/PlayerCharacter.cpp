@@ -903,12 +903,8 @@ APlayerCharacter::APlayerCharacter()
 
 			
 			PlayerHUD->PlayExitAnimation(true);
-
-			//SaveGameInstance->SaveLoc(GetActorLocation());
-			//SaveGameInstance->SaveRot(GetActorRotation());
-			//SaveGameInstance->SaveHealCount(10);
-
-			//SaveGameInstance->Save(SaveGameInstance);
+			SpawnLocation = GetActorLocation();
+			UJesusSaveGame::GetInstance().Save(this, GameInstance);
 		});
 	MontageEndEventMap.Add(AnimationType::SAVELOOP, [&]()
 		{
@@ -1893,7 +1889,6 @@ void APlayerCharacter::RestoreStat()
 	{
 		combatmanager.MonsterInfoArray[i]->RespawnCharacter();
 	}
-	UJesusSaveGame::GetInstance().Save(this, GameInstance);
 }
 
 void APlayerCharacter::MoveSpawnLocation(FVector Location)
