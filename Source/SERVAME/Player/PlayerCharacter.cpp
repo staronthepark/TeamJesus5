@@ -1731,7 +1731,7 @@ void APlayerCharacter::BeginPlay()
 	SkillTrailComp->SetVisibility(false);
 
 	ShieldCount = 3;
-	PlayerHUD->SetShield(ShieldCount);
+	//PlayerHUD->SetShield(ShieldCount);
 
 	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnWeaponOverlapBegin);
 	SkillCollisionComp->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnWeaponOverlapBegin);

@@ -75,7 +75,7 @@ void UUserSetting_GraphicsUI::ChangeLanguage()
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (GameInstance->language == Language::ENG)
 	{
-		TitleGraphicImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::title)->EngTexture, true);
+		//TitleGraphicImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::title)->EngTexture, true);
 		VolumetricImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::volumetric)->EngTexture, true);
 		ShadowImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::shadow)->EngTexture, true);
 		GIImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::Gi)->EngTexture, true);
@@ -84,7 +84,7 @@ void UUserSetting_GraphicsUI::ChangeLanguage()
 	}
 	else if (GameInstance->language == Language::KOR)
 	{
-		TitleGraphicImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::title)->KorTexture, true);
+		//TitleGraphicImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::title)->KorTexture, true);
 		VolumetricImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::volumetric)->KorTexture, true);
 		ShadowImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::shadow)->KorTexture, true);
 		GIImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::Gi)->KorTexture, true);

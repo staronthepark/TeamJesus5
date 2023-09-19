@@ -52,8 +52,8 @@ public:
 	//UPROPERTY(meta = (BindWidget))
 	//USliderUI* WBP_Setting_Slider_Voice;
 
-	UPROPERTY(meta = (BindWidget))
-	UImage* TitleAudioImage;
+	//UPROPERTY(meta = (BindWidget))
+	//UImage* TitleAudioImage;
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* MasterAudioImage;
