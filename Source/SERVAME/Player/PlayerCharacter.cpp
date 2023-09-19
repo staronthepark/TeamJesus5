@@ -2726,13 +2726,8 @@ void APlayerCharacter::ShieldAttack()
 
 void APlayerCharacter::SetSoul(int32 value)
 {
-	if(ShieldCount < 3)
-	PlayerHUD->SetShield(ShieldCount++);
 	PlayerDataStruct.SoulCount += value;
-	if (ShieldCount >= 3)
-	{
-		SetShieldHP(PlayerDataStruct.MaxShieldHP);
-	}
+
 }
 
 void APlayerCharacter::LoadFile()

@@ -89,3 +89,8 @@ void UPlayerStatUI::OnPurchaseButtonClicked()
 
 	SelectedButton->Activate();
 }
+
+void UPlayerStatUI::SetRemainSoul(int value)
+{
+	RemainSoulText->SetText(FText::AsNumber(value));
+}
