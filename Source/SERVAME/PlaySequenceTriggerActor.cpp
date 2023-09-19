@@ -47,6 +47,7 @@ void APlaySequenceTriggerActor::EnableEvent()
 	
 	Character->AxisX = 1;
 	Character->AxisY = 1;
+	Character->ChangeMontageAnimation(AnimationType::IDLE);
 	Character->PlayerHUD->SetVisibility(ESlateVisibility::Collapsed);
 
 	AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
