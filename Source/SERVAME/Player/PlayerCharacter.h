@@ -82,8 +82,6 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 MaxHealCount;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int32 ShieldRecoverySoulCount;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MaxStamina;  
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PlayerStamina;
@@ -108,10 +106,6 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float ShieldDashMoveDistance;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float ShieldHP;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float MaxShieldHP;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float BaseDamage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 StrengthIndex;
@@ -127,6 +121,8 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 		float SkillSoulCost;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float ShieldSoulCost;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float ShieldCoolDown;
 };
 
 UCLASS()
@@ -200,8 +196,6 @@ public:
 	bool CanExecution;
 
 	float ShieldDashSpeed;
-
-	int ShieldCount;
 
 	FName SaveMapName;
 

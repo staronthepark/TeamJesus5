@@ -1162,7 +1162,7 @@ APlayerCharacter::APlayerCharacter()
 
 	InputEventMap[PlayerAction::NONE][ActionType::SHIELD].Add(true, [&]()
 		{
-			if (PlayerDataStruct.ShieldHP <= 0)return;
+			if (PlayerDataStruct.SoulCount <= 0)return;
 			AxisY != 1 || AxisX != 1 ? ChangeActionType(ActionType::MOVE) : ChangeActionType(ActionType::NONE);
 
 			IsCollisionCamera = false;
@@ -1730,9 +1730,6 @@ void APlayerCharacter::BeginPlay()
 	SkillAuraComp->Deactivate();
 	SkillTrailComp->SetVisibility(false);
 
-	ShieldCount = 3;
-	PlayerHUD->SetShield(ShieldCount);
-
 	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnWeaponOverlapBegin);
 	SkillCollisionComp->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnWeaponOverlapBegin);
 	ExecutionTrigger->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnExecutionOverlapBegin);
@@ -2091,15 +2088,14 @@ void APlayerCharacter::Run()
 
 void APlayerCharacter::SetShieldHP(float HP)
 {
-	PlayerDataStruct.ShieldHP = FMath::Clamp(PlayerDataStruct.ShieldHP += HP, 0, PlayerDataStruct.MaxShieldHP);
+	//PlayerDataStruct.ShieldHP = FMath::Clamp(PlayerDataStruct.ShieldHP += HP, 0, PlayerDataStruct.MaxShieldHP);
 	if (HP < 0)
 	{
 		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[38].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 	}
-	if (PlayerDataStruct.ShieldHP <= 0)
+	if (PlayerDataStruct.SoulCount <= 0)
 	{
-		ShieldCount = 0;
 		PlayerHUD->ClearShield();
 		IsGrab = false;
 		VibrateGamePad(0.4f, 0.4f);
@@ -2162,7 +2158,7 @@ bool APlayerCharacter::CanActivate(int32 SoulCount)
 {
 	if (SoulCount > PlayerDataStruct.SoulCount)
 	{
-		PlayerDataStruct.SoulCount -= SoulCount;
+		SetSoul(-SoulCount);
 		return true;
 	}
 	return false;
@@ -2492,7 +2488,6 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 
 	if (ExecutionCharacter == nullptr)return;
 
-	ShieldCount = 0;
 	PlayerHUD->ClearShield();
 	UGameplayStatics::SetGlobalTimeDilation(this, .25f);
 	VibrateGamePad(0.4f, 0.4f);
@@ -2500,8 +2495,10 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[38].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[39].ObjClass, ShieldMeshComp->GetComponentLocation(), GetActorRotation() + FRotator(0, 90, 0));
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
-	PlayerDataStruct.ShieldHP = 0;
 	IsExecute = true;
+
+	//ShieldCoolDown
+
 	IsCollisionCamera = true;
 	Imotal = true;
 	ChangeActionType(ActionType::DEAD);	
@@ -2610,10 +2607,11 @@ void APlayerCharacter::SkillAttack()
 	{
 		if (UseStamina(PlayerUseStaminaMap[ActionType::SKILL]))
 		{
+			CanActivate(PlayerDataStruct.SkillSoulCost) ? PlayerAttackType = ActionType::SKILL : PlayerAttackType = ActionType::ATTACK;
 			Imotal = false;
-			PlayerAttackType = ActionType::SKILL;
 			ComboAttackStart();
 			CanNextAttack = false;
+
 		}
 	}
 }
@@ -2726,25 +2724,16 @@ void APlayerCharacter::ShieldAttack()
 
 void APlayerCharacter::SetSoul(int32 value)
 {
-	if(ShieldCount < 3)
-	PlayerHUD->SetShield(ShieldCount++);
 	PlayerDataStruct.SoulCount += value;
-	if (ShieldCount >= 3)
-	{
-		SetShieldHP(PlayerDataStruct.MaxShieldHP);
-	}
 }
 
 void APlayerCharacter::LoadFile()
 {
 	UJesusSaveGame::GetInstance().Load(this, GameInstance);
 
-
 	ASoundManager::GetInstance().StartBGMSound(IsPhaseTwo);
 	if(IsPhaseTwo)
 		UCombatManager::GetInstance().Boss2->SetActive(true);
-	PlayerDataStruct.ShieldHP = PlayerDataStruct.MaxShieldHP;
-
 }
 
 void APlayerCharacter::LoadMap()
