@@ -27,6 +27,9 @@ public:
 	TArray<UStaticMeshComponent*>MeshCompArray;
 	TArray<UParticleSystemComponent*>ParticleCompArray;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FName Name;
+
 	virtual void Init()override;
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime);

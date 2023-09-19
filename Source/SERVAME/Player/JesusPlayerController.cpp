@@ -249,6 +249,8 @@ void AJesusPlayerController::Save()
 void AJesusPlayerController::Load()
 {
 	UJesusSaveGame::GetInstance().Load(character, character->GameInstance);
+
+	character->LoadMap();
 }
 
 void AJesusPlayerController::PressLockon()

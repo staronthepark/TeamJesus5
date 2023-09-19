@@ -38,6 +38,11 @@ void UStatUI::ChangeState(EStatState changeState)
 	state = changeState;
 }
 
+EStatState UStatUI::GetState()
+{
+	return state;
+}
+
 void UStatUI::OnButtonClicked()
 {
 	if (state == EStatState::closed || state == EStatState::activated)
