@@ -108,6 +108,7 @@ class SERVAME_API UPlayerStatUI : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 	UButton* ResetButton;
 
+
 	UPROPERTY(meta = (BindiWidget))
 	UTextBlock* RemainSoulText;
 
@@ -130,4 +131,7 @@ public:
 
 	UFUNCTION()
 	void OnPurchaseButtonClicked();
+
+	void SetRemainSoul(int value);
+
 };

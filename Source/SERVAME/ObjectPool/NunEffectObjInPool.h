@@ -23,7 +23,6 @@ enum class EffectType : uint8
 	SELFHEAL,
 	HEALDUST,
 	WORSHIPEFFECT,
-	JUDEMENTEFFECT,
 	DARKEFFECT,
 	DARKEFFECTHIT,
 	FOGEFFECT,
@@ -35,6 +34,8 @@ enum class EffectType : uint8
 	SALVATIONEFFECT,
 	CRYSTALEFFECT,
 	CRYSTALEFFECT_BUSRT,
+	TELEPORT_IN,
+	TELEPORT_OUT,
 };
 
 UCLASS()
@@ -98,6 +99,9 @@ public:
 	float MinAngle = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Curve")
 	float MaxAngle = 360.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Curve")
+	float TraceTime = 1.f;
+	bool IsTrace = true;
 
 	UPROPERTY()
 	FDamageEvent DamageEvent;
@@ -105,6 +109,9 @@ public:
 	FTimerHandle LifeTimer;
 	FTimerHandle DotTimerHandle;
 	FTimerHandle ShotTimerHandle;
+	FTimerHandle TraceHandle;
+
+	ABaseCharacter* PlayerCharacter;
 
 	TMap<EffectType, EffectType> GetBurstEffectType;
 

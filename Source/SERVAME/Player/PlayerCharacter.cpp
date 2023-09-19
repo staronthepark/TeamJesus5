@@ -903,12 +903,8 @@ APlayerCharacter::APlayerCharacter()
 
 			
 			PlayerHUD->PlayExitAnimation(true);
-
-			//SaveGameInstance->SaveLoc(GetActorLocation());
-			//SaveGameInstance->SaveRot(GetActorRotation());
-			//SaveGameInstance->SaveHealCount(10);
-
-			//SaveGameInstance->Save(SaveGameInstance);
+			SpawnLocation = GetActorLocation();
+			UJesusSaveGame::GetInstance().Save(this, GameInstance, SaveMapName);
 		});
 	MontageEndEventMap.Add(AnimationType::SAVELOOP, [&]()
 		{
@@ -1749,9 +1745,24 @@ void APlayerCharacter::BeginPlay()
 	ShieldAttackOverlap->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnShieldOverlapBegin);
 	
 	ShoulderView(IsShoulderView);
-	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.5f);
+
+	TArray<AActor*> ActorsToFind;
+	if (UWorld* World = GetWorld())
+	{
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseTriggerActor::StaticClass(), ActorsToFind);
+	}
+	for (AActor* TriggerActor : ActorsToFind)
+	{
+		ABaseTriggerActor* TriggerActorCast = Cast<ABaseTriggerActor>(TriggerActor);
+		if (TriggerActorCast)
+		{
+			GameInstance->SavedTriggerActor.Add(TriggerActorCast->Index, TriggerActorCast);
+		}
+	}
+
+	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
+	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
 	ASoundManager::GetInstance().Init();
-	ASoundManager::GetInstance().StartBGMSound(IsPhaseTwo);
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -1879,7 +1890,6 @@ void APlayerCharacter::RestoreStat()
 	{
 		combatmanager.MonsterInfoArray[i]->RespawnCharacter();
 	}
-	UJesusSaveGame::GetInstance().Save(this, GameInstance);
 }
 
 void APlayerCharacter::MoveSpawnLocation(FVector Location)
@@ -1889,9 +1899,9 @@ void APlayerCharacter::MoveSpawnLocation(FVector Location)
 	SetActorRotation(FRotator(0, 0, 0));
 	YawRotation = FRotator(0, 0, 0);
 	SetActorLocation(Location);
-	SpawnLocation = Location;
+	//SpawnLocation = Location;
 	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
-	UJesusSaveGame::GetInstance().Save(this, GameInstance);
+	//UJesusSaveGame::GetInstance().Save(this, GameInstance);
 
 	if (IsLockOn)
 		LockOn();
@@ -2146,6 +2156,16 @@ void APlayerCharacter::CheckInputKey()
 		ChangeActionType(ActionType::NONE);
 		ChangeMontageAnimation(AnimationType::IDLE);
 	}
+}
+
+bool APlayerCharacter::CanActivate(int32 SoulCount)
+{
+	if (SoulCount > PlayerDataStruct.SoulCount)
+	{
+		PlayerDataStruct.SoulCount -= SoulCount;
+		return true;
+	}
+	return false;
 }
 
 void APlayerCharacter::SetSpeed(float speed)
@@ -2706,19 +2726,27 @@ void APlayerCharacter::ShieldAttack()
 
 void APlayerCharacter::SetSoul(int32 value)
 {
-	if(ShieldCount < 3)
-	PlayerHUD->SetShield(ShieldCount++);
 	PlayerDataStruct.SoulCount += value;
-	if (ShieldCount >= 3)
-	{
-		SetShieldHP(PlayerDataStruct.MaxShieldHP);
-	}
+
 }
 
 void APlayerCharacter::LoadFile()
 {
 	UJesusSaveGame::GetInstance().Load(this, GameInstance);
 
+
+	ASoundManager::GetInstance().StartBGMSound(IsPhaseTwo);
+	if(IsPhaseTwo)
+		UCombatManager::GetInstance().Boss2->SetActive(true);
+	PlayerDataStruct.ShieldHP = PlayerDataStruct.MaxShieldHP;
+
+}
+
+void APlayerCharacter::LoadMap()
+{
+
+	FLatentActionInfo LatentInfo;
+	UGameplayStatics::LoadStreamLevel(this, SaveMapName, true, true, LatentInfo);
 }
 
 void APlayerCharacter::PlayStartAnimation()
@@ -2756,6 +2784,7 @@ void APlayerCharacter::PlayerDead(bool IsFly)
 	ChangeActionType(ActionType::DEAD);
 	MontageBlendInTime = 0.0f;
 	IsFly ? ChangeMontageAnimation(AnimationType::DEADLOOP2) : ChangeMontageAnimation(AnimationType::DEAD);
+	IsPhaseTwo = false;
 }
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

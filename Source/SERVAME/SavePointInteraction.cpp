@@ -73,6 +73,7 @@ void ASavePointInteraction::EnableEvent()
 	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 	if (IsActive)
 	{
+		Character->SaveMapName = Name;
 		Character->AxisX = 1;
 		Character->AxisY = 1;
 		Character->Imotal = true;

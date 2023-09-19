@@ -167,6 +167,7 @@ public:
 	bool TracePlayer;
 	bool IsOverlap = false;
 	bool IsAttacking = false;
+	bool IsDie = false;
 
 	bool asd = false;
 	bool asd2 = false;

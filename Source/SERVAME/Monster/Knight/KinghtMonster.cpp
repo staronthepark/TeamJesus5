@@ -1,4 +1,3 @@
-
 #include "KinghtMonster.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
@@ -358,6 +357,7 @@ void AKinghtMonster::KnockBackEmd()
 
 void AKinghtMonster::SpawnBegin()
 {
+	CanCancle = false;
 	Spawning = true;
 	StateType = MonsterStateType::CANTACT;
 	HitCollision->Deactivate();
@@ -366,6 +366,7 @@ void AKinghtMonster::SpawnBegin()
 
 void AKinghtMonster::SpawnEnd()
 {
+	CanCancle = true;
 	Spawning = false;
 	StateType = MonsterStateType::NONE;
 	HitCollision->Activate();
@@ -374,7 +375,10 @@ void AKinghtMonster::SpawnEnd()
 
 void AKinghtMonster::OnHitCancle()
 {
-	CanCancle = true;
+	if (MyMonsterType == MonsterType::ELITEKNIGHT)
+		CanCancle = false;
+	else
+		CanCancle = true;
 }
 
 void AKinghtMonster::OffHitCancle()

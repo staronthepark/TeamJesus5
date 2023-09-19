@@ -74,7 +74,7 @@ class SERVAME_API UStatUI : public UUserWidget
 	UPROPERTY(EditAnywhere)
 	EStateType Type;
 
-	TMap<EStateType, TFunction<void(int32 index)>> TypeAnimation;
+	TMap<EStateType, TFunction<bool(int32 index)>> TypeAnimation;
 
 	UPlayerStatComponent* PlayerStatComp;
 	
@@ -99,5 +99,4 @@ public:
 
 	UFUNCTION()
 	void Activate();
-
 };

@@ -113,6 +113,20 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 		float MaxShieldHP;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float BaseDamage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 StrengthIndex;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 StaminaIndex;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 HPIndex;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 ShieldIndex;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 SoulBonusCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float SkillSoulCost;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float ShieldSoulCost;
 };
 
 UCLASS()
@@ -188,6 +202,8 @@ public:
 	float ShieldDashSpeed;
 
 	int ShieldCount;
+
+	FName SaveMapName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraSpringArm")
 		USpringArmComponent* CameraBoom1;
@@ -411,6 +427,8 @@ public:
 
 	void CheckInputKey();
 
+	bool CanActivate(int32 SoulCount);
+
 	void SetSpeed(float speed);
 
 	void ShieldOff();
@@ -435,6 +453,8 @@ public:
 	void SetSoul(int32 value);
 
 	void LoadFile();
+
+	void LoadMap();
 
 	UFUNCTION()
 		void PlayStartAnimation();

@@ -83,21 +83,7 @@ void UJesusGameInstance::Init()
 		setting->SetAntiAliasingQuality(3);
 		
 		setting->ApplySettings(true);
-	}
-
-	TArray<AActor*> ActorsToFind;
-	if (UWorld* World = GetWorld())
-	{
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseTriggerActor::StaticClass(), ActorsToFind);
-	}
-	for (AActor* TriggerActor : ActorsToFind)
-	{
-		ABaseTriggerActor* TriggerActorCast = Cast<ABaseTriggerActor>(TriggerActor);
-		if (TriggerActorCast)
-		{
-			SavedTriggerActor.Add(TriggerActorCast->Index, TriggerActorCast);
-		}
-	}
+	}	
 }
 
 void UJesusGameInstance::SetPostProcessBrightness(float value)
