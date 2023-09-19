@@ -85,8 +85,12 @@ AJesusBoss2::AJesusBoss2()
 	RightFingerOverlapCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("RightFingerOverlap"));
 	RightFingerOverlapCollision->SetupAttachment(GetMesh(), FName("Bip001-R-Finger23"));
 
+	SSIBAR = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SSIBAR"));
+	SSIBAR->SetupAttachment(GetMesh(), FName(TEXT("Bip001-Spine2")));
+	SSIBAR->SetCollisionProfileName("NoCollision");
+	
 	LockOnTargetHead = CreateDefaultSubobject<USphereComponent>(TEXT("LockOnHead"));
-	LockOnTargetHead->SetupAttachment(GetMesh(), FName("Bip001-Spine2"));
+	LockOnTargetHead->SetupAttachment(SSIBAR);
 	LockOnTargetHead->SetCollisionProfileName("LockOnTarget");
 
 	LockOnTargetLArm = CreateDefaultSubobject<USphereComponent>(TEXT("LockOnLArm"));
@@ -1180,7 +1184,6 @@ void AJesusBoss2::PostInitializeComponents()
 		Boss2AnimInstance->OnRightLockOn.AddUObject(this, &AJesusBoss2::RightLockOn);
 		Boss2AnimInstance->OnRightLockOff.AddUObject(this, &AJesusBoss2::RightLockOff);
 
-
 		Boss2AnimInstance->OnMontageEnded.AddDynamic(this, &AJesusBoss2::GetEndedMontage);
 	}
 }
@@ -1496,8 +1499,7 @@ void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 		Player->SetShieldHP(-BossDataStruct.DamageList[Type]);
 		CameraShake(PlayerCameraShake);
 		VibrateGamePad(0.4f, 0.4f);
-		objectpool.SpawnObject(objectpool.ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		objectpool.SpawnObject(objectpool.ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 		objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 		return;
 	}
@@ -1510,8 +1512,7 @@ void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 			return;
 		
 		OtherActor->TakeDamage(Damage, DamageEvent, GetController(), this);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 	}
 }

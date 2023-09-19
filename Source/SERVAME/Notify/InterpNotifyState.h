@@ -10,6 +10,7 @@
 /**
  * 
  */
+
 UCLASS()
 class SERVAME_API UInterpNotifyState : public UBossBaseNotifyState
 {
@@ -19,6 +20,10 @@ class SERVAME_API UInterpNotifyState : public UBossBaseNotifyState
 	virtual void NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime);
 
 public:
+	UInterpNotifyState();
+
 	UPROPERTY(EditAnywhere)
 	float InterpVal;
 };
+
+

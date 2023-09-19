@@ -21,6 +21,7 @@ ANunEffectObjInPool::ANunEffectObjInPool()
 	DamageSphereTriggerComp = CreateDefaultSubobject<UNunDamageSphereTriggerComp>(TEXT("DamageSphere_a"));
 	DamageSphereTriggerComp->SetupAttachment(RootComponent);
 
+	GetBurstEffectType.Add(EffectType::NONE, EffectType::DARKEFFECTHIT);
 	GetBurstEffectType.Add(EffectType::DARKEFFECT, EffectType::DARKEFFECTHIT);
 	GetBurstEffectType.Add(EffectType::PRAYEFFECT, EffectType::PRAYHITEFFECT);
 	GetBurstEffectType.Add(EffectType::CRYSTALEFFECT, EffectType::CRYSTALEFFECT_BUSRT);
@@ -32,12 +33,38 @@ void ANunEffectObjInPool::BeginPlay()
 
 	ProjectileCollision->OnComponentBeginOverlap.AddDynamic(this, &ANunEffectObjInPool::OnProjectileBeginOverlap);
 	RangeAttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ANunEffectObjInPool::OnRangeAttackBeginOverlap);
+
+	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 void ANunEffectObjInPool::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
+
 	if (IsShot)
 		SetActorLocation(GetActorLocation() += MoveDir * Speed * DeltaTime);
+
+	if (IsCurve)
+	{
+		if (IsTrace)
+			TargetLoc = PlayerCharacter->GetActorLocation();
+
+		CurvePoint = FMath::VInterpConstantTo(CurvePoint, TargetLoc, GetWorld()->DeltaTimeSeconds, Speed);
+		auto Val = FMath::VInterpConstantTo(GetActorLocation(), CurvePoint, GetWorld()->DeltaTimeSeconds, Speed);
+		SetActorLocation(Val);
+
+		if (GetActorLocation() == TargetLoc)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("GetActorLocation() == TargetLoc"));
+			UE_LOG(LogTemp, Warning, TEXT("%d"), Type);
+			IsCurve = false;
+			if (GetBurstEffectType.Contains(Type))
+				CurrentEffect->SetAsset(GetTypeEffect[GetBurstEffectType[Type]]);
+			CurrentEffect->Activate();
+
+			ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
+		}
+	}
 }
 
 void ANunEffectObjInPool::SetActive(bool active)
@@ -92,6 +119,12 @@ void ANunEffectObjInPool::ShotProjectile(bool val, FVector Target)
 		{
 			IsCurve = val;
 			TargetLoc = Target;
+
+			GetWorld()->GetTimerManager().SetTimer(TraceHandle, FTimerDelegate::CreateLambda([=]()
+				{
+					IsTrace = false;
+				}), TraceTime,false);
+
 			MidPointCalc();
 			CurveControlPoint();
 		}), Delay, false);
@@ -100,7 +133,7 @@ void ANunEffectObjInPool::ShotProjectile(bool val, FVector Target)
 void ANunEffectObjInPool::MidPointCalc()
 {
 	auto Loc = TargetLoc - GetActorLocation();
-	auto RandVal = FMath::RandRange(MinCurveRadius, MaxCurveRadius);
+	auto RandVal = FMath::RandRange(MinCurvePointDistance, MaxCurvePointDistance);
 	MidPoint = (Loc * RandVal) + GetActorLocation();
 }
 
@@ -111,7 +144,9 @@ void ANunEffectObjInPool::CurveControlPoint()
 	UKismetMathLibrary::BreakRotIntoAxes(Val, X_Vec, Y_Vec, Z_Vec);
 
 	auto AddVal = UKismetMathLibrary::Add_VectorFloat(Y_Vec, FMath::RandRange(MinCurveRadius, MaxCurveRadius));
+	auto RotateAngleVal = AddVal.RotateAngleAxis(FMath::RandRange(MinAngle, MaxAngle), X_Vec);
 
+	CurvePoint = MidPoint + RotateAngleVal;
 }
 
 void ANunEffectObjInPool::SetCurrentEffect(EffectType type)
@@ -142,12 +177,14 @@ void ANunEffectObjInPool::DeactivateDamageSphere(float time)
 
 void ANunEffectObjInPool::OnProjectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	IsCurve = false;
+	SetActorTickEnabled(false);
 	DeactivateCurrentEffect();
 
 	if (Type == EffectType::NONE)
+	{
 		return;
-
-	IsCurve = false;
+	}
 
 	Type = GetBurstEffectType[Type];
 

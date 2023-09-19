@@ -45,16 +45,61 @@ class SERVAME_API UPlayerStatUI : public UUserWidget
 	
 	UPROPERTY(meta = (BindWidget))
 	UStatUI* StrButton3;
+
+	UPROPERTY(meta = (BindWidget))
+	UStatUI* StrButton4;
 	
 
-	UPROPERTY(EditAnywhere)
 	TArray<UStatUI*> StaminaButtons;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* StaminaButton0;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* StaminaButton1;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* StaminaButton2;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* StaminaButton3;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* StaminaButton4;
+
 	TArray<UStatUI*> HpButtons;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* HpButton0;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* HpButton1;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* HpButton2;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* HpButton3;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* HpButton4;
+
 	TArray<UStatUI*> ShieldButtons;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* ShieldButton0;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* ShieldButton1;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* ShieldButton2;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* ShieldButton3;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* ShieldButton4;
 
 	UPROPERTY(EditAnywhere)
 	TMap<EStateType, FStatButtonExplainTextures> ExplainTextures;
@@ -74,6 +119,7 @@ class SERVAME_API UPlayerStatUI : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* ResetButton;
+
 
 	UPROPERTY(meta = (BindiWidget))
 	UTextBlock* RemainSoulText;
@@ -97,4 +143,7 @@ public:
 
 	UFUNCTION()
 	void OnPurchaseButtonClicked();
+
+	void SetRemainSoul(int value);
+
 };

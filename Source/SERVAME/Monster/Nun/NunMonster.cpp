@@ -49,6 +49,10 @@ ANunMonster::ANunMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::DARK, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::PRAY, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::CURSE, MonsterStateType::BEFOREATTACK);
+	AnimTypeToStateType.Add(MonsterAnimationType::FRAGMENT, MonsterStateType::BEFOREATTACK);
+	AnimTypeToStateType.Add(MonsterAnimationType::CRYSTAL, MonsterStateType::BEFOREATTACK);
+	AnimTypeToStateType.Add(MonsterAnimationType::ILLUSION, MonsterStateType::BEFOREATTACK);
+	AnimTypeToStateType.Add(MonsterAnimationType::JUEMENT_GROUND, MonsterStateType::BEFOREATTACK);
 
 	MonsterMoveMap.Add(1, [&]()
 		{
@@ -156,7 +160,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::DARK, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(true, [&]()
 		{
-			/*UE_LOG(LogTemp, Warning, TEXT("DarkProjectile"));
+			UE_LOG(LogTemp, Warning, TEXT("DarkProjectile"));
 			if (SpawnLocArr.IsEmpty())
 				return;
 
@@ -169,10 +173,9 @@ ANunMonster::ANunMonster()
 			DarkObj->SetCurrentEffect(EffectType::DARKEFFECT);
 			DarkObj->ActivateCurrentEffect();
 			DarkObj->ShotProjectile(PlayerCharacter);
-			DarkObj->SetActorTickEnabled(true);*/
-
-			PrayAttack();
+			DarkObj->SetActorTickEnabled(true);
 		});
+
 	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(false, [&]()
 		{
 		});
@@ -182,6 +185,42 @@ ANunMonster::ANunMonster()
 		{
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::PRAY].Add(false, [&]()
+		{
+		});
+
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::FRAGMENT, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::FRAGMENT].Add(true, [&]()
+		{
+			FragmentsAttack();
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::FRAGMENT].Add(false, [&]()
+		{
+		});
+
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::CRYSTAL, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::CRYSTAL].Add(true, [&]()
+		{
+			CrystalAttack();
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::CRYSTAL].Add(false, [&]()
+		{
+		});
+
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::ILLUSION, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::ILLUSION].Add(true, [&]()
+		{
+			IllusionAttack();
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::ILLUSION].Add(false, [&]()
+		{
+		});
+
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::JUEMENT_GROUND, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::JUEMENT_GROUND].Add(true, [&]()
+		{
+			JudementAttack_2();
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::JUEMENT_GROUND].Add(false, [&]()
 		{
 		});
 
@@ -233,6 +272,30 @@ ANunMonster::ANunMonster()
 			ChangeMontageAnimation(MonsterAnimationType::IDLE);
 		});
 
+	MontageEndEventMap.Add(MonsterAnimationType::FRAGMENT, [&]()
+		{
+			ChangeActionType(MonsterActionType::NONE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::CRYSTAL, [&]()
+		{
+			ChangeActionType(MonsterActionType::NONE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::ILLUSION, [&]()
+		{
+			ChangeActionType(MonsterActionType::NONE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::JUEMENT_GROUND, [&]()
+		{
+			ChangeActionType(MonsterActionType::NONE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		});
+
 	MontageEndEventMap.Add(MonsterAnimationType::CURSE, [&]()
 		{
 			ChangeActionType(MonsterActionType::NONE);
@@ -274,12 +337,12 @@ ANunMonster::ANunMonster()
 
 	SetActionByRandomMap.Add(MonsterAnimationType::DARK, [&](float percent)
 		{
-			if (percent > 0.3)
+			if (percent <= 0.3)
 			{
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::DARK);
 			}
-			else if (percent >= 0.3f && percent < 0.7f)
+			else if (percent > 0.3f && percent < 0.7f)
 			{
 				//심판
 				ChangeActionType(MonsterActionType::ATTACK);
@@ -360,6 +423,15 @@ void ANunMonster::BeginPlay()
 void ANunMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+
+	//텔레포트 이펙트 확인용
+	//사용할 때 텔레포트 함수의 플레이어 락온 부분 주석치고 사용할 것.
+	//if (test)
+	//{
+	//	TelePort();
+	//	test = false;
+	//}
 }
 
 void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -383,7 +455,7 @@ void ANunMonster::OnNunTargetDetectionEndOverlap(UPrimitiveComponent* Overlapped
 
 void ANunMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
-	UE_LOG(LogTemp, Warning, TEXT("StartAttackTrigger"));
+	UE_LOG(LogTemp, Warning, TEXT("StartAttackTrigger : %f"), CurrentDistance);
 
 	if (!MonsterController->FindPlayer)
 		return;
@@ -398,7 +470,6 @@ void ANunMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 		return;
 	AttackAnimationType = AttackAnimType;
 
-	//TODO : 거리별 패턴을 위한 Map 생성해주기
 	if(CurrentDistance < 600.f)
 		AttackAnimationType = MonsterAnimationType::DARK;
 	else if (CurrentDistance >= 600.f && CurrentDistance <= 1500.f)
@@ -435,6 +506,7 @@ float ANunMonster::Die(float Dm)
 {
 	if (MonsterDataStruct.CharacterHp <= 0)
 	{
+		IsDie = true;
 		Imotal = true;
 		GetWorld()->GetTimerManager().ClearTimer(SelfHealTimerHandle);
 		ChangeActionType(MonsterActionType::DEAD);
@@ -475,6 +547,7 @@ void ANunMonster::SpawnKnight()
 		Knight->ChangeMontageAnimation(MonsterAnimationType::SPAWNING);
 		Knight->MonsterController->FindPlayer = true;
 		Knight->ChangeActionType(MonsterActionType::MOVE);
+		Knight->MonsterMoveEventIndex = 1;
 		KnightArr.Push(Knight);
 	}
 }
@@ -506,8 +579,8 @@ void ANunMonster::MultiHeal()
 
 	DrawDebugSphere(GetWorld(), Center, HealRadius, 16, DrawColor, false, 1.f);
 
-	CameraShake(PlayerCameraShake);
-	VibrateGamePad(1.0f, 0.5f);
+	//CameraShake(PlayerCameraShake);
+	//VibrateGamePad(1.0f, 0.5f);
 
 	if (bResult)
 	{
@@ -563,6 +636,9 @@ void ANunMonster::SelfHeal()
 {
 	GetWorld()->GetTimerManager().SetTimer(SelfHealTimerHandle, FTimerDelegate::CreateLambda([=]()
 	{			
+			if (IsDie)
+				return;
+
 			if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
 				return;
 
@@ -650,10 +726,10 @@ void ANunMonster::JudementAttack()
 		auto NunEffect = Cast<ANunEffectObjInPool>(PoolObj);
 		NunEffect->DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		NunEffect->DamageSphereTriggerComp->bHiddenInGame = false;
-		NunEffect->DamageSphereTriggerComp->Count = 1;
+		NunEffect->DamageSphereTriggerComp->MaxCount = 1;
 		NunEffect->DamageSphereTriggerComp->Damage = 50.f;
 		NunEffect->DamageSphereTriggerComp->DamageTime = 1.f;
-		NunEffect->SetCurrentEffect(EffectType::JUDEMENTEFFECT);
+		NunEffect->SetCurrentEffect(EffectType::JUDGEMENTEFFECT);
 		NunEffect->ActivateCurrentEffect();
 		NunEffect->DeactivateDamageSphere(JudementTime);
 	}
@@ -661,6 +737,8 @@ void ANunMonster::JudementAttack()
 
 void ANunMonster::Curse()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Curse"));
+
 }
 
 void ANunMonster::CrystalAttack()
@@ -695,6 +773,19 @@ void ANunMonster::CrystalAttack()
 
 void ANunMonster::FogAttack()
 {
+	auto Loc = GetActorLocation();
+
+	auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		GetActorLocation(), FRotator::ZeroRotator);
+	auto FogEffect = Cast<ANunEffectObjInPool>(PoolObj);
+
+	FogEffect->SetCurrentEffect(EffectType::FOGEFFECT);
+	FogEffect->ActivateCurrentEffect();
+	FogEffect->DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	FogEffect->DamageSphereTriggerComp->MaxCount = 1;
+	FogEffect->DamageSphereTriggerComp->Damage = 50.f;
+	FogEffect->DamageSphereTriggerComp->DamageTime = 1.f;
+	FogEffect->DeactivateDamageSphere(1.f);
 }
 
 void ANunMonster::PrayAttack()
@@ -710,11 +801,12 @@ void ANunMonster::PrayAttack()
 			SpawnLocArr[PraySpawnCount]->GetComponentLocation(), FRotator::ZeroRotator);
 
 			auto PrayObj = Cast<ANunEffectObjInPool>(DarkPoolObj);
-			PrayObj->SetCurrentEffect(EffectType::DARKEFFECT);
+			PrayObj->SetCurrentEffect(EffectType::PRAYEFFECT);
 			PrayObj->ActivateCurrentEffect();
-			PrayObj->ShotProjectile(true, PlayerCharacter->GetActorLocation());
 			PrayObj->SetActorTickEnabled(true);
-		
+			PrayObj->ShotProjectile(true, PlayerCharacter->GetActorLocation());
+			PrayObj->Speed = 1000.f;
+			PrayObj->Damage = PrayDamage;
 			++PraySpawnCount;
 
 			if (PraySpawnCount >= SpawnLocArr.Num())
@@ -727,10 +819,60 @@ void ANunMonster::PrayAttack()
 
 void ANunMonster::FragmentsAttack()
 {
+	UE_LOG(LogTemp, Warning, TEXT("FragmentsAttack"));
+
+	auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		GetActorLocation(), FRotator::ZeroRotator);
+
+	auto FragmentObj = Cast<ANunEffectObjInPool>(PoolObj);
+	FragmentObj->SetCurrentEffect(EffectType::FRAGMENTEFFECT_BURST);
+	FragmentObj->ActivateCurrentEffect();
+
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+
+	bool bResult = GetWorld()->SweepSingleByChannel(
+		OUT HitResult,
+		GetActorLocation(),
+		GetActorLocation(),
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel3,
+		FCollisionShape::MakeSphere(FragmentRange),
+		Params);
+
+	FColor DrawColor;
+
+	if (bResult)
+		DrawColor = FColor::Green;
+	else
+		DrawColor = FColor::Red;
+
+	DrawDebugSphere(GetWorld(), GetActorLocation(), FragmentRange, 16, DrawColor, false, 2.f);
+
+	//CameraShake(PlayerCameraShake);
+	//VibrateGamePad(1.0f, 0.5f);
+
+	if (bResult && HitResult.GetActor())
+	{
+		FDamageEvent DamageEvent;
+		auto Player = Cast<APlayerCharacter>(HitResult.GetActor());
+
+		Player->TakeDamage(SkillInfoMap[MonsterAnimationType::FRAGMENT].Damage, DamageEvent, GetController(), this);
+	}
 }
 
 void ANunMonster::IllusionAttack()
 {
+	UE_LOG(LogTemp, Warning, TEXT("IllusionAttack"));
+
+
+
+}
+
+void ANunMonster::JudementAttack_2()
+{
+	UE_LOG(LogTemp, Warning, TEXT("JudementAttack_2"));
+
 }
 
 void ANunMonster::SingleHeal()
@@ -886,14 +1028,27 @@ void ANunMonster::TelePort()
 	if (PlayerCharacter->IsLockOn)
 		PlayerCharacter->LockOn();
 
+	auto TeleportInObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		GetActorLocation(), FRotator::ZeroRotator);
+	auto Temp1 = Cast<ANunEffectObjInPool>(TeleportInObj);
+	Temp1->SetCurrentEffect(EffectType::TELEPORT_IN);
+	Temp1->ActivateCurrentEffect();
+	
 	srand(time(NULL));
 
 	auto Num = rand() % TeleportArr.Num();
 
 	SetActorLocation(TeleportArr[Num]->GetActorLocation());
 
+	auto TeleportOutObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		GetActorLocation(), FRotator::ZeroRotator);
+	auto Temp2 = Cast<ANunEffectObjInPool>(TeleportOutObj);
+	Temp2->SetCurrentEffect(EffectType::TELEPORT_OUT);
+	Temp2->ActivateCurrentEffect();
+
 	ChangeActionType(MonsterActionType::NONE);
 	ChangeMontageAnimation(MonsterAnimationType::IDLE);
+	FogAttack();
 }
 
 void ANunMonster::CheckMontageEndNotify()
@@ -926,8 +1081,10 @@ void ANunMonster::RespawnCharacter()
 	WeaponOpacity = 0.171653f;
 	MeshOpacity = 0.171653f;
 
+	IsDie = false;
 	SelfHeal();
 
+	DeactivateHpBar();
 	ActivateHitCollision();
 	MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
 	MonsterHPWidget->SetHP(1.0f);

@@ -51,10 +51,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
 		TMap<int32, bool>SavedTriggerActor;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
+		FName MapName;
+
 public:
 
 
-	void Save(APlayerCharacter* Player, UJesusGameInstance* Instance);
+	void Save(APlayerCharacter* Player, UJesusGameInstance* Instance, FName MapName);
 	void Delete();
 	UJesusSaveGame* Load(APlayerCharacter* Player, UJesusGameInstance* Instance);
 };
