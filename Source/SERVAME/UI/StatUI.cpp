@@ -12,18 +12,16 @@ void UStatUI::NativeOnInitialized()
 	Button->OnClicked.AddDynamic(this, &UStatUI::OnButtonClicked);
 
 	TypeAnimation.Add(EStateType::str, [&](int32 index) {
-		PlayerStatComp->StrengthStatList[index].Func();
+		return PlayerStatComp->StrengthStatList[index].Func();
 		});
 	TypeAnimation.Add(EStateType::stamina, [&](int32 index) {
-		PlayerStatComp->StaminaStatList[index].Func();
-
+		return PlayerStatComp->StaminaStatList[index].Func();
 		});
 	TypeAnimation.Add(EStateType::hp, [&](int32 index) {
-		PlayerStatComp->HpStatList[index].Func();
-
+		return PlayerStatComp->HpStatList[index].Func();
 		});
 	TypeAnimation.Add(EStateType::shield, [&](int32 index) {
-		PlayerStatComp->ShieldStatList[index].Func();
+		return PlayerStatComp->ShieldStatList[index].Func();
 		});
 
 	index = 0;
@@ -61,15 +59,16 @@ void UStatUI::OnButtonUnclicked()
 
 void UStatUI::Activate()
 {
-	state = EStatState::activated;
-	ActiveBackground->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	TypeAnimation[Type](index);
+	if (TypeAnimation[Type](index)) {
+		state = EStatState::activated;
+		ActiveBackground->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 
-	for (int i = 0; i < Lines.Num(); i++)
-		Lines[i]->SetBrushFromTexture(LineTexture, true);
+		for (int i = 0; i < Lines.Num(); i++)
+			Lines[i]->SetBrushFromTexture(LineTexture, true);
 
-	if (NextStat == NULL)
-		return;
-	NextStat->index = index + 1;
-	NextStat->ChangeState(EStatState::can);
+		if (NextStat == NULL)
+			return;
+		NextStat->index = index + 1;
+		NextStat->ChangeState(EStatState::can);
+	}
 }
