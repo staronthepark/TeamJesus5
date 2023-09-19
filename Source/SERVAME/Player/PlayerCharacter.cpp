@@ -1756,7 +1756,7 @@ void APlayerCharacter::BeginPlay()
 			GameInstance->SavedTriggerActor.Add(TriggerActorCast->Index, TriggerActorCast);
 		}
 	}
-
+	PlayerDataStruct.SoulCount = 0;
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
 	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
 	ASoundManager::GetInstance().Init();
@@ -2156,7 +2156,7 @@ void APlayerCharacter::CheckInputKey()
 
 bool APlayerCharacter::CanActivate(int32 SoulCount)
 {
-	if (SoulCount > PlayerDataStruct.SoulCount)
+	if (SoulCount >= PlayerDataStruct.SoulCount)
 	{
 		SetSoul(-SoulCount);
 		return true;
