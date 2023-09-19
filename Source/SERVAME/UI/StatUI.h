@@ -89,7 +89,7 @@ public:
 
 	virtual void NativeOnInitialized();
 	void ChangeState(EStatState changeState);
-
+	EStatState GetState();
 
 	UFUNCTION()
 	void OnButtonClicked();

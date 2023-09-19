@@ -6,10 +6,26 @@
 void UPlayerStatUI::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+
 	StrButtons.Add(StrButton0);
 	StrButtons.Add(StrButton1);
 	StrButtons.Add(StrButton2);
 	StrButtons.Add(StrButton3);
+
+	StaminaButtons.Add(StaminaButton0);
+	StaminaButtons.Add(StaminaButton1);
+	StaminaButtons.Add(StaminaButton2);
+	StaminaButtons.Add(StaminaButton3);
+
+	HpButtons.Add(HpButton0);
+	HpButtons.Add(HpButton1);
+	HpButtons.Add(HpButton2);
+	HpButtons.Add(HpButton3);
+
+	ShieldButtons.Add(ShieldButton0);
+	ShieldButtons.Add(ShieldButton1);
+	ShieldButtons.Add(ShieldButton2);
+	ShieldButtons.Add(ShieldButton3);
 
 	for (int i = 0; i < StrButtons.Num(); i++)
 	{
@@ -68,7 +84,7 @@ void UPlayerStatUI::OnShieldButtonClicked()
 
 void UPlayerStatUI::OnPurchaseButtonClicked()
 {
-	if (SelectedButton == nullptr)
+	if (SelectedButton == nullptr || SelectedButton->GetState() != EStatState::can)
 		return;
 
 	SelectedButton->Activate();
