@@ -109,7 +109,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "fasdfasfasdfasdfasd")
 	bool test = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
+	TSubclassOf<ANunMonster> IllusionNunClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
+	float IllusionTime = 10.f;
 	bool IsIllusion = false;
+	FTimerHandle IllusionTimer;
 
 	//수녀 a타입 스킬
 	void TelePort();
@@ -131,6 +136,8 @@ public:
 
 	FTimerHandle SelfHealTimerHandle;
 	FTimerHandle DelayTimerHandle;
+
+	void SetYaw();
 
 	UFUNCTION()
 	void OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

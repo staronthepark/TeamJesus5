@@ -427,11 +427,17 @@ void ANunMonster::Tick(float DeltaTime)
 
 	//텔레포트 이펙트 확인용
 	//사용할 때 텔레포트 함수의 플레이어 락온 부분 주석치고 사용할 것.
-	if (test)
-	{
-		TelePort();
-		test = false;
-	}
+	//if (test)
+	//{
+	//	TelePort();
+	//	test = false;
+	//}
+}
+
+void ANunMonster::SetYaw()
+{
+	TargetRotation = (PlayerCharacter->GetActorLocation() - GetActorLocation()).Rotation();
+	YawRotation = TargetRotation;
 }
 
 void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -509,8 +515,25 @@ float ANunMonster::Die(float Dm)
 		IsDie = true;
 		Imotal = true;
 		GetWorld()->GetTimerManager().ClearTimer(SelfHealTimerHandle);
+
+		DeactivateHpBar();
+		DeactivateHitCollision();
+
+		NunAnimInstance->StopMontage(MontageMap[AnimationType]);
 		ChangeActionType(MonsterActionType::DEAD);
 		StateType = MonsterStateType::CANTACT;
+
+		MonsterController->StopMovement();
+		DeactivateSMOverlap();
+		ParryingCollision1->Deactivate();
+		DeactivateRightWeapon();
+		ChangeMontageAnimation(MonsterAnimationType::DEAD);
+
+		//GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
+		//	{
+		//		MinusOpacity = true;
+		//	}), 3.2f, false);
+
 		return Dm;
 	}
 
@@ -519,6 +542,9 @@ float ANunMonster::Die(float Dm)
 
 void ANunMonster::SpawnKnight()
 {
+	if (IsIllusion)
+		return;
+
 	for (int i = 0; i < KnightNum; i++)
 	{
 		FActorSpawnParameters SpawnParams; 
@@ -696,7 +722,10 @@ void ANunMonster::DotFloor()
 			NunEffect->DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			NunEffect->DamageSphereTriggerComp->bHiddenInGame = false;
 			NunEffect->DamageSphereTriggerComp->Count = 10000;
-			NunEffect->DamageSphereTriggerComp->Damage = 20.f;
+			if (IsIllusion)
+				NunEffect->DamageSphereTriggerComp->Damage = 0.f;
+			else
+				NunEffect->DamageSphereTriggerComp->Damage = 20.f;
 			NunEffect->DamageSphereTriggerComp->DamageTime = 1.f;
 			NunEffect->SetCurrentEffect(EffectType::WORSHIPEFFECT);
 			NunEffect->ActivateCurrentEffect();
@@ -727,7 +756,10 @@ void ANunMonster::JudementAttack()
 		NunEffect->DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		NunEffect->DamageSphereTriggerComp->bHiddenInGame = false;
 		NunEffect->DamageSphereTriggerComp->MaxCount = 1;
-		NunEffect->DamageSphereTriggerComp->Damage = 50.f;
+		if (IsIllusion)
+			NunEffect->DamageSphereTriggerComp->Damage = 0.f;
+		else
+			NunEffect->DamageSphereTriggerComp->Damage = 50.f;
 		NunEffect->DamageSphereTriggerComp->DamageTime = 1.f;
 		NunEffect->SetCurrentEffect(EffectType::JUDGEMENTEFFECT);
 		NunEffect->ActivateCurrentEffect();
@@ -763,6 +795,8 @@ void ANunMonster::CrystalAttack()
 				CrystalSpawnLoc->GetComponentLocation(), FRotator::ZeroRotator);
 			auto CrystalEffect = Cast<ANunEffectObjInPool>(PoolObj);
 
+			if (IsIllusion)
+				CrystalEffect->Damage = 0.f;
 			CrystalEffect->SetCurrentEffect(EffectType::CRYSTALEFFECT);
 			CrystalEffect->ActivateCurrentEffect();
 			CrystalEffect->ShotProjectile(Temp);
@@ -783,7 +817,10 @@ void ANunMonster::FogAttack()
 	FogEffect->ActivateCurrentEffect();
 	FogEffect->DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	FogEffect->DamageSphereTriggerComp->MaxCount = 1;
-	FogEffect->DamageSphereTriggerComp->Damage = 50.f;
+	if (IsIllusion)
+		FogEffect->DamageSphereTriggerComp->Damage = 0.f;
+	else
+		FogEffect->DamageSphereTriggerComp->Damage = 50.f;
 	FogEffect->DamageSphereTriggerComp->DamageTime = 1.f;
 	FogEffect->DeactivateDamageSphere(1.f);
 }
@@ -806,7 +843,10 @@ void ANunMonster::PrayAttack()
 			PrayObj->SetActorTickEnabled(true);
 			PrayObj->ShotProjectile(true, PlayerCharacter->GetActorLocation());
 			PrayObj->Speed = 1000.f;
-			PrayObj->Damage = PrayDamage;
+			if (IsIllusion)
+				PrayObj->Damage = 0.f;
+			else
+				PrayObj->Damage = PrayDamage;
 			++PraySpawnCount;
 
 			if (PraySpawnCount >= SpawnLocArr.Num())
@@ -857,22 +897,49 @@ void ANunMonster::FragmentsAttack()
 		FDamageEvent DamageEvent;
 		auto Player = Cast<APlayerCharacter>(HitResult.GetActor());
 
+		if (IsIllusion)
+			return;
+
 		Player->TakeDamage(SkillInfoMap[MonsterAnimationType::FRAGMENT].Damage, DamageEvent, GetController(), this);
 	}
 }
 
 void ANunMonster::IllusionAttack()
 {
+	if (IsIllusion)
+		return;
+
 	UE_LOG(LogTemp, Warning, TEXT("IllusionAttack"));
 
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;;
+	FVector SpawnLoc = FVector::ZeroVector;
+	FRotator SpawnRot = FRotator::ZeroRotator;
 
+	auto Illusion = GetWorld()->SpawnActor<ANunMonster>(IllusionNunClass, SpawnLoc, SpawnRot, SpawnParams);
 
+	srand(time(NULL));
+	auto Num = rand() % TeleportArr.Num();
+
+	Illusion->SetActorLocation(TeleportArr[Num]->GetActorLocation());
+	Illusion->SetActorRotation(SpawnRot);
+	Illusion->MonsterController->FindPlayer = true;
+	Illusion->IsIllusion = false;
+	Illusion->SetYaw();
+
+	GetWorld()->GetTimerManager().SetTimer(IllusionTimer, FTimerDelegate::CreateLambda([=]()
+		{
+			Illusion->MonsterDataStruct.CharacterHp = -1;
+			Illusion->Die(0.f);
+			GetWorld()->GetTimerManager().ClearTimer(IllusionTimer);
+		}), IllusionTime, false);
 }
 
 void ANunMonster::JudementAttack_2()
 {
 	UE_LOG(LogTemp, Warning, TEXT("JudementAttack_2"));
 
+	//TODO : 환영은 데미지 0
 }
 
 void ANunMonster::SingleHeal()
@@ -1011,6 +1078,8 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 
 	if (TeleportDamageSum >= MonsterDataStruct.CharacterMaxHp * TeleportVal)
 	{
+		if (IsIllusion)
+			return 0.f;
 		TelePort();
 		TeleportDamageSum = 0;
 	}
@@ -1025,20 +1094,24 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 
 void ANunMonster::TelePort()
 {
-	//if (PlayerCharacter->IsLockOn)
-	//	PlayerCharacter->LockOn();
+	if (PlayerCharacter->IsLockOn)
+		PlayerCharacter->LockOn();
+
+	//사라진 상태에서 0.7초후에 이동시키고 메쉬 활성화
 
 	auto TeleportInObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
 		GetActorLocation(), FRotator::ZeroRotator);
 	auto Temp1 = Cast<ANunEffectObjInPool>(TeleportInObj);
 	Temp1->SetCurrentEffect(EffectType::TELEPORT_IN);
 	Temp1->ActivateCurrentEffect();
+	GetMesh()->SetVisibility(false);
 	
 	GetWorld()->GetTimerManager().SetTimer(TeleportTimer, FTimerDelegate::CreateLambda([=]()
 		{
 			srand(time(NULL));
 			auto Num = rand() % TeleportArr.Num();
 			SetActorLocation(TeleportArr[Num]->GetActorLocation());
+			GetMesh()->SetVisibility(true);
 
 			auto TeleportOutObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
 				GetActorLocation(), FRotator::ZeroRotator);
@@ -1049,6 +1122,7 @@ void ANunMonster::TelePort()
 			ChangeActionType(MonsterActionType::NONE);
 			ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			FogAttack();
+			SetYaw();
 			GetWorld()->GetTimerManager().ClearTimer(TeleportTimer);
 		}), TeleportDelayVal, false);
 }
