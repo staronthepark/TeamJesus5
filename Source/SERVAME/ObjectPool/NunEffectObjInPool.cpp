@@ -53,15 +53,17 @@ void ANunEffectObjInPool::Tick(float DeltaTime)
 		auto Val = FMath::VInterpConstantTo(GetActorLocation(), CurvePoint, GetWorld()->DeltaTimeSeconds, Speed);
 		SetActorLocation(Val);
 
-		//if (GetActorLocation() == TargetLoc)
-		//{
-		//	UE_LOG(LogTemp, Warning, TEXT("GetActorLocation() == TargetLoc"));
-		//	IsCurve = false;
-			//CurrentEffect->SetAsset(GetTypeEffect[GetBurstEffectType[Type]]);
-			//CurrentEffect->Activate();
+		if (GetActorLocation() == TargetLoc)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("GetActorLocation() == TargetLoc"));
+			UE_LOG(LogTemp, Warning, TEXT("%d"), Type);
+			IsCurve = false;
+			if (GetBurstEffectType.Contains(Type))
+				CurrentEffect->SetAsset(GetTypeEffect[GetBurstEffectType[Type]]);
+			CurrentEffect->Activate();
 
-		//	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
-		//}
+			ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
+		}
 	}
 }
 
@@ -175,15 +177,14 @@ void ANunEffectObjInPool::DeactivateDamageSphere(float time)
 
 void ANunEffectObjInPool::OnProjectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	IsCurve = false;
+	SetActorTickEnabled(false);
 	DeactivateCurrentEffect();
 
 	if (Type == EffectType::NONE)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ssibal?"));
 		return;
 	}
-
-	IsCurve = false;
 
 	Type = GetBurstEffectType[Type];
 

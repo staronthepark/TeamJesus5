@@ -49,6 +49,7 @@ ANunMonster::ANunMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::DARK, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::PRAY, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::CURSE, MonsterStateType::BEFOREATTACK);
+	AnimTypeToStateType.Add(MonsterAnimationType::FRAGMENT, MonsterStateType::BEFOREATTACK);
 
 	MonsterMoveMap.Add(1, [&]()
 		{
@@ -173,6 +174,7 @@ ANunMonster::ANunMonster()
 
 			PrayAttack();
 		});
+
 	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(false, [&]()
 		{
 		});
@@ -184,6 +186,16 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap[MonsterAnimationType::PRAY].Add(false, [&]()
 		{
 		});
+
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::FRAGMENT, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::FRAGMENT].Add(true, [&]()
+		{
+			FragmentsAttack();
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::FRAGMENT].Add(false, [&]()
+		{
+		});
+
 
 	MontageEndEventMap.Add(MonsterAnimationType::HEAL1, [&]()
 		{
@@ -228,6 +240,12 @@ ANunMonster::ANunMonster()
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::PRAY, [&]()
+		{
+			ChangeActionType(MonsterActionType::NONE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::FRAGMENT, [&]()
 		{
 			ChangeActionType(MonsterActionType::NONE);
 			ChangeMontageAnimation(MonsterAnimationType::IDLE);
@@ -283,7 +301,8 @@ ANunMonster::ANunMonster()
 			{
 				//½ÉÆÇ
 				ChangeActionType(MonsterActionType::ATTACK);
-				ChangeMontageAnimation(MonsterAnimationType::JUDEMENT);
+				//ChangeMontageAnimation(MonsterAnimationType::JUDEMENT);
+				ChangeMontageAnimation(MonsterAnimationType::FRAGMENT);
 			}
 			else
 			{
@@ -507,8 +526,8 @@ void ANunMonster::MultiHeal()
 
 	DrawDebugSphere(GetWorld(), Center, HealRadius, 16, DrawColor, false, 1.f);
 
-	CameraShake(PlayerCameraShake);
-	VibrateGamePad(1.0f, 0.5f);
+	//CameraShake(PlayerCameraShake);
+	//VibrateGamePad(1.0f, 0.5f);
 
 	if (bResult)
 	{
@@ -734,6 +753,7 @@ void ANunMonster::PrayAttack()
 			PrayObj->SetActorTickEnabled(true);
 			PrayObj->ShotProjectile(true, PlayerCharacter->GetActorLocation());
 			PrayObj->Speed = 1000.f;
+			PrayObj->Damage = PrayDamage;
 			++PraySpawnCount;
 
 			if (PraySpawnCount >= SpawnLocArr.Num())
@@ -746,10 +766,54 @@ void ANunMonster::PrayAttack()
 
 void ANunMonster::FragmentsAttack()
 {
+	UE_LOG(LogTemp, Warning, TEXT("FragmentsAttack"));
+
+	auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		GetActorLocation(), FRotator::ZeroRotator);
+
+	auto FragmentObj = Cast<ANunEffectObjInPool>(PoolObj);
+	FragmentObj->SetCurrentEffect(EffectType::FRAGMENTEFFECT_BURST);
+	FragmentObj->ActivateCurrentEffect();
+
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+
+	bool bResult = GetWorld()->SweepSingleByChannel(
+		OUT HitResult,
+		GetActorLocation(),
+		GetActorLocation(),
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel3,
+		FCollisionShape::MakeSphere(FragmentRange),
+		Params);
+
+	FColor DrawColor;
+
+	if (bResult)
+		DrawColor = FColor::Green;
+	else
+		DrawColor = FColor::Red;
+
+	DrawDebugSphere(GetWorld(), GetActorLocation(), FragmentRange, 16, DrawColor, false, 2.f);
+
+	//CameraShake(PlayerCameraShake);
+	//VibrateGamePad(1.0f, 0.5f);
+
+	if (bResult && HitResult.GetActor())
+	{
+		FDamageEvent DamageEvent;
+		auto Player = Cast<APlayerCharacter>(HitResult.GetActor());
+
+		Player->TakeDamage(SkillInfoMap[MonsterAnimationType::FRAGMENT].Damage, DamageEvent, GetController(), this);
+	}
 }
 
 void ANunMonster::IllusionAttack()
 {
+	UE_LOG(LogTemp, Warning, TEXT("IllusionAttack"));
+
+
+
 }
 
 void ANunMonster::SingleHeal()
@@ -949,6 +1013,7 @@ void ANunMonster::RespawnCharacter()
 	IsDie = false;
 	SelfHeal();
 
+	DeactivateHpBar();
 	ActivateHitCollision();
 	MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
 	MonsterHPWidget->SetHP(1.0f);

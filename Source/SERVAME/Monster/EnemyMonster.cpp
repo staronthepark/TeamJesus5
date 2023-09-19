@@ -810,7 +810,8 @@ void AEnemyMonster::RespawnCharacter()
 	WeaponOpacity = 0.171653f;
 	MeshOpacity = 0.171653f;
 	SkeletalMeshComp->SetScalarParameterValueOnMaterials("Opacity", MeshOpacity);
-	SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity);
+	if (MyMonsterType != MonsterType::NUN)
+		SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity);
 
 	ActivateHitCollision();
 	MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
