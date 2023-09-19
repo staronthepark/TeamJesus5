@@ -102,6 +102,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FragmentsAttack")
 	float FragmentRange = 500.f;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "fasdfasfasdfasdfasd")
+	bool test = false;
+
+	bool IsIllusion = false;
+
 	//수녀 a타입 스킬
 	void TelePort();
 	void SpawnKnight();
@@ -118,6 +124,7 @@ public:
 	void PrayAttack();
 	void FragmentsAttack();
 	void IllusionAttack();
+	void JudementAttack_2();
 
 	FTimerHandle SelfHealTimerHandle;
 	FTimerHandle DelayTimerHandle;

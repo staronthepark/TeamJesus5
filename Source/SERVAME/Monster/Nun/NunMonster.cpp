@@ -50,6 +50,9 @@ ANunMonster::ANunMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::PRAY, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::CURSE, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::FRAGMENT, MonsterStateType::BEFOREATTACK);
+	AnimTypeToStateType.Add(MonsterAnimationType::CRYSTAL, MonsterStateType::BEFOREATTACK);
+	AnimTypeToStateType.Add(MonsterAnimationType::ILLUSION, MonsterStateType::BEFOREATTACK);
+	AnimTypeToStateType.Add(MonsterAnimationType::JUEMENT_GROUND, MonsterStateType::BEFOREATTACK);
 
 	MonsterMoveMap.Add(1, [&]()
 		{
@@ -157,7 +160,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::DARK, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(true, [&]()
 		{
-			/*UE_LOG(LogTemp, Warning, TEXT("DarkProjectile"));
+			UE_LOG(LogTemp, Warning, TEXT("DarkProjectile"));
 			if (SpawnLocArr.IsEmpty())
 				return;
 
@@ -170,9 +173,7 @@ ANunMonster::ANunMonster()
 			DarkObj->SetCurrentEffect(EffectType::DARKEFFECT);
 			DarkObj->ActivateCurrentEffect();
 			DarkObj->ShotProjectile(PlayerCharacter);
-			DarkObj->SetActorTickEnabled(true);*/
-
-			PrayAttack();
+			DarkObj->SetActorTickEnabled(true);
 		});
 
 	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(false, [&]()
@@ -196,6 +197,32 @@ ANunMonster::ANunMonster()
 		{
 		});
 
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::CRYSTAL, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::CRYSTAL].Add(true, [&]()
+		{
+			CrystalAttack();
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::CRYSTAL].Add(false, [&]()
+		{
+		});
+
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::ILLUSION, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::ILLUSION].Add(true, [&]()
+		{
+			IllusionAttack();
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::ILLUSION].Add(false, [&]()
+		{
+		});
+
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::JUEMENT_GROUND, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::JUEMENT_GROUND].Add(true, [&]()
+		{
+			JudementAttack_2();
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::JUEMENT_GROUND].Add(false, [&]()
+		{
+		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::HEAL1, [&]()
 		{
@@ -251,6 +278,24 @@ ANunMonster::ANunMonster()
 			ChangeMontageAnimation(MonsterAnimationType::IDLE);
 		});
 
+	MontageEndEventMap.Add(MonsterAnimationType::CRYSTAL, [&]()
+		{
+			ChangeActionType(MonsterActionType::NONE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::ILLUSION, [&]()
+		{
+			ChangeActionType(MonsterActionType::NONE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::JUEMENT_GROUND, [&]()
+		{
+			ChangeActionType(MonsterActionType::NONE);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		});
+
 	MontageEndEventMap.Add(MonsterAnimationType::CURSE, [&]()
 		{
 			ChangeActionType(MonsterActionType::NONE);
@@ -301,8 +346,7 @@ ANunMonster::ANunMonster()
 			{
 				//심판
 				ChangeActionType(MonsterActionType::ATTACK);
-				//ChangeMontageAnimation(MonsterAnimationType::JUDEMENT);
-				ChangeMontageAnimation(MonsterAnimationType::FRAGMENT);
+				ChangeMontageAnimation(MonsterAnimationType::JUDEMENT);
 			}
 			else
 			{
@@ -379,6 +423,15 @@ void ANunMonster::BeginPlay()
 void ANunMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+
+	//텔레포트 이펙트 확인용
+	//사용할 때 텔레포트 함수의 플레이어 락온 부분 주석치고 사용할 것.
+	//if (test)
+	//{
+	//	TelePort();
+	//	test = false;
+	//}
 }
 
 void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -816,6 +869,12 @@ void ANunMonster::IllusionAttack()
 
 }
 
+void ANunMonster::JudementAttack_2()
+{
+	UE_LOG(LogTemp, Warning, TEXT("JudementAttack_2"));
+
+}
+
 void ANunMonster::SingleHeal()
 {
 	UE_LOG(LogTemp, Warning, TEXT("SingleHeal"));
@@ -969,11 +1028,23 @@ void ANunMonster::TelePort()
 	if (PlayerCharacter->IsLockOn)
 		PlayerCharacter->LockOn();
 
+	auto TeleportInObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		GetActorLocation(), FRotator::ZeroRotator);
+	auto Temp1 = Cast<ANunEffectObjInPool>(TeleportInObj);
+	Temp1->SetCurrentEffect(EffectType::TELEPORT_IN);
+	Temp1->ActivateCurrentEffect();
+	
 	srand(time(NULL));
 
 	auto Num = rand() % TeleportArr.Num();
 
 	SetActorLocation(TeleportArr[Num]->GetActorLocation());
+
+	auto TeleportOutObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		GetActorLocation(), FRotator::ZeroRotator);
+	auto Temp2 = Cast<ANunEffectObjInPool>(TeleportOutObj);
+	Temp2->SetCurrentEffect(EffectType::TELEPORT_OUT);
+	Temp2->ActivateCurrentEffect();
 
 	ChangeActionType(MonsterActionType::NONE);
 	ChangeMontageAnimation(MonsterAnimationType::IDLE);
