@@ -100,12 +100,7 @@ AEnemyMonster::AEnemyMonster()
 	CheckDIstanceMap.Add(true, [&]()
 		{
 			if (PlayerCharacter != nullptr)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("asdfasdfasd"));
 				CurrentDistance = FVector::Distance(GetActorLocation(), PlayerCharacter->GetActorLocation());
-			}
-			else
-				UE_LOG(LogTemp, Warning, TEXT("?????????"));
 		});
 
 	MonsterTickEventMap.Add(MonsterActionType::NONE, [&]()
@@ -567,6 +562,7 @@ void AEnemyMonster::TickOverlap()
 		return;
 
 	IsOverlap = false;
+	IsDetect = true;
 
 	if (ActionType == MonsterActionType::DEAD)
 		return;
@@ -574,7 +570,6 @@ void AEnemyMonster::TickOverlap()
 		return;
 
 	TracePlayer = true;
-	IsDetect = true;
 	MonsterMoveEventIndex = 1;
 
 	TargetDetectEventMap[AttackType]();

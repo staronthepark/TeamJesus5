@@ -360,8 +360,6 @@ void ANunMonster::BeginPlay()
 void ANunMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	//UE_LOG(LogTemp, Warning, TEXT("%f"), CurrentDistance);
 }
 
 void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -385,7 +383,7 @@ void ANunMonster::OnNunTargetDetectionEndOverlap(UPrimitiveComponent* Overlapped
 
 void ANunMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
-	UE_LOG(LogTemp, Warning, TEXT("StartAttackTrigger"));
+	UE_LOG(LogTemp, Warning, TEXT("StartAttackTrigger : %f"), CurrentDistance);
 
 	if (!MonsterController->FindPlayer)
 		return;
@@ -400,7 +398,6 @@ void ANunMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 		return;
 	AttackAnimationType = AttackAnimType;
 
-	//TODO : 거리별 패턴을 위한 Map 생성해주기
 	if(CurrentDistance < 600.f)
 		AttackAnimationType = MonsterAnimationType::DARK;
 	else if (CurrentDistance >= 600.f && CurrentDistance <= 1500.f)

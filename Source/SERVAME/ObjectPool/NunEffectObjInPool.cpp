@@ -53,15 +53,15 @@ void ANunEffectObjInPool::Tick(float DeltaTime)
 		auto Val = FMath::VInterpConstantTo(GetActorLocation(), CurvePoint, GetWorld()->DeltaTimeSeconds, Speed);
 		SetActorLocation(Val);
 
-		if (GetActorLocation() == TargetLoc)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("GetActorLocation() == TargetLoc"));
-			IsCurve = false;
+		//if (GetActorLocation() == TargetLoc)
+		//{
+		//	UE_LOG(LogTemp, Warning, TEXT("GetActorLocation() == TargetLoc"));
+		//	IsCurve = false;
 			//CurrentEffect->SetAsset(GetTypeEffect[GetBurstEffectType[Type]]);
 			//CurrentEffect->Activate();
 
-			ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
-		}
+		//	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
+		//}
 	}
 }
 
