@@ -337,7 +337,7 @@ ANunMonster::ANunMonster()
 			{
 				//ÀúÁÖ
 				ChangeActionType(MonsterActionType::ATTACK);
-				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+				ChangeMontageAnimation(MonsterAnimationType::HEAL1);
 				FogAttack();
 			}
 		});
@@ -350,7 +350,7 @@ ANunMonster::ANunMonster()
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::HEAL1);
 			}
-			else if (percent > 0.4f && percent < 0.8f)
+			else if (percent > 0.4f && percent < 0.6f)
 			{
 				//¼þ¹è
 				ChangeActionType(MonsterActionType::ATTACK);
@@ -741,7 +741,7 @@ void ANunMonster::DotFloor()
 			NunEffect->ActivateCurrentEffect();
 			NunEffect->DeactivateDamageSphere(DotTime);
 		}
-	}
+	}	
 }
 
 void ANunMonster::JudementAttack()
@@ -751,7 +751,6 @@ void ANunMonster::JudementAttack()
 	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
 	if (NavSystem == nullptr)
 		return;
-
 
 	GetWorld()->GetTimerManager().SetTimer(JudementTimer, FTimerDelegate::CreateLambda([=]()
 		{
@@ -768,11 +767,12 @@ void ANunMonster::JudementAttack()
 				JudementObj->ActivateCurrentEffect();
 				JudementObj->Damage = 20;
 				JudementObj->ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-				++JudementCurrentCount;
+				JudementCurrentCount++;
 			}
 
 			if (JudementCurrentCount >= JudementMaxCount)
 			{
+				JudementCurrentCount = 0;
 				GetWorld()->GetTimerManager().ClearTimer(JudementTimer);
 				return;
 			}
@@ -1132,7 +1132,14 @@ void ANunMonster::TelePort()
 		{
 			srand(time(NULL));
 			auto Num = rand() % TeleportArr.Num();
+			while (CurrentNum == Num)
+			{
+				srand(time(NULL));
+				Num = rand() % TeleportArr.Num();
+			}
 			CurrentNum = Num;
+
+
 			SetActorLocation(TeleportArr[Num]->GetActorLocation());
 
 			SetActive(true);

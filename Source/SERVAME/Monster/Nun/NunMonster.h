@@ -70,7 +70,7 @@ public:
 	float TeleportVal = 0.05f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
 	float TeleportDelayVal = 0.1f;
-	int CurrentNum = -1;
+	int CurrentNum = 0;
 	FTimerHandle TeleportTimer;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
