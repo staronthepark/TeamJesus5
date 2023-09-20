@@ -60,8 +60,6 @@ UJesusSaveGame* UJesusSaveGame::Load(APlayerCharacter* Player, UJesusGameInstanc
 	SaveInstance->SaveIndex = 0;
 	SaveInstance = Cast<UJesusSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveInstance->SaveSlotName, SaveInstance->SaveIndex));
 
-	
-
 	if (SaveInstance != nullptr)
 	{
 		Player->PlayerDataStruct = SaveInstance->PlayerData;
@@ -72,14 +70,14 @@ UJesusSaveGame* UJesusSaveGame::Load(APlayerCharacter* Player, UJesusGameInstanc
 		//Player->YawRotation.Yaw = SaveInstance->PlayerRot.Yaw;
 		Player->IsPhaseTwo = SaveInstance->IsPhaseTwo;
 
-		for (int32 i = 0; i < 20; i++)
-		{
-			if (SaveInstance->SavedTriggerActor.Contains(i))
-			{
-				GameInstance->SavedTriggerActor[i]->IsActive = SaveInstance->SavedTriggerActor[i];
-				GameInstance->SavedTriggerActor[i]->Init();
-			}
-		}
+		//for (int32 i = 0; i < 20; i++)
+		//{
+		//	if (SaveInstance->SavedTriggerActor.Contains(i))
+		//	{
+		//		GameInstance->SavedTriggerActor[i]->IsActive = SaveInstance->SavedTriggerActor[i];
+		//		GameInstance->SavedTriggerActor[i]->Init();
+		//	}
+		//}
 	}
 
 	

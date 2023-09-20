@@ -186,7 +186,8 @@ void ANunEffectObjInPool::OnProjectileBeginOverlap(UPrimitiveComponent* Overlapp
 		return;
 	}
 
-	Type = GetBurstEffectType[Type];
+	if (GetBurstEffectType.Contains(Type))
+		Type = GetBurstEffectType[Type];
 
 	CurrentEffect->SetAsset(GetTypeEffect[Type]);
 	CurrentEffect->Activate();
