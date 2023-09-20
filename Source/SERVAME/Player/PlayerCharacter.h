@@ -74,12 +74,12 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 {
 	GENERATED_BODY()
 
-	int32 SoulCount;
+		float SoulCount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TMap<AnimationType, FPlayerDamageInfo>DamageList;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int32 MaxSoulCount;
+		float MaxSoulCount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 MaxHealCount;
