@@ -23,6 +23,16 @@ void UPlayerHPUI::DecreaseStaminaGradual(AActor* Actor, float value)
 	Player_Stamina_Bar->DecreaseGradual(Actor, value);
 }
 
+void UPlayerHPUI::SetSoul(float value)
+{
+	Player_Soul_Bar->SetValue(value);
+}
+
+void UPlayerHPUI::DecreaseSoulGradual(AActor* Actor, float value)
+{
+	Player_Soul_Bar->DecreaseGradual(Actor, value);
+}
+
 //void UPlayerHPUI::SetSkill(float value)
 //{
 //	value = FMath::Clamp(value, 0.0f, 1.0f);

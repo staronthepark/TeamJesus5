@@ -40,8 +40,8 @@ UCLASS()
 class SERVAME_API UUserSetting_GraphicsUI : public USubUserSettingUI
 {
 	GENERATED_BODY()
-	UPROPERTY(meta = (BindWidget))
-		UImage* TitleGraphicImage;
+	//UPROPERTY(meta = (BindWidget))
+	//	UImage* TitleGraphicImage;
 
 	UPROPERTY(meta = (BindWidget))
 		UImage* VolumetricImage;

@@ -40,6 +40,8 @@ class SERVAME_API UPlayerHPUI : public UBaseUI
 		UProgressiveBarUI* Player_HP_Bar;
 	UPROPERTY(meta = (BindWidget))
 		UProgressiveBarUI* Player_Stamina_Bar;
+	UPROPERTY(meta = (BindWidget))
+		UProgressiveBarUI* Player_Soul_Bar;
 
 	//UPROPERTY(meta = (BindWidget))
 	//	UImage* Player_Skill_Image;
@@ -59,6 +61,9 @@ public:
 
 	void SetStamina(float value);
 	void DecreaseStaminaGradual(AActor* Actor, float value);
+
+	void SetSoul(float value);
+	void DecreaseSoulGradual(AActor* Actor, float value);
 
 	//void SetSkill(float value);
 };

@@ -56,7 +56,7 @@ void UPlayerHUD::NativeOnInitialized()
 
 void UPlayerHUD::ClearShield()
 {
-	WBP_Player_ShieldsUI->Clear();
+	//WBP_Player_ShieldsUI->Clear();
 }
 
 
@@ -86,6 +86,16 @@ void UPlayerHUD::SetStamina(float value)
 void UPlayerHUD::DecreaseStaminaGradual(AActor* Actor, float value)
 {
 	WBP_PlayerHPUI->DecreaseStaminaGradual(Actor, value);
+}
+
+void UPlayerHUD::SetSoul(float value)
+{
+	WBP_PlayerHPUI->SetSoul(value);
+}
+
+void UPlayerHUD::DecreaseSoulGradual(AActor* Actor, float value)
+{
+	WBP_PlayerHPUI->DecreaseSoulGradual(Actor, value);
 }
 
 void UPlayerHUD::SetSkill(float value)
@@ -124,10 +134,10 @@ void UPlayerHUD::PlayAnimations(EGuides type, bool IsOpen)
 	GuideAnimationFunction[type](IsOpen);
 }
 
-void UPlayerHUD::SetShield(int value)
-{
-	WBP_Player_ShieldsUI->SetShield(value);
-}
+//void UPlayerHUD::SetShield(int value)
+//{
+//	WBP_Player_ShieldsUI->SetShield(value);
+//}
 
 
 void UPlayerHUD::PlayGuidesAnimation(EGuides type, bool IsOpen)
