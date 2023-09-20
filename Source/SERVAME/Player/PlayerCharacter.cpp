@@ -2749,7 +2749,7 @@ void APlayerCharacter::LoadFile()
 	if(IsPhaseTwo)
 		UCombatManager::GetInstance().Boss2->SetActive(true);
 
-	SetSoul(PlayerDataStruct.SoulCount);
+	//SetSoul(PlayerDataStruct.SoulCount);
 }
 
 void APlayerCharacter::LoadMap()
