@@ -752,21 +752,31 @@ void ANunMonster::JudementAttack()
 	if (NavSystem == nullptr)
 		return;
 
-	FNavLocation RandomLocation;
 
-	if (NavSystem->GetRandomPointInNavigableRadius(GetActorLocation(), JudementRange, RandomLocation))
-	{
-		FVector Temp = RandomLocation.Location;
-		auto Loc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z - 87.f);
-		auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
-			Loc, FRotator::ZeroRotator);
+	GetWorld()->GetTimerManager().SetTimer(JudementTimer, FTimerDelegate::CreateLambda([=]()
+		{
+			FNavLocation RandomLocation;
+			if (NavSystem->GetRandomPointInNavigableRadius(GetActorLocation(), JudementRange, RandomLocation))
+			{
+				FVector Temp = RandomLocation.Location;
+				auto Loc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z - 87.f);
+				auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+					Loc, FRotator::ZeroRotator);
 
-		auto JudementObj = Cast<ANunEffectObjInPool>(PoolObj);
-		JudementObj->SetCurrentEffect(EffectType::JUDGEMENTEFFECT);
-		JudementObj->ActivateCurrentEffect();
-		JudementObj->Damage = 20;
-		JudementObj->ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	}
+				auto JudementObj = Cast<ANunEffectObjInPool>(PoolObj);
+				JudementObj->SetCurrentEffect(EffectType::JUDGEMENTEFFECT);
+				JudementObj->ActivateCurrentEffect();
+				JudementObj->Damage = 20;
+				JudementObj->ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+				++JudementCurrentCount;
+			}
+
+			if (JudementCurrentCount >= JudementMaxCount)
+			{
+				GetWorld()->GetTimerManager().ClearTimer(JudementTimer);
+				return;
+			}
+		}), JudementDelay, true);
 }
 
 void ANunMonster::Curse()

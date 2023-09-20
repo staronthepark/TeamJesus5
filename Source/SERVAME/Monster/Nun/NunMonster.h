@@ -93,6 +93,12 @@ public:
 	float JudementRange = 1000;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JudementAttack")
 	float JudementTime = 15.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JudementAttack")
+	float JudementDelay = 0.5f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JudementAttack")
+	int JudementMaxCount = 15;
+	int JudementCurrentCount = 0;
+	FTimerHandle JudementTimer;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CrystalAttack")
 	float CrystalRange = 400.f;

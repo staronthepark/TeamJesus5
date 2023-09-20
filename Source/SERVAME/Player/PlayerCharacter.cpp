@@ -2270,7 +2270,6 @@ void APlayerCharacter::LookTarget()
 	FRotator rotation = FRotationMatrix::MakeFromX(TargetComp->GetComponentLocation() - HeadBoneLocation->GetComponentLocation()).Rotator();
 
 
-	UE_LOG(LogTemp, Warning, TEXT("%f"), AnimInstance->HeadBoneRotateValue);
 
 	if (AnimInstance->PlayerAnimationType != AnimationType::BATTLEDODGE
 		&& AnimInstance->PlayerAnimationType != AnimationType::SPRINT 
