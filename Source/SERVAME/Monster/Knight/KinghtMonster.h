@@ -80,6 +80,7 @@ public:
 	const float RunBlend = 600.f;
 
 	bool MinusOpacity = false;
+	bool IsSpawn = false;
 
 	//Notify
 	void InterpStart();

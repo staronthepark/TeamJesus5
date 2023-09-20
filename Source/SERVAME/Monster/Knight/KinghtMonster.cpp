@@ -71,6 +71,9 @@ AKinghtMonster::AKinghtMonster()
 
 	MonsterMoveMap.Add(0, [&]()
 		{
+			if (IsSpawn || PatrolActorArr.IsEmpty())
+				return;
+
 			IsPatrol = true;
 			GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.CharacterOriginSpeed;
 			KnightAnimInstance->BlendSpeed = WalkBlend;
@@ -302,6 +305,14 @@ void AKinghtMonster::Tick(float DeltaTime)
 void AKinghtMonster::RespawnCharacter()
 {
 	Super::RespawnCharacter();
+
+	if (IsSpawn)
+	{
+		//소환된 기사 삭제
+		SetActorTickEnabled(false);
+		GetWorld()->DestroyActor(this);
+		return;
+	}
 
 	TracePlayer = false;
 	MonsterController->FindPlayer = false;
