@@ -2270,7 +2270,6 @@ void APlayerCharacter::LookTarget()
 	FRotator rotation = FRotationMatrix::MakeFromX(TargetComp->GetComponentLocation() - HeadBoneLocation->GetComponentLocation()).Rotator();
 
 
-	UE_LOG(LogTemp, Warning, TEXT("%f"), AnimInstance->HeadBoneRotateValue);
 
 	if (AnimInstance->PlayerAnimationType != AnimationType::BATTLEDODGE
 		&& AnimInstance->PlayerAnimationType != AnimationType::SPRINT 
@@ -2749,7 +2748,7 @@ void APlayerCharacter::LoadFile()
 	if(IsPhaseTwo)
 		UCombatManager::GetInstance().Boss2->SetActive(true);
 
-	SetSoul(PlayerDataStruct.SoulCount);
+	//SetSoul(PlayerDataStruct.SoulCount);
 }
 
 void APlayerCharacter::LoadMap()

@@ -60,8 +60,6 @@ UJesusSaveGame* UJesusSaveGame::Load(APlayerCharacter* Player, UJesusGameInstanc
 	SaveInstance->SaveIndex = 0;
 	SaveInstance = Cast<UJesusSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveInstance->SaveSlotName, SaveInstance->SaveIndex));
 
-	
-
 	if (SaveInstance != nullptr)
 	{
 		Player->PlayerDataStruct = SaveInstance->PlayerData;
