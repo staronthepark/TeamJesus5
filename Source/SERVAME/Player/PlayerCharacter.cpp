@@ -1760,6 +1760,7 @@ void APlayerCharacter::BeginPlay()
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
 	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
 	ASoundManager::GetInstance().Init();
+	CanShieldDeploy = true;
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -2748,7 +2749,7 @@ void APlayerCharacter::LoadFile()
 	if(IsPhaseTwo)
 		UCombatManager::GetInstance().Boss2->SetActive(true);
 
-	//SetSoul(PlayerDataStruct.SoulCount);
+	SetSoul(PlayerDataStruct.SoulCount);
 }
 
 void APlayerCharacter::LoadMap()
