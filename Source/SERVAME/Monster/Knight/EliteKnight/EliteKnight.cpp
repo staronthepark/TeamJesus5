@@ -40,8 +40,10 @@ void AEliteKnight::Tick(float DeltaTime)
 	if (IsMoveStart)
 	{
 		fDeltaTime += DeltaTime;
-		if(fDeltaTime >= MinWalkTime)
+		if (fDeltaTime >= MinWalkTime)
+		{
 			//블렌드 스페이스 적용
+		}
 	}
 }
 

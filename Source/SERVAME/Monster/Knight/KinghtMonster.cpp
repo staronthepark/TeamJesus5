@@ -573,7 +573,7 @@ void AKinghtMonster::SearchPlayer()
 		HitType = MonsterAnimationType::BACKHIT;
 }
 
-float AKinghtMonster::GetRandNum(float Min, float Max)
+int AKinghtMonster::GetRandNum(int Min, int Max)
 {
 	std::srand(time(NULL));
 	auto Val = rand() % Max + Min;
