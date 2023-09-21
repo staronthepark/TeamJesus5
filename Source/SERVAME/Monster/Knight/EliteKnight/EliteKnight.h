@@ -21,5 +21,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void RunBlending();
-	
+
+	UPROPERTY(EditAnyWhere, Category = "Sprint")
+	float SprintDuration = 1.f;
+	UPROPERTY(EditAnyWhere, Category = "Sprint")
+	float SprintAttackRadius;
+	float SprintTime;
+	float BlendSpeed;
+
 };

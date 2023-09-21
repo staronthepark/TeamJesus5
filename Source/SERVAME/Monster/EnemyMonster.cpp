@@ -280,7 +280,8 @@ AEnemyMonster::AEnemyMonster()
 	MontageEndEventMap.Add(MonsterAnimationType::RANGEATTACK1, MontageEndEventMap[MonsterAnimationType::ATTACK1]);
 	MontageEndEventMap.Add(MonsterAnimationType::DASHATTACK1, MontageEndEventMap[MonsterAnimationType::ATTACK1]);
 	MontageEndEventMap.Add(MonsterAnimationType::STINGaTTACK1, MontageEndEventMap[MonsterAnimationType::ATTACK1]);
-	
+	MontageEndEventMap.Add(MonsterAnimationType::SPRINTATTACK, MontageEndEventMap[MonsterAnimationType::ATTACK1]);
+
 	MontageEndEventMap.Add(MonsterAnimationType::HIT, [&]()
 		{
 			if (TracePlayer)
@@ -355,6 +356,11 @@ AEnemyMonster::AEnemyMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::STINGaTTACK1, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::STINGaTTACK1].Add(true, NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1][true]);
 	NotifyBeginEndEventMap[MonsterAnimationType::STINGaTTACK1].Add(false, NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1][false]);
+
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::SPRINTATTACK, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::SPRINTATTACK].Add(true, NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1][true]);
+	NotifyBeginEndEventMap[MonsterAnimationType::SPRINTATTACK].Add(false, NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1][false]);
+
 
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::RANGEATTACK1, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::RANGEATTACK1].Add(true, [&]()

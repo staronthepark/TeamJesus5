@@ -43,11 +43,25 @@ void AEliteKnight::Tick(float DeltaTime)
 		if (fDeltaTime >= MinWalkTime)
 		{
 			//블렌드 스페이스 적용
+			SprintTime += DeltaTime;
+			KnightAnimInstance->BlendDirection = 180.f;
+			BlendSpeed = FMath::Lerp(WalkBlend, RunBlend, SprintTime / SprintDuration);
+			KnightAnimInstance->BlendSpeed = BlendSpeed;
+		}
+
+		if (CurrentDistance <= SprintAttackRadius)
+		{
+			ChangeActionType(MonsterActionType::ATTACK);
+			ChangeMontageAnimation(MonsterAnimationType::SPRINTATTACK);
 		}
 	}
+
 }
 
 void AEliteKnight::RunBlending()
 {
+	IsMoveStart = false;
+
+	KnightAnimInstance->BlendDirection = 180.f;
 }
 

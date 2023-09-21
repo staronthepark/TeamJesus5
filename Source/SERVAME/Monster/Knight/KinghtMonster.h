@@ -82,7 +82,7 @@ public:
 	bool MinusOpacity = false;
 	bool IsSpawn = false;
 
-	bool IsMoveStart;
+	bool IsMoveStart = false;
 	float fDeltaTime;
 	float MinWalkTime;
 
