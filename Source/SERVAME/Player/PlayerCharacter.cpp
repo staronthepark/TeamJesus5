@@ -2738,7 +2738,10 @@ void APlayerCharacter::SetSoul(int32 value)
 	PlayerDataStruct.SoulCount += value;
 
 	value < 0 ? PlayerHUD->DecreaseSoulGradual(this, PlayerDataStruct.SoulCount / PlayerDataStruct.MaxSoulCount) : 
-		PlayerHUD->SetSoul(PlayerDataStruct.SoulCount / PlayerDataStruct.MaxSoulCount);		
+		PlayerHUD->SetSoul(PlayerDataStruct.SoulCount / PlayerDataStruct.MaxSoulCount);
+
+	if (PlayerDataStruct.SoulCount <= 0)PlayerDataStruct.SoulCount = 0;
+	else if(PlayerDataStruct.SoulCount >= PlayerDataStruct.MaxSoulCount)PlayerDataStruct.SoulCount = 100;
 }
 
 void APlayerCharacter::LoadFile()
