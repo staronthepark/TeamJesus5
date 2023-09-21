@@ -71,6 +71,9 @@ AKinghtMonster::AKinghtMonster()
 
 	MonsterMoveMap.Add(0, [&]()
 		{
+			if (IsSpawn || PatrolActorArr.IsEmpty())
+				return;
+
 			IsPatrol = true;
 			GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.CharacterOriginSpeed;
 			KnightAnimInstance->BlendSpeed = WalkBlend;
@@ -103,6 +106,8 @@ AKinghtMonster::AKinghtMonster()
 	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
 		{
 			WalkToRunBlend = false;
+			KnightAnimInstance->BlendDirection = 0.f;
+
 			OnHitCancle();
 
 			if (TracePlayer)
@@ -160,6 +165,10 @@ AKinghtMonster::AKinghtMonster()
 			}
 			else
 			{
+				if (!IsMoveStart)
+					MinWalkTime = GetRandNum(3.f, 5.f);
+
+				IsMoveStart = true;
 				Temp = 0.f;
 				CalcedDist = 0.f;
 				InterpolationTime = 0.f;
@@ -302,6 +311,14 @@ void AKinghtMonster::Tick(float DeltaTime)
 void AKinghtMonster::RespawnCharacter()
 {
 	Super::RespawnCharacter();
+
+	if (IsSpawn)
+	{
+		//소환된 기사 삭제
+		SetActorTickEnabled(false);
+		GetWorld()->DestroyActor(this);
+		return;
+	}
 
 	TracePlayer = false;
 	MonsterController->FindPlayer = false;
@@ -463,6 +480,7 @@ void AKinghtMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 	AttackAnimationType = AttackAnimType;
 	if (ActionType != MonsterActionType::ATTACK)
 	{
+		IsMoveStart = false;
 		MonsterController->StopMovement();
 
 		if (MontageMap.Contains(AnimationType))
@@ -555,6 +573,13 @@ void AKinghtMonster::SearchPlayer()
 		HitType = MonsterAnimationType::HIT;
 	else if (ForwardSpeed < 0)
 		HitType = MonsterAnimationType::BACKHIT;
+}
+
+int AKinghtMonster::GetRandNum(int Min, int Max)
+{
+	std::srand(time(NULL));
+	auto Val = rand() % Max + Min;
+	return Val;
 }
 
 float AKinghtMonster::Die(float Dm)

@@ -32,7 +32,7 @@ enum class MonsterAnimationType : uint8
 	FRAGMENT,
 	CRYSTAL,
 	ILLUSION,
-	JUEMENT_GROUND,
+	SPRINTATTACK,
 
 	FORWARDMOVE,
 	LEFTMOVE,

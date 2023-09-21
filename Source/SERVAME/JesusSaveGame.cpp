@@ -58,12 +58,10 @@ UJesusSaveGame* UJesusSaveGame::Load(APlayerCharacter* Player, UJesusGameInstanc
 	SaveInstance = Cast<UJesusSaveGame>(UGameplayStatics::CreateSaveGameObject(UJesusSaveGame::StaticClass()));
 	SaveInstance->SaveSlotName = "JesusSave";
 	SaveInstance->SaveIndex = 0;
-	
-	
+	SaveInstance = Cast<UJesusSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveInstance->SaveSlotName, SaveInstance->SaveIndex));
 
 	if (SaveInstance != nullptr)
 	{
-		SaveInstance = Cast<UJesusSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveInstance->SaveSlotName, SaveInstance->SaveIndex));
 		Player->PlayerDataStruct = SaveInstance->PlayerData;
 		Player->SetActorLocation(SaveInstance->PlayerLoc);
 		Player->SetActorRotation(SaveInstance->PlayerRot);

@@ -58,4 +58,6 @@ public:
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
 	float BlendSpeed = 0.f;
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
+	float BlendDirection = 0.f;
 };
