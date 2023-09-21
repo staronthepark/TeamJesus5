@@ -111,7 +111,7 @@ public:
 	void Rotate();
 	void DrawCircle(FVector Center);
 	void SearchPlayer();
-	float GetRandNum(float Min, float Max);
+	int GetRandNum(int Min, int Max);
 
 	UFUNCTION()
 	void OnKnightTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
