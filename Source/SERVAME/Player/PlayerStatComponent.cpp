@@ -218,7 +218,8 @@ void UPlayerStatComponent::BeginPlay()
 	{
 		if (Owner->CanActivate(ShieldStatList[Owner->PlayerDataStruct.ShieldIndex].SoulCost))
 		{
-			Owner->PlayerDataStruct.ShieldSoulCost = ShieldStatList[Owner->PlayerDataStruct.ShieldIndex].Value;
+			Owner->PlayerDataStruct.ShieldDecreaseSoulPercent = ShieldStatList[Owner->PlayerDataStruct.ShieldIndex].Value;
+			Owner->PlayerDataStruct.ShieldBashSoulCost -= ShieldStatList[Owner->PlayerDataStruct.ShieldIndex].Value * 10.0f;
 			Owner->PlayerDataStruct.ShieldIndex++;
 			return true;
 		}

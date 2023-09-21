@@ -122,9 +122,11 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 SkillSoulCost;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float ShieldSoulCost;
+		int32 ShieldBashSoulCost;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float ShieldCoolDown;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float SkillCoolDown;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float ShieldDecreaseSoulPercent;
 };
@@ -274,6 +276,7 @@ public:
 	float ChangeTargetTime;	
 
 	FTimerHandle ShieldCoolDownTimer;
+	FTimerHandle SkillCoolDownTimer;
 	FTimerHandle SprintStartTimer;
 	FTimerHandle SprintEndTimer;
 	FTimerHandle DeadTimer;
@@ -305,6 +308,7 @@ public:
 	bool IsGrab;
 	bool IsInputPad;
 	bool CanShieldDeploy;
+	bool CanUseSkill;
 	
 	float TargetOpacity;
 
@@ -420,6 +424,7 @@ public:
 	void RecoverStamina();
 
 	void RecoverShield();
+	void RecoverSkill();
 
 	virtual void IsNotifyActive(bool value) override;
 
