@@ -356,15 +356,26 @@ void AKinghtMonster::RespawnCharacter()
 		return;
 	}
 
-	if (MyMonsterType == MonsterType::KNIGHT)
+	//TODO : 일반 기사, 끈질긴 기사 패트롤
+	if (MyMonsterType == MonsterType::KNIGHT || MyMonsterType == MonsterType::PERSISTENTKNIGHT)
 	{
 		TracePlayer = false;
 		MonsterController->FindPlayer = false;
 		IsPatrol = true;
 		MonsterMoveEventIndex = 0;
 		ChangeActionType(MonsterActionType::MOVE);
+	}		
+	else if (MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
+	{
+		AnimationType = MonsterAnimationType::STARTDEAD;
+		ChangeActionType(MonsterActionType::NONE);
+		ChangeMontageAnimation(MonsterAnimationType::STARTDEAD);
 	}
-
+	else
+	{
+		ChangeActionType(MonsterActionType::NONE);
+		ChangeMontageAnimation(MonsterAnimationType::IDLE);
+	}
 	WeaponOpacity = 0.171653f;
 	MeshOpacity = 0.171653f;
 

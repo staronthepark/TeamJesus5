@@ -832,9 +832,6 @@ void AEnemyMonster::RespawnCharacter()
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
 	SetActorTickEnabled(true);
-
-	ChangeActionType(MonsterActionType::NONE);
-	ChangeMontageAnimation(MonsterAnimationType::IDLE);
 }
 
 void AEnemyMonster::ResumeMontage()
