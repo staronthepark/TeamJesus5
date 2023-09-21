@@ -122,6 +122,10 @@ APlayerCharacter::APlayerCharacter()
 	ForwardRotation[2].Add(-180.0f);
 	ForwardRotation[2].Add(135.0f);
 
+	SkillRotateLUT.Add(-45.0f);
+	SkillRotateLUT.Add(0.0f);
+	SkillRotateLUT.Add(45.0f);
+
 	HitEffectRotatorList.Add(AnimationType::ATTACK1, FRotator(50, 90.0f, 0)   );
 	HitEffectRotatorList.Add(AnimationType::ATTACK2, FRotator(0, -90.0f, 0.0f));
 	HitEffectRotatorList.Add(AnimationType::ATTACK3, FRotator(0.0f, 180.0f, 0.0f));
@@ -493,7 +497,6 @@ APlayerCharacter::APlayerCharacter()
 	NotifyBeginEndEventMap.Add(AnimationType::SKILL1, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::SKILL1].Add(false, [&]()
 		{
-
 			DeactivateRightWeapon();
 			SkillTrailComp->SetVisibility(false);
 			SkillAuraComp->Deactivate();
@@ -501,6 +504,14 @@ APlayerCharacter::APlayerCharacter()
 		});
 	NotifyBeginEndEventMap[AnimationType::SKILL1].Add(true, [&]()
 		{
+			AObjectPool& objectpool = AObjectPool::GetInstance();
+			for (int32 i = 0; i < SkillCount; i++)
+			{
+				FRotator CurrentRotation = GetActorRotation();
+				CurrentRotation.Yaw -= SkillRotateLUT[i];
+				FVector Location = GetActorLocation() + CurrentRotation.Vector() * SkillDistance;
+				objectpool.SpawnObject(objectpool.ObjectArray[43].ObjClass, Location, FRotator::ZeroRotator);
+			}
 			SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		});
 
@@ -515,6 +526,15 @@ APlayerCharacter::APlayerCharacter()
 	NotifyBeginEndEventMap[AnimationType::SKILL2].Add(true, [&]()
 		{
 			SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+			AObjectPool& objectpool = AObjectPool::GetInstance();
+			for (int32 i = 0; i < SkillCount; i++)
+			{
+				FRotator CurrentRotation = GetActorRotation();
+				CurrentRotation.Yaw -= SkillRotateLUT[i];
+				FVector Location = GetActorLocation() + CurrentRotation.Vector() * SkillDistance;
+				objectpool.SpawnObject(objectpool.ObjectArray[43].ObjClass, Location, FRotator::ZeroRotator);
+			}
 		});
 
 	PlayerActionTickMap.Add(PlayerAction::NONE, TMap<ActionType, TFunction<void()>>());

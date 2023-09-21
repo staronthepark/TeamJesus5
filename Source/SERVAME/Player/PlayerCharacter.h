@@ -255,6 +255,13 @@ public:
 	UPROPERTY()
 		UUserSettingUI* UserSettingUI;
 
+	UPROPERTY(EditAnywhere)
+		float SkillDistance;
+	UPROPERTY(EditAnywhere)
+		int32 SkillCount;
+	TArray<float> SkillRotateLUT;
+
+
 	ABaseCharacter* ExecutionCharacter;
 
 	TArray<UPrimitiveComponent*>TargetCompArray;
