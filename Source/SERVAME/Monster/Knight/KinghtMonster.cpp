@@ -367,6 +367,7 @@ void AKinghtMonster::RespawnCharacter()
 	}		
 	else if (MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
 	{
+		Imotal = true;
 		AnimationType = MonsterAnimationType::STARTDEAD;
 		ChangeActionType(MonsterActionType::NONE);
 		ChangeMontageAnimation(MonsterAnimationType::STARTDEAD);
