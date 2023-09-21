@@ -36,4 +36,16 @@ void AEliteKnight::BeginPlay()
 void AEliteKnight::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (IsMoveStart)
+	{
+		fDeltaTime += DeltaTime;
+		if(fDeltaTime >= MinWalkTime)
+			//블렌드 스페이스 적용
+	}
 }
+
+void AEliteKnight::RunBlending()
+{
+}
+

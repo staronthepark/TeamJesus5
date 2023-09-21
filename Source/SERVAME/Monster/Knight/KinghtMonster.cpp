@@ -163,6 +163,10 @@ AKinghtMonster::AKinghtMonster()
 			}
 			else
 			{
+				if (!IsMoveStart)
+					MinWalkTime = GetRandNum(1.f, 3.f);
+
+				IsMoveStart = true;
 				Temp = 0.f;
 				CalcedDist = 0.f;
 				InterpolationTime = 0.f;
@@ -474,6 +478,7 @@ void AKinghtMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 	AttackAnimationType = AttackAnimType;
 	if (ActionType != MonsterActionType::ATTACK)
 	{
+		IsMoveStart = false;
 		MonsterController->StopMovement();
 
 		if (MontageMap.Contains(AnimationType))
@@ -566,6 +571,13 @@ void AKinghtMonster::SearchPlayer()
 		HitType = MonsterAnimationType::HIT;
 	else if (ForwardSpeed < 0)
 		HitType = MonsterAnimationType::BACKHIT;
+}
+
+float AKinghtMonster::GetRandNum(float Min, float Max)
+{
+	std::srand(time(NULL));
+	auto Val = rand() % Max + Min;
+	return Val;
 }
 
 float AKinghtMonster::Die(float Dm)

@@ -82,6 +82,10 @@ public:
 	bool MinusOpacity = false;
 	bool IsSpawn = false;
 
+	bool IsMoveStart;
+	float fDeltaTime;
+	float MinWalkTime;
+
 	//Notify
 	void InterpStart();
 	void InterpEnd();
@@ -107,6 +111,7 @@ public:
 	void Rotate();
 	void DrawCircle(FVector Center);
 	void SearchPlayer();
+	float GetRandNum(float Min, float Max);
 
 	UFUNCTION()
 	void OnKnightTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
