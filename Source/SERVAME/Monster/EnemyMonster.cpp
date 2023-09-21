@@ -52,6 +52,7 @@ AEnemyMonster::AEnemyMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::RANGEATTACK1, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::DASHATTACK1, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::STINGaTTACK1, MonsterStateType::BEFOREATTACK);
+	AnimTypeToStateType.Add(MonsterAnimationType::SPRINTATTACK, MonsterStateType::BEFOREATTACK);
 
 	AnimTypeToStateType.Add(MonsterAnimationType::HIT, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::BACKHIT, MonsterStateType::CANTACT);

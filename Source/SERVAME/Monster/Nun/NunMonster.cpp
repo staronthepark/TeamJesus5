@@ -182,6 +182,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::PRAY, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::PRAY].Add(true, [&]()
 		{
+			PrayAttack();
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::PRAY].Add(false, [&]()
 		{
@@ -443,6 +444,9 @@ void ANunMonster::Tick(float DeltaTime)
 
 void ANunMonster::SetYaw()
 {
+	if (PlayerCharacter == nullptr)
+		return;
+
 	TargetRotation = (PlayerCharacter->GetActorLocation() - GetActorLocation()).Rotation();
 	YawRotation = TargetRotation;
 }
@@ -574,6 +578,7 @@ void ANunMonster::SpawnKnight()
 			//SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
 		}
 
+		Knight->IsSpawn = true;
 		Knight->SetActorLocation(SpawnLoc);
 		Knight->SetActorRotation(SpawnRot);
 		Knight->SpawnBegin();
@@ -909,7 +914,7 @@ void ANunMonster::FragmentsAttack()
 		FDamageEvent DamageEvent;
 		auto Player = Cast<APlayerCharacter>(HitResult.GetActor());
 
-		if (IsIllusion)
+		if (IsIllusion || Player == nullptr)
 			return;
 
 		Player->TakeDamage(SkillInfoMap[MonsterAnimationType::FRAGMENT].Damage, DamageEvent, GetController(), this);
@@ -943,6 +948,7 @@ void ANunMonster::IllusionAttack()
 	Illusion->SetActorRotation(SpawnRot);
 	Illusion->MonsterController->FindPlayer = true;
 	Illusion->IsIllusion = true;
+	Illusion->PlayerCharacter = PlayerCharacter;
 	IsIllusion = true;
 	Illusion->SetYaw();
 
@@ -1186,6 +1192,12 @@ void ANunMonster::IsNotifyActive(bool value)
 void ANunMonster::RespawnCharacter()
 {
 	Super::RespawnCharacter();
+
+	KnightArr.Empty();
+
+	TeleportDamageSum = 0.f;
+	SpawnDamageSum = 0.f;
+	IllusionDamageSum = 0.f;
 
 	WeaponOpacity = 0.171653f;
 	MeshOpacity = 0.171653f;
