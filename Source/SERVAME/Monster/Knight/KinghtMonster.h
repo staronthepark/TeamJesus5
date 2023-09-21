@@ -83,7 +83,7 @@ public:
 	bool IsSpawn = false;
 
 	bool IsMoveStart = false;
-	float fDeltaTime;
+	float SprintDeltaTime;
 	float MinWalkTime;
 
 	//Notify

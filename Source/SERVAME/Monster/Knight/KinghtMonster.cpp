@@ -105,9 +105,27 @@ AKinghtMonster::AKinghtMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
 		{
+			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			WalkToRunBlend = false;
-			KnightAnimInstance->BlendDirection = 0.f;
+			OnHitCancle();
 
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				KnightAnimInstance->BlendSpeed = WalkBlend;
+				ChangeActionType(MonsterActionType::MOVE);
+			}
+			else
+			{
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			}
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::SPRINTATTACK, [&]()
+		{
+			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			WalkToRunBlend = false;
 			OnHitCancle();
 
 			if (TracePlayer)
@@ -161,14 +179,12 @@ AKinghtMonster::AKinghtMonster()
 
 			if (CurrentDistance >= RunableDistance && !IsPatrol)
 			{
-				IsMoveStart = false;
-				fDeltaTime = 0;
 				ChangeActionType(MonsterActionType::RUN);
 			}
 			else
 			{
 				if (!IsMoveStart)
-					MinWalkTime = GetRandNum(3.f, 5.f);
+					MinWalkTime = GetRandNum(3, 5);
 
 				IsMoveStart = true;
 				Temp = 0.f;
@@ -202,6 +218,23 @@ AKinghtMonster::AKinghtMonster()
 
 			KnightAnimInstance->BlendSpeed = Temp;
 			MonsterDataStruct.RunSpeed = FMath::Lerp(120.f, 240.f, (KnightAnimInstance->BlendSpeed - 300.f) / 300.f);
+
+			//KnightAnimInstance->Montage_Stop(0.25f, MontageMap[AnimationType]);
+		});
+
+	MonsterTickEventMap.Add(MonsterActionType::SPRINT, [&]()
+		{
+			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			RotateMap[PlayerCharacter != nullptr]();
+			MonsterMoveMap[MonsterMoveEventIndex]();
+
+			auto speed = FMath::Clamp(CalcedDist, 300.f, 600.f);
+
+			if (speed > Temp)
+				Temp = speed;
+
+			KnightAnimInstance->BlendSpeed = Temp;
+			MonsterDataStruct.RunSpeed = FMath::Lerp(120.f, 500.f, (KnightAnimInstance->BlendSpeed - 300.f) / 300.f);
 
 			//KnightAnimInstance->Montage_Stop(0.25f, MontageMap[AnimationType]);
 		});
@@ -275,7 +308,8 @@ void AKinghtMonster::Tick(float DeltaTime)
 	if (MonsterController->FindPlayer && CurrentDistance > AttackRange && ActionType != MonsterActionType::ATTACK)
 		TracePlayer = true;
 
-	if (ActionType == MonsterActionType::RUN && CalcedDist != RunBlend && !IsPatrol)
+	if ((ActionType == MonsterActionType::RUN || ActionType == MonsterActionType::SPRINT)
+		&& CalcedDist != RunBlend && !IsPatrol)
 	{
 		if (WalkToRunBlend)
 		{
@@ -285,7 +319,7 @@ void AKinghtMonster::Tick(float DeltaTime)
 		else if (CurrentDistance >= AccelerationDist)
 		{
 			InterpolationTime += DeltaTime;
-			CalcedDist = FMath::Lerp(IdleBlend, WalkBlend, InterpolationTime / InterpolationDuration);
+			CalcedDist = FMath::Lerp(IdleBlend, RunBlend, InterpolationTime / InterpolationDuration);
 		}
 		else
 		{
@@ -322,11 +356,14 @@ void AKinghtMonster::RespawnCharacter()
 		return;
 	}
 
-	TracePlayer = false;
-	MonsterController->FindPlayer = false;
-	IsPatrol = true;
-	MonsterMoveEventIndex = 0;
-	ChangeActionType(MonsterActionType::MOVE);
+	if (MyMonsterType == MonsterType::KNIGHT)
+	{
+		TracePlayer = false;
+		MonsterController->FindPlayer = false;
+		IsPatrol = true;
+		MonsterMoveEventIndex = 0;
+		ChangeActionType(MonsterActionType::MOVE);
+	}
 
 	WeaponOpacity = 0.171653f;
 	MeshOpacity = 0.171653f;
@@ -483,7 +520,8 @@ void AKinghtMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 	if (ActionType != MonsterActionType::ATTACK)
 	{
 		IsMoveStart = false;
-		fDeltaTime = 0;
+		SprintDeltaTime = 0;
+
 		MonsterController->StopMovement();
 
 		if (MontageMap.Contains(AnimationType))

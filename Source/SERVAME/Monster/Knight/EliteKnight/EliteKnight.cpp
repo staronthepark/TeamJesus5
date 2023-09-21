@@ -3,6 +3,7 @@
 
 #include "EliteKnight.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "..\KnightAttackTriggerComp.h"
 
 AEliteKnight::AEliteKnight()
 {
@@ -25,7 +26,7 @@ AEliteKnight::AEliteKnight()
 			}
 		});
 
-	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
+	SetActionByRandomMap.Add(MonsterAnimationType::SPRINTATTACK, [&](float percent)
 		{
 			ChangeActionType(MonsterActionType::ATTACK);
 			ChangeMontageAnimation(MonsterAnimationType::SPRINTATTACK);
@@ -42,23 +43,23 @@ void AEliteKnight::BeginPlay()
 void AEliteKnight::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 	if (IsMoveStart)
 	{
-		fDeltaTime += DeltaTime;
-		if (fDeltaTime >= MinWalkTime)
+		SprintDeltaTime += DeltaTime;
+
+		UE_LOG(LogTemp, Warning, TEXT("%f"), SprintDeltaTime);
+		UE_LOG(LogTemp, Warning, TEXT("%f"), MinWalkTime);
+		UE_LOG(LogTemp, Warning, TEXT("Blend Speed : %f"), KnightAnimInstance->BlendSpeed);
+
+		if (SprintDeltaTime >= MinWalkTime)
 		{
-			fDeltaTime = 0;
+			ChangeActionType(MonsterActionType::SPRINT);
+
 			SprintTime += DeltaTime;
-
-			//Direction도 보간시켜서 증가시켜야 함.
-			BlendSpeed = FMath::Lerp(WalkBlend, RunBlend, SprintTime / SprintDuration);
-			KnightAnimInstance->BlendSpeed = BlendSpeed;
 			BlendDirection = FMath::Lerp(0.f, 180.f, SprintTime / SprintDuration);
-			KnightAnimInstance->BlendDirection = 180.f;
-
-			MonsterDataStruct.RunSpeed = FMath::Lerp(120.f, 240.f, (KnightAnimInstance->BlendSpeed - 300.f) / 300.f);
-			GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.RunSpeed;
+			FMath::Clamp(BlendDirection, 0, 180);
+			KnightAnimInstance->BlendDirection = BlendDirection;
 
 			if (CurrentDistance <= SprintAttackRadius)
 			{
@@ -66,6 +67,12 @@ void AEliteKnight::Tick(float DeltaTime)
 				StartAttackTrigger(MonsterAnimationType::SPRINTATTACK);
 			}
 		}
+	}
+	else
+	{
+		SprintTime = 0;
+		SprintDeltaTime = 0;
+		KnightAnimInstance->BlendDirection = 0.f;
 	}
 
 }

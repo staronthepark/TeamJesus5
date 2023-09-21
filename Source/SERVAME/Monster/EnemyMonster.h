@@ -30,6 +30,7 @@ enum class MonsterActionType : uint8
 	POWERATTACK,
 	MOVE,
 	RUN,
+	SPRINT,
 	HIT,
 	DEAD,
 };

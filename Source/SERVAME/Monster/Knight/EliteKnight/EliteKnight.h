@@ -21,9 +21,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnyWhere, Category = "Sprint")
+	float SprintAttackRadius = 100.f;
 	float SprintDuration = 1.f;
-	UPROPERTY(EditAnyWhere, Category = "Sprint")
-	float SprintAttackRadius = 500.f;
 	float SprintTime;
 	float BlendSpeed;
 	float BlendDirection;
