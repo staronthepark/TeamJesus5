@@ -106,6 +106,8 @@ AKinghtMonster::AKinghtMonster()
 	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
 		{
 			WalkToRunBlend = false;
+			KnightAnimInstance->BlendDirection = 0.f;
+
 			OnHitCancle();
 
 			if (TracePlayer)
@@ -164,7 +166,7 @@ AKinghtMonster::AKinghtMonster()
 			else
 			{
 				if (!IsMoveStart)
-					MinWalkTime = GetRandNum(1.f, 3.f);
+					MinWalkTime = GetRandNum(3.f, 5.f);
 
 				IsMoveStart = true;
 				Temp = 0.f;

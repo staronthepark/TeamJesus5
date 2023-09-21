@@ -1332,12 +1332,14 @@ void AJesusBoss::CheckBossDie()
 		ChangeMontageAnimation(BossAnimationType::DIE);
 		IsDead = true;
 		AIController->BossUI->PlayBossDiedAnimtion();
+		AIController->GetBlackboardComponent()->SetValueAsBool(FName(TEXT("IsDetected")), false);
+		AIController->DetectedActorArr.Empty();
 		AIController->OnUnPossess();
 
-		for (auto iter = BossDataStruct.DamageList.begin(); iter != BossDataStruct.DamageList.end(); iter.operator++())
-		{
-			iter.Value() = 0;
-		}
+		//for (auto iter = BossDataStruct.DamageList.begin(); iter != BossDataStruct.DamageList.end(); iter.operator++())
+		//{
+		//	iter.Value() = 0;
+		//}
 
 		//¸Ê ·Îµù µÆÀ» ¶§ BossUIÀÇ PlayFadeOutAnimation È£Ãâ
 		GetWorldTimerManager().SetTimer(ChangePlayerLocTimerHandle, FTimerDelegate::CreateLambda([=]()
@@ -1403,6 +1405,9 @@ int AJesusBoss::GetRandomNum(int Min, int Max)
 
 void AJesusBoss::DoRandomStep()
 {
+	UE_LOG(LogTemp, Warning, TEXT("fDeltaTime : %f"), fDeltaTime);
+	UE_LOG(LogTemp, Warning, TEXT("MinWalkTime : %f"), MinWalkTime);
+
 	IsMoveStart = false;
 	fDeltaTime = 0.f;
 	srand(time(NULL));
@@ -1609,11 +1614,13 @@ void AJesusBoss::DeactivateSMOverlap()
 
 void AJesusBoss::SpawnInit()
 {
+	AIController->OnPossess(this);
+
 	//½ºÅÝ
 	BossDataStruct.CharacterHp = BossDataStruct.CharacterMaxHp;
 	BossDataStruct.CurrentGrrogyGauge = BossDataStruct.MaxGrrogyGauge;
 	AIController->BossUI->SetHP(1);
-	BossDataStruct.CharacterOriginSpeed = 100.f;
+	BossDataStruct.CharacterOriginSpeed = 120.f;
 	AccumulateDamage = 0.f;
 	DealTimePercent = 0;
 	IsExecution = false;
@@ -1624,6 +1631,7 @@ void AJesusBoss::SpawnInit()
 	IsDead = false;
 	Push2PhasePattern = false;
 	CanExecution = false;
+	CanMove = true;
 
 	//ÆÐÅÏÈ®·ü
 	InitPercentageMap[BossAttackType::MELEE]();
