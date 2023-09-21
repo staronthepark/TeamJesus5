@@ -161,6 +161,8 @@ AKinghtMonster::AKinghtMonster()
 
 			if (CurrentDistance >= RunableDistance && !IsPatrol)
 			{
+				IsMoveStart = false;
+				fDeltaTime = 0;
 				ChangeActionType(MonsterActionType::RUN);
 			}
 			else
@@ -481,6 +483,7 @@ void AKinghtMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 	if (ActionType != MonsterActionType::ATTACK)
 	{
 		IsMoveStart = false;
+		fDeltaTime = 0;
 		MonsterController->StopMovement();
 
 		if (MontageMap.Contains(AnimationType))

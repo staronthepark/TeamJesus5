@@ -62,7 +62,7 @@ public:
 	bool CircleWalkEnd = false;
 
 	UPROPERTY(EditAnyWhere, Category = "RunableDistance")
-	float RunableDistance = 1000.f;
+	float RunableDistance = 800.f;
 	UPROPERTY(EditAnyWhere, Category = "RunableDistance")
 	float AccelerationDist = 700.f;
 	float InterpolationDuration = 0.5f;
