@@ -157,7 +157,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		UE_LOG(LogTemp, Warning, TEXT("LostPlayer"));
 		FindPlayer = false;
 
-		if (Monster->MyMonsterType != MonsterType::KNIGHT)
+		if (Monster->MyMonsterType == MonsterType::KNIGHT)
 		{
 			auto Knight = Cast<AKinghtMonster>(Monster);
 

@@ -351,6 +351,8 @@ void AKinghtMonster::RespawnCharacter()
 	if (IsSpawn)
 	{
 		//소환된 기사 삭제
+		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
+		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
 		SetActorTickEnabled(false);
 		GetWorld()->DestroyActor(this);
 		return;
@@ -377,6 +379,7 @@ void AKinghtMonster::RespawnCharacter()
 		ChangeActionType(MonsterActionType::NONE);
 		ChangeMontageAnimation(MonsterAnimationType::IDLE);
 	}
+
 	WeaponOpacity = 0.171653f;
 	MeshOpacity = 0.171653f;
 
