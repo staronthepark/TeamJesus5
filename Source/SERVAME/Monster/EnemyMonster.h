@@ -191,6 +191,7 @@ protected:
 	TMap<MonsterAttackType, TFunction<void()>>TargetDetectEventMap;
 
 public:
+	int GetRandNum(int Min, int Max);
 
 	virtual void ChangeMontageAnimation(MonsterAnimationType type);
 	void ChangeActionType(MonsterActionType type);

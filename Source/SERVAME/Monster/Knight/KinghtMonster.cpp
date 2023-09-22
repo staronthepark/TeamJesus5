@@ -631,13 +631,6 @@ void AKinghtMonster::SearchPlayer()
 		HitType = MonsterAnimationType::BACKHIT;
 }
 
-int AKinghtMonster::GetRandNum(int Min, int Max)
-{
-	std::srand(time(NULL));
-	auto Val = rand() % Max + Min;
-	return Val;
-}
-
 float AKinghtMonster::Die(float Dm)
 {
 	if (MonsterDataStruct.CharacterHp <= 0)

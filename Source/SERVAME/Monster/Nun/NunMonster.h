@@ -131,6 +131,12 @@ public:
 	bool MinusOpacity = false;
 	FTimerHandle IllusionTimer;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PaternDelay")
+	int MinDelayTime = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PaternDelay")
+	int MaxDelayTime = 3.f;
+	bool IsCoolTime = false;
+
 	//수녀 a타입 스킬
 	void TelePort();
 	void SpawnKnight();
@@ -150,6 +156,7 @@ public:
 
 	FTimerHandle SelfHealTimerHandle;
 	FTimerHandle DelayTimerHandle;
+	FTimerHandle PaternDelay;
 
 	void SetYaw();
 

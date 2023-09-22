@@ -55,8 +55,8 @@ void ANunEffectObjInPool::Tick(float DeltaTime)
 
 		if (GetActorLocation() == TargetLoc)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("GetActorLocation() == TargetLoc"));
-			UE_LOG(LogTemp, Warning, TEXT("%d"), Type);
+			//UE_LOG(LogTemp, Warning, TEXT("GetActorLocation() == TargetLoc"));
+			//UE_LOG(LogTemp, Warning, TEXT("%d"), Type);
 			IsCurve = false;
 			if (GetBurstEffectType.Contains(Type))
 				CurrentEffect->SetAsset(GetTypeEffect[GetBurstEffectType[Type]]);

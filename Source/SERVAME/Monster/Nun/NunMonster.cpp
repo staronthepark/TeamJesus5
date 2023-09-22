@@ -63,6 +63,14 @@ ANunMonster::ANunMonster()
 			ChangeMontageAnimation(MonsterAnimationType::IDLE);
 		});
 	
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::IDLE, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(true, [&]()
+		{
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(false, [&]()
+		{
+		});
+
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::HEAL1, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::HEAL1].Add(true, [&]()
 		{
@@ -472,9 +480,7 @@ void ANunMonster::OnNunTargetDetectionEndOverlap(UPrimitiveComponent* Overlapped
 
 void ANunMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
-	UE_LOG(LogTemp, Warning, TEXT("StartAttackTrigger : %f"), CurrentDistance);
-
-	if (!MonsterController->FindPlayer)
+	if (!MonsterController->FindPlayer || IsCoolTime)
 		return;
 
 	if (NunAnimInstance == nullptr)
@@ -502,9 +508,15 @@ void ANunMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 		float RandomValue = FMath::RandRange(0, 100) * 0.01f;
 		if (SetActionByRandomMap.Contains(AttackAnimationType))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("SetActionByRandomMap"));
 			MonsterMoveEventIndex = 1;
 			SetActionByRandomMap[AttackAnimationType](RandomValue);
+			IsCoolTime = true;
+			GetWorld()->GetTimerManager().SetTimer(PaternDelay, FTimerDelegate::CreateLambda([=]()
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Cool Time End"));
+					IsCoolTime = false;
+					StartAttackTrigger(AttackAnimationType);
+				}), GetRandNum(MinDelayTime,MaxDelayTime), false);
 		}
 	}
 }
@@ -1211,6 +1223,8 @@ void ANunMonster::RespawnCharacter()
 	ActivateHitCollision();
 	MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
 	MonsterHPWidget->SetHP(1.0f);
+	ChangeActionType(MonsterActionType::NONE);
+	ChangeMontageAnimation(MonsterAnimationType::IDLE);
 }
 
 void ANunMonster::ResumeMontage()
