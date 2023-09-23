@@ -46,8 +46,8 @@ class SERVAME_API UUserSettingGameUI : public USubUserSettingUI
 		//UPROPERTY(meta = (BindWidget))
 		//	UButtonUI* WBP_Setting_Button;
 
-	UPROPERTY(meta = (BindWidget))
-		UImage* TitleGameImage;
+	//UPROPERTY(meta = (BindWidget))
+	//	UImage* TitleGameImage;
 
 	//UPROPERTY(meta = (BindWidget))
 	//	UImage* CameraImage;

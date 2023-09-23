@@ -1,4 +1,3 @@
-
 #include "KinghtMonster.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
@@ -72,14 +71,8 @@ AKinghtMonster::AKinghtMonster()
 
 	MonsterMoveMap.Add(0, [&]()
 		{
-			if (!IsPatrol)
-			{
-				MonsterMoveEventIndex = 1;
+			if (IsSpawn || PatrolActorArr.IsEmpty())
 				return;
-			}
-
-			if(PatrolActorArr.IsEmpty())
-				MonsterMoveEventIndex = 1;
 
 			IsPatrol = true;
 			GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.CharacterOriginSpeed;
@@ -113,6 +106,8 @@ AKinghtMonster::AKinghtMonster()
 	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
 		{
 			WalkToRunBlend = false;
+			KnightAnimInstance->BlendDirection = 0.f;
+
 			OnHitCancle();
 
 			if (TracePlayer)
@@ -170,6 +165,10 @@ AKinghtMonster::AKinghtMonster()
 			}
 			else
 			{
+				if (!IsMoveStart)
+					MinWalkTime = GetRandNum(3.f, 5.f);
+
+				IsMoveStart = true;
 				Temp = 0.f;
 				CalcedDist = 0.f;
 				InterpolationTime = 0.f;
@@ -313,6 +312,14 @@ void AKinghtMonster::RespawnCharacter()
 {
 	Super::RespawnCharacter();
 
+	if (IsSpawn)
+	{
+		//소환된 기사 삭제
+		SetActorTickEnabled(false);
+		GetWorld()->DestroyActor(this);
+		return;
+	}
+
 	TracePlayer = false;
 	MonsterController->FindPlayer = false;
 	IsPatrol = true;
@@ -367,6 +374,7 @@ void AKinghtMonster::KnockBackEmd()
 
 void AKinghtMonster::SpawnBegin()
 {
+	CanCancle = false;
 	Spawning = true;
 	StateType = MonsterStateType::CANTACT;
 	HitCollision->Deactivate();
@@ -375,6 +383,7 @@ void AKinghtMonster::SpawnBegin()
 
 void AKinghtMonster::SpawnEnd()
 {
+	CanCancle = true;
 	Spawning = false;
 	StateType = MonsterStateType::NONE;
 	HitCollision->Activate();
@@ -383,7 +392,10 @@ void AKinghtMonster::SpawnEnd()
 
 void AKinghtMonster::OnHitCancle()
 {
-	CanCancle = true;
+	if (MyMonsterType == MonsterType::ELITEKNIGHT)
+		CanCancle = false;
+	else
+		CanCancle = true;
 }
 
 void AKinghtMonster::OffHitCancle()
@@ -398,7 +410,7 @@ void AKinghtMonster::Stun()
 	DeactivateSMOverlap();
 	ParryingCollision1->Deactivate();
 	DeactivateRightWeapon();
-	ChangeMontageAnimation(MonsterAnimationType::PARRYING);
+	ChangeMontageAnimation(MonsterAnimationType::DEAD);
 }
 
 void AKinghtMonster::ChangeMontageAnimation(MonsterAnimationType type)
@@ -468,6 +480,7 @@ void AKinghtMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 	AttackAnimationType = AttackAnimType;
 	if (ActionType != MonsterActionType::ATTACK)
 	{
+		IsMoveStart = false;
 		MonsterController->StopMovement();
 
 		if (MontageMap.Contains(AnimationType))
@@ -560,6 +573,13 @@ void AKinghtMonster::SearchPlayer()
 		HitType = MonsterAnimationType::HIT;
 	else if (ForwardSpeed < 0)
 		HitType = MonsterAnimationType::BACKHIT;
+}
+
+int AKinghtMonster::GetRandNum(int Min, int Max)
+{
+	std::srand(time(NULL));
+	auto Val = rand() % Max + Min;
+	return Val;
 }
 
 float AKinghtMonster::Die(float Dm)

@@ -1332,12 +1332,14 @@ void AJesusBoss::CheckBossDie()
 		ChangeMontageAnimation(BossAnimationType::DIE);
 		IsDead = true;
 		AIController->BossUI->PlayBossDiedAnimtion();
+		AIController->GetBlackboardComponent()->SetValueAsBool(FName(TEXT("IsDetected")), false);
+		AIController->DetectedActorArr.Empty();
 		AIController->OnUnPossess();
 
-		for (auto iter = BossDataStruct.DamageList.begin(); iter != BossDataStruct.DamageList.end(); iter.operator++())
-		{
-			iter.Value() = 0;
-		}
+		//for (auto iter = BossDataStruct.DamageList.begin(); iter != BossDataStruct.DamageList.end(); iter.operator++())
+		//{
+		//	iter.Value() = 0;
+		//}
 
 		//¸Ê ·Îµù µÆÀ» ¶§ BossUIÀÇ PlayFadeOutAnimation È£Ãâ
 		GetWorldTimerManager().SetTimer(ChangePlayerLocTimerHandle, FTimerDelegate::CreateLambda([=]()
@@ -1403,6 +1405,9 @@ int AJesusBoss::GetRandomNum(int Min, int Max)
 
 void AJesusBoss::DoRandomStep()
 {
+	UE_LOG(LogTemp, Warning, TEXT("fDeltaTime : %f"), fDeltaTime);
+	UE_LOG(LogTemp, Warning, TEXT("MinWalkTime : %f"), MinWalkTime);
+
 	IsMoveStart = false;
 	fDeltaTime = 0.f;
 	srand(time(NULL));
@@ -1609,11 +1614,13 @@ void AJesusBoss::DeactivateSMOverlap()
 
 void AJesusBoss::SpawnInit()
 {
+	AIController->OnPossess(this);
+
 	//½ºÅÝ
 	BossDataStruct.CharacterHp = BossDataStruct.CharacterMaxHp;
 	BossDataStruct.CurrentGrrogyGauge = BossDataStruct.MaxGrrogyGauge;
 	AIController->BossUI->SetHP(1);
-	BossDataStruct.CharacterOriginSpeed = 100.f;
+	BossDataStruct.CharacterOriginSpeed = 120.f;
 	AccumulateDamage = 0.f;
 	DealTimePercent = 0;
 	IsExecution = false;
@@ -1624,6 +1631,7 @@ void AJesusBoss::SpawnInit()
 	IsDead = false;
 	Push2PhasePattern = false;
 	CanExecution = false;
+	CanMove = true;
 
 	//ÆÐÅÏÈ®·ü
 	InitPercentageMap[BossAttackType::MELEE]();
@@ -1903,8 +1911,7 @@ void AJesusBoss::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		Player->SetShieldHP(-BossDataStruct.DamageList[Type]);
 		CameraShake(PlayerCameraShake);
 		VibrateGamePad(0.4f, 0.4f);
-		objectpool.SpawnObject(objectpool.ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		objectpool.SpawnObject(objectpool.ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 		objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 		return;
 	}
@@ -1918,8 +1925,7 @@ void AJesusBoss::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	
 		//UE_LOG(LogTemp, Warning, TEXT("DAMAGE : %d"), Damage);
 		OtherActor->TakeDamage(Damage, DamageEvent, GetController(), this);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 	
 		if (HitEffectRotatorList.Contains(Type))
