@@ -127,6 +127,7 @@ public:
 	float IllusionTime = 10.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
 	float IllusionVal = 0.25f;
+	bool useIllusion = false;
 	bool IsIllusion = false;
 	bool MinusOpacity = false;
 	FTimerHandle IllusionTimer;

@@ -177,6 +177,10 @@ ANunMonster::ANunMonster()
 				SpawnLocArr[RandomValue]->GetComponentLocation(), FRotator::ZeroRotator);
 
 			auto DarkObj = Cast<ANunEffectObjInPool>(DarkPoolObj);
+
+			if (IsIllusion)
+				DarkObj->Damage = 0.f;
+
 			DarkObj->SetCurrentEffect(EffectType::DARKEFFECT);
 			DarkObj->ActivateCurrentEffect();
 			DarkObj->ShotProjectile(PlayerCharacter);
@@ -551,6 +555,34 @@ float ANunMonster::Die(float Dm)
 		ParryingCollision1->Deactivate();
 		DeactivateRightWeapon();
 		ChangeMontageAnimation(MonsterAnimationType::DEAD);
+
+		if (IsIllusion)
+		{
+			if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
+				return 0.f;
+
+			MonsterDataStruct.CharacterHp += SelfHealVal;
+
+			if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
+				MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
+
+			float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
+			MonsterHPWidget->SetHP(CurrentPercent);
+
+			auto SpawnLoc = GetActorLocation();
+
+			auto HealPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+				SpawnLoc + FVector(0, 0, 200), FRotator::ZeroRotator);
+
+			auto HealEffect = Cast<ANunEffectObjInPool>(HealPoolObj);
+
+			HealEffect->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+			HealEffect->SetCurrentEffect(EffectType::SINGLEHEAL);
+			HealEffect->ActivateCurrentEffect();
+		}
+
+		//머테리얼에 Opacity 값 넣기 전까지 임시로 Visibility 꺼주기
+		GetMesh()->SetVisibility(false);
 
 		GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
 			{
@@ -935,7 +967,7 @@ void ANunMonster::FragmentsAttack()
 
 void ANunMonster::IllusionAttack()
 {
-	if (IsIllusion)
+	if (useIllusion)
 		return;
 
 	UE_LOG(LogTemp, Warning, TEXT("IllusionAttack"));
@@ -961,14 +993,14 @@ void ANunMonster::IllusionAttack()
 	Illusion->MonsterController->FindPlayer = true;
 	Illusion->IsIllusion = true;
 	Illusion->PlayerCharacter = PlayerCharacter;
-	IsIllusion = true;
+	useIllusion = true;
 	Illusion->SetYaw();
 
 	GetWorld()->GetTimerManager().SetTimer(IllusionTimer, FTimerDelegate::CreateLambda([=]()
 		{
 			Illusion->MonsterDataStruct.CharacterHp = -1;
 			Illusion->Die(0.f);
-			IsIllusion = false;
+			useIllusion = false;
 			GetWorld()->GetTimerManager().ClearTimer(IllusionTimer);
 		}), IllusionTime, false);
 }
