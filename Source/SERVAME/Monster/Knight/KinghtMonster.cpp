@@ -77,7 +77,7 @@ AKinghtMonster::AKinghtMonster()
 			IsPatrol = true;
 			GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.CharacterOriginSpeed;
 			KnightAnimInstance->BlendSpeed = WalkBlend;
-			MonsterController->Patrol(PatrolActorArr[PatrolIndexCount]->GetActorLocation(), PatrolActorArr.Num());
+			//MonsterController->Patrol(PatrolActorArr[PatrolIndexCount]->GetActorLocation(), PatrolActorArr.Num());
 		});
 	MonsterMoveMap.Add(3, [&]()
 		{
