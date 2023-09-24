@@ -408,7 +408,7 @@ AEnemyMonster::AEnemyMonster()
 
 	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
 		{
-			if (percent >= 0.5)
+			if (percent >= 0.5f)
 			{
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
@@ -663,6 +663,13 @@ void AEnemyMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, 
 	objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
 }
 
+int AEnemyMonster::GetRandNum(int Min, int Max)
+{
+	std::srand(time(NULL));
+	auto Val = rand() % Max + Min;
+	return Val;
+}
+
 void AEnemyMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
 	TracePlayer = false;
@@ -832,9 +839,6 @@ void AEnemyMonster::RespawnCharacter()
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
 	SetActorTickEnabled(true);
-
-	ChangeActionType(MonsterActionType::NONE);
-	ChangeMontageAnimation(MonsterAnimationType::IDLE);
 }
 
 void AEnemyMonster::ResumeMontage()

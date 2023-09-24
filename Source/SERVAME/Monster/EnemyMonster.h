@@ -30,6 +30,7 @@ enum class MonsterActionType : uint8
 	POWERATTACK,
 	MOVE,
 	RUN,
+	SPRINT,
 	HIT,
 	DEAD,
 };
@@ -190,6 +191,7 @@ protected:
 	TMap<MonsterAttackType, TFunction<void()>>TargetDetectEventMap;
 
 public:
+	int GetRandNum(int Min, int Max);
 
 	virtual void ChangeMontageAnimation(MonsterAnimationType type);
 	void ChangeActionType(MonsterActionType type);

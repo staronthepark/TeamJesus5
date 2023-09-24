@@ -2,6 +2,8 @@
 
 
 #include "EliteKnight.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "..\KnightAttackTriggerComp.h"
 
 AEliteKnight::AEliteKnight()
 {
@@ -24,6 +26,11 @@ AEliteKnight::AEliteKnight()
 			}
 		});
 
+	SetActionByRandomMap.Add(MonsterAnimationType::SPRINTATTACK, [&](float percent)
+		{
+			ChangeActionType(MonsterActionType::ATTACK);
+			ChangeMontageAnimation(MonsterAnimationType::SPRINTATTACK);
+		});
 }
 
 void AEliteKnight::BeginPlay()
@@ -36,32 +43,36 @@ void AEliteKnight::BeginPlay()
 void AEliteKnight::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 	if (IsMoveStart)
 	{
-		fDeltaTime += DeltaTime;
-		if (fDeltaTime >= MinWalkTime)
-		{
-			//블렌드 스페이스 적용
-			SprintTime += DeltaTime;
-			KnightAnimInstance->BlendDirection = 180.f;
-			BlendSpeed = FMath::Lerp(WalkBlend, RunBlend, SprintTime / SprintDuration);
-			KnightAnimInstance->BlendSpeed = BlendSpeed;
-		}
+		SprintDeltaTime += DeltaTime;
 
-		if (CurrentDistance <= SprintAttackRadius)
+		UE_LOG(LogTemp, Warning, TEXT("%f"), SprintDeltaTime);
+		UE_LOG(LogTemp, Warning, TEXT("%f"), MinWalkTime);
+		UE_LOG(LogTemp, Warning, TEXT("Blend Speed : %f"), KnightAnimInstance->BlendSpeed);
+
+		if (SprintDeltaTime >= MinWalkTime)
 		{
-			ChangeActionType(MonsterActionType::ATTACK);
-			ChangeMontageAnimation(MonsterAnimationType::SPRINTATTACK);
+			ChangeActionType(MonsterActionType::SPRINT);
+
+			SprintTime += DeltaTime;
+			BlendDirection = FMath::Lerp(0.f, 180.f, SprintTime / SprintDuration);
+			FMath::Clamp(BlendDirection, 0, 180);
+			KnightAnimInstance->BlendDirection = BlendDirection;
+
+			if (CurrentDistance <= SprintAttackRadius)
+			{
+				IsMoveStart = false;
+				StartAttackTrigger(MonsterAnimationType::SPRINTATTACK);
+			}
 		}
+	}
+	else
+	{
+		SprintTime = 0;
+		SprintDeltaTime = 0;
+		KnightAnimInstance->BlendDirection = 0.f;
 	}
 
 }
-
-void AEliteKnight::RunBlending()
-{
-	IsMoveStart = false;
-
-	KnightAnimInstance->BlendDirection = 180.f;
-}
-

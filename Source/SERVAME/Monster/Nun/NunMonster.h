@@ -97,6 +97,8 @@ public:
 	float JudementDelay = 0.5f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JudementAttack")
 	int JudementMaxCount = 15;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JudementAttack")
+	float JudementProjectileRange = 150.f;
 	int JudementCurrentCount = 0;
 	FTimerHandle JudementTimer;
 
@@ -127,9 +129,16 @@ public:
 	float IllusionTime = 10.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
 	float IllusionVal = 0.25f;
+	bool useIllusion = false;
 	bool IsIllusion = false;
 	bool MinusOpacity = false;
 	FTimerHandle IllusionTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PaternDelay")
+	int MinDelayTime = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PaternDelay")
+	int MaxDelayTime = 3.f;
+	bool IsCoolTime = false;
 
 	//수녀 a타입 스킬
 	void TelePort();
@@ -150,6 +159,7 @@ public:
 
 	FTimerHandle SelfHealTimerHandle;
 	FTimerHandle DelayTimerHandle;
+	FTimerHandle PaternDelay;
 
 	void SetYaw();
 
