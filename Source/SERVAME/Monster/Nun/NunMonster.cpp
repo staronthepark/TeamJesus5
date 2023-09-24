@@ -790,7 +790,7 @@ void ANunMonster::DotFloor()
 			NunEffect->ActivateCurrentEffect();
 			NunEffect->DeactivateDamageSphere(DotTime);
 		}
-	}	
+	}
 }
 
 void ANunMonster::JudementAttack()
@@ -810,12 +810,15 @@ void ANunMonster::JudementAttack()
 				auto Loc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z - 87.f);
 				auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
 					Loc, FRotator::ZeroRotator);
-
+				
 				auto JudementObj = Cast<ANunEffectObjInPool>(PoolObj);
 				JudementObj->SetCurrentEffect(EffectType::JUDGEMENTEFFECT);
 				JudementObj->ActivateCurrentEffect();
 				JudementObj->Damage = 20;
-				JudementObj->ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+				JudementObj->LifeTime = 5.f;
+				JudementObj->SweepSingle(1.f, JudementProjectileRange, SkillInfoMap[MonsterAnimationType::JUDEMENT].Damage,
+					IsIllusion, GetController());
+				
 				JudementCurrentCount++;
 			}
 
@@ -845,6 +848,12 @@ void ANunMonster::CrystalAttack()
 	FNavLocation RandomLocation;
 
 	auto PlayerLoc = PlayerCharacter->GetActorLocation();
+
+	auto CrystalStart = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		CrystalSpawnLoc->GetComponentLocation(), FRotator::ZeroRotator);
+	auto CrystalStartEffect = Cast<ANunEffectObjInPool>(CrystalStart);
+	CrystalStartEffect->SetCurrentEffect(EffectType::CRYSTALEFFECT_START);
+	CrystalStartEffect->ActivateCurrentEffect();
 
 	for (int i = 0; i < CrystalCount; i++)
 	{

@@ -97,6 +97,8 @@ public:
 	float JudementDelay = 0.5f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JudementAttack")
 	int JudementMaxCount = 15;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JudementAttack")
+	float JudementProjectileRange = 150.f;
 	int JudementCurrentCount = 0;
 	FTimerHandle JudementTimer;
 

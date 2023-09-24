@@ -130,6 +130,47 @@ void ANunEffectObjInPool::ShotProjectile(bool val, FVector Target)
 		}), Delay, false);
 }
 
+void ANunEffectObjInPool::SweepSingle(float delay, float Radius, float damage, bool Isillusion, AController* Controller)
+{
+	GetWorld()->GetTimerManager().SetTimer(SweepTimerHandle, FTimerDelegate::CreateLambda([=]()
+		{
+			FHitResult HitResult;
+			FCollisionQueryParams Params(NAME_None, false, this);
+
+			bool bResult = GetWorld()->SweepSingleByChannel(
+				OUT HitResult,
+				GetActorLocation(),
+				GetActorLocation(),
+				FQuat::Identity,
+				ECollisionChannel::ECC_GameTraceChannel3,
+				FCollisionShape::MakeSphere(Radius),
+				Params);
+
+			FColor DrawColor;
+
+			if (bResult)
+				DrawColor = FColor::Green;
+			else
+				DrawColor = FColor::Red;
+
+			//DrawDebugSphere(GetWorld(), GetActorLocation(), Radius, 16, DrawColor, false, 2.f);
+
+			//CameraShake(PlayerCameraShake);
+			//VibrateGamePad(1.0f, 0.5f);
+
+			if (bResult && HitResult.GetActor())
+			{
+				FDamageEvent DamageEvent;
+				auto Player = Cast<APlayerCharacter>(HitResult.GetActor());
+
+				if (Isillusion || Player == nullptr)
+					return;
+
+				Player->TakeDamage(damage, DamageEvent, Controller, this);
+			}
+		}), delay, false);
+}
+
 void ANunEffectObjInPool::MidPointCalc()
 {
 	auto Loc = TargetLoc - GetActorLocation();
@@ -182,15 +223,14 @@ void ANunEffectObjInPool::OnProjectileBeginOverlap(UPrimitiveComponent* Overlapp
 	DeactivateCurrentEffect();
 
 	if (Type == EffectType::NONE)
-	{
 		return;
-	}
 
 	if (GetBurstEffectType.Contains(Type))
+	{
 		Type = GetBurstEffectType[Type];
-
-	CurrentEffect->SetAsset(GetTypeEffect[Type]);
-	CurrentEffect->Activate();
+		CurrentEffect->SetAsset(GetTypeEffect[Type]);
+		CurrentEffect->Activate();
+	}
 
 	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
