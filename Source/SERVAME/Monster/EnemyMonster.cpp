@@ -408,7 +408,7 @@ AEnemyMonster::AEnemyMonster()
 
 	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
 		{
-			if (percent >= 0.5)
+			if (percent >= 0.5f)
 			{
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
