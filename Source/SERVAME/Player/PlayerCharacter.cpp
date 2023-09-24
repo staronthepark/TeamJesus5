@@ -122,6 +122,10 @@ APlayerCharacter::APlayerCharacter()
 	ForwardRotation[2].Add(-180.0f);
 	ForwardRotation[2].Add(135.0f);
 
+	SkillRotateLUT.Add(-45.0f);
+	SkillRotateLUT.Add(0.0f);
+	SkillRotateLUT.Add(45.0f);
+
 	HitEffectRotatorList.Add(AnimationType::ATTACK1, FRotator(50, 90.0f, 0)   );
 	HitEffectRotatorList.Add(AnimationType::ATTACK2, FRotator(0, -90.0f, 0.0f));
 	HitEffectRotatorList.Add(AnimationType::ATTACK3, FRotator(0.0f, 180.0f, 0.0f));
@@ -493,7 +497,6 @@ APlayerCharacter::APlayerCharacter()
 	NotifyBeginEndEventMap.Add(AnimationType::SKILL1, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::SKILL1].Add(false, [&]()
 		{
-
 			DeactivateRightWeapon();
 			SkillTrailComp->SetVisibility(false);
 			SkillAuraComp->Deactivate();
@@ -501,6 +504,14 @@ APlayerCharacter::APlayerCharacter()
 		});
 	NotifyBeginEndEventMap[AnimationType::SKILL1].Add(true, [&]()
 		{
+			AObjectPool& objectpool = AObjectPool::GetInstance();
+			for (int32 i = 0; i < SkillCount; i++)
+			{
+				FRotator CurrentRotation = GetActorRotation();
+				CurrentRotation.Yaw -= SkillRotateLUT[i];
+				FVector Location = GetActorLocation() + CurrentRotation.Vector() * SkillDistance;
+				objectpool.SpawnObject(objectpool.ObjectArray[43].ObjClass, Location, FRotator::ZeroRotator);
+			}
 			SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		});
 
@@ -515,6 +526,15 @@ APlayerCharacter::APlayerCharacter()
 	NotifyBeginEndEventMap[AnimationType::SKILL2].Add(true, [&]()
 		{
 			SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+			AObjectPool& objectpool = AObjectPool::GetInstance();
+			for (int32 i = 0; i < SkillCount; i++)
+			{
+				FRotator CurrentRotation = GetActorRotation();
+				CurrentRotation.Yaw -= SkillRotateLUT[i];
+				FVector Location = GetActorLocation() + CurrentRotation.Vector() * SkillDistance;
+				objectpool.SpawnObject(objectpool.ObjectArray[43].ObjClass, Location, FRotator::ZeroRotator);
+			}
 		});
 
 	PlayerActionTickMap.Add(PlayerAction::NONE, TMap<ActionType, TFunction<void()>>());
@@ -1760,6 +1780,8 @@ void APlayerCharacter::BeginPlay()
 	//GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
 	//GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
 	ASoundManager::GetInstance().Init();
+	CanShieldDeploy = true;
+	CanUseSkill = true;
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -2119,6 +2141,11 @@ void APlayerCharacter::RecoverStamina()
 void APlayerCharacter::RecoverShield()
 {
 	CanShieldDeploy = true;
+}
+
+void APlayerCharacter::RecoverSkill()
+{
+	CanUseSkill = true;
 }
 
 bool APlayerCharacter::UseStamina(float value)
@@ -2584,7 +2611,10 @@ void APlayerCharacter::BasicAttack()
 	}
 	else
 	{
-		ShieldAttack();
+		if (CanActivate(PlayerDataStruct.ShieldBashSoulCost))
+		{
+			ShieldAttack();
+		}
 	}
 }
 
@@ -2615,9 +2645,13 @@ void APlayerCharacter::SkillAttack()
 {
 	if (CanNextAttack)
 	{
-		if (UseStamina(PlayerUseStaminaMap[ActionType::SKILL]))
+		if (UseStamina(PlayerUseStaminaMap[ActionType::SKILL]) && CanUseSkill)
 		{
 			CanActivate(PlayerDataStruct.SkillSoulCost) ? PlayerAttackType = ActionType::SKILL : PlayerAttackType = ActionType::ATTACK;
+			if (PlayerAttackType == ActionType::SKILL)
+			{
+				GetWorldTimerManager().SetTimer(SkillCoolDownTimer, this, &APlayerCharacter::RecoverSkill, PlayerDataStruct.SkillCoolDown);
+			}
 			Imotal = false;
 			ComboAttackStart();
 			CanNextAttack = false;
@@ -2716,19 +2750,22 @@ void APlayerCharacter::SetCameraTarget(FVector Offset, float Length)
 
 void APlayerCharacter::ShieldAttack()
 {
-	if (UseStamina(PlayerUseStaminaMap[ActionType::SHIELD]))
+	if (CanActivate(PlayerDataStruct.ShieldBashSoulCost))
 	{
-		IsGrab = false;
-		AObjectPool& objectpool = AObjectPool::GetInstance();
-		objectpool.SpawnObject(objectpool.ObjectArray[24].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-		PlayerShieldDashMovement();
-		ChangeActionType(ActionType::MOVE);
-		ChangeMontageAnimation(AnimationType::SHIELDATTACK);
-		ShoulderView(IsShoulderView);
-		CameraShake(PlayerCameraShake);
-		AnimInstance->BodyBlendAlpha = 1.0f;
-		ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		ShieldAttackOverlap->SetRelativeLocation(FVector(0, 62.86, 107.34));
+		if (UseStamina(PlayerUseStaminaMap[ActionType::SHIELD]))
+		{
+			IsGrab = false;
+			AObjectPool& objectpool = AObjectPool::GetInstance();
+			objectpool.SpawnObject(objectpool.ObjectArray[24].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+			PlayerShieldDashMovement();
+			ChangeActionType(ActionType::MOVE);
+			ChangeMontageAnimation(AnimationType::SHIELDATTACK);
+			ShoulderView(IsShoulderView);
+			CameraShake(PlayerCameraShake);
+			AnimInstance->BodyBlendAlpha = 1.0f;
+			ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			ShieldAttackOverlap->SetRelativeLocation(FVector(0, 62.86, 107.34));
+		}
 	}
 }
 
@@ -2737,7 +2774,10 @@ void APlayerCharacter::SetSoul(int32 value)
 	PlayerDataStruct.SoulCount += value;
 
 	value < 0 ? PlayerHUD->DecreaseSoulGradual(this, PlayerDataStruct.SoulCount / PlayerDataStruct.MaxSoulCount) : 
-		PlayerHUD->SetSoul(PlayerDataStruct.SoulCount / PlayerDataStruct.MaxSoulCount);		
+		PlayerHUD->SetSoul(PlayerDataStruct.SoulCount / PlayerDataStruct.MaxSoulCount);
+
+	if (PlayerDataStruct.SoulCount <= 0)PlayerDataStruct.SoulCount = 0;
+	else if(PlayerDataStruct.SoulCount >= PlayerDataStruct.MaxSoulCount)PlayerDataStruct.SoulCount = 100;
 }
 
 void APlayerCharacter::LoadFile()
@@ -2748,7 +2788,7 @@ void APlayerCharacter::LoadFile()
 	if(IsPhaseTwo)
 		UCombatManager::GetInstance().Boss2->SetActive(true);
 
-	//SetSoul(PlayerDataStruct.SoulCount);
+	SetSoul(PlayerDataStruct.SoulCount);
 }
 
 void APlayerCharacter::LoadMap()
