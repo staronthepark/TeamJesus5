@@ -73,7 +73,7 @@ public:
 	float CalcedDist;
 	float Temp = 0.f;
 
-	bool CanCancle = true;
+	bool CanCancle = false;
 
 	const float IdleBlend = 0.f;
 	const float WalkBlend = 300.f;

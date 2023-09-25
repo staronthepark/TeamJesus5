@@ -438,7 +438,7 @@ void AKinghtMonster::SpawnBegin()
 void AKinghtMonster::SpawnEnd()
 {
 	Imotal = false;
-	CanCancle = true;
+	//CanCancle = true;
 	Spawning = false;
 	StateType = MonsterStateType::NONE;
 	HitCollision->Activate();
