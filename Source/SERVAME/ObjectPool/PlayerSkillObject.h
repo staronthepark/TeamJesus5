@@ -19,7 +19,6 @@ class SERVAME_API APlayerSkillObject : public ABaseObjectInPool
 
 	APlayerSkillObject();
 
-	FDamageEvent DamageEvent;
 	FTimerHandle LifeTimer;
 
 public:
