@@ -437,6 +437,7 @@ void AKinghtMonster::SpawnBegin()
 
 void AKinghtMonster::SpawnEnd()
 {
+	Imotal = false;
 	CanCancle = true;
 	Spawning = false;
 	StateType = MonsterStateType::NONE;
@@ -464,7 +465,7 @@ void AKinghtMonster::Stun()
 	DeactivateSMOverlap();
 	ParryingCollision1->Deactivate();
 	DeactivateRightWeapon();
-	ChangeMontageAnimation(MonsterAnimationType::DEAD);
+	ChangeMontageAnimation(MonsterAnimationType::PARRYING);
 }
 
 void AKinghtMonster::ChangeMontageAnimation(MonsterAnimationType type)

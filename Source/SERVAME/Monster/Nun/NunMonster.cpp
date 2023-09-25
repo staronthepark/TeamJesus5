@@ -608,6 +608,7 @@ void ANunMonster::SpawnKnight()
 		FRotator SpawnRot = FRotator::ZeroRotator;
 
 		auto Knight = GetWorld()->SpawnActor<AKinghtMonster>(KnightClass,SpawnLoc,SpawnRot,SpawnParams);
+		Knight->Imotal = true;
 
 		UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
 		if (NavSystem == nullptr)
