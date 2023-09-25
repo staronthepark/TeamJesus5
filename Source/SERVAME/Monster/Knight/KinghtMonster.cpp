@@ -446,10 +446,10 @@ void AKinghtMonster::SpawnEnd()
 
 void AKinghtMonster::OnHitCancle()
 {
-	if (MyMonsterType == MonsterType::ELITEKNIGHT)
-		CanCancle = false;
-	else
-		CanCancle = true;
+	//if (MyMonsterType == MonsterType::ELITEKNIGHT)
+	//	CanCancle = false;
+	//else
+	//	CanCancle = true;
 }
 
 void AKinghtMonster::OffHitCancle()
