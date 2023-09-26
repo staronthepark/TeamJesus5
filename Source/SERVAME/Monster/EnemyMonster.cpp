@@ -240,7 +240,8 @@ AEnemyMonster::AEnemyMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::EXECUTION, [&]()
 		{
-			ChangeActionType(MonsterActionType::DEAD);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			//ChangeActionType(MonsterActionType::DEAD);
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::STANDBY, [&]()
