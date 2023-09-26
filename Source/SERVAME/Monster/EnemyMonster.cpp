@@ -212,6 +212,7 @@ AEnemyMonster::AEnemyMonster()
 	MontageEndEventMap.Add(MonsterAnimationType::PARRYING, [&]()
 		{
 			ActivateRightWeapon();
+			CanRotate = true;
 
 			if (TracePlayer)
 			{
@@ -240,7 +241,19 @@ AEnemyMonster::AEnemyMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::EXECUTION, [&]()
 		{
-			ChangeActionType(MonsterActionType::DEAD);
+			CanRotate = true;
+
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+			}
+			else
+			{
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			}
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::STANDBY, [&]()
@@ -713,8 +726,8 @@ void AEnemyMonster::ShotProjectile()
 
 void AEnemyMonster::Rotate()
 {
-	if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP
-		|| AnimationType == MonsterAnimationType::EXECUTION)return;
+	if (!CanRotate)
+		return;
 
 	auto Rot = FRotator(0.f, GetActorRotation().Yaw, GetActorRotation().Roll);
 
@@ -723,7 +736,8 @@ void AEnemyMonster::Rotate()
 
 void AEnemyMonster::Stun()
 {
-	//CanExecution = true;
+	CanRotate = false;
+	CanExecution = true;
 	AnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
 	DeactivateSMOverlap();
@@ -799,6 +813,7 @@ void AEnemyMonster::Tick(float DeltaTime)
 
 	if (MonsterDataStruct.CharacterHp <= 0)
 	{
+		CanRotate = false;
 		ChangeActionType(MonsterActionType::DEAD);
 		StateType = MonsterStateType::CANTACT;
 	}

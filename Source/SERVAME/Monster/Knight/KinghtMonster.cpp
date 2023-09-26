@@ -103,6 +103,26 @@ AKinghtMonster::AKinghtMonster()
 			}
 		});
 
+	MontageEndEventMap.Add(MonsterAnimationType::EXECUTION, [&]()
+		{
+			CanRotate = true;
+			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			WalkToRunBlend = false;
+			OnHitCancle();
+
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				KnightAnimInstance->BlendSpeed = WalkBlend;
+				ChangeActionType(MonsterActionType::MOVE);
+			}
+			else
+			{
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			}
+		});
+
 	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
 		{
 			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -349,7 +369,6 @@ void AKinghtMonster::Tick(float DeltaTime)
 
 void AKinghtMonster::ReturnBlendFunc(float delta)
 {
-	//TODO ºí·»µù + ¼Óµµ ¾È´À·ÁÁü
 	ReturnInterpTime += delta;
 	auto Val = FMath::Clamp(CalcedDist, IdleBlend, RunBlend);
 
@@ -370,6 +389,24 @@ void AKinghtMonster::ReturnBlendFunc(float delta)
 	}
 }
 
+void AKinghtMonster::IdleToWalkBlendFunc(float delta)
+{
+	IdleToWalkInterpTime += delta;
+	auto Val = FMath::Clamp(CalcedDist, IdleBlend, WalkBlend);
+
+	KnightAnimInstance->BlendSpeed = FMath::Clamp(FMath::Lerp(Val, IdleBlend, IdleToWalkInterpTime / InterpolationDuration), IdleBlend, WalkBlend);
+	auto Speed = FMath::Clamp(FMath::Lerp(GetCharacterMovement()->MaxWalkSpeed, 120.f, IdleToWalkInterpTime / InterpolationDuration), IdleBlend, WalkBlend);
+
+	UE_LOG(LogTemp, Warning, TEXT("%f"), IdleToWalkInterpTime);
+	UE_LOG(LogTemp, Warning, TEXT("%f"), FMath::Lerp(Val, IdleBlend, IdleToWalkInterpTime / InterpolationDuration));
+
+	GetCharacterMovement()->MaxWalkSpeed = Speed;
+
+	if (KnightAnimInstance->BlendSpeed >= WalkBlend)
+	{
+		IdleToWalkInterpTime = 0.f;
+	}
+}
 
 void AKinghtMonster::RespawnCharacter()
 {
@@ -487,6 +524,8 @@ void AKinghtMonster::OffHitCancle()
 
 void AKinghtMonster::Stun()
 {
+	CanRotate = false;
+	CanExecution = true;
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
 	DeactivateSMOverlap();
