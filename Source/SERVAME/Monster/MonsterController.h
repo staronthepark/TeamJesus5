@@ -6,8 +6,8 @@
 #include "AIController.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Runtime/AIModule/Classes/Perception/AISenseConfig_Sight.h"
+#include "..\UI\BossUI.h"
 #include "MonsterController.generated.h"
-
 
 UCLASS()
 class SERVAME_API AMonsterController : public AAIController
@@ -17,10 +17,16 @@ class SERVAME_API AMonsterController : public AAIController
 public:
 	AMonsterController();
 
+	UPROPERTY()
+	UBossUI* BossUI;
+	UPROPERTY()
+	TSubclassOf<UBossUI> BossUIClass;
+
 	virtual void BeginPlay();
 
 	bool IsArrived = false;
 	bool FindPlayer = false;
+	TAtomic<bool> IsUIActivate = false;
 
 	void Movement(FVector Location);
 	void MoveWhenArrived(FVector Location);
@@ -28,6 +34,8 @@ public:
 
 	UFUNCTION()
 	void OnPerception(AActor* Actor, FAIStimulus Stimulus);
+	UFUNCTION()
+	void ChangeLanguage();
 
 	UFUNCTION()
 	void OnTargetPerceptionUpdated_Delegate(AActor* Actor, FAIStimulus Stimulus);

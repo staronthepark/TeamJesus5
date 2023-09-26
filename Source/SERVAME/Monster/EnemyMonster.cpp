@@ -541,8 +541,6 @@ void AEnemyMonster::BeginPlay()
 	MeshOpacity = 0.171653f;
 	//MonsterHpWidget = Cast<UMonsterWidget>(HpWidget->GetWidget());
 	
-	DeactivateHpBar();
-
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &AEnemyMonster::OnTargetDetectionBeginOverlap);
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &AEnemyMonster::OnTargetDetectionEndOverlap);
 
@@ -613,7 +611,7 @@ void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* Overlappe
 
 void AEnemyMonster::OnTargetDetectionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (MyMonsterType == MonsterType::NUN)
+	if (MyMonsterType == MonsterType::NUN || MyMonsterType == MonsterType::ILLUSION_NUN)
 	{
 		return;
 	}
@@ -749,21 +747,24 @@ void AEnemyMonster::Stun()
 float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
 	if (Imotal)
 	{
 		return 0;
 	}
 
-	ActivateHpBar();
-	GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
+	if (MyMonsterType != MonsterType::NUN)
+	{
+		ActivateHpBar();
+		GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
+		MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
+		MonsterDataStruct.CharacterHp -= DamageAmount;
+
+		float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
+		MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
+	}
 
 	DeactivateHitCollision();
-
-	MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
-	MonsterDataStruct.CharacterHp -= DamageAmount;
-
-	float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
-	MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
 
 	Die(DamageAmount);
 
@@ -849,7 +850,7 @@ void AEnemyMonster::RespawnCharacter()
 	WeaponOpacity = 0.171653f;
 	MeshOpacity = 0.171653f;
 	SkeletalMeshComp->SetScalarParameterValueOnMaterials("Opacity", MeshOpacity);
-	if (MyMonsterType != MonsterType::NUN)
+	if (MyMonsterType != MonsterType::NUN || MyMonsterType != MonsterType::ILLUSION_NUN)
 		SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity);
 
 	ActivateHitCollision();

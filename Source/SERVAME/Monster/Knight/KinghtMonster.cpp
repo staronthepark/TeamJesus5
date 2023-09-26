@@ -281,6 +281,8 @@ void AKinghtMonster::BeginPlay()
 {
 	Super::BeginPlay(); 
 
+	DeactivateHpBar();
+
 	if(IsPatrol)
 	{
 		TracePlayer = false;

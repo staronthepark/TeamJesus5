@@ -5,6 +5,11 @@
 
 AMonsterController::AMonsterController()
 {
+	static ConstructorHelpers::FClassFinder<UBossUI> BossUIAsset(TEXT("/Game/02_Resource/04_UI/01_WBP/02_BossUI/WBP_BossUI"));
+
+	if (BossUIAsset.Succeeded())
+		BossUIClass = BossUIAsset.Class;
+
 	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComp"));
 
 	Sight = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
@@ -44,7 +49,7 @@ void AMonsterController::Tick(float DeltaTime)
 
 	if (Player != nullptr)
 	{
-		if (Player->PlayerDataStruct.CharacterHp > 0)
+		if (Player->PlayerDataStruct.CharacterHp > 0 && !Monster->IsDie)
 		{
 			if (DetectedActorArr.Num() >= 1)
 			{
@@ -56,6 +61,12 @@ void AMonsterController::Tick(float DeltaTime)
 		else
 		{
 			DetectedActorArr.Empty();
+
+			if (IsUIActivate.Exchange(false))
+			{
+				if (IsValid(BossUI))
+					BossUI->RemoveFromParent();
+			}
 		}
 	}
 }
@@ -150,6 +161,14 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("FindPlayer"));
 			FindPlayer = true;
+
+			if (Monster->MyMonsterType == MonsterType::NUN)
+			{
+				BossUI->AddToViewport();
+				Monster->PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->LeftButton->OnClicked.AddDynamic(this, &AMonsterController::ChangeLanguage);
+				Monster->PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->RightButton->OnClicked.AddDynamic(this, &AMonsterController::ChangeLanguage);
+				BossUI->PlayBossHPOpenAnimation(true, EBossSettings::phase1);
+			}
 		}
 	}
 	else
@@ -201,11 +220,22 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 	}
 }
 
+void AMonsterController::ChangeLanguage()
+{
+	BossUI->ChangeLanguage();
+}
+
 void AMonsterController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 	
 	AIPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AMonsterController::OnPerception);
+
+	if (IsValid(BossUIClass))
+	{
+		BossUI = Cast<UBossUI>(CreateWidget(GetWorld(), BossUIClass));
+		BossUI->SetHP(1);
+	}
 }
 
 void AMonsterController::OnUnPossess()

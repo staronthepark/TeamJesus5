@@ -53,6 +53,8 @@ ANunMonster::ANunMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::CRYSTAL, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::ILLUSION, MonsterStateType::BEFOREATTACK);
 
+
+
 	MonsterMoveMap.Add(1, [&]()
 		{
 		});
@@ -410,6 +412,9 @@ void ANunMonster::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (MyMonsterType == MonsterType::NUN)
+		DeactivateHpBar();
+
 	SpawnLocArr.Push(Loc1);
 	SpawnLocArr.Push(Loc2);
 	SpawnLocArr.Push(Loc3);
@@ -465,9 +470,10 @@ void ANunMonster::SetYaw()
 
 void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ActivateHpBar();
-
 	SelfHeal();
+	
+	if (MyMonsterType == MonsterType::ILLUSION_NUN)
+		ActivateHpBar();
 
 	if (ActionType == MonsterActionType::DEAD)
 		return;
@@ -539,11 +545,13 @@ float ANunMonster::Die(float Dm)
 {
 	if (MonsterDataStruct.CharacterHp <= 0)
 	{
+		MonsterController->BossUI->PlayBossDiedAnimtion();
+		MonsterController->BossUI->SetVisibility(ESlateVisibility::Hidden);
+
 		IsDie = true;
 		Imotal = true;
 		GetWorld()->GetTimerManager().ClearTimer(SelfHealTimerHandle);
 
-		DeactivateHpBar();
 		DeactivateHitCollision();
 
 		NunAnimInstance->StopMontage(MontageMap[AnimationType]);
@@ -1132,17 +1140,21 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		return 0;
 	}
 
-	//MonsterHpWidget->Hp->SetVisibility(ESlateVisibility::Visible);
-	//MonsterHpWidget->HpBG->SetVisibility(ESlateVisibility::Visible);
-	//GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
-
 	DeactivateHitCollision();
 
-	MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
 	MonsterDataStruct.CharacterHp -= DamageAmount;
 
-	float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
-	MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
+	if (MyMonsterType == MonsterType::NUN)
+	{
+		MonsterController->BossUI->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
+		MonsterController->BossUI->SetDamageText(DamageAmount);
+	}
+	else
+	{
+		MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
+		float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
+		MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
+	}
 
 	Die(DamageAmount);
 
@@ -1247,6 +1259,8 @@ void ANunMonster::RespawnCharacter()
 {
 	Super::RespawnCharacter();
 
+	MonsterController->BossUI->SetHP(1);
+
 	KnightArr.Empty();
 
 	TeleportDamageSum = 0.f;
@@ -1261,7 +1275,6 @@ void ANunMonster::RespawnCharacter()
 
 	MinusOpacity = false;
 
-	DeactivateHpBar();
 	ActivateHitCollision();
 	MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
 	MonsterHPWidget->SetHP(1.0f);
