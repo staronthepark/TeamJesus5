@@ -23,7 +23,7 @@ AKinghtMonster::AKinghtMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::IDLE, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(true, [&]()
 		{
-			if (TracePlayer)
+			if (TracePlayer && MonsterController->FindPlayer)
 			{
 				StateType = AnimTypeToStateType[MonsterAnimationType::IDLE];
 				MonsterMoveEventIndex = 1;
@@ -41,7 +41,7 @@ AKinghtMonster::AKinghtMonster()
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(false, [&]()
 		{	
-			if (TracePlayer)
+			if (TracePlayer && MonsterController->FindPlayer)
 			{
 				StateType = AnimTypeToStateType[MonsterAnimationType::IDLE];
 				MonsterMoveEventIndex = 1;
@@ -341,8 +341,35 @@ void AKinghtMonster::Tick(float DeltaTime)
 		KnightHeadMesh->SetScalarParameterValueOnMaterials("Dither", MeshOpacity -= OpactiyDeltaTime);
 	}
 
+	if (isReturnBlend)
+		ReturnBlendFunc(DeltaTime);
+
 	SearchPlayer();
 }
+
+void AKinghtMonster::ReturnBlendFunc(float delta)
+{
+	//TODO ºí·»µù + ¼Óµµ ¾È´À·ÁÁü
+	ReturnInterpTime += delta;
+	auto Val = FMath::Clamp(CalcedDist, IdleBlend, RunBlend);
+
+	KnightAnimInstance->BlendSpeed = FMath::Clamp(FMath::Lerp(Val, IdleBlend, ReturnInterpTime / InterpolationDuration), IdleBlend, RunBlend);
+	MonsterDataStruct.RunSpeed = FMath::Clamp(FMath::Lerp(GetCharacterMovement()->MaxWalkSpeed, 0.f, ReturnInterpTime / InterpolationDuration), IdleBlend, RunBlend);
+
+	UE_LOG(LogTemp, Warning, TEXT("%f"), ReturnInterpTime);
+	UE_LOG(LogTemp, Warning, TEXT("%f"), FMath::Lerp(Val, IdleBlend, ReturnInterpTime / InterpolationDuration));
+
+	GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.RunSpeed;
+
+	if (KnightAnimInstance->BlendSpeed <= IdleBlend)
+	{
+		MonsterController->StopMovement();
+		ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		isReturnBlend = false;
+		ReturnInterpTime = 0.f;
+	}
+}
+
 
 void AKinghtMonster::RespawnCharacter()
 {

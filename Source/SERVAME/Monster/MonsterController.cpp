@@ -144,7 +144,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 
 	auto Dist = FVector::Distance(Player->GetActorLocation(), Monster->GetActorLocation());
 
-	if (Dist <= PerceptionSight)
+	if (Dist <= PerceptionSight - 100.f)
 	{
 		if (GetTeamAttitudeTowards(*Actor) == ETeamAttitude::Hostile)
 		{
@@ -157,35 +157,45 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		UE_LOG(LogTemp, Warning, TEXT("LostPlayer"));
 		FindPlayer = false;
 
-		if (Monster->MyMonsterType == MonsterType::KNIGHT || Monster->MyMonsterType == MonsterType::PERSISTENTKNIGHT)
+		if (Monster->MyMonsterType == MonsterType::NUN)
 		{
-			auto Knight = Cast<AKinghtMonster>(Monster);
-
-			Knight->MonsterMoveEventIndex = 0;
-			Knight->ChangeActionType(MonsterActionType::MOVE);
-			Knight->KnightAnimInstance->BlendSpeed = Knight->WalkBlend;
-			Knight->WalkToRunBlend = false;
+			Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			Monster->MonsterMoveEventIndex = 1;
 		}
 		else
 		{
-			if (Monster->MyMonsterType == MonsterType::DEADBODYOFKNIGHT && !Monster->IsPatrol)
+			auto Knight = Cast<AKinghtMonster>(Monster);
+
+			if (Monster->MyMonsterType == MonsterType::KNIGHT || Monster->MyMonsterType == MonsterType::PERSISTENTKNIGHT)
 			{
-				Monster->ChangeMontageAnimation(MonsterAnimationType::STARTDEAD);
+				Knight->MonsterMoveEventIndex = 0;
+				Knight->ChangeActionType(MonsterActionType::MOVE);
+				Knight->KnightAnimInstance->BlendSpeed = Knight->WalkBlend;
+				Knight->WalkToRunBlend = false;
+			}
+			else if (Monster->MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
+			{
+				if (!Knight->Reviving)
+				{
+					Knight->MonsterMoveEventIndex = 0;
+					Knight->ChangeActionType(MonsterActionType::MOVE);
+					Knight->KnightAnimInstance->BlendSpeed = Knight->WalkBlend;
+					Knight->WalkToRunBlend = false;
+				}
+				else
+				{
+					Knight->ChangeActionType(MonsterActionType::NONE);
+					StopMovement();
+				}
 				return;
 			}
-			else if (Monster->MyMonsterType != MonsterType::NUN)
+			else if (Monster->MyMonsterType == MonsterType::ELITEKNIGHT)
 			{
-				auto Knight = Cast<AKinghtMonster>(Monster);
-
 				Knight->ChangeActionType(MonsterActionType::NONE);
-				Knight->KnightAnimInstance->BlendSpeed = Knight->IdleBlend;
+				Knight->TracePlayer = true;
+				Knight->isReturnBlend = true;
 				Knight->WalkToRunBlend = false;
-				StopMovement();
-			}
-			else
-			{
-				Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
-				Monster->MonsterMoveEventIndex = 1;
+				Knight->IsMoveStart = false;
 			}
 		}
 	}

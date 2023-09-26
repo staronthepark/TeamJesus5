@@ -44,7 +44,7 @@ public:
 	float KnockBackDelayTime = 1.f;
 
 	bool IsInterpStart;
-
+	bool Reviving = true;
 	bool Spawning = false;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
@@ -67,6 +67,7 @@ public:
 	float AccelerationDist = 700.f;
 	float InterpolationDuration = 0.5f;
 	float InterpolationTime = 0.0f;
+	float ReturnInterpTime = 0.f;
 	bool WalkToRunBlend;
 
 	bool StartRun;
@@ -81,6 +82,7 @@ public:
 
 	bool MinusOpacity = false;
 	bool IsSpawn = false;
+	bool isReturnBlend = false;
 
 	bool IsMoveStart = false;
 	float SprintDeltaTime;
@@ -111,6 +113,7 @@ public:
 	void Rotate();
 	void DrawCircle(FVector Center);
 	void SearchPlayer();
+	void ReturnBlendFunc(float delta);
 
 	UFUNCTION()
 	void OnKnightTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

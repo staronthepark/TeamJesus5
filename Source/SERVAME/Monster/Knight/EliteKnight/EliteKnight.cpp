@@ -48,9 +48,9 @@ void AEliteKnight::Tick(float DeltaTime)
 	{
 		SprintDeltaTime += DeltaTime;
 
-		UE_LOG(LogTemp, Warning, TEXT("%f"), SprintDeltaTime);
-		UE_LOG(LogTemp, Warning, TEXT("%f"), MinWalkTime);
-		UE_LOG(LogTemp, Warning, TEXT("Blend Speed : %f"), KnightAnimInstance->BlendSpeed);
+		//UE_LOG(LogTemp, Warning, TEXT("%f"), SprintDeltaTime);
+		//UE_LOG(LogTemp, Warning, TEXT("%f"), MinWalkTime);
+		//UE_LOG(LogTemp, Warning, TEXT("Blend Speed : %f"), KnightAnimInstance->BlendSpeed);
 
 		if (SprintDeltaTime >= MinWalkTime)
 		{
