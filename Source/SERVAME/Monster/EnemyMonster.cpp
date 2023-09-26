@@ -529,8 +529,6 @@ void AEnemyMonster::BeginPlay()
 	MeshOpacity = 0.171653f;
 	//MonsterHpWidget = Cast<UMonsterWidget>(HpWidget->GetWidget());
 	
-	DeactivateHpBar();
-
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &AEnemyMonster::OnTargetDetectionBeginOverlap);
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &AEnemyMonster::OnTargetDetectionEndOverlap);
 
@@ -601,7 +599,7 @@ void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* Overlappe
 
 void AEnemyMonster::OnTargetDetectionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (MyMonsterType == MonsterType::NUN)
+	if (MyMonsterType == MonsterType::NUN || MyMonsterType == MonsterType::ILLUSION_NUN)
 	{
 		return;
 	}
