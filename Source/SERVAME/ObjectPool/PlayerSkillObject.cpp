@@ -46,14 +46,14 @@ void APlayerSkillObject::SetActive(bool active)
 			FCollisionShape::MakeSphere(200.0f),
 			Params);
 
-		//FColor DrawColor;
-		//
-		//if (bResult)
-		//	DrawColor = FColor::Green;
-		//else
-		//	DrawColor = FColor::Red;
-		//
-		//DrawDebugSphere(GetWorld(), GetActorLocation(), 200.0f, 16, DrawColor, false, 2.f);
+		FColor DrawColor;
+
+		if (bResult)
+			DrawColor = FColor::Green;
+		else
+			DrawColor = FColor::Red;
+
+		DrawDebugSphere(GetWorld(), GetActorLocation(), 200.0f, 16, DrawColor, false, 2.f);
 
 		if (bResult && HitResult.GetActor())
 		{
