@@ -545,8 +545,13 @@ float ANunMonster::Die(float Dm)
 {
 	if (MonsterDataStruct.CharacterHp <= 0)
 	{
-		MonsterController->BossUI->PlayBossDiedAnimtion();
-		MonsterController->BossUI->SetVisibility(ESlateVisibility::Hidden);
+		if (MyMonsterType == MonsterType::NUN)
+		{
+			MonsterController->BossUI->PlayBossDiedAnimtion();
+			MonsterController->BossUI->SetVisibility(ESlateVisibility::Hidden);
+		}
+		else
+			DeactivateHpBar();
 
 		IsDie = true;
 		Imotal = true;
@@ -563,31 +568,6 @@ float ANunMonster::Die(float Dm)
 		ParryingCollision1->Deactivate();
 		DeactivateRightWeapon();
 		ChangeMontageAnimation(MonsterAnimationType::DEAD);
-
-		if (IsIllusion)
-		{
-			if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
-				return 0.f;
-
-			MonsterDataStruct.CharacterHp += SelfHealVal;
-
-			if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
-				MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
-
-			float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
-			MonsterHPWidget->SetHP(CurrentPercent);
-
-			auto SpawnLoc = GetActorLocation();
-
-			auto HealPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
-				SpawnLoc + FVector(0, 0, 200), FRotator::ZeroRotator);
-
-			auto HealEffect = Cast<ANunEffectObjInPool>(HealPoolObj);
-
-			HealEffect->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
-			HealEffect->SetCurrentEffect(EffectType::SINGLEHEAL);
-			HealEffect->ActivateCurrentEffect();
-		}
 
 		//머테리얼에 Opacity 값 넣기 전까지 임시로 Visibility 꺼주기
 		GetMesh()->SetVisibility(false);
