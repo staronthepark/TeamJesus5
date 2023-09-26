@@ -155,6 +155,15 @@ AEnemyMonster::AEnemyMonster()
 
 	MonsterTickEventMap.Add(MonsterActionType::DEAD, [&]()
 		{	
+			if (MyMonsterType == MonsterType::TUTORIAL)
+			{
+				MeshOpacity -= fDeltaTime * 0.25f;
+				WeaponOpacity -= fDeltaTime * 0.25f;
+
+				SkeletalMeshComp->SetScalarParameterValueOnMaterials("Opacity", MeshOpacity);
+				SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity);
+			}
+
 			if (MeshOpacity < 0.0f)
 			{
 				SetActive(false);
@@ -219,9 +228,9 @@ AEnemyMonster::AEnemyMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
 		{
-			//ChangeMontageAnimation(MonsterAnimationType::DEADLOOP);
-			//IsStun = true;
-			//CanExecution = true;
+			ChangeMontageAnimation(MonsterAnimationType::DEADLOOP);
+			IsStun = true;
+			CanExecution = true;
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::DEADLOOP, [&]()
@@ -584,6 +593,7 @@ void AEnemyMonster::TickOverlap()
 
 void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
 	otherActor = OtherActor;
 	IsOverlap = true;
 }
