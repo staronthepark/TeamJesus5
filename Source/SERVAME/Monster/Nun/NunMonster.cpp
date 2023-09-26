@@ -53,6 +53,8 @@ ANunMonster::ANunMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::CRYSTAL, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::ILLUSION, MonsterStateType::BEFOREATTACK);
 
+
+
 	MonsterMoveMap.Add(1, [&]()
 		{
 		});
@@ -410,6 +412,9 @@ void ANunMonster::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (MyMonsterType == MonsterType::NUN)
+		DeactivateHpBar();
+
 	SpawnLocArr.Push(Loc1);
 	SpawnLocArr.Push(Loc2);
 	SpawnLocArr.Push(Loc3);
@@ -465,9 +470,10 @@ void ANunMonster::SetYaw()
 
 void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ActivateHpBar();
-
 	SelfHeal();
+	
+	if (MyMonsterType == MonsterType::ILLUSION_NUN)
+		ActivateHpBar();
 
 	if (ActionType == MonsterActionType::DEAD)
 		return;
@@ -539,11 +545,18 @@ float ANunMonster::Die(float Dm)
 {
 	if (MonsterDataStruct.CharacterHp <= 0)
 	{
+		if (MyMonsterType == MonsterType::NUN)
+		{
+			MonsterController->BossUI->PlayBossDiedAnimtion();
+			MonsterController->BossUI->SetVisibility(ESlateVisibility::Hidden);
+		}
+		else
+			DeactivateHpBar();
+
 		IsDie = true;
 		Imotal = true;
 		GetWorld()->GetTimerManager().ClearTimer(SelfHealTimerHandle);
 
-		DeactivateHpBar();
 		DeactivateHitCollision();
 
 		NunAnimInstance->StopMontage(MontageMap[AnimationType]);
@@ -555,31 +568,6 @@ float ANunMonster::Die(float Dm)
 		ParryingCollision1->Deactivate();
 		DeactivateRightWeapon();
 		ChangeMontageAnimation(MonsterAnimationType::DEAD);
-
-		if (IsIllusion)
-		{
-			if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
-				return 0.f;
-
-			MonsterDataStruct.CharacterHp += SelfHealVal;
-
-			if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
-				MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
-
-			float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
-			MonsterHPWidget->SetHP(CurrentPercent);
-
-			auto SpawnLoc = GetActorLocation();
-
-			auto HealPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
-				SpawnLoc + FVector(0, 0, 200), FRotator::ZeroRotator);
-
-			auto HealEffect = Cast<ANunEffectObjInPool>(HealPoolObj);
-
-			HealEffect->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
-			HealEffect->SetCurrentEffect(EffectType::SINGLEHEAL);
-			HealEffect->ActivateCurrentEffect();
-		}
 
 		//머테리얼에 Opacity 값 넣기 전까지 임시로 Visibility 꺼주기
 		GetMesh()->SetVisibility(false);
@@ -1132,17 +1120,21 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		return 0;
 	}
 
-	//MonsterHpWidget->Hp->SetVisibility(ESlateVisibility::Visible);
-	//MonsterHpWidget->HpBG->SetVisibility(ESlateVisibility::Visible);
-	//GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
-
 	DeactivateHitCollision();
 
-	MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
 	MonsterDataStruct.CharacterHp -= DamageAmount;
 
-	float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
-	MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
+	if (MyMonsterType == MonsterType::NUN)
+	{
+		MonsterController->BossUI->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
+		MonsterController->BossUI->SetDamageText(DamageAmount);
+	}
+	else
+	{
+		MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
+		float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
+		MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
+	}
 
 	Die(DamageAmount);
 
@@ -1247,6 +1239,8 @@ void ANunMonster::RespawnCharacter()
 {
 	Super::RespawnCharacter();
 
+	MonsterController->BossUI->SetHP(1);
+
 	KnightArr.Empty();
 
 	TeleportDamageSum = 0.f;
@@ -1261,7 +1255,6 @@ void ANunMonster::RespawnCharacter()
 
 	MinusOpacity = false;
 
-	DeactivateHpBar();
 	ActivateHitCollision();
 	MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
 	MonsterHPWidget->SetHP(1.0f);

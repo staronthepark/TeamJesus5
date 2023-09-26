@@ -27,9 +27,9 @@ ADeadBodyOfKinght::ADeadBodyOfKinght()
 
 	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
 		{
-			//ChangeMontageAnimation(MonsterAnimationType::DEADLOOP);
-			//IsStun = true;
-			//CanExecution = true;
+			ChangeMontageAnimation(MonsterAnimationType::DEADLOOP);
+			IsStun = true;
+			CanExecution = true;
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::STARTDEAD, [&]()

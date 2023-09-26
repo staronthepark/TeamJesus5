@@ -17,8 +17,6 @@ class SERVAME_API ADeadBodyOfKinght : public AKinghtMonster
 public:
 	ADeadBodyOfKinght();
 
-	bool Reviving = true;
-
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
