@@ -30,9 +30,6 @@ class SERVAME_API UMainMenuUI : public UUserWidget
 		UImage* ContinueBackgroundImage;
 
 	UPROPERTY(meta = (BindWidget))
-		UButton* ContinueButton;
-
-	UPROPERTY(meta = (BindWidget))
 		UImage* OptionBackgroundImage;
 
 	UPROPERTY(meta = (BindWidget))
@@ -74,6 +71,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 		UButton* StartButton;
+
+	UPROPERTY(meta = (BindWidget))
+		UButton* ContinueButton;
 
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
