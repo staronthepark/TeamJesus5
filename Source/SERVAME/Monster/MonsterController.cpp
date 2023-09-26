@@ -157,7 +157,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		UE_LOG(LogTemp, Warning, TEXT("LostPlayer"));
 		FindPlayer = false;
 
-		if (Monster->MyMonsterType == MonsterType::KNIGHT)
+		if (Monster->MyMonsterType == MonsterType::KNIGHT || Monster->MyMonsterType == MonsterType::PERSISTENTKNIGHT)
 		{
 			auto Knight = Cast<AKinghtMonster>(Monster);
 
@@ -168,13 +168,25 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		}
 		else
 		{
-			if (Monster->MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
+			if (Monster->MyMonsterType == MonsterType::DEADBODYOFKNIGHT && !Monster->IsPatrol)
 			{
 				Monster->ChangeMontageAnimation(MonsterAnimationType::STARTDEAD);
 				return;
 			}
-			Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
-			Monster->MonsterMoveEventIndex = 1;
+			else if (Monster->MyMonsterType != MonsterType::NUN)
+			{
+				auto Knight = Cast<AKinghtMonster>(Monster);
+
+				Knight->ChangeActionType(MonsterActionType::NONE);
+				Knight->KnightAnimInstance->BlendSpeed = Knight->IdleBlend;
+				Knight->WalkToRunBlend = false;
+				StopMovement();
+			}
+			else
+			{
+				Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
+				Monster->MonsterMoveEventIndex = 1;
+			}
 		}
 	}
 }
