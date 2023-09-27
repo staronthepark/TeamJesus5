@@ -117,7 +117,7 @@ void UUserSettingUI::Open()
 	Controller->bShowMouseCursor = true;
 	Controller->SetPause(true);
 	this->SetKeyboardFocus();
-	WBP_UserSetting_GameUI->SetFocus();
+	WBP_UserSetting_SelectUI->SetFocus();
 	PlayAnimation(OpenAnimation);
 }
 
