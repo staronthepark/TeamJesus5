@@ -155,6 +155,15 @@ AEnemyMonster::AEnemyMonster()
 
 	MonsterTickEventMap.Add(MonsterActionType::DEAD, [&]()
 		{	
+			if (MyMonsterType == MonsterType::TUTORIAL)
+			{
+				MeshOpacity -= fDeltaTime * 0.25f;
+				WeaponOpacity -= fDeltaTime * 0.25f;
+
+				SkeletalMeshComp->SetScalarParameterValueOnMaterials("Opacity", MeshOpacity);
+				SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity);
+			}
+
 			if (MeshOpacity < 0.0f)
 			{
 				SetActive(false);
@@ -219,9 +228,9 @@ AEnemyMonster::AEnemyMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
 		{
-			//ChangeMontageAnimation(MonsterAnimationType::DEADLOOP);
-			//IsStun = true;
-			//CanExecution = true;
+			ChangeMontageAnimation(MonsterAnimationType::DEADLOOP);
+			IsStun = true;
+			CanExecution = true;
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::DEADLOOP, [&]()
@@ -231,7 +240,8 @@ AEnemyMonster::AEnemyMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::EXECUTION, [&]()
 		{
-			ChangeActionType(MonsterActionType::DEAD);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			//ChangeActionType(MonsterActionType::DEAD);
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::STANDBY, [&]()
@@ -408,7 +418,7 @@ AEnemyMonster::AEnemyMonster()
 
 	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
 		{
-			if (percent >= 0.5)
+			if (percent >= 0.5f)
 			{
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
@@ -584,6 +594,7 @@ void AEnemyMonster::TickOverlap()
 
 void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
 	otherActor = OtherActor;
 	IsOverlap = true;
 }
@@ -661,6 +672,13 @@ void AEnemyMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, 
 	objectpool.SpawnObject(objectpool.ObjectArray[7].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
 	objectpool.SpawnObject(objectpool.ObjectArray[7].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
 	objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
+}
+
+int AEnemyMonster::GetRandNum(int Min, int Max)
+{
+	std::srand(time(NULL));
+	auto Val = rand() % Max + Min;
+	return Val;
 }
 
 void AEnemyMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
@@ -832,9 +850,6 @@ void AEnemyMonster::RespawnCharacter()
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
 	SetActorTickEnabled(true);
-
-	ChangeActionType(MonsterActionType::NONE);
-	ChangeMontageAnimation(MonsterAnimationType::IDLE);
 }
 
 void AEnemyMonster::ResumeMontage()

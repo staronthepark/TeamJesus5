@@ -1463,7 +1463,7 @@ void AJesusBoss2::DoTypeAttack(float MinRange, float MaxRange, float Dist, bool 
 
 		if (Type != Boss2AnimationType::LEFTWALK)
 			Boss2->CanMove = false;
-		Boss2->GetCharacterMovement()->MaxWalkSpeed = CurrentActionTemp.Speed;
+		//Boss2->GetCharacterMovement()->MaxWalkSpeed = CurrentActionTemp.Speed;
 		Boss2->PlayAttackAnim(Type);
 		Boss2->IsLockOn = LockOn;
 		Boss2->IsMontagePlay = false;

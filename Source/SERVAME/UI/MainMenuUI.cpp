@@ -35,6 +35,10 @@ void UMainMenuUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 	PlayAnimation(FadeOutAnimation);
+	APlayerController* Controller = GetWorld()->GetFirstPlayerController();
+	Controller->SetInputMode(FInputModeUIOnly());
+	Controller->bShowMouseCursor = true;
+	StartButton->SetFocus();
 }
 
 void UMainMenuUI::HoverStartButton()
@@ -91,7 +95,10 @@ void UMainMenuUI::UnhoverQuitButton()
 
 void UMainMenuUI::ClickStartButton()
 {
-	PlayAnimation(MainMenuCloseAnimation);
+	PlayAnimation(FadeInAnimation);
+	APlayerController* Controller = GetWorld()->GetFirstPlayerController();
+	Controller->SetInputMode(FInputModeGameOnly());
+	Controller->bShowMouseCursor = false;
 	/*RenderTargetImage->SetVisibility(ESlateVisibility::Collapsed);*/
 	//if(LevelSequencePlayer)
 	//	LevelSequencePlayer->Play();
@@ -99,6 +106,10 @@ void UMainMenuUI::ClickStartButton()
 
 void UMainMenuUI::ClickContinueButton()
 {
+	PlayAnimation(MainMenuCloseAnimation);
+	APlayerController* Controller = GetWorld()->GetFirstPlayerController();
+	Controller->SetInputMode(FInputModeGameOnly());
+	Controller->bShowMouseCursor = false;
 }
 
 void UMainMenuUI::ClickOptionButton()
@@ -115,7 +126,7 @@ void UMainMenuUI::ClickQuitButton()
 {
 	//if (UserSettingUI)
 	//	UserSettingUI->ClickQuitSettingButton();
-	UMG_GameExit->SetVisibility(ESlateVisibility::Visible);
+	UMG_GameExit->Open();
 }
 
 //void UMainMenuUI::SequenceFinish()

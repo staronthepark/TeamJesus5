@@ -20,13 +20,10 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	void RunBlending();
-
 	UPROPERTY(EditAnyWhere, Category = "Sprint")
+	float SprintAttackRadius = 100.f;
 	float SprintDuration = 1.f;
-	UPROPERTY(EditAnyWhere, Category = "Sprint")
-	float SprintAttackRadius;
 	float SprintTime;
 	float BlendSpeed;
-
+	float BlendDirection;
 };

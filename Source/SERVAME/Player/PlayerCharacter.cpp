@@ -504,7 +504,11 @@ APlayerCharacter::APlayerCharacter()
 		});
 	NotifyBeginEndEventMap[AnimationType::SKILL1].Add(true, [&]()
 		{
+			UCombatManager::GetInstance().ActivateCollider();
 			AObjectPool& objectpool = AObjectPool::GetInstance();
+			CameraShake(PlayerCameraShake);
+			VibrateGamePad(0.4f, 0.4f);
+
 			for (int32 i = 0; i < SkillCount; i++)
 			{
 				FRotator CurrentRotation = GetActorRotation();
@@ -525,7 +529,12 @@ APlayerCharacter::APlayerCharacter()
 		});
 	NotifyBeginEndEventMap[AnimationType::SKILL2].Add(true, [&]()
 		{
+			UCombatManager::GetInstance().ActivateCollider();
 			SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+			CameraShake(PlayerCameraShake);
+			VibrateGamePad(0.4f, 0.4f);
+
 
 			AObjectPool& objectpool = AObjectPool::GetInstance();
 			for (int32 i = 0; i < SkillCount; i++)
@@ -1710,6 +1719,7 @@ void APlayerCharacter::BeginPlay()
 	GameInstance->InitInstance();
 	GameInstance->InitDefaultSetting();
 	GameInstance->MainMenuWidget->StartButton->OnClicked.AddDynamic(this, &APlayerCharacter::PlayStartAnimation);
+	GameInstance->MainMenuWidget->ContinueButton->OnClicked.AddDynamic(this, &APlayerCharacter::PlayStartAnimation);
 	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 
 	GameInstance->MainMenuWidget->AddToViewport();
@@ -1777,8 +1787,8 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 	PlayerDataStruct.SoulCount = 0;
-	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
-	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
+	//GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
+	//GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
 	ASoundManager::GetInstance().Init();
 	CanShieldDeploy = true;
 	CanUseSkill = true;
@@ -2806,6 +2816,7 @@ void APlayerCharacter::PlayStartAnimation()
 	ChangeMontageAnimation(AnimationType::GAMESTART);
 	AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 	controller->DisableInput(controller);
+	controller->SetInputMode(FInputModeGameOnly());
 	controller->bShowMouseCursor = false;
 	LocketSKMesh->GetAnimInstance()->Montage_Play(MontageMap[AnimationType::NONE]);
 }

@@ -2,6 +2,9 @@
 
 
 #include "PlayerStatUI.h"
+#include "Components/Image.h"
+#include "StatUI.h"
+
 
 void UPlayerStatUI::NativeOnInitialized()
 {
@@ -60,30 +63,30 @@ void UPlayerStatUI::NativeOnInitialized()
 
 void UPlayerStatUI::OnStrButtonClicked()
 {
-	ExplainTitle->SetBrushFromTexture(ExplainTextures.Find(EStateType::str)->TitleTexture, true);
-	ExplainIcon->SetBrushFromTexture(ExplainTextures.Find(EStateType::str)->IconTexture, true);
-	ExplainText->SetBrushFromTexture(ExplainTextures.Find(EStateType::str)->ExplainText, true);
+	ExplainTitle->SetBrushFromTexture(ExplainTextures.Find(EStatsType::str)->TitleTexture, true);
+	ExplainIcon->SetBrushFromTexture(ExplainTextures.Find(EStatsType::str)->IconTexture, true);
+	ExplainText->SetBrushFromTexture(ExplainTextures.Find(EStatsType::str)->ExplainText, true);
 }
 
 void UPlayerStatUI::OnStaminaButtonClicked()
 {
-	ExplainTitle->SetBrushFromTexture(ExplainTextures.Find(EStateType::stamina)->TitleTexture, true);
-	ExplainIcon->SetBrushFromTexture(ExplainTextures.Find(EStateType::stamina)->IconTexture, true);
-	ExplainText->SetBrushFromTexture(ExplainTextures.Find(EStateType::stamina)->ExplainText, true);
+	ExplainTitle->SetBrushFromTexture(ExplainTextures.Find(EStatsType::stamina)->TitleTexture, true);
+	ExplainIcon->SetBrushFromTexture(ExplainTextures.Find(EStatsType::stamina)->IconTexture, true);
+	ExplainText->SetBrushFromTexture(ExplainTextures.Find(EStatsType::stamina)->ExplainText, true);
 }
 
 void UPlayerStatUI::OnHpButtonClicked()
 {
-	ExplainTitle->SetBrushFromTexture(ExplainTextures.Find(EStateType::hp)->TitleTexture, true);
-	ExplainIcon->SetBrushFromTexture(ExplainTextures.Find(EStateType::hp)->IconTexture, true);
-	ExplainText->SetBrushFromTexture(ExplainTextures.Find(EStateType::hp)->ExplainText, true);
+	ExplainTitle->SetBrushFromTexture(ExplainTextures.Find(EStatsType::hp)->TitleTexture, true);
+	ExplainIcon->SetBrushFromTexture(ExplainTextures.Find(EStatsType::hp)->IconTexture, true);
+	ExplainText->SetBrushFromTexture(ExplainTextures.Find(EStatsType::hp)->ExplainText, true);
 }
 
 void UPlayerStatUI::OnShieldButtonClicked()
 {
-	ExplainTitle->SetBrushFromTexture(ExplainTextures.Find(EStateType::shield)->TitleTexture, true);
-	ExplainIcon->SetBrushFromTexture(ExplainTextures.Find(EStateType::shield)->IconTexture, true);
-	ExplainText->SetBrushFromTexture(ExplainTextures.Find(EStateType::shield)->ExplainText, true);
+	ExplainTitle->SetBrushFromTexture(ExplainTextures.Find(EStatsType::shield)->TitleTexture, true);
+	ExplainIcon->SetBrushFromTexture(ExplainTextures.Find(EStatsType::shield)->IconTexture, true);
+	ExplainText->SetBrushFromTexture(ExplainTextures.Find(EStatsType::shield)->ExplainText, true);
 }
 
 void UPlayerStatUI::OnPurchaseButtonClicked()
