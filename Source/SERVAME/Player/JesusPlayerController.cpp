@@ -427,7 +427,7 @@ void AJesusPlayerController::OpenMenu()
 		if (!character->UserSettingUI->IsInViewport())
 		{
 			SetPause(true);
-			character->UserSettingUI->AddToViewport();	
+			character->UserSettingUI->AddToViewport();
 			SetInputMode(FInputModeUIOnly());
 			bShowMouseCursor = true;
 		}

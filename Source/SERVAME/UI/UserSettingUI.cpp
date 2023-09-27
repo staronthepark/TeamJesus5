@@ -39,6 +39,7 @@ void UUserSettingUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 	PlayAnimation(OpenAnimation);
+	Open();
 }
 
 void UUserSettingUI::NativeDestruct()
@@ -106,6 +107,39 @@ void UUserSettingUI::ChangeLanguage()
 	WBP_UserSetting_LightUI->ChangeLanguage();
 	WBP_UserSetting_GraphicsUI->ChangeLanguage();
 	UMG_GameExit->ChangeLanguage();
+}
+
+void UUserSettingUI::Open()
+{
+	this->SetVisibility(ESlateVisibility::Visible);
+	APlayerController* Controller = GetWorld()->GetFirstPlayerController();
+	Controller->SetInputMode(FInputModeUIOnly());
+	Controller->bShowMouseCursor = true;
+	Controller->SetPause(true);
+	this->SetKeyboardFocus();
+	WBP_UserSetting_GameUI->SetFocus();
+	PlayAnimation(OpenAnimation);
+}
+
+void UUserSettingUI::Close()
+{
+	this->SetVisibility(ESlateVisibility::Collapsed);
+	APlayerController* Controller = GetWorld()->GetFirstPlayerController();
+	Controller->SetInputMode(FInputModeGameOnly());
+	Controller->bShowMouseCursor = false;
+	Controller->SetPause(false);
+	this->RemoveFromParent();
+}
+
+FReply UUserSettingUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	FReply Reply = FReply::Unhandled();
+	if (InKeyEvent.GetKey() == EKeys::Escape)
+	{
+		Close();
+		Reply = FReply::Handled();
+	}
+	return Reply;
 }
 
 
