@@ -237,7 +237,7 @@ AKinghtMonster::AKinghtMonster()
 				Temp = speed;
 
 			KnightAnimInstance->BlendSpeed = Temp;
-			MonsterDataStruct.RunSpeed = FMath::Lerp(120.f, 240.f, (KnightAnimInstance->BlendSpeed - 300.f) / 300.f);
+			MonsterDataStruct.RunSpeed = FMath::Lerp(120.f, 600.f, (KnightAnimInstance->BlendSpeed - 300.f) / 300.f);
 
 			//KnightAnimInstance->Montage_Stop(0.25f, MontageMap[AnimationType]);
 		});
@@ -254,7 +254,7 @@ AKinghtMonster::AKinghtMonster()
 				Temp = speed;
 
 			KnightAnimInstance->BlendSpeed = Temp;
-			MonsterDataStruct.RunSpeed = FMath::Lerp(120.f, 500.f, (KnightAnimInstance->BlendSpeed - 300.f) / 300.f);
+			MonsterDataStruct.RunSpeed = FMath::Lerp(120.f, 600.f, (KnightAnimInstance->BlendSpeed - 300.f) / 300.f);
 
 			//KnightAnimInstance->Montage_Stop(0.25f, MontageMap[AnimationType]);
 		});
