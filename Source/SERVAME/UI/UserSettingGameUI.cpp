@@ -102,7 +102,5 @@ void UUserSettingGameUI::SetLanguage()
 		LightSettingButton->WidgetStyle.Pressed.SetResourceObject(ImageTextures.Find(EGameSettings::brightnesspressed)->KorTexture);
 		//WBP_Camera_Button->ChangeLanguage();
 	}
-
-	
 }
 

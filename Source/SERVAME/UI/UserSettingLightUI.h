@@ -11,6 +11,9 @@
 /**
  * 
  */
+
+enum class Language :uint8;
+
 UCLASS()
 class SERVAME_API UUserSettingLightUI : public UUserWidget
 {
@@ -35,5 +38,5 @@ public:
 		void ChangeSliderValue(float value);
 
 	UFUNCTION()
-		void ChangeLanguage();
+		void ChangeLanguage(Language& language);
 };

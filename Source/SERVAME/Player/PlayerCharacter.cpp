@@ -930,6 +930,7 @@ APlayerCharacter::APlayerCharacter()
 		});
 	MontageEndEventMap.Add(AnimationType::SAVESTART, [&]()
 		{
+			GameInstance->PlayerStatUI->AddToViewport();
 			PlayerHUD->PlayInteractionAnimation(true, EInteractions::close);
 			ChangeMontageAnimation(AnimationType::SAVELOOP);
 			RestoreStat();

@@ -14,6 +14,8 @@
  * 
  */
 
+enum class Language :uint8;
+
 UENUM()
 enum class EGraphicsSettings : uint8
 {
@@ -98,7 +100,7 @@ public:
 		void SetReflect();
 
 	UFUNCTION()
-		void ChangeLanguage();
+		void ChangeLanguage(Language& language);
 
 
 };

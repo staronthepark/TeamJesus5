@@ -141,6 +141,8 @@ public:
 
 	virtual void NativeOnInitialized();
 
+	virtual void NativeConstruct();
+
 	UFUNCTION()
 	void OnStrButtonClicked();
 
@@ -156,6 +158,12 @@ public:
 	UFUNCTION()
 	void OnPurchaseButtonClicked();
 
+	// 이게 남은 영혼!!
 	void SetRemainSoul(int value);
 
+	void Open();
+
+	void Close();
+
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent);
 };

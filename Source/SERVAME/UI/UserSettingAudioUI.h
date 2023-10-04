@@ -13,6 +13,8 @@
  * 
  */
 
+enum class Language :uint8;
+
 UENUM()
 enum class EAudioSettings : uint8
 {
@@ -85,6 +87,6 @@ public:
 	//void SetVoiceVolume(float value);
 
 	UFUNCTION()
-	void ChangeLanguage();
+	void ChangeLanguage(Language& language);
 
 };

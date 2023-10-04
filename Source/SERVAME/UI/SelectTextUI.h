@@ -12,6 +12,8 @@
  * 
  */
 
+enum class Language : uint8;
+
 UENUM()
 enum class EHoverTextures : uint8
 {
@@ -67,5 +69,5 @@ public:
 	UFUNCTION()
 	void OnUnhovered();
 
-	void ChangeLanguage();
+	void ChangeLanguage(Language& language);
 };

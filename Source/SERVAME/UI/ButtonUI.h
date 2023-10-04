@@ -12,6 +12,8 @@
  * 
  */
 
+enum class Language :uint8;
+
 USTRUCT(BlueprintType)
 struct SERVAME_API FButtonTextures
 {
@@ -55,5 +57,5 @@ public:
 	int GetValue();
 	void SetValue(int value);
 
-	void ChangeLanguage();
+	void ChangeLanguage(Language& language);
 };

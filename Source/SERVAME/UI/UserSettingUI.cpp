@@ -103,11 +103,11 @@ void UUserSettingUI::ChangeLanguage()
 {
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
-	WBP_UserSetting_SelectUI->ChangeLanguage();
-	WBP_UserSetting_AudioUI->ChangeLanguage();
-	WBP_UserSetting_LightUI->ChangeLanguage();
-	WBP_UserSetting_GraphicsUI->ChangeLanguage();
-	UMG_GameExit->ChangeLanguage();
+	WBP_UserSetting_SelectUI->ChangeLanguage(GameInstance->language);
+	WBP_UserSetting_AudioUI->ChangeLanguage(GameInstance->language);
+	WBP_UserSetting_LightUI->ChangeLanguage(GameInstance->language);
+	WBP_UserSetting_GraphicsUI->ChangeLanguage(GameInstance->language);
+	UMG_GameExit->ChangeLanguage(GameInstance->language);
 }
 
 void UUserSettingUI::Open()
