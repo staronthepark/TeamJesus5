@@ -240,7 +240,6 @@ AEnemyMonster::AEnemyMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::EXECUTION, [&]()
 		{
-			//todo : È¸Àü
 			ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			//ChangeActionType(MonsterActionType::DEAD);
 		});
@@ -394,13 +393,10 @@ AEnemyMonster::AEnemyMonster()
 
 	RotateMap.Add(false, [&]()
 		{
-			UE_LOG(LogTemp, Warning, TEXT("RotateMap.Add(false, [&]()"));
 		});
 
 	RotateMap.Add(true, [&]()
 		{
-			UE_LOG(LogTemp, Warning, TEXT("RotateMap.Add(true, [&]()"));
-
 			if (PlayerCharacter != nullptr)
 			{
 				TargetRotation = (PlayerCharacter->GetActorLocation() - GetActorLocation()).Rotation();
@@ -716,7 +712,7 @@ void AEnemyMonster::ShotProjectile()
 void AEnemyMonster::Rotate()
 {
 	if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP
-		|| AnimationType == MonsterAnimationType::EXECUTION)return;
+		/*|| AnimationType == MonsterAnimationType::EXECUTION*/)return;
 
 	auto Rot = FRotator(0.f, GetActorRotation().Yaw, GetActorRotation().Roll);
 

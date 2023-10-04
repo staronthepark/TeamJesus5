@@ -106,7 +106,6 @@ AKinghtMonster::AKinghtMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::EXECUTION, [&]()
 		{
-			CanRotate = true;
 			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			WalkToRunBlend = false;
 			OnHitCancle();
@@ -525,7 +524,6 @@ void AKinghtMonster::OffHitCancle()
 
 void AKinghtMonster::Stun()
 {
-	//CanRotate = false;
 	//CanExecution = true;
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
@@ -624,15 +622,6 @@ void AKinghtMonster::EndAttackTrigger(MonsterAnimationType AttackAnimType)
 	if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP)
 		return;
 	TracePlayer = true;
-}
-
-void AKinghtMonster::Rotate()
-{
-	if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP
-		|| AnimationType == MonsterAnimationType::EXECUTION)
-		return;
-
-	SetActorRotation(FMath::Lerp(GetActorRotation(), YawRotation, MonsterDataStruct.RotateSpeed * fDeltaTime));
 }
 
 void AKinghtMonster::DrawCircle(FVector Center)
