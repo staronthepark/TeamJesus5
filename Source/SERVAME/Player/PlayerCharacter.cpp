@@ -1792,8 +1792,8 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 	PlayerDataStruct.SoulCount = 0;
-	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
-	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
+	//GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
+	//GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
 	ASoundManager::GetInstance().Init();
 	CanShieldDeploy = true;
 	CanUseSkill = true;
