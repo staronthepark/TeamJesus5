@@ -1908,7 +1908,7 @@ void AJesusBoss::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	AObjectPool& objectpool = AObjectPool::GetInstance();
 	if (OtherComp->GetName() == "ShieldCollision")
 	{
-		Player->SetShieldHP(-BossDataStruct.DamageList[Type]);
+		Player->SetShieldHP(-BossDataStruct.DamageList[Type], GetActorLocation());
 		CameraShake(PlayerCameraShake);
 		VibrateGamePad(0.4f, 0.4f);
 		objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);

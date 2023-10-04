@@ -259,6 +259,12 @@ public:
 		float SkillDistance;
 	UPROPERTY(EditAnywhere)
 		int32 SkillCount;
+
+	UPROPERTY(EditAnywhere)
+		float PowerAttackDefDistance;
+	UPROPERTY(EditAnywhere)
+		float AttackDefDistance;
+
 	TArray<float> SkillRotateLUT;
 
 
@@ -426,7 +432,7 @@ public:
 
 	void Sprint();
 	void Run();
-	void SetShieldHP(float HP);
+	void SetShieldHP(float HP, FVector Location);
 
 	void RecoverStamina();
 

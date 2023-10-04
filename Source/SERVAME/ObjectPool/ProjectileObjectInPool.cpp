@@ -53,7 +53,7 @@ void AProjectileObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* Overl
 	if (OtherComp->GetName() == "ShieldCollision")
 	{
 		auto Player = Cast<APlayerCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), APlayerCharacter::StaticClass()));
-		Player->SetShieldHP(-Damage);
+		Player->SetShieldHP(-Damage, GetActorLocation());
 		boss->CameraShake(boss->PlayerCameraShake);
 		boss->VibrateGamePad(0.4f, 0.4f);
 		Collision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);

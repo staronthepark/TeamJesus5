@@ -446,8 +446,11 @@ void AKinghtMonster::RespawnCharacter()
 		ChangeMontageAnimation(MonsterAnimationType::IDLE);
 	}
 
-	WeaponOpacity = 0.171653f;
-	MeshOpacity = 0.171653f;
+	WeaponOpacity = 1.0f;
+	MeshOpacity = 1.0f;
+
+	SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity);
+	KnightHeadMesh->SetScalarParameterValueOnMaterials("Dither", WeaponOpacity);
 
 	MinusOpacity = false;
 	OpactiyDeltaTime = 0.f;

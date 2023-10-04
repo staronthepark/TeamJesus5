@@ -4,6 +4,7 @@
 #include "../BaseCharacter.h"
 #include "../Player/PlayerCharacter.h"
 #include "../ObjectPool/PlayerSkillObject.h"
+#include "../Manager/CombatManager.h"
 
 APlayerSkillObject::APlayerSkillObject()
 {
@@ -62,6 +63,7 @@ void APlayerSkillObject::SetActive(bool active)
 
 
 			Player->TakeDamage(Damage, DamageEvent, nullptr, this);
+			UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(Player);
 		}
 	}
 }
