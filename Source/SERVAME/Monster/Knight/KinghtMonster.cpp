@@ -469,7 +469,7 @@ void AKinghtMonster::InterpEnd() { IsInterpStart = false; }
 
 void AKinghtMonster::KnockBackStart()
 {
-/*	GetWorld()->GetTimerManager().SetTimer(KnockBackTimerHandle, FTimerDelegate::CreateLambda([=]()
+	GetWorld()->GetTimerManager().SetTimer(KnockBackTimerHandle, FTimerDelegate::CreateLambda([=]()
 		{
 			IsKnockBack = false;
 			GetWorld()->GetTimerManager().ClearTimer(KnockBackTimerHandle);
@@ -482,14 +482,13 @@ void AKinghtMonster::KnockBackStart()
 			GetWorld()->GetTimerManager().ClearTimer(KnockBackDelayTimerHandle);
 		}), KnockBackDelayTime, false);
 
-	StopAnimMontage(MontageMap[AnimationType]); 
 	DeactivateAttackTrigger();
-	IsKnockBack = true;*/ 
+	IsKnockBack = true; 
 }
 
 void AKinghtMonster::KnockBackEmd() 
 { 
-	//IsKnockBack = false; 
+	IsKnockBack = false; 
 }
 
 void AKinghtMonster::SpawnBegin()
@@ -504,7 +503,7 @@ void AKinghtMonster::SpawnBegin()
 void AKinghtMonster::SpawnEnd()
 {
 	Imotal = false;
-	//CanCancle = true;
+	CanCancle = true;
 	Spawning = false;
 	StateType = MonsterStateType::NONE;
 	HitCollision->Activate();
@@ -513,10 +512,10 @@ void AKinghtMonster::SpawnEnd()
 
 void AKinghtMonster::OnHitCancle()
 {
-	//if (MyMonsterType == MonsterType::ELITEKNIGHT)
-	//	CanCancle = false;
-	//else
-	//	CanCancle = true;
+	if (MyMonsterType == MonsterType::ELITEKNIGHT)
+		CanCancle = false;
+	else
+		CanCancle = true;
 }
 
 void AKinghtMonster::OffHitCancle()
