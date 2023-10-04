@@ -6,12 +6,24 @@
 #include "Blueprint/UserWidget.h"
 #include <Components/Button.h>
 #include <Components/TextBlock.h>
-#include "StatUI.h"
 #include "PlayerStatUI.generated.h"
 
 /**
  * 
  */
+
+class UStatUI;
+class UImage;
+
+UENUM()
+enum class EStatsType : uint8
+{
+	str		UMETA(DisplayName = "Strength"),
+	stamina	UMETA(DisplayName = "Stamina"),
+	hp		UMETA(DiaplayName = "Hp"),
+	shield	UMETA(DisplayName = "Shield")
+};
+
 USTRUCT(BlueprintType)
 struct SERVAME_API FStatButtonExplainTextures
 {
@@ -102,7 +114,7 @@ class SERVAME_API UPlayerStatUI : public UUserWidget
 		UStatUI* ShieldButton4;
 
 	UPROPERTY(EditAnywhere)
-	TMap<EStateType, FStatButtonExplainTextures> ExplainTextures;
+	TMap<EStatsType, FStatButtonExplainTextures> ExplainTextures;
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* ExplainTitle;

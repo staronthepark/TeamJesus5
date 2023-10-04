@@ -10,6 +10,7 @@ void AJesusPlayerController::BeginPlay()
 
 	bAutoManageActiveCameraTarget = false;
 
+	SetInputMode(FInputModeUIOnly());
 	bShowMouseCursor = true;
 
 	ChangeTargetMouseValue = 3.0f;
@@ -135,6 +136,7 @@ void AJesusPlayerController::PressDodge()
 		if (character->UserSettingUI->IsInViewport())
 		{
 			SetPause(false);
+			SetInputMode(FInputModeGameOnly());
 			bShowMouseCursor = false;
 			character->UserSettingUI->RemoveFromParent();
 			return;
@@ -257,6 +259,7 @@ void AJesusPlayerController::PressLockon()
 {	
 	if (GameInstance->MainMenuWidget->IsInViewport())
 	{
+		SetInputMode(FInputModeGameOnly());
 		bShowMouseCursor = false;
 		character->UserSettingUI->RemoveFromParent();
 	}
@@ -424,12 +427,14 @@ void AJesusPlayerController::OpenMenu()
 		if (!character->UserSettingUI->IsInViewport())
 		{
 			SetPause(true);
+			character->UserSettingUI->AddToViewport();
+			SetInputMode(FInputModeUIOnly());
 			bShowMouseCursor = true;
-			character->UserSettingUI->AddToViewport();			
 		}
 		else
 		{
 			SetPause(false);
+			SetInputMode(FInputModeGameOnly());
 			bShowMouseCursor = false;
 			character->UserSettingUI->RemoveFromParent();
 		}
@@ -457,8 +462,9 @@ void AJesusPlayerController::CloseMenu()
 		if (character->UserSettingUI->IsInViewport())
 		{
 			SetPause(false);
-			bShowMouseCursor = false;	
 			character->UserSettingUI->RemoveFromParent();
+			SetInputMode(FInputModeGameOnly());
+			bShowMouseCursor = false;
 		}
 	}
 }

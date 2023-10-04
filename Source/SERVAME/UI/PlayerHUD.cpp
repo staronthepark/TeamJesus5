@@ -50,8 +50,6 @@ void UPlayerHUD::NativeOnInitialized()
 		});
 
 	isGamePad = Keyboard;
-
-
 }
 
 void UPlayerHUD::ClearShield()
@@ -176,7 +174,6 @@ void UPlayerHUD::PlayInteractionAnimation(bool IsOpen, EInteractions interaction
 		Interaction_Image->SetBrushFromTexture(InteractionTextures.Find(interactions)->EngTextures[isGamePad]); 
 	else if(currentLanguage == Language::KOR)
 		Interaction_Image->SetBrushFromTexture(InteractionTextures.Find(interactions)->KorTextures[isGamePad]); 
-
 
 	if (IsOpen && Interaction_Image->GetRenderOpacity() < 0.1f)
 	{

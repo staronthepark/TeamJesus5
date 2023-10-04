@@ -2836,6 +2836,7 @@ void APlayerCharacter::PlayStartAnimation()
 	ChangeMontageAnimation(AnimationType::GAMESTART);
 	AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 	controller->DisableInput(controller);
+	controller->SetInputMode(FInputModeGameOnly());
 	controller->bShowMouseCursor = false;
 	LocketSKMesh->GetAnimInstance()->Montage_Play(MontageMap[AnimationType::NONE]);
 }

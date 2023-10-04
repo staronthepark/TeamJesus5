@@ -17,7 +17,7 @@
  * 
  */
 UCLASS()
-class SERVAME_API UMainMenuUI : public UUserWidget
+class SERVAME_API UMainMenuUI: public UUserWidget
 {
 	GENERATED_BODY()
 		//UPROPERTY(meta = (BindWidget))
@@ -52,6 +52,8 @@ class SERVAME_API UMainMenuUI : public UUserWidget
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* MainMenuCloseAnimation;
 
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		UWidgetAnimation* FadeInAnimation;
 	//ALevelSequenceActor* LevelSequenceActor;
 	//UPROPERTY(EditAnywhere)
 	//	ULevelSequence* LevelSequence;
