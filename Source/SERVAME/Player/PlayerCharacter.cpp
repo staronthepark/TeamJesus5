@@ -1110,7 +1110,10 @@ APlayerCharacter::APlayerCharacter()
 
 	InputEventMap[PlayerAction::NONE][ActionType::SKILL].Add(true, [&]()
 		{
-			SkillAttack();
+			if (IsGrab)
+				Parring();
+			else
+				SkillAttack();
 		});
 	InputEventMap[PlayerAction::NONE][ActionType::SKILL].Add(false, [&]()
 		{
@@ -1145,7 +1148,8 @@ APlayerCharacter::APlayerCharacter()
 
 	InputEventMap[PlayerAction::NONE][ActionType::PARRING].Add(true, [&]()
 		{
-			Parring();
+			if (IsGrab)
+				Parring();
 		});
 	InputEventMap[PlayerAction::NONE][ActionType::PARRING].Add(false, [&]()
 		{
@@ -1792,8 +1796,8 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 	PlayerDataStruct.SoulCount = 0;
-	//GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
-	//GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
+	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
+	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
 	ASoundManager::GetInstance().Init();
 	CanShieldDeploy = true;
 	CanUseSkill = true;
@@ -2129,12 +2133,9 @@ void APlayerCharacter::SetShieldHP(float HP, FVector Location)
 {
 	SetSoul(HP * PlayerDataStruct.ShieldDecreaseSoulPercent);
 
-	//FVector MyDir = Location - GetActorLocation();
-	////MyDir.Normalize();
-	//
-	//float Distance = HP <= 60 ? AttackDefDistance : PowerAttackDefDistance;
-	//
-	//LaunchCharacter(-MyDir * Distance, false, false);
+	float Distance = HP <= 60 ? AttackDefDistance : PowerAttackDefDistance;
+
+	LaunchCharacter(-GetActorRotation().Vector() * Distance, false, false);
 
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[38].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
@@ -2820,6 +2821,11 @@ void APlayerCharacter::LoadMap()
 
 	FLatentActionInfo LatentInfo;
 	UGameplayStatics::LoadStreamLevel(this, SaveMapName, true, true, LatentInfo);
+	if (SaveMapName == "2-2Map")
+	{
+		SaveMapName = "A_KimMinYeongMap_Boss1";
+		GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 1.0f);
+	}
 }
 
 void APlayerCharacter::PlayStartAnimation()
