@@ -15,7 +15,6 @@ AEffectObjectInPool::AEffectObjectInPool()
 void AEffectObjectInPool::BeginPlay()
 {
 	Super::BeginPlay();
-	CurrentEffect->SetAsset(GetTypeEffect[Type]);
 }
 
 void AEffectObjectInPool::Tick(float DeltaTime)
@@ -36,6 +35,12 @@ void AEffectObjectInPool::ReturnObject()
 {
 	Super::ReturnObject();
 	SetActorTickEnabled(false);
+}
+
+void AEffectObjectInPool::SetEffectType(SelectEffectType type)
+{
+	Type = type;
+	CurrentEffect->SetAsset(GetTypeEffect[Type]);
 }
 
 void AEffectObjectInPool::ActivateCurrentEffect()

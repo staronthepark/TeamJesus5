@@ -265,8 +265,16 @@ AKinghtMonster::AKinghtMonster()
 
 	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
 		{
-			ChangeActionType(MonsterActionType::ATTACK);
-			ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
+			if (percent <= 0.5f)
+			{
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
+			}
+			else
+			{
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::POWERATTACK1);
+			}
 		});
 
 	SetActionByRandomMap.Add(MonsterAnimationType::DASHATTACK1, [&](float percent)
@@ -716,6 +724,8 @@ float AKinghtMonster::Die(float Dm)
 				auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[44].ObjClass,
 				GetActorLocation(), FRotator::ZeroRotator);
 				auto CastObj = Cast<AEffectObjectInPool>(PoolObj);
+				CastObj->SetEffectType(SelectEffectType::KNIGHT_DEAD);
+				CastObj->ActivateCurrentEffect();
 
 				MinusOpacity = true;
 			}), 3.2f, false);

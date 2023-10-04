@@ -41,6 +41,7 @@ public:
 	virtual void BeginPlay() override;
 	virtual void ReturnObject()override;
 
+	void SetEffectType(SelectEffectType type);
 	void ActivateCurrentEffect();
 	void DeactivateCurrentEffect();
 };
