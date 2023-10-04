@@ -140,6 +140,20 @@ public:
 	int MaxDelayTime = 3.f;
 	bool IsCoolTime = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float Dark_Group_Percent_1 = 0.4f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float Dark_Group_Percent_2 = 0.7f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float SingleHeal_Group_Percent_1 = 0.4f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float SingleHeal_Group_Percent_2 = 0.6f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float MultiHeal_Group_Percent_1 = 0.3f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float MultiHeal_Group_Percent_2 = 0.5f;
+
+
 	//수녀 a타입 스킬
 	void TelePort();
 	void SpawnKnight();

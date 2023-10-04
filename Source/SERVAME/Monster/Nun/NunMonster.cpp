@@ -336,13 +336,13 @@ ANunMonster::ANunMonster()
 
 	SetActionByRandomMap.Add(MonsterAnimationType::DARK, [&](float percent)
 		{
-			if (percent <= 0.4)
+			if (percent <= Dark_Group_Percent_1)
 			{
 				//ÆÄÆí
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::FRAGMENT);
 			}
-			else if (percent > 0.3f && percent < 0.7f)
+			else if (percent > Dark_Group_Percent_1 && percent < Dark_Group_Percent_2)
 			{
 				//½ÉÆÇ
 				ChangeActionType(MonsterActionType::ATTACK);
@@ -359,13 +359,13 @@ ANunMonster::ANunMonster()
 
 	SetActionByRandomMap.Add(MonsterAnimationType::HEAL1, [&](float percent)
 		{
-			if (percent <= 0.4)
+			if (percent <= SingleHeal_Group_Percent_1)
 			{
 				//´ÜÀÏÈú
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::HEAL1);
 			}
-			else if (percent > 0.4f && percent < 0.6f)
+			else if (percent > SingleHeal_Group_Percent_1 && percent < SingleHeal_Group_Percent_2)
 			{
 				//¼þ¹è
 				ChangeActionType(MonsterActionType::ATTACK);
@@ -381,13 +381,13 @@ ANunMonster::ANunMonster()
 
 	SetActionByRandomMap.Add(MonsterAnimationType::HEAL2, [&](float percent)
 		{
-			if (percent <= 0.3)
+			if (percent <= MultiHeal_Group_Percent_1)
 			{
 				//¾îµÒ
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::DARK);
 			}
-			else if (percent > 0.3f && percent < 0.5f)
+			else if (percent > MultiHeal_Group_Percent_1 && percent < MultiHeal_Group_Percent_2)
 			{
 				//±¤¿ªÈú
 				ChangeActionType(MonsterActionType::ATTACK);
