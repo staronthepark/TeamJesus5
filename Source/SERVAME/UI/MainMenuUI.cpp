@@ -2,6 +2,7 @@
 
 
 #include "MainMenuUI.h"
+#include <SERVAME/Player/JesusPlayerController.h>
 
 
 void UMainMenuUI::NativeOnInitialized()
@@ -96,24 +97,29 @@ void UMainMenuUI::UnhoverQuitButton()
 void UMainMenuUI::ClickStartButton()
 {
 	PlayAnimation(FadeInAnimation);
-	APlayerController* Controller = GetWorld()->GetFirstPlayerController();
+	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 	Controller->SetInputMode(FInputModeGameOnly());
 	Controller->bShowMouseCursor = false;
 	/*RenderTargetImage->SetVisibility(ESlateVisibility::Collapsed);*/
 	//if(LevelSequencePlayer)
 	//	LevelSequencePlayer->Play();
+	Controller->SetPause(false);
 }
 
 void UMainMenuUI::ClickContinueButton()
 {
 	PlayAnimation(MainMenuCloseAnimation);
-	APlayerController* Controller = GetWorld()->GetFirstPlayerController();
+	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 	Controller->SetInputMode(FInputModeGameOnly());
 	Controller->bShowMouseCursor = false;
+	Controller->SetPause(false);
 }
 
 void UMainMenuUI::ClickOptionButton()
 {
+	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+	Controller->character->UserSettingUI->AddToViewport();
+	
 }
 
 //void UMainMenuUI::ClickSettingButton()

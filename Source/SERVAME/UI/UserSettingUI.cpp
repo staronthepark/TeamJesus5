@@ -4,6 +4,7 @@
 #include "UserSettingUI.h"
 #include "..\Manager\SoundManager.h"
 #include <SERVAME/Manager/JesusGameInstance.h>
+#include <SERVAME/Player/JesusPlayerController.h>
 
 #define Game 0
 #define Audio 1
@@ -124,10 +125,19 @@ void UUserSettingUI::Open()
 void UUserSettingUI::Close()
 {
 	this->SetVisibility(ESlateVisibility::Collapsed);
-	APlayerController* Controller = GetWorld()->GetFirstPlayerController();
-	Controller->SetInputMode(FInputModeGameOnly());
-	Controller->bShowMouseCursor = false;
-	Controller->SetPause(false);
+	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (!GameInstance->MainMenuWidget->IsInViewport())
+	{
+		Controller->SetInputMode(FInputModeGameOnly());
+		Controller->bShowMouseCursor = false;
+		Controller->SetPause(false);
+	}
+	else {
+		Controller->SetInputMode(FInputModeUIOnly());
+		Controller->bShowMouseCursor = true;
+		Controller->SetPause(true);
+	}
 	this->RemoveFromParent();
 }
 
