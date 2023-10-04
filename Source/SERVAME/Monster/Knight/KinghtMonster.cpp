@@ -4,6 +4,7 @@
 #include "Math/RandomStream.h"
 #include "KnightAttackTriggerComp.h"
 #include "..\..\Manager\CombatManager.h"
+#include "..\..\ObjectPool\EffectObjectInPool.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 AKinghtMonster::AKinghtMonster()
@@ -478,7 +479,6 @@ void AKinghtMonster::KnockBackStart()
 	GetWorld()->GetTimerManager().SetTimer(KnockBackDelayTimerHandle, FTimerDelegate::CreateLambda([=]()
 		{
 			ActivateAttackTrigger();
-			MontageEndEventMap[MonsterAnimationType::HIT]();
 			GetWorld()->GetTimerManager().ClearTimer(KnockBackDelayTimerHandle);
 		}), KnockBackDelayTime, false);
 
@@ -525,8 +525,8 @@ void AKinghtMonster::OffHitCancle()
 
 void AKinghtMonster::Stun()
 {
-	CanRotate = false;
-	CanExecution = true;
+	//CanRotate = false;
+	//CanExecution = true;
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
 	DeactivateSMOverlap();
@@ -631,6 +631,7 @@ void AKinghtMonster::Rotate()
 	if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP
 		|| AnimationType == MonsterAnimationType::EXECUTION)
 		return;
+
 	SetActorRotation(FMath::Lerp(GetActorRotation(), YawRotation, MonsterDataStruct.RotateSpeed * fDeltaTime));
 }
 
@@ -717,8 +718,13 @@ float AKinghtMonster::Die(float Dm)
 		DeactivateRightWeapon();
 		ChangeMontageAnimation(MonsterAnimationType::DEAD);
 
+		//래그돌 적용 후 30초 정도 있다가 점점 시체 없에기
 		GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
 			{
+				auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[44].ObjClass,
+				GetActorLocation(), FRotator::ZeroRotator);
+				auto CastObj = Cast<AEffectObjectInPool>(PoolObj);
+
 				MinusOpacity = true;
 			}), 3.2f, false);
 
