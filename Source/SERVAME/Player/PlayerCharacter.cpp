@@ -332,7 +332,12 @@ APlayerCharacter::APlayerCharacter()
 		});
 
 	NotifyBeginEndEventMap.Add(AnimationType::POWERATTACK1, TMap<bool, TFunction<void()>>());
-	NotifyBeginEndEventMap[AnimationType::POWERATTACK1].Add(true, NotifyBeginEndEventMap[AnimationType::ATTACK1][true]);
+	NotifyBeginEndEventMap[AnimationType::POWERATTACK1].Add(true, [&]()
+	{
+			NotifyBeginEndEventMap[AnimationType::ATTACK1][true]();
+			CameraShake(PlayerCameraShake);
+			VibrateGamePad(0.2f, 0.2f);
+		});
 	NotifyBeginEndEventMap[AnimationType::POWERATTACK1].Add(false, [&]()
 		{
 			DeactivateRightWeapon();
@@ -353,19 +358,19 @@ APlayerCharacter::APlayerCharacter()
 	NotifyBeginEndEventMap[AnimationType::ATTACK4].Add(false, NotifyBeginEndEventMap[AnimationType::ATTACK1][false]);
 
 	NotifyBeginEndEventMap.Add(AnimationType::RUNATTACK, TMap<bool, TFunction<void()>>());
-	NotifyBeginEndEventMap[AnimationType::RUNATTACK].Add(true, NotifyBeginEndEventMap[AnimationType::ATTACK1][true]);
+	NotifyBeginEndEventMap[AnimationType::RUNATTACK].Add(true, NotifyBeginEndEventMap[AnimationType::POWERATTACK1][true]);
 	NotifyBeginEndEventMap[AnimationType::RUNATTACK].Add(false, NotifyBeginEndEventMap[AnimationType::ATTACK1][false]);
 
 	NotifyBeginEndEventMap.Add(AnimationType::RUNPOWERATTACK, TMap<bool, TFunction<void()>>());
-	NotifyBeginEndEventMap[AnimationType::RUNPOWERATTACK].Add(true, NotifyBeginEndEventMap[AnimationType::ATTACK1][true]);
+	NotifyBeginEndEventMap[AnimationType::RUNPOWERATTACK].Add(true, NotifyBeginEndEventMap[AnimationType::POWERATTACK1][true]);
 	NotifyBeginEndEventMap[AnimationType::RUNPOWERATTACK].Add(false, NotifyBeginEndEventMap[AnimationType::ATTACK1][false]);
 
 	NotifyBeginEndEventMap.Add(AnimationType::POWERATTACK2, TMap<bool, TFunction<void()>>());
-	NotifyBeginEndEventMap[AnimationType::POWERATTACK2].Add(true, NotifyBeginEndEventMap[AnimationType::ATTACK1][true]);
+	NotifyBeginEndEventMap[AnimationType::POWERATTACK2].Add(true, NotifyBeginEndEventMap[AnimationType::POWERATTACK1][true]);
 	NotifyBeginEndEventMap[AnimationType::POWERATTACK2].Add(false, NotifyBeginEndEventMap[AnimationType::POWERATTACK1][false]);
 
 	NotifyBeginEndEventMap.Add(AnimationType::POWERATTACK3, TMap<bool, TFunction<void()>>());
-	NotifyBeginEndEventMap[AnimationType::POWERATTACK3].Add(true, NotifyBeginEndEventMap[AnimationType::ATTACK1][true]);
+	NotifyBeginEndEventMap[AnimationType::POWERATTACK3].Add(true, NotifyBeginEndEventMap[AnimationType::POWERATTACK1][true]);
 	NotifyBeginEndEventMap[AnimationType::POWERATTACK3].Add(false, [&]()
 		{
 			NotifyBeginEndEventMap[AnimationType::POWERATTACK1][false]();
@@ -1787,11 +1792,13 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 	PlayerDataStruct.SoulCount = 0;
-	//GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
-	//GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
+	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
+	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
 	ASoundManager::GetInstance().Init();
 	CanShieldDeploy = true;
 	CanUseSkill = true;
+
+	SetSoul(PlayerDataStruct.SoulCount);
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -2118,9 +2125,16 @@ void APlayerCharacter::Run()
 	InputEventMap[PlayerAction::NONE][ActionType::MOVE][true]();
 }
 
-void APlayerCharacter::SetShieldHP(float HP)
+void APlayerCharacter::SetShieldHP(float HP, FVector Location)
 {
 	SetSoul(HP * PlayerDataStruct.ShieldDecreaseSoulPercent);
+
+	//FVector MyDir = Location - GetActorLocation();
+	////MyDir.Normalize();
+	//
+	//float Distance = HP <= 60 ? AttackDefDistance : PowerAttackDefDistance;
+	//
+	//LaunchCharacter(-MyDir * Distance, false, false);
 
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[38].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
