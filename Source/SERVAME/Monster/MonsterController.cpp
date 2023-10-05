@@ -180,6 +180,10 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		{
 			Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			Monster->MonsterMoveEventIndex = 1;
+			if (IsValid(BossUI))
+			{
+				BossUI->RemoveFromParent();
+			}
 		}
 		else
 		{

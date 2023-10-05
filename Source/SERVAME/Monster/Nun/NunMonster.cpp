@@ -229,6 +229,14 @@ ANunMonster::ANunMonster()
 		{
 		});
 
+	MontageEndEventMap.Add(MonsterAnimationType::IDLE, [&]()
+		{
+			if (PlayerCharacter)
+				StartAttackTrigger(AttackAnimationType);
+			else
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		});
+
 	MontageEndEventMap.Add(MonsterAnimationType::HEAL1, [&]()
 		{
 			ChangeActionType(MonsterActionType::NONE);
@@ -543,49 +551,53 @@ void ANunMonster::EndAttackTrigger(MonsterAnimationType AttackAnimType)
 
 float ANunMonster::Die(float Dm)
 {
-	if (MonsterDataStruct.CharacterHp <= 0)
+	if (MyMonsterType == MonsterType::NUN)
 	{
-		if (MyMonsterType == MonsterType::NUN)
-		{
-			MonsterController->BossUI->PlayBossDiedAnimtion();
-			MonsterController->BossUI->SetVisibility(ESlateVisibility::Hidden);
-		}
-		else
-			DeactivateHpBar();
+		MonsterController->BossUI->PlayBossDiedAnimtion();
+		MonsterController->BossUI->SetVisibility(ESlateVisibility::Hidden);
 
-		IsDie = true;
-		Imotal = true;
-		GetWorld()->GetTimerManager().ClearTimer(SelfHealTimerHandle);
+		//소환한 환영과 기사 삭제
+		for (auto SpawnedKnight : KnightArr)
+			SpawnedKnight->Die(0.f);
 
-		DeactivateHitCollision();
-
-		NunAnimInstance->StopMontage(MontageMap[AnimationType]);
-		ChangeActionType(MonsterActionType::DEAD);
-		StateType = MonsterStateType::CANTACT;
-
-		MonsterController->StopMovement();
-		DeactivateSMOverlap();
-		ParryingCollision1->Deactivate();
-		DeactivateRightWeapon();
-		ChangeMontageAnimation(MonsterAnimationType::DEAD);
-
-		//머테리얼에 Opacity 값 넣기 전까지 임시로 Visibility 꺼주기
-		GetMesh()->SetVisibility(false);
-
-		GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
-			{
-				MinusOpacity = true;
-			}), 1.2f, false);
-
-		return Dm;
+		KnightArr.Empty();
+		if (Illusion != nullptr)
+			Illusion->Die(0.f);
 	}
+	else
+		DeactivateHpBar();
+
+
+	IsDie = true;
+	Imotal = true;
+	GetWorld()->GetTimerManager().ClearTimer(SelfHealTimerHandle);
+
+	DeactivateHitCollision();
+
+	NunAnimInstance->StopMontage(MontageMap[AnimationType]);
+	ChangeActionType(MonsterActionType::DEAD);
+	StateType = MonsterStateType::CANTACT;
+
+	MonsterController->StopMovement();
+	DeactivateSMOverlap();
+	ParryingCollision1->Deactivate();
+	DeactivateRightWeapon();
+	ChangeMontageAnimation(MonsterAnimationType::DEAD);
+
+	//머테리얼에 Opacity 값 넣기 전까지 임시로 Visibility 꺼주기
+	GetMesh()->SetVisibility(false);
+
+	GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
+		{
+			MinusOpacity = true;
+		}), 1.2f, false);
 
 	return Dm;
 }
 
 void ANunMonster::SpawnKnight()
 {
-	if (IsIllusion)
+	if (IsIllusion || MonsterDataStruct.CharacterHp < 500)
 		return;
 
 	for (int i = 0; i < KnightNum; i++)
@@ -975,13 +987,16 @@ void ANunMonster::IllusionAttack()
 	FVector SpawnLoc = FVector::ZeroVector;
 	FRotator SpawnRot = FRotator::ZeroRotator;
 
-	auto Illusion = GetWorld()->SpawnActor<ANunMonster>(IllusionNunClass, SpawnLoc, SpawnRot, SpawnParams);
+	Illusion = GetWorld()->SpawnActor<ANunMonster>(IllusionNunClass, SpawnLoc, SpawnRot, SpawnParams);
 
 	srand(time(NULL));
 	int Num = rand() % TeleportArr.Num();
 
-	while (CurrentNum == Num)
+	while (1)
 	{
+		if (CurrentNum != Num)
+			break;
+
 		srand(time(NULL));
 		Num = rand() % TeleportArr.Num();
 	}
@@ -1137,7 +1152,8 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
 	}
 
-	Die(DamageAmount);
+	if (MonsterDataStruct.CharacterHp <= 0)
+		Die(DamageAmount);
 
 	TeleportDamageSum += DamageAmount;
 	SpawnDamageSum += DamageAmount;
@@ -1185,8 +1201,11 @@ void ANunMonster::TelePort()
 		{
 			srand(time(NULL));
 			auto Num = rand() % TeleportArr.Num();
-			while (CurrentNum == Num)
+			while (1)
 			{
+				if (CurrentNum != Num)
+					break;
+
 				srand(time(NULL));
 				Num = rand() % TeleportArr.Num();
 			}
@@ -1243,18 +1262,25 @@ void ANunMonster::RespawnCharacter()
 	MonsterController->BossUI->SetHP(1);
 
 	KnightArr.Empty();
+	PlayerCharacter = nullptr;
 
 	TeleportDamageSum = 0.f;
 	SpawnDamageSum = 0.f;
 	IllusionDamageSum = 0.f;
 
-	WeaponOpacity = 0.171653f;
-	MeshOpacity = 0.171653f;
+	MeshOpacity = 1.0f;
 
 	IsDie = false;
 	SelfHeal();
 
 	MinusOpacity = false;
+
+	
+	//머테리얼에 Opacity 값 넣기 전까지 임시로 Visibility 꺼주기
+	GetMesh()->SetVisibility(true);
+
+	GetCapsuleComponent()->SetCollisionProfileName("AIPhysics");
+	SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity);
 
 	ActivateHitCollision();
 	MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;

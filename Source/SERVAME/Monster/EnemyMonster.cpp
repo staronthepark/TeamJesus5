@@ -749,7 +749,8 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
 	MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
 
-	Die(DamageAmount);
+	if (MonsterDataStruct.CharacterHp <= 0)
+		Die(DamageAmount);
 
 	return DamageAmount;
 }
@@ -832,8 +833,7 @@ void AEnemyMonster::RespawnCharacter()
 	WeaponOpacity = 0.171653f;
 	MeshOpacity = 0.171653f;
 	SkeletalMeshComp->SetScalarParameterValueOnMaterials("Opacity", MeshOpacity);
-	if (MyMonsterType != MonsterType::NUN)
-		SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity);
+	//SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity);
 
 	ActivateHitCollision();
 	MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;

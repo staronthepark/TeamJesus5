@@ -430,8 +430,6 @@ void AKinghtMonster::IdleToWalkBlendFunc(float delta)
 
 void AKinghtMonster::RespawnCharacter()
 {
-	Super::RespawnCharacter();
-
 	if (IsSpawn)
 	{
 		//소환된 기사 삭제
@@ -441,6 +439,11 @@ void AKinghtMonster::RespawnCharacter()
 		GetWorld()->DestroyActor(this);
 		return;
 	}
+
+	Super::RespawnCharacter();
+
+	KnightAnimInstance->ResumeMontage(MontageMap[AnimationType]);
+	GetWorld()->GetTimerManager().ClearTimer(MonsterDeadTimer);
 
 	//TODO : 일반 기사, 끈질긴 기사 패트롤
 	if (MyMonsterType == MonsterType::KNIGHT || MyMonsterType == MonsterType::PERSISTENTKNIGHT)
@@ -713,37 +716,31 @@ void AKinghtMonster::SearchPlayer()
 
 float AKinghtMonster::Die(float Dm)
 {
-	if (MonsterDataStruct.CharacterHp <= 0)
-	{
-		Imotal = true;
-		GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
-		DeactivateHpBar();
-		DeactivateHitCollision();
+	Imotal = true;
+	GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
+	DeactivateHpBar();
+	DeactivateHitCollision();
 
-		KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
-		ChangeActionType(MonsterActionType::DEAD);
-		StateType = MonsterStateType::CANTACT;
+	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
+	ChangeActionType(MonsterActionType::DEAD);
+	StateType = MonsterStateType::CANTACT;
 
-		MonsterController->StopMovement();
-		DeactivateSMOverlap();
-		ParryingCollision1->Deactivate();
-		DeactivateRightWeapon();
-		ChangeMontageAnimation(MonsterAnimationType::DEAD);
+	MonsterController->StopMovement();
+	DeactivateSMOverlap();
+	ParryingCollision1->Deactivate();
+	DeactivateRightWeapon();
+	ChangeMontageAnimation(MonsterAnimationType::DEAD);
 
-		//래그돌 적용 후 30초 정도 있다가 점점 시체 없에기
-		GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
-			{
-				auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[44].ObjClass,
-				GetActorLocation(), FRotator::ZeroRotator);
-				auto CastObj = Cast<AEffectObjectInPool>(PoolObj);
-				CastObj->SetEffectType(SelectEffectType::KNIGHT_DEAD);
-				CastObj->ActivateCurrentEffect();
+	GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
+		{
+			auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[44].ObjClass,
+			GetActorLocation(), FRotator::ZeroRotator);
+			auto CastObj = Cast<AEffectObjectInPool>(PoolObj);
+			CastObj->SetEffectType(SelectEffectType::KNIGHT_DEAD);
+			CastObj->ActivateCurrentEffect();
 
-				MinusOpacity = true;
-			}), 10.f, false);
-
-		return Dm;
-	}
+			MinusOpacity = true;
+		}), 10.f, false);
 
 	return Dm;
 }

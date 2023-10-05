@@ -125,6 +125,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
 	TSubclassOf<ANunMonster> IllusionNunClass;
+	ANunMonster* Illusion;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
 	float IllusionTime = 10.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
