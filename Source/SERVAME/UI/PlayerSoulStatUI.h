@@ -24,9 +24,17 @@ class SERVAME_API UPlayerSoulStatUI : public UUserWidget
 	
 public:
 	virtual void NativeOnInitialized() override;
+	virtual void NativeConstruct() override;
+
 	UFUNCTION()
 		void ClickPray();
 
 	UFUNCTION()
 		void OpenStat();
+
+	void Close();
+
+	void SetRemainSoul(int value);
+
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent);
 };

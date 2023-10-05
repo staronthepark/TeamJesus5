@@ -12,7 +12,7 @@
 #include "../BaseTriggerActor.h"
 #include "JesusGameInstance.generated.h"
 
-class UPlayerStatUI;
+class UPlayerSoulStatUI;
 
 USTRUCT(BlueprintType)
 struct FStartSetting
@@ -57,10 +57,10 @@ public:
 		UDebugLogWidget* DebugLogWidget;
 
 		UPROPERTY()
-		TSubclassOf<UPlayerStatUI> PlayerStatWidgetClass;
+		TSubclassOf<UPlayerSoulStatUI> PlayerStatWidgetClass;
 
 		UPROPERTY()
-		UPlayerStatUI* PlayerStatUI;
+		UPlayerSoulStatUI* PlayerStatUI;
 
 		UPROPERTY()
 		Language language;

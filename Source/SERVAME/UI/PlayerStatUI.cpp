@@ -65,8 +65,6 @@ void UPlayerStatUI::NativeOnInitialized()
 void UPlayerStatUI::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	Open();
 }
 
 void UPlayerStatUI::OnStrButtonClicked()
@@ -112,31 +110,32 @@ void UPlayerStatUI::SetRemainSoul(int value)
 
 void UPlayerStatUI::Open()
 {
+	this->SetVisibility(ESlateVisibility::Visible);
 	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 	Controller->SetInputMode(FInputModeUIOnly());
 	Controller->bShowMouseCursor = true;
-	Controller->SetPause(true);
-	StrButton0->SetFocus();
 	StrButton0->SetKeyboardFocus();
 }
 
 void UPlayerStatUI::Close()
 {
-	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
-	Controller->SetInputMode(FInputModeGameOnly());
-	Controller->bShowMouseCursor = false;
-	Controller->SetPause(false);
-	this->RemoveFromParent();
+	this->SetVisibility(ESlateVisibility::Collapsed);
+	//AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+	//Controller->SetInputMode(FInputModeGameOnly());
+	//Controller->bShowMouseCursor = false;
+	//Controller->SetPause(false);
+	//this->RemoveFromParent();
+
 }
 
-FReply UPlayerStatUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
-{
-	FReply Reply = FReply::Unhandled();
-	if (InKeyEvent.GetKey() == EKeys::Escape)
-	{
-		Close();
-		Reply = FReply::Handled();
-	}
-	return Reply;
-}
+//FReply UPlayerStatUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+//{
+//	FReply Reply = FReply::Unhandled();
+//	if (InKeyEvent.GetKey() == EKeys::Escape)
+//	{
+//		Close();
+//		Reply = FReply::Handled();
+//	}
+//	return Reply;
+//}
 
