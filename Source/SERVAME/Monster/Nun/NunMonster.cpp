@@ -932,8 +932,10 @@ void ANunMonster::FragmentsAttack()
 {
 	UE_LOG(LogTemp, Warning, TEXT("FragmentsAttack"));
 
+	auto Loc = GetActorLocation();
+
 	auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
-		GetActorLocation(), FRotator::ZeroRotator);
+		FVector(Loc.X,Loc.Y,Loc.Z-160.f), FRotator::ZeroRotator);
 
 	auto FragmentObj = Cast<ANunEffectObjInPool>(PoolObj);
 	FragmentObj->SetCurrentEffect(EffectType::FRAGMENTEFFECT_BURST);
