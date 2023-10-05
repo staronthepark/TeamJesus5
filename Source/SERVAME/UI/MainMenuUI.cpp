@@ -2,6 +2,7 @@
 
 
 #include "MainMenuUI.h"
+#include <SERVAME/Player/JesusPlayerController.h>
 
 
 void UMainMenuUI::NativeOnInitialized()
@@ -35,6 +36,10 @@ void UMainMenuUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 	PlayAnimation(FadeOutAnimation);
+	APlayerController* Controller = GetWorld()->GetFirstPlayerController();
+	Controller->SetInputMode(FInputModeUIOnly());
+	Controller->bShowMouseCursor = true;
+	StartButton->SetFocus();
 }
 
 void UMainMenuUI::HoverStartButton()
@@ -91,18 +96,30 @@ void UMainMenuUI::UnhoverQuitButton()
 
 void UMainMenuUI::ClickStartButton()
 {
-	PlayAnimation(MainMenuCloseAnimation);
+	PlayAnimation(FadeInAnimation);
+	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+	Controller->SetInputMode(FInputModeGameOnly());
+	Controller->bShowMouseCursor = false;
 	/*RenderTargetImage->SetVisibility(ESlateVisibility::Collapsed);*/
 	//if(LevelSequencePlayer)
 	//	LevelSequencePlayer->Play();
+	Controller->SetPause(false);
 }
 
 void UMainMenuUI::ClickContinueButton()
 {
+	PlayAnimation(MainMenuCloseAnimation);
+	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+	Controller->SetInputMode(FInputModeGameOnly());
+	Controller->bShowMouseCursor = false;
+	Controller->SetPause(false);
 }
 
 void UMainMenuUI::ClickOptionButton()
 {
+	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+	Controller->character->UserSettingUI->AddToViewport();
+	
 }
 
 //void UMainMenuUI::ClickSettingButton()
@@ -115,7 +132,7 @@ void UMainMenuUI::ClickQuitButton()
 {
 	//if (UserSettingUI)
 	//	UserSettingUI->ClickQuitSettingButton();
-	UMG_GameExit->SetVisibility(ESlateVisibility::Visible);
+	UMG_GameExit->Open();
 }
 
 //void UMainMenuUI::SequenceFinish()

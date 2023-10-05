@@ -83,4 +83,12 @@ public:
 
 	UFUNCTION()
 	void ChangeLanguage();
+
+	UFUNCTION()
+	void Open();
+
+	UFUNCTION()
+	void Close();
+
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent);
 };

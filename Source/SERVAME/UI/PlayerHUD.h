@@ -87,6 +87,7 @@ class SERVAME_API UPlayerHUD : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 		UPlayerGuideUI* WBP_PlayerGuideUI;
 
+
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* HUDOpenAnimation;
 

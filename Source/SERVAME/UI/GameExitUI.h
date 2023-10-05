@@ -52,6 +52,13 @@ class SERVAME_API UGameExitUI : public UUserWidget
 
 public:
 	virtual void NativeOnInitialized() override;
+
+	UFUNCTION()
+	void Open();
+	
+	UFUNCTION()
+	void Close();
+
 	UFUNCTION()
 	void YesButtonClicked();
 	UFUNCTION()

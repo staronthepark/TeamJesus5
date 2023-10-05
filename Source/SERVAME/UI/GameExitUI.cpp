@@ -14,6 +14,17 @@ void UGameExitUI::NativeOnInitialized()
 	ChangeLanguage();
 }
 
+void UGameExitUI::Open()
+{
+	this->SetVisibility(ESlateVisibility::Visible);
+	SetKeyboardFocus();
+}
+
+void UGameExitUI::Close()
+{
+	this->SetVisibility(ESlateVisibility::Collapsed);
+}
+
 void UGameExitUI::YesButtonClicked()
 {
 	UKismetSystemLibrary::QuitGame(GetWorld(), UGameplayStatics::GetPlayerController(GetWorld(), 0), EQuitPreference::Quit, true);
@@ -21,7 +32,7 @@ void UGameExitUI::YesButtonClicked()
 
 void UGameExitUI::NoButtonClicked()
 {
-	this->SetVisibility(ESlateVisibility::Collapsed);
+	Close();
 }
 
 void UGameExitUI::ChangeLanguage()
