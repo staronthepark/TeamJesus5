@@ -125,11 +125,10 @@ AKinghtMonster::AKinghtMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
 		{
-			GetMesh()->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-			GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
-			GetMesh()->SetCollisionProfileName("Ragdoll");
-			GetMesh()->SetSimulatePhysics(true);
-			GetMesh()->SetEnableGravity(true);
+			KnightAnimInstance->PauseAnimation(MontageMap[AnimationType]);
+			//GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
+			//GetMesh()->SetCollisionProfileName("Ragdoll");
+			//GetMesh()->SetSimulatePhysics(true);
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
@@ -150,6 +149,8 @@ AKinghtMonster::AKinghtMonster()
 				ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			}
 		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::POWERATTACK1, MontageEndEventMap[MonsterAnimationType::ATTACK1]);
 
 	MontageEndEventMap.Add(MonsterAnimationType::SPRINTATTACK, [&]()
 		{
@@ -466,6 +467,7 @@ void AKinghtMonster::RespawnCharacter()
 	WeaponOpacity = 1.0f;
 	MeshOpacity = 1.0f;
 
+	GetCapsuleComponent()->SetCollisionProfileName("AIPhysics");
 	SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity);
 	KnightHeadMesh->SetScalarParameterValueOnMaterials("Dither", WeaponOpacity);
 
@@ -714,6 +716,7 @@ float AKinghtMonster::Die(float Dm)
 	if (MonsterDataStruct.CharacterHp <= 0)
 	{
 		Imotal = true;
+		GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
 		DeactivateHpBar();
 		DeactivateHitCollision();
 
