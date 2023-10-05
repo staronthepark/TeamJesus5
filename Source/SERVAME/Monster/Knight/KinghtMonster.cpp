@@ -125,10 +125,11 @@ AKinghtMonster::AKinghtMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
 		{
-			KnightAnimInstance->Montage_Stop(0.25f, MontageMap[AnimationType]);
+			GetMesh()->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+			GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
 			GetMesh()->SetCollisionProfileName("Ragdoll");
 			GetMesh()->SetSimulatePhysics(true);
-			//GetMesh()->SetEnableGravity(true);
+			GetMesh()->SetEnableGravity(true);
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
