@@ -11,7 +11,8 @@ void UGameExitUI::NativeOnInitialized()
 	Super::NativeOnInitialized();
 	YesButton->OnClicked.AddDynamic(this, &UGameExitUI::YesButtonClicked);
 	NoButton->OnClicked.AddDynamic(this, &UGameExitUI::NoButtonClicked);
-	ChangeLanguage();
+	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	ChangeLanguage(GameInstance->language);
 }
 
 void UGameExitUI::Open()
@@ -35,10 +36,9 @@ void UGameExitUI::NoButtonClicked()
 	Close();
 }
 
-void UGameExitUI::ChangeLanguage()
+void UGameExitUI::ChangeLanguage(Language& language)
 {
-	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	if (GameInstance->language == Language::ENG)
+	if (language == Language::ENG)
 	{
 		PanelBackground->SetBrushFromTexture(ImageTextures.Find(EExitSettings::title)->EngTexture,true);
 		YesButton->WidgetStyle.Normal.SetResourceObject(ImageTextures.Find(EExitSettings::yesnormal)->EngTexture);
@@ -54,7 +54,7 @@ void UGameExitUI::ChangeLanguage()
 		NoButton->WidgetStyle.Pressed.SetResourceObject(ImageTextures.Find(EExitSettings::nopressed)->EngTexture);
 		NoButton->WidgetStyle.Pressed.ImageSize = FVector2D(38, 23);
 	}
-	else if (GameInstance->language == Language::KOR)
+	else if (language == Language::KOR)
 	{
 		PanelBackground->SetBrushFromTexture(ImageTextures.Find(EExitSettings::title)->KorTexture,true);
 		YesButton->WidgetStyle.Normal.SetResourceObject(ImageTextures.Find(EExitSettings::yesnormal)->KorTexture);

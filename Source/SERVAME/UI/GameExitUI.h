@@ -12,6 +12,8 @@
  * 
  */
 
+enum class Language :uint8;
+
 UENUM()
 enum class EExitSettings : uint8
 {
@@ -65,5 +67,5 @@ public:
 	void NoButtonClicked();
 
 	UFUNCTION()
-	void ChangeLanguage();
+	void ChangeLanguage(Language& language);
 };

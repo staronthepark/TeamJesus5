@@ -4,6 +4,7 @@
 #include "PlayerStatUI.h"
 #include "Components/Image.h"
 #include "StatUI.h"
+#include <SERVAME/Player/JesusPlayerController.h>
 
 
 void UPlayerStatUI::NativeOnInitialized()
@@ -61,6 +62,13 @@ void UPlayerStatUI::NativeOnInitialized()
 	PurchaseButton->OnClicked.AddDynamic(this, &UPlayerStatUI::OnPurchaseButtonClicked);
 }
 
+void UPlayerStatUI::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	Open();
+}
+
 void UPlayerStatUI::OnStrButtonClicked()
 {
 	ExplainTitle->SetBrushFromTexture(ExplainTextures.Find(EStatsType::str)->TitleTexture, true);
@@ -101,3 +109,34 @@ void UPlayerStatUI::SetRemainSoul(int value)
 {
 	RemainSoulText->SetText(FText::AsNumber(value));
 }
+
+void UPlayerStatUI::Open()
+{
+	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+	Controller->SetInputMode(FInputModeUIOnly());
+	Controller->bShowMouseCursor = true;
+	Controller->SetPause(true);
+	StrButton0->SetFocus();
+	StrButton0->SetKeyboardFocus();
+}
+
+void UPlayerStatUI::Close()
+{
+	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+	Controller->SetInputMode(FInputModeGameOnly());
+	Controller->bShowMouseCursor = false;
+	Controller->SetPause(false);
+	this->RemoveFromParent();
+}
+
+FReply UPlayerStatUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	FReply Reply = FReply::Unhandled();
+	if (InKeyEvent.GetKey() == EKeys::Escape)
+	{
+		Close();
+		Reply = FReply::Handled();
+	}
+	return Reply;
+}
+

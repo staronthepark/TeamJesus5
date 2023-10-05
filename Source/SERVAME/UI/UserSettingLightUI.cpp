@@ -18,7 +18,7 @@ void UUserSettingLightUI::NativeConstruct()
 	float value = 1 - GameInstance->GetPostProcessBrightness();
 	WBP_Setting_Slider->SetValue(value);
 	RightImage->SetRenderOpacity(value);
-	ChangeLanguage();
+	ChangeLanguage(GameInstance->language);
 }
 
 void UUserSettingLightUI::ChangeSliderValue(float value)
@@ -28,14 +28,13 @@ void UUserSettingLightUI::ChangeSliderValue(float value)
 	GameInstance->SetPostProcessBrightness(1 - value);
 }
 
-void UUserSettingLightUI::ChangeLanguage()
+void UUserSettingLightUI::ChangeLanguage(Language& language)
 {
-	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	if (GameInstance->language == Language::ENG)
+	if (language == Language::ENG)
 	{
 		LightSettingImage->SetBrushFromTexture(LightSettingTextures[0]);
 	}
-	else if (GameInstance->language == Language::KOR)
+	else if (language == Language::KOR)
 	{
 		LightSettingImage->SetBrushFromTexture(LightSettingTextures[1]);
 	}

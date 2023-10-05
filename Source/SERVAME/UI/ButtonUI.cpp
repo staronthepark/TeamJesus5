@@ -10,20 +10,26 @@ void UButtonUI::NativeOnInitialized()
 	LeftButton->OnClicked.AddDynamic(this, &UButtonUI::LeftButtonClicked);
 	RightButton->OnClicked.AddDynamic(this, &UButtonUI::RightButtonClicked);
 	index = 0;
-	ChangeLanguage();
+	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	ChangeLanguage(GameInstance->language);
 }
 
 void UButtonUI::LeftButtonClicked()
 {
 	if (--index == -1)
 		index = OnOffImages.Num() - 1;
-	ChangeLanguage();
+	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	ChangeLanguage(GameInstance->language);
 }
 
 void UButtonUI::RightButtonClicked()
 {
 	index = ++index % OnOffImages.Num();
-	ChangeLanguage();
+	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	ChangeLanguage(GameInstance->language);
 }
 
 int UButtonUI::GetValue()
@@ -34,17 +40,18 @@ int UButtonUI::GetValue()
 void UButtonUI::SetValue(int value)
 {
 	index = FMath::Clamp(value, 0, OnOffImages.Num() - 1);
-	ChangeLanguage();
+	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	ChangeLanguage(GameInstance->language);
 }
 
-void UButtonUI::ChangeLanguage()
+void UButtonUI::ChangeLanguage(Language& language)
 {
-	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	if (GameInstance->language == Language::ENG)
+	if (language == Language::ENG)
 	{
 		OnOffImage->SetBrushFromTexture(OnOffImages.Find(index)->EngTexture, true);
 	}
-	else if (GameInstance->language == Language::KOR)
+	else if (language == Language::KOR)
 	{
 		OnOffImage->SetBrushFromTexture(OnOffImages.Find(index)->KorTexture, true);
 	}

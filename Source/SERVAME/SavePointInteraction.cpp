@@ -83,6 +83,8 @@ void ASavePointInteraction::EnableEvent()
 		objectpool.SpawnObject(objectpool.ObjectArray[23].ObjClass, GetActorLocation() + FVector(0, 0, 200.0f), FRotator::ZeroRotator);
 		IsActive = true;
 
+		//Character->GameInstance->PlayerStatUI->AddToViewport();
+
 		for (int32 i = 0; i < ParticleCompArray.Num(); i++)
 		{
 			ParticleCompArray[i]->SetActive(true, false);

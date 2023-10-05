@@ -79,14 +79,13 @@ void USelectTextUI::OnUnhovered()
 	}
 }
 
-void USelectTextUI::ChangeLanguage()
+void USelectTextUI::ChangeLanguage(Language& language)
 {
-	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	if (GameInstance->language == Language::ENG)
+	if (language == Language::ENG)
 	{
 		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::unhovered)->EngTextures, true);
 	}
-	else if (GameInstance->language == Language::KOR)
+	else if (language == Language::KOR)
 	{
 		Text->SetBrushFromTexture(SelectTextTextures.Find(EHoverTextures::unhovered)->KorTextures, true);
 	}
