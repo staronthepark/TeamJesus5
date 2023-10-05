@@ -123,6 +123,14 @@ AKinghtMonster::AKinghtMonster()
 			}
 		});
 
+	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
+		{
+			KnightAnimInstance->Montage_Stop(0.25f, MontageMap[AnimationType]);
+			GetMesh()->SetCollisionProfileName("Ragdoll");
+			GetMesh()->SetSimulatePhysics(true);
+			//GetMesh()->SetEnableGravity(true);
+		});
+
 	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
 		{
 			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -728,7 +736,7 @@ float AKinghtMonster::Die(float Dm)
 				CastObj->ActivateCurrentEffect();
 
 				MinusOpacity = true;
-			}), 3.2f, false);
+			}), 10.f, false);
 
 		return Dm;
 	}
