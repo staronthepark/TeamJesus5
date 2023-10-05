@@ -7,7 +7,7 @@
 #include "SoundManager.h"
 #include "../JesusSaveGame.h"
 #include "Kismet/GameplayStatics.h"
-#include <SERVAME/UI/PlayerStatUI.h>
+#include <SERVAME/UI/PlayerSoulStatUI.h>
 
 
 #define LOW 0
@@ -19,7 +19,7 @@ UJesusGameInstance::UJesusGameInstance()
 {
 	static ConstructorHelpers::FClassFinder<UDebugLogWidget> DLW(TEXT("/Game/02_Resource/04_UI/01_WBP/99_Debug/WBP_DebugLog"));
 	static ConstructorHelpers::FClassFinder<UMainMenuUI> ASD(TEXT("/Game/02_Resource/04_UI/01_WBP/00_MainMenu/WBP_MainMenu"));
-	static ConstructorHelpers::FClassFinder<UPlayerStatUI> PSU(TEXT("/Game/02_Resource/04_UI/01_WBP/07_StatUI/WBP_Player_Stat_UI"));
+	static ConstructorHelpers::FClassFinder<UPlayerSoulStatUI> PSU(TEXT("/Game/02_Resource/04_UI/01_WBP/07_StatUI/WBP_PlayerStat_UI"));
 
 	if (DLW.Succeeded())
 		DebugLogWidgetClass = DLW.Class;
@@ -38,7 +38,7 @@ void UJesusGameInstance::InitInstance()
 	MainMenuWidget = Cast<UMainMenuUI>(CreateWidget(GetWorld(), MainMenuWidgetClass));
 	if (IsValid(PlayerStatWidgetClass))
 	{
-		PlayerStatUI = Cast<UPlayerStatUI>(CreateWidget(GetWorld(), PlayerStatWidgetClass));
+		PlayerStatUI = Cast<UPlayerSoulStatUI>(CreateWidget(GetWorld(), PlayerStatWidgetClass));
 	}
 
 }

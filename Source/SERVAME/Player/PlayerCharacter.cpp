@@ -15,6 +15,7 @@
 #include "../JesusSaveGame.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "..\UI\PlayerHUD.h"
+#include <SERVAME/UI/PlayerSoulStatUI.h>
 
 APlayerCharacter::APlayerCharacter()
 {
