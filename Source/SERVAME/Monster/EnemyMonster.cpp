@@ -743,11 +743,14 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 	DeactivateHitCollision();
 
-	MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
-	MonsterDataStruct.CharacterHp -= DamageAmount;
+	if (MyMonsterType != MonsterType::NUN)
+	{
+		MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
+		MonsterDataStruct.CharacterHp -= DamageAmount;
 
-	float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
-	MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
+		float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
+		MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
+	}
 
 	if (MonsterDataStruct.CharacterHp <= 0)
 		Die(DamageAmount);

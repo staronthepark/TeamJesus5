@@ -189,6 +189,9 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		{
 			auto Knight = Cast<AKinghtMonster>(Monster);
 
+			if (Knight->IsSpawn)
+				return;
+
 			if (Monster->MyMonsterType == MonsterType::KNIGHT || Monster->MyMonsterType == MonsterType::PERSISTENTKNIGHT)
 			{
 				Knight->MonsterMoveEventIndex = 0;

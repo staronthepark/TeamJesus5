@@ -16,6 +16,8 @@
 #include "..\..\ObjectPool\NunEffectObjInPool.h"
 #include "..\..\NunDamageSphereTriggerComp.h"
 
+int ANunMonster::CurrentNum = 0;
+
 ANunMonster::ANunMonster()
 {
 	AttackTrigger = CreateDefaultSubobject<UNunAttackTriggerComp>(TEXT("AttackTriggerCollision"));
@@ -449,11 +451,15 @@ void ANunMonster::SetYaw()
 
 void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	SelfHealTimer();
-	GetWorld()->GetTimerManager().SetTimer(TeleportHandle, this, &ANunMonster::TelePort, TeleportCoolTime);
-
 	if (MyMonsterType == MonsterType::ILLUSION_NUN)
+	{
 		ActivateHpBar();
+	}
+	else
+	{
+		SelfHealTimer();
+		GetWorld()->GetTimerManager().SetTimer(TeleportHandle, this, &ANunMonster::TelePort, TeleportCoolTime);
+	}
 
 	if (ActionType == MonsterActionType::DEAD)
 		return;
@@ -538,8 +544,10 @@ float ANunMonster::Die(float Dm)
 	}
 	else
 	{
-		auto OriginNun = Cast<ANunMonster>(OriginNunClass);
+		auto actor = UGameplayStatics::GetActorOfClass(GetWorld(), OriginNunClass);
+		auto OriginNun = Cast<ANunMonster>(actor);
 		OriginNun->SelfHeal();
+
 		DeactivateHpBar();
 	}
 
@@ -709,8 +717,8 @@ void ANunMonster::SelfHealTimer()
 			if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
 				MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
 
-			float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
-			MonsterHPWidget->SetHP(CurrentPercent);
+			float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;	
+			MonsterController->BossUI->SetHP(CurrentPercent);
 
 			auto SpawnLoc = GetActorLocation();
 
@@ -748,7 +756,7 @@ void ANunMonster::SelfHeal()
 		MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
 
 	float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
-	MonsterHPWidget->SetHP(CurrentPercent);
+	MonsterController->BossUI->SetHP(CurrentPercent);
 
 	auto SpawnLoc = GetActorLocation();
 
@@ -1003,6 +1011,8 @@ void ANunMonster::IllusionAttack()
 
 	Illusion = GetWorld()->SpawnActor<ANunMonster>(IllusionNunClass, SpawnLoc, SpawnRot, SpawnParams);
 
+	UE_LOG(LogTemp, Warning, TEXT("illusion CurrentNum = %d"), CurrentNum);
+
 	srand(time(NULL));
 	int Num = rand() % TeleportArr.Num();
 
@@ -1225,6 +1235,7 @@ void ANunMonster::TelePort()
 			}
 			CurrentNum = Num;
 
+			UE_LOG(LogTemp, Warning, TEXT("origin CurrentNum = %d"), CurrentNum);
 
 			SetActorLocation(TeleportArr[Num]->GetActorLocation());
 
