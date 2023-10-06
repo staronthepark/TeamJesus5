@@ -154,6 +154,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 	}
 
 	auto Dist = FVector::Distance(Player->GetActorLocation(), Monster->GetActorLocation());
+	Monster->PlayerCharacter = Player;
 
 	if (Dist <= PerceptionSight - 100.f)
 	{

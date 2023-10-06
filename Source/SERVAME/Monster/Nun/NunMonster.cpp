@@ -451,21 +451,27 @@ void ANunMonster::SetYaw()
 
 void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (MyMonsterType == MonsterType::ILLUSION_NUN)
+	if (MonsterController->FindPlayer && !CheckDetect)
 	{
-		ActivateHpBar();
-	}
-	else
-	{
-		SelfHealTimer();
-		GetWorld()->GetTimerManager().SetTimer(TeleportHandle, this, &ANunMonster::TelePort, TeleportCoolTime);
-	}
+		CheckDetect = true;
 
-	if (ActionType == MonsterActionType::DEAD)
-		return;
-	if (PlayerCharacter == nullptr)
-	{
-		PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
+		if (MyMonsterType == MonsterType::ILLUSION_NUN)
+		{
+			ActivateHpBar();
+		}
+		else
+		{
+			SpawnKnight(2);
+			SelfHealTimer();
+			GetWorld()->GetTimerManager().SetTimer(TeleportHandle, this, &ANunMonster::TelePort, TeleportCoolTime);
+		}
+
+		if (ActionType == MonsterActionType::DEAD)
+			return;
+		if (PlayerCharacter == nullptr)
+		{
+			PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
+		}
 	}
 }
 
@@ -551,6 +557,7 @@ float ANunMonster::Die(float Dm)
 		DeactivateHpBar();
 	}
 
+	CheckDetect = false;
 	IsDie = true;
 	Imotal = true;
 	GetWorld()->GetTimerManager().ClearTimer(SelfHealTimerHandle);
@@ -579,26 +586,24 @@ float ANunMonster::Die(float Dm)
 	return Dm;
 }
 
-void ANunMonster::SpawnKnight()
+void ANunMonster::SpawnKnight(int knightnum)
 {
 	if (IsIllusion || MonsterDataStruct.CharacterHp < 500)
 		return;
 
-	for (int i = 0; i < KnightNum; i++)
+	int Num = 0;
+
+	FVector SpawnLoc = FVector::ZeroVector;
+	FRotator SpawnRot = FRotator::ZeroRotator;
+	FNavLocation RandomLocation;
+
+	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
+	if (NavSystem == nullptr)
+		return;
+
+	if (knightnum == 0)
 	{
-		FActorSpawnParameters SpawnParams; 
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;;
-		FVector SpawnLoc = FVector::ZeroVector;
-		FRotator SpawnRot = FRotator::ZeroRotator;
-
-		auto Knight = GetWorld()->SpawnActor<AKinghtMonster>(KnightClass,SpawnLoc,SpawnRot,SpawnParams);
-		Knight->Imotal = true;
-
-		UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
-		if (NavSystem == nullptr)
-			return;
-
-		FNavLocation RandomLocation;
+		Num = KnightNum;
 
 		if (NavSystem->GetRandomPointInNavigableRadius(PlayerCharacter->GetActorLocation(), KnightSpawnRadius, RandomLocation))
 		{
@@ -606,10 +611,29 @@ void ANunMonster::SpawnKnight()
 			SpawnLoc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
 			//SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
 		}
+	}
+	else
+	{
+		Num = knightnum;
+
+		if (NavSystem->GetRandomPointInNavigableRadius(GetActorLocation(), KnightSpawnRadius, RandomLocation))
+		{
+			FVector Temp = RandomLocation.Location;
+			SpawnLoc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
+			//SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
+		}
+	}
+
+	for (int i = 0; i < Num; i++)
+	{
+		FActorSpawnParameters SpawnParams; 
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;;
+
+		auto Knight = GetWorld()->SpawnActor<AKinghtMonster>(KnightClass,SpawnLoc,SpawnRot,SpawnParams);
+		Knight->Imotal = true;
 
 		Knight->IsSpawn = true;
-		Knight->SetActorLocation(SpawnLoc);
-		Knight->SetActorRotation(SpawnRot);
+		Knight->PlayerCharacter = PlayerCharacter;
 		Knight->SpawnBegin();
 		Knight->ChangeMontageAnimation(MonsterAnimationType::SPAWNING);
 		Knight->MonsterController->FindPlayer = true;
@@ -1286,6 +1310,7 @@ void ANunMonster::RespawnCharacter()
 
 	GetWorld()->GetTimerManager().ClearTimer(TeleportHandle);
 	MonsterController->BossUI->SetHP(1);
+	CheckDetect = false;
 
 	KnightArr.Empty();
 	PlayerCharacter = nullptr;

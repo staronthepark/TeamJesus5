@@ -144,6 +144,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PaternDelay")
 	int MaxDelayTime = 3.f;
 	bool IsCoolTime = false;
+	bool CheckDetect = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
 	float Dark_Group_Percent_1 = 0.4f;
@@ -162,7 +163,8 @@ public:
 
 	//수녀 a타입 스킬
 	void TelePort();
-	void SpawnKnight();
+	void SpawnKnight(int knightnum = 0);
+
 	void SingleHeal();
 	void MultiHeal();
 	void SelfHeal();
