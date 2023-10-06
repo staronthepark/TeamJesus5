@@ -131,36 +131,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap[MonsterAnimationType::SELFHEAL].Add(true, [&]()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("SelfHeal"));
-
-			if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
-				return;
-
-			MonsterDataStruct.CharacterHp += SelfHealVal;
-
-			if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
-				MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
-
-			float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
-			MonsterHPWidget->SetHP(CurrentPercent);
-
-			auto SpawnLoc = GetActorLocation();
-
-			auto HealPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
-				SpawnLoc + FVector(0, 0, 200), FRotator::ZeroRotator);
-			auto HealDustPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
-				SpawnLoc - FVector(0, 0, 165), FRotator::ZeroRotator);
-
-			auto HealEffect = Cast<ANunEffectObjInPool>(HealPoolObj);
-			auto HealDustEffect = Cast<ANunEffectObjInPool>(HealDustPoolObj);
-
-			HealEffect->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
-			HealDustEffect->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
-
-			HealEffect->SetCurrentEffect(EffectType::SINGLEHEAL);
-			HealDustEffect->SetCurrentEffect(EffectType::HEALDUST);
-
-			HealEffect->ActivateCurrentEffect();
-			HealDustEffect->ActivateCurrentEffect();
+			SelfHeal();
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::SELFHEAL].Add(false, [&]()
 		{
@@ -478,8 +449,9 @@ void ANunMonster::SetYaw()
 
 void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	SelfHeal();
-	
+	SelfHealTimer();
+	GetWorld()->GetTimerManager().SetTimer(TeleportHandle, this, &ANunMonster::TelePort, TeleportCoolTime);
+
 	if (MyMonsterType == MonsterType::ILLUSION_NUN)
 		ActivateHpBar();
 
@@ -565,12 +537,16 @@ float ANunMonster::Die(float Dm)
 			Illusion->Die(0.f);
 	}
 	else
+	{
+		auto OriginNun = Cast<ANunMonster>(OriginNunClass);
+		OriginNun->SelfHeal();
 		DeactivateHpBar();
-
+	}
 
 	IsDie = true;
 	Imotal = true;
 	GetWorld()->GetTimerManager().ClearTimer(SelfHealTimerHandle);
+	GetWorld()->GetTimerManager().ClearTimer(TeleportHandle);
 
 	DeactivateHitCollision();
 
@@ -718,10 +694,10 @@ void ANunMonster::MultiHeal()
 	}
 }
 
-void ANunMonster::SelfHeal()
+void ANunMonster::SelfHealTimer()
 {
 	GetWorld()->GetTimerManager().SetTimer(SelfHealTimerHandle, FTimerDelegate::CreateLambda([=]()
-	{			
+		{
 			if (IsDie)
 				return;
 
@@ -755,7 +731,43 @@ void ANunMonster::SelfHeal()
 			HealEffect->ActivateCurrentEffect();
 			HealDustEffect->ActivateCurrentEffect();
 
-	}), SelfHealCoolTime,true);
+		}), SelfHealCoolTime, true);
+}
+
+void ANunMonster::SelfHeal()
+{
+	if (IsDie)
+		return;
+
+	if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
+		return;
+
+	MonsterDataStruct.CharacterHp += SelfHealVal;
+
+	if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
+		MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
+
+	float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
+	MonsterHPWidget->SetHP(CurrentPercent);
+
+	auto SpawnLoc = GetActorLocation();
+
+	auto HealPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		SpawnLoc + FVector(0, 0, 200), FRotator::ZeroRotator);
+	auto HealDustPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		SpawnLoc - FVector(0, 0, 165), FRotator::ZeroRotator);
+
+	auto HealEffect = Cast<ANunEffectObjInPool>(HealPoolObj);
+	auto HealDustEffect = Cast<ANunEffectObjInPool>(HealDustPoolObj);
+
+	HealEffect->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+	HealDustEffect->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+
+	HealEffect->SetCurrentEffect(EffectType::SINGLEHEAL);
+	HealDustEffect->SetCurrentEffect(EffectType::HEALDUST);
+
+	HealEffect->ActivateCurrentEffect();
+	HealDustEffect->ActivateCurrentEffect();
 }
 
 void ANunMonster::DotFloor()
@@ -1261,6 +1273,7 @@ void ANunMonster::RespawnCharacter()
 {
 	Super::RespawnCharacter();
 
+	GetWorld()->GetTimerManager().ClearTimer(TeleportHandle);
 	MonsterController->BossUI->SetHP(1);
 
 	KnightArr.Empty();
@@ -1273,7 +1286,6 @@ void ANunMonster::RespawnCharacter()
 	MeshOpacity = 1.0f;
 
 	IsDie = false;
-	SelfHeal();
 
 	MinusOpacity = false;
 

@@ -70,6 +70,8 @@ public:
 	float TeleportVal = 0.05f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
 	float TeleportDelayVal = 0.1f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
+	float TeleportCoolTime = 10.f;
 	int CurrentNum = 0;
 	FTimerHandle TeleportTimer;
 
@@ -125,6 +127,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
 	TSubclassOf<ANunMonster> IllusionNunClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
+	TSubclassOf<ANunMonster> OriginNunClass;
 	ANunMonster* Illusion;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
 	float IllusionTime = 10.f;
@@ -154,6 +158,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
 	float MultiHeal_Group_Percent_2 = 0.5f;
 
+	void SelfHealTimer();
 
 	//수녀 a타입 스킬
 	void TelePort();
@@ -175,6 +180,7 @@ public:
 	FTimerHandle SelfHealTimerHandle;
 	FTimerHandle DelayTimerHandle;
 	FTimerHandle PaternDelay;
+	FTimerHandle TeleportHandle;
 
 	void SetYaw();
 
