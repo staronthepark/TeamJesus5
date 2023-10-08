@@ -16,6 +16,8 @@
 #include "..\..\ObjectPool\NunEffectObjInPool.h"
 #include "..\..\NunDamageSphereTriggerComp.h"
 
+int ANunMonster::CurrentNum = 0;
+
 ANunMonster::ANunMonster()
 {
 	AttackTrigger = CreateDefaultSubobject<UNunAttackTriggerComp>(TEXT("AttackTriggerCollision"));
@@ -131,36 +133,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap[MonsterAnimationType::SELFHEAL].Add(true, [&]()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("SelfHeal"));
-
-			if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
-				return;
-
-			MonsterDataStruct.CharacterHp += SelfHealVal;
-
-			if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
-				MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
-
-			float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
-			MonsterHPWidget->SetHP(CurrentPercent);
-
-			auto SpawnLoc = GetActorLocation();
-
-			auto HealPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
-				SpawnLoc + FVector(0, 0, 200), FRotator::ZeroRotator);
-			auto HealDustPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
-				SpawnLoc - FVector(0, 0, 165), FRotator::ZeroRotator);
-
-			auto HealEffect = Cast<ANunEffectObjInPool>(HealPoolObj);
-			auto HealDustEffect = Cast<ANunEffectObjInPool>(HealDustPoolObj);
-
-			HealEffect->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
-			HealDustEffect->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
-
-			HealEffect->SetCurrentEffect(EffectType::SINGLEHEAL);
-			HealDustEffect->SetCurrentEffect(EffectType::HEALDUST);
-
-			HealEffect->ActivateCurrentEffect();
-			HealDustEffect->ActivateCurrentEffect();
+			SelfHeal();
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::SELFHEAL].Add(false, [&]()
 		{
@@ -227,6 +200,14 @@ ANunMonster::ANunMonster()
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::ILLUSION].Add(false, [&]()
 		{
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::IDLE, [&]()
+		{
+			if (PlayerCharacter)
+				StartAttackTrigger(AttackAnimationType);
+			else
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::HEAL1, [&]()
@@ -336,13 +317,13 @@ ANunMonster::ANunMonster()
 
 	SetActionByRandomMap.Add(MonsterAnimationType::DARK, [&](float percent)
 		{
-			if (percent <= 0.4)
+			if (percent <= Dark_Group_Percent_1)
 			{
 				//파편
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::FRAGMENT);
 			}
-			else if (percent > 0.3f && percent < 0.7f)
+			else if (percent > Dark_Group_Percent_1 && percent < Dark_Group_Percent_2)
 			{
 				//심판
 				ChangeActionType(MonsterActionType::ATTACK);
@@ -359,13 +340,13 @@ ANunMonster::ANunMonster()
 
 	SetActionByRandomMap.Add(MonsterAnimationType::HEAL1, [&](float percent)
 		{
-			if (percent <= 0.4)
+			if (percent <= SingleHeal_Group_Percent_1)
 			{
 				//단일힐
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::HEAL1);
 			}
-			else if (percent > 0.4f && percent < 0.6f)
+			else if (percent > SingleHeal_Group_Percent_1 && percent < SingleHeal_Group_Percent_2)
 			{
 				//숭배
 				ChangeActionType(MonsterActionType::ATTACK);
@@ -381,13 +362,13 @@ ANunMonster::ANunMonster()
 
 	SetActionByRandomMap.Add(MonsterAnimationType::HEAL2, [&](float percent)
 		{
-			if (percent <= 0.3)
+			if (percent <= MultiHeal_Group_Percent_1)
 			{
 				//어둠
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::DARK);
 			}
-			else if (percent > 0.3f && percent < 0.5f)
+			else if (percent > MultiHeal_Group_Percent_1 && percent < MultiHeal_Group_Percent_2)
 			{
 				//광역힐
 				ChangeActionType(MonsterActionType::ATTACK);
@@ -470,16 +451,27 @@ void ANunMonster::SetYaw()
 
 void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	SelfHeal();
-	
-	if (MyMonsterType == MonsterType::ILLUSION_NUN)
-		ActivateHpBar();
-
-	if (ActionType == MonsterActionType::DEAD)
-		return;
-	if (PlayerCharacter == nullptr)
+	if (MonsterController->FindPlayer && !CheckDetect)
 	{
-		PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
+		CheckDetect = true;
+
+		if (MyMonsterType == MonsterType::ILLUSION_NUN)
+		{
+			ActivateHpBar();
+		}
+		else
+		{
+			SpawnKnight(2);
+			SelfHealTimer();
+			GetWorld()->GetTimerManager().SetTimer(TeleportHandle, this, &ANunMonster::TelePort, TeleportCoolTime);
+		}
+
+		if (ActionType == MonsterActionType::DEAD)
+			return;
+		if (PlayerCharacter == nullptr)
+		{
+			PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
+		}
 	}
 }
 
@@ -543,66 +535,75 @@ void ANunMonster::EndAttackTrigger(MonsterAnimationType AttackAnimType)
 
 float ANunMonster::Die(float Dm)
 {
-	if (MonsterDataStruct.CharacterHp <= 0)
+	if (MyMonsterType == MonsterType::NUN)
 	{
-		if (MyMonsterType == MonsterType::NUN)
-		{
-			MonsterController->BossUI->PlayBossDiedAnimtion();
-			MonsterController->BossUI->SetVisibility(ESlateVisibility::Hidden);
-		}
-		else
-			DeactivateHpBar();
+		MonsterController->BossUI->PlayBossDiedAnimtion();
+		MonsterController->BossUI->SetVisibility(ESlateVisibility::Hidden);
 
-		IsDie = true;
-		Imotal = true;
-		GetWorld()->GetTimerManager().ClearTimer(SelfHealTimerHandle);
+		//소환한 환영과 기사 삭제
+		for (auto SpawnedKnight : KnightArr)
+			SpawnedKnight->Die(0.f);
 
-		DeactivateHitCollision();
-
-		NunAnimInstance->StopMontage(MontageMap[AnimationType]);
-		ChangeActionType(MonsterActionType::DEAD);
-		StateType = MonsterStateType::CANTACT;
-
-		MonsterController->StopMovement();
-		DeactivateSMOverlap();
-		ParryingCollision1->Deactivate();
-		DeactivateRightWeapon();
-		ChangeMontageAnimation(MonsterAnimationType::DEAD);
-
-		//머테리얼에 Opacity 값 넣기 전까지 임시로 Visibility 꺼주기
-		GetMesh()->SetVisibility(false);
-
-		GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
-			{
-				MinusOpacity = true;
-			}), 1.2f, false);
-
-		return Dm;
+		KnightArr.Empty();
+		if (Illusion != nullptr)
+			Illusion->Die(0.f);
 	}
+	else
+	{
+		auto actor = UGameplayStatics::GetActorOfClass(GetWorld(), OriginNunClass);
+		auto OriginNun = Cast<ANunMonster>(actor);
+		OriginNun->SelfHeal();
+
+		DeactivateHpBar();
+	}
+
+	CheckDetect = false;
+	IsDie = true;
+	Imotal = true;
+	GetWorld()->GetTimerManager().ClearTimer(SelfHealTimerHandle);
+	GetWorld()->GetTimerManager().ClearTimer(TeleportHandle);
+
+	DeactivateHitCollision();
+
+	NunAnimInstance->StopMontage(MontageMap[AnimationType]);
+	ChangeActionType(MonsterActionType::DEAD);
+	StateType = MonsterStateType::CANTACT;
+
+	MonsterController->StopMovement();
+	DeactivateSMOverlap();
+	ParryingCollision1->Deactivate();
+	DeactivateRightWeapon();
+	ChangeMontageAnimation(MonsterAnimationType::DEAD);
+
+	//머테리얼에 Opacity 값 넣기 전까지 임시로 Visibility 꺼주기
+	GetMesh()->SetVisibility(false);
+
+	GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
+		{
+			MinusOpacity = true;
+		}), 1.2f, false);
 
 	return Dm;
 }
 
-void ANunMonster::SpawnKnight()
+void ANunMonster::SpawnKnight(int knightnum)
 {
-	if (IsIllusion)
+	if (IsIllusion || MonsterDataStruct.CharacterHp < 500)
 		return;
 
-	for (int i = 0; i < KnightNum; i++)
+	int Num = 0;
+
+	FVector SpawnLoc = FVector::ZeroVector;
+	FRotator SpawnRot = FRotator::ZeroRotator;
+	FNavLocation RandomLocation;
+
+	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
+	if (NavSystem == nullptr)
+		return;
+
+	if (knightnum == 0)
 	{
-		FActorSpawnParameters SpawnParams; 
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;;
-		FVector SpawnLoc = FVector::ZeroVector;
-		FRotator SpawnRot = FRotator::ZeroRotator;
-
-		auto Knight = GetWorld()->SpawnActor<AKinghtMonster>(KnightClass,SpawnLoc,SpawnRot,SpawnParams);
-		Knight->Imotal = true;
-
-		UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld());
-		if (NavSystem == nullptr)
-			return;
-
-		FNavLocation RandomLocation;
+		Num = KnightNum;
 
 		if (NavSystem->GetRandomPointInNavigableRadius(PlayerCharacter->GetActorLocation(), KnightSpawnRadius, RandomLocation))
 		{
@@ -610,10 +611,29 @@ void ANunMonster::SpawnKnight()
 			SpawnLoc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
 			//SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
 		}
+	}
+	else
+	{
+		Num = knightnum;
+
+		if (NavSystem->GetRandomPointInNavigableRadius(GetActorLocation(), KnightSpawnRadius, RandomLocation))
+		{
+			FVector Temp = RandomLocation.Location;
+			SpawnLoc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
+			//SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
+		}
+	}
+
+	for (int i = 0; i < Num; i++)
+	{
+		FActorSpawnParameters SpawnParams; 
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;;
+
+		auto Knight = GetWorld()->SpawnActor<AKinghtMonster>(KnightClass,SpawnLoc,SpawnRot,SpawnParams);
+		Knight->Imotal = true;
 
 		Knight->IsSpawn = true;
-		Knight->SetActorLocation(SpawnLoc);
-		Knight->SetActorRotation(SpawnRot);
+		Knight->PlayerCharacter = PlayerCharacter;
 		Knight->SpawnBegin();
 		Knight->ChangeMontageAnimation(MonsterAnimationType::SPAWNING);
 		Knight->MonsterController->FindPlayer = true;
@@ -706,10 +726,10 @@ void ANunMonster::MultiHeal()
 	}
 }
 
-void ANunMonster::SelfHeal()
+void ANunMonster::SelfHealTimer()
 {
 	GetWorld()->GetTimerManager().SetTimer(SelfHealTimerHandle, FTimerDelegate::CreateLambda([=]()
-	{			
+		{
 			if (IsDie)
 				return;
 
@@ -721,8 +741,8 @@ void ANunMonster::SelfHeal()
 			if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
 				MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
 
-			float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
-			MonsterHPWidget->SetHP(CurrentPercent);
+			float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;	
+			MonsterController->BossUI->SetHP(CurrentPercent);
 
 			auto SpawnLoc = GetActorLocation();
 
@@ -743,7 +763,43 @@ void ANunMonster::SelfHeal()
 			HealEffect->ActivateCurrentEffect();
 			HealDustEffect->ActivateCurrentEffect();
 
-	}), SelfHealCoolTime,true);
+		}), SelfHealCoolTime, true);
+}
+
+void ANunMonster::SelfHeal()
+{
+	if (IsDie)
+		return;
+
+	if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
+		return;
+
+	MonsterDataStruct.CharacterHp += SelfHealVal;
+
+	if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
+		MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
+
+	float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
+	MonsterController->BossUI->SetHP(CurrentPercent);
+
+	auto SpawnLoc = GetActorLocation();
+
+	auto HealPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		SpawnLoc + FVector(0, 0, 200), FRotator::ZeroRotator);
+	auto HealDustPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		SpawnLoc - FVector(0, 0, 165), FRotator::ZeroRotator);
+
+	auto HealEffect = Cast<ANunEffectObjInPool>(HealPoolObj);
+	auto HealDustEffect = Cast<ANunEffectObjInPool>(HealDustPoolObj);
+
+	HealEffect->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+	HealDustEffect->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+
+	HealEffect->SetCurrentEffect(EffectType::SINGLEHEAL);
+	HealDustEffect->SetCurrentEffect(EffectType::HEALDUST);
+
+	HealEffect->ActivateCurrentEffect();
+	HealDustEffect->ActivateCurrentEffect();
 }
 
 void ANunMonster::DotFloor()
@@ -920,8 +976,10 @@ void ANunMonster::FragmentsAttack()
 {
 	UE_LOG(LogTemp, Warning, TEXT("FragmentsAttack"));
 
+	auto Loc = GetActorLocation();
+
 	auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
-		GetActorLocation(), FRotator::ZeroRotator);
+		FVector(Loc.X,Loc.Y,Loc.Z-160.f), FRotator::ZeroRotator);
 
 	auto FragmentObj = Cast<ANunEffectObjInPool>(PoolObj);
 	FragmentObj->SetCurrentEffect(EffectType::FRAGMENTEFFECT_BURST);
@@ -975,13 +1033,18 @@ void ANunMonster::IllusionAttack()
 	FVector SpawnLoc = FVector::ZeroVector;
 	FRotator SpawnRot = FRotator::ZeroRotator;
 
-	auto Illusion = GetWorld()->SpawnActor<ANunMonster>(IllusionNunClass, SpawnLoc, SpawnRot, SpawnParams);
+	Illusion = GetWorld()->SpawnActor<ANunMonster>(IllusionNunClass, SpawnLoc, SpawnRot, SpawnParams);
+
+	UE_LOG(LogTemp, Warning, TEXT("illusion CurrentNum = %d"), CurrentNum);
 
 	srand(time(NULL));
 	int Num = rand() % TeleportArr.Num();
 
-	while (CurrentNum == Num)
+	while (1)
 	{
+		if (CurrentNum != Num)
+			break;
+
 		srand(time(NULL));
 		Num = rand() % TeleportArr.Num();
 	}
@@ -1123,6 +1186,7 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	DeactivateHitCollision();
 
 	MonsterDataStruct.CharacterHp -= DamageAmount;
+	ChangeMontageAnimation(MonsterAnimationType::HIT);
 
 	if (MyMonsterType == MonsterType::NUN)
 	{
@@ -1136,7 +1200,8 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
 	}
 
-	Die(DamageAmount);
+	if (MonsterDataStruct.CharacterHp <= 0)
+		Die(DamageAmount);
 
 	TeleportDamageSum += DamageAmount;
 	SpawnDamageSum += DamageAmount;
@@ -1184,13 +1249,17 @@ void ANunMonster::TelePort()
 		{
 			srand(time(NULL));
 			auto Num = rand() % TeleportArr.Num();
-			while (CurrentNum == Num)
+			while (1)
 			{
+				if (CurrentNum != Num)
+					break;
+
 				srand(time(NULL));
 				Num = rand() % TeleportArr.Num();
 			}
 			CurrentNum = Num;
 
+			UE_LOG(LogTemp, Warning, TEXT("origin CurrentNum = %d"), CurrentNum);
 
 			SetActorLocation(TeleportArr[Num]->GetActorLocation());
 
@@ -1239,21 +1308,29 @@ void ANunMonster::RespawnCharacter()
 {
 	Super::RespawnCharacter();
 
+	GetWorld()->GetTimerManager().ClearTimer(TeleportHandle);
 	MonsterController->BossUI->SetHP(1);
+	CheckDetect = false;
 
 	KnightArr.Empty();
+	PlayerCharacter = nullptr;
 
 	TeleportDamageSum = 0.f;
 	SpawnDamageSum = 0.f;
 	IllusionDamageSum = 0.f;
 
-	WeaponOpacity = 0.171653f;
-	MeshOpacity = 0.171653f;
+	MeshOpacity = 1.0f;
 
 	IsDie = false;
-	SelfHeal();
 
 	MinusOpacity = false;
+
+	
+	//머테리얼에 Opacity 값 넣기 전까지 임시로 Visibility 꺼주기
+	GetMesh()->SetVisibility(true);
+
+	GetCapsuleComponent()->SetCollisionProfileName("AIPhysics");
+	SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity);
 
 	ActivateHitCollision();
 	MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;

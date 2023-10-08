@@ -230,7 +230,7 @@ AEnemyMonster::AEnemyMonster()
 		{
 			ChangeMontageAnimation(MonsterAnimationType::DEADLOOP);
 			IsStun = true;
-			CanExecution = true;
+			//CanExecution = true;
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::DEADLOOP, [&]()
@@ -393,7 +393,6 @@ AEnemyMonster::AEnemyMonster()
 
 	RotateMap.Add(false, [&]()
 		{
-
 		});
 
 	RotateMap.Add(true, [&]()
@@ -713,7 +712,7 @@ void AEnemyMonster::ShotProjectile()
 void AEnemyMonster::Rotate()
 {
 	if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP
-		|| AnimationType == MonsterAnimationType::EXECUTION)return;
+		/*|| AnimationType == MonsterAnimationType::EXECUTION*/)return;
 
 	auto Rot = FRotator(0.f, GetActorRotation().Yaw, GetActorRotation().Roll);
 
@@ -744,13 +743,17 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 	DeactivateHitCollision();
 
-	MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
-	MonsterDataStruct.CharacterHp -= DamageAmount;
+	if (MyMonsterType != MonsterType::NUN)
+	{
+		MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
+		MonsterDataStruct.CharacterHp -= DamageAmount;
 
-	float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
-	MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
+		float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
+		MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
+	}
 
-	Die(DamageAmount);
+	if (MonsterDataStruct.CharacterHp <= 0)
+		Die(DamageAmount);
 
 	return DamageAmount;
 }
@@ -833,8 +836,7 @@ void AEnemyMonster::RespawnCharacter()
 	WeaponOpacity = 0.171653f;
 	MeshOpacity = 0.171653f;
 	SkeletalMeshComp->SetScalarParameterValueOnMaterials("Opacity", MeshOpacity);
-	if (MyMonsterType != MonsterType::NUN)
-		SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity);
+	//SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity);
 
 	ActivateHitCollision();
 	MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;

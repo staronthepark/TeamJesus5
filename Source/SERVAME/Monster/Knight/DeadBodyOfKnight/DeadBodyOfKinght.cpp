@@ -21,8 +21,16 @@ ADeadBodyOfKinght::ADeadBodyOfKinght()
 
 	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
 		{
-			ChangeActionType(MonsterActionType::ATTACK);
-			ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
+			if (percent <= 0.5f)
+			{
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
+			}
+			else
+			{
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::POWERATTACK1);
+			}
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()

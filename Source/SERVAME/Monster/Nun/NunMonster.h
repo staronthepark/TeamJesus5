@@ -70,7 +70,9 @@ public:
 	float TeleportVal = 0.05f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
 	float TeleportDelayVal = 0.1f;
-	int CurrentNum = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
+	float TeleportCoolTime = 10.f;
+	static int CurrentNum;
 	FTimerHandle TeleportTimer;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
@@ -126,6 +128,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
 	TSubclassOf<ANunMonster> IllusionNunClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
+	TSubclassOf<ANunMonster> OriginNunClass;
+	ANunMonster* Illusion;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
 	float IllusionTime = 10.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
 	float IllusionVal = 0.25f;
@@ -139,10 +144,27 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PaternDelay")
 	int MaxDelayTime = 3.f;
 	bool IsCoolTime = false;
+	bool CheckDetect = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float Dark_Group_Percent_1 = 0.4f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float Dark_Group_Percent_2 = 0.7f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float SingleHeal_Group_Percent_1 = 0.4f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float SingleHeal_Group_Percent_2 = 0.6f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float MultiHeal_Group_Percent_1 = 0.3f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float MultiHeal_Group_Percent_2 = 0.5f;
+
+	void SelfHealTimer();
 
 	//수녀 a타입 스킬
 	void TelePort();
-	void SpawnKnight();
+	void SpawnKnight(int knightnum = 0);
+
 	void SingleHeal();
 	void MultiHeal();
 	void SelfHeal();
@@ -160,6 +182,7 @@ public:
 	FTimerHandle SelfHealTimerHandle;
 	FTimerHandle DelayTimerHandle;
 	FTimerHandle PaternDelay;
+	FTimerHandle TeleportHandle;
 
 	void SetYaw();
 

@@ -328,6 +328,18 @@ AJesusBoss2::AJesusBoss2()
 			Boss2->Damage = 0.f;
 		}));
 
+	MontageStartMap.Add(Boss2AnimationType::RUNATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->IsAttackMontageEnd = false;
+			Boss2->CanMove = false;
+		}));
+	MontageEndMap.Add(Boss2AnimationType::RUNATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->CanMove = true;
+			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
+		}));
+
 	MontageStartMap.Add(Boss2AnimationType::HEADING, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 			Boss2->HitCount++;
@@ -594,6 +606,12 @@ AJesusBoss2::AJesusBoss2()
 					PlayAttackAnim(Boss2AnimationType::LEFT_TURN_ATTACK);
 					return;
 				}
+			}
+
+			if (Type == Boss2AnimationType::CHARGE)
+			{
+				PlayAttackAnim(Boss2AnimationType::RUNATTACK);
+				return;
 			}
 
 			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)

@@ -154,6 +154,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 	}
 
 	auto Dist = FVector::Distance(Player->GetActorLocation(), Monster->GetActorLocation());
+	Monster->PlayerCharacter = Player;
 
 	if (Dist <= PerceptionSight - 100.f)
 	{
@@ -180,10 +181,17 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		{
 			Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			Monster->MonsterMoveEventIndex = 1;
+			if (IsValid(BossUI))
+			{
+				BossUI->RemoveFromParent();
+			}
 		}
 		else
 		{
 			auto Knight = Cast<AKinghtMonster>(Monster);
+
+			if (Knight->IsSpawn)
+				return;
 
 			if (Monster->MyMonsterType == MonsterType::KNIGHT || Monster->MyMonsterType == MonsterType::PERSISTENTKNIGHT)
 			{

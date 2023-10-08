@@ -111,7 +111,6 @@ public:
 	void InterpMove();
 	void ActivateAttackTrigger();
 	void DeactivateAttackTrigger();
-	void Rotate();
 	void DrawCircle(FVector Center);
 	void SearchPlayer();
 	void ReturnBlendFunc(float delta);
