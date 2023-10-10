@@ -1416,7 +1416,11 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANWALK][ActionType::ATTACK].Add(false, [&]() {});
 	InputEventMap[PlayerAction::CANWALK][ActionType::POWERATTACK].Add(true, [&]() {});
 	InputEventMap[PlayerAction::CANWALK][ActionType::POWERATTACK].Add(false, [&]() {});
-	InputEventMap[PlayerAction::CANWALK][ActionType::PARRING].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANWALK][ActionType::PARRING].Add(true, [&]() {
+
+		if (IsGrab)
+			Parring();
+		});
 	InputEventMap[PlayerAction::CANWALK][ActionType::PARRING].Add(false, [&]() {});
 	InputEventMap[PlayerAction::CANWALK][ActionType::MOVE].Add(true, [&]()
 		{
@@ -2210,7 +2214,18 @@ void APlayerCharacter::CheckInputKey()
 	{
 		ChangeMontageAnimation(AnimationType::SHIELDLOOP);
 	}
-	else if (AxisX != 1  || AxisY != 1)
+	else
+	{
+
+		IsGrab = false;
+		AxisY == 1 && AxisX == 1 ? ChangeMontageAnimation(AnimationType::SHIELDEND)
+			: ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
+		SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
+		AnimInstance->BodyBlendAlpha = 1.0f;
+		ShieldOff();
+		ShoulderView(IsShoulderView);
+	}
+	if (AxisX != 1  || AxisY != 1)
 	{
 		if(AxisY == 2 && !IsGrab)
 		TargetCameraBoomLength = 350.0f;
