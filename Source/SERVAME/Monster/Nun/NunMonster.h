@@ -74,6 +74,7 @@ public:
 	float TeleportDelayVal = 0.1f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
 	float TeleportCoolTime = 10.f;
+	float Count = 0;
 	static int CurrentNum;
 	bool IsCoolTimeTeleport = false;
 	FTimerHandle TeleportTimer;
@@ -172,8 +173,11 @@ public:
 
 	//수녀 a타입 스킬
 	void TelePort();
+	void TelePortAttack();
+	void TelePortTempFunc();
 	void SpawnKnight(int knightnum = 0);
 
+	void DarkAttack();
 	void SingleHeal();
 	void MultiHeal();
 	void SelfHeal();

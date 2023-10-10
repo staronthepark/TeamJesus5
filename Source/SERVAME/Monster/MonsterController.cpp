@@ -219,7 +219,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 			else if (Monster->MyMonsterType == MonsterType::ELITEKNIGHT)
 			{
 				Knight->ChangeActionType(MonsterActionType::NONE);
-				Knight->TracePlayer = true;
+				Knight->TracePlayer = false;
 				Knight->isReturnBlend = true;
 				Knight->WalkToRunBlend = false;
 				Knight->IsMoveStart = false;

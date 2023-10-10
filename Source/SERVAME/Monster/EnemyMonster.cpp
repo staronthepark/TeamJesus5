@@ -846,6 +846,7 @@ void AEnemyMonster::RespawnCharacter()
 	//PlayerCharacter = nullptr;
 	YawRotation = GetActorRotation();
 
+	DeactivateHpBar();
 	ActivateLockOnImage(false, nullptr);
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);

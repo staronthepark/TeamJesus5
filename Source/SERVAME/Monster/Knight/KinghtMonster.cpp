@@ -740,7 +740,7 @@ float AKinghtMonster::Die(float Dm)
 			CastObj->ActivateCurrentEffect();
 
 			MinusOpacity = true;
-		}), 10.f, false);
+		}), 4.5f, false);
 
 	return Dm;
 }
