@@ -164,8 +164,9 @@ AEnemyMonster::AEnemyMonster()
 				SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity);
 			}
 
-			if (MeshOpacity < 0.0f)
+			if (MeshOpacity <= 0.0f)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("asdfasf"));
 				SetActive(false);
 				SetActorHiddenInGame(true);
 				SetActorEnableCollision(false);

@@ -1304,11 +1304,18 @@ void ANunMonster::TelePortAttack()
 {
 	DarkAttack();
 	TelePortTempFunc();
-	//delay?
-	DarkAttack();
-	TelePortTempFunc();
-	//delay?
-	FragmentsAttack();
+
+	GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
+		{
+			DarkAttack();
+			TelePortTempFunc();
+
+			GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
+				{
+					CrystalAttack();
+				}), 1.f, false, 0.5f);
+
+		}),1.f, false, 0.5f);
 }
 
 void ANunMonster::TelePortTempFunc()

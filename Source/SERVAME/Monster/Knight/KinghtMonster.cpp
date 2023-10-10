@@ -376,7 +376,7 @@ void AKinghtMonster::Tick(float DeltaTime)
 
 	if (MinusOpacity)
 	{
-		OpactiyDeltaTime += 0.01;
+		OpactiyDeltaTime += 0.005;
 		SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity -= OpactiyDeltaTime);
 		KnightHeadMesh->SetScalarParameterValueOnMaterials("Dither", MeshOpacity -= OpactiyDeltaTime);
 	}
@@ -716,6 +716,22 @@ void AKinghtMonster::SearchPlayer()
 
 float AKinghtMonster::Die(float Dm)
 {
+	if (PlayerCharacter->IsLockOn)
+	{
+		PlayerCharacter->TargetComp = nullptr;
+		PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
+		PlayerCharacter->GetFirstTarget();
+
+		if (PlayerCharacter->TargetComp == nullptr)
+		{
+			PlayerCharacter->LockOn();
+		}
+		else
+		{
+			Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true, PlayerCharacter->TargetComp);
+		}
+	}
+
 	Imotal = true;
 	GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
 	DeactivateHpBar();

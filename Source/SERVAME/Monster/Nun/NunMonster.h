@@ -79,6 +79,7 @@ public:
 	bool IsCoolTimeTeleport = false;
 	FTimerHandle TeleportTimer;
 	FTimerHandle TeleportHandle;
+	FTimerHandle TeleportAttackHandle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
 	float HealVal = 500.f;
