@@ -157,6 +157,7 @@ ANunMonster::ANunMonster()
 				DarkObj->Damage = 0.f;
 
 			DarkObj->SetCurrentEffect(EffectType::DARKEFFECT);
+			DarkObj->Delay = DarkDelay;
 			DarkObj->ActivateCurrentEffect();
 			DarkObj->ShotProjectile(PlayerCharacter);
 			DarkObj->SetActorTickEnabled(true);
@@ -463,7 +464,12 @@ void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* Overlapp
 		{
 			SpawnKnight(2);
 			SelfHealTimer();
-			GetWorld()->GetTimerManager().SetTimer(TeleportHandle, this, &ANunMonster::TelePort, TeleportCoolTime);
+
+			GetWorld()->GetTimerManager().SetTimer(TeleportHandle, FTimerDelegate::CreateLambda([=]()
+				{
+					IsCoolTimeTeleport = true;
+					TelePort();
+				}), TeleportCoolTime, true, 0.f);
 		}
 
 		if (ActionType == MonsterActionType::DEAD)
@@ -602,38 +608,30 @@ void ANunMonster::SpawnKnight(int knightnum)
 		return;
 
 	if (knightnum == 0)
-	{
 		Num = KnightNum;
-
-		if (NavSystem->GetRandomPointInNavigableRadius(PlayerCharacter->GetActorLocation(), KnightSpawnRadius, RandomLocation))
-		{
-			FVector Temp = RandomLocation.Location;
-			SpawnLoc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
-			//SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
-		}
-	}
 	else
-	{
 		Num = knightnum;
 
+	for (int i = 0; i < Num; i++)
+	{
 		if (NavSystem->GetRandomPointInNavigableRadius(GetActorLocation(), KnightSpawnRadius, RandomLocation))
 		{
 			FVector Temp = RandomLocation.Location;
 			SpawnLoc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
 			//SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
 		}
-	}
 
-	for (int i = 0; i < Num; i++)
-	{
-		FActorSpawnParameters SpawnParams; 
+		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;;
 
 		auto Knight = GetWorld()->SpawnActor<AKinghtMonster>(KnightClass,SpawnLoc,SpawnRot,SpawnParams);
 		Knight->Imotal = true;
 
+		Knight->MonsterDataStruct.CharacterMaxHp = SpawnedKnightMaxHp;
+		Knight->MonsterDataStruct.CharacterHp = SpawnedKnightMaxHp;
 		Knight->IsSpawn = true;
 		Knight->PlayerCharacter = PlayerCharacter;
+		Knight->Super::PlayerCharacter = PlayerCharacter;
 		Knight->SpawnBegin();
 		Knight->ChangeMontageAnimation(MonsterAnimationType::SPAWNING);
 		Knight->MonsterController->FindPlayer = true;
@@ -957,6 +955,7 @@ void ANunMonster::PrayAttack()
 			PrayObj->ActivateCurrentEffect();
 			PrayObj->SetActorTickEnabled(true);
 			PrayObj->ShotProjectile(true, PlayerCharacter->GetActorLocation());
+			PrayObj->Delay = PrayDelay;
 			PrayObj->Speed = 1000.f;
 			if (IsIllusion)
 				PrayObj->Damage = 0.f;
@@ -1279,6 +1278,9 @@ void ANunMonster::TelePort()
 			SetYaw();
 			GetWorld()->GetTimerManager().ClearTimer(TeleportTimer);
 		}), TeleportDelayVal, false);
+
+	if (IsCoolTimeTeleport)
+		TelePort();
 }
 
 void ANunMonster::CheckMontageEndNotify()

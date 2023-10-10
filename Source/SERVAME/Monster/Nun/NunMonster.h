@@ -63,6 +63,8 @@ public:
 	float KnightSpawnRadius = 400.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
 	float KnightSpawnVal = 0.2f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
+	float SpawnedKnightMaxHp = 200.f;
 
 	TArray<AActor*> TeleportArr;
 
@@ -73,7 +75,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
 	float TeleportCoolTime = 10.f;
 	static int CurrentNum;
+	bool IsCoolTimeTeleport = false;
 	FTimerHandle TeleportTimer;
+	FTimerHandle TeleportHandle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
 	float HealVal = 500.f;
@@ -111,9 +115,14 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PrayAttack")
 	float PrayObjSpawnDelay = 0.2f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PrayDamage")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PrayAttack")
 	float PrayDamage = 5.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PrayAttack")
+	float PrayDelay = 2.f;
 	int PraySpawnCount = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DarkAttack")
+	float DarkDelay = 2.f;
 
 	float TeleportDamageSum = 0.f;
 	float SpawnDamageSum = 0.f;
@@ -182,7 +191,6 @@ public:
 	FTimerHandle SelfHealTimerHandle;
 	FTimerHandle DelayTimerHandle;
 	FTimerHandle PaternDelay;
-	FTimerHandle TeleportHandle;
 
 	void SetYaw();
 
