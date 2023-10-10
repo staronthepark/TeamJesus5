@@ -73,6 +73,7 @@ void ASavePointInteraction::EnableEvent()
 	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 	if (IsActive)
 	{
+		Character->SaveMapName = Name;
 		Character->AxisX = 1;
 		Character->AxisY = 1;
 		Character->Imotal = true;
@@ -81,6 +82,8 @@ void ASavePointInteraction::EnableEvent()
 		objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, GetActorLocation() + FVector(0, 0, 150.0f), FRotator::ZeroRotator);
 		objectpool.SpawnObject(objectpool.ObjectArray[23].ObjClass, GetActorLocation() + FVector(0, 0, 200.0f), FRotator::ZeroRotator);
 		IsActive = true;
+
+		//Character->GameInstance->PlayerStatUI->AddToViewport();
 
 		for (int32 i = 0; i < ParticleCompArray.Num(); i++)
 		{

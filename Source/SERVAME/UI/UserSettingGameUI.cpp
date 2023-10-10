@@ -82,7 +82,7 @@ void UUserSettingGameUI::SetLanguage()
 
 	if (GameInstance->language == Language::ENG)
 	{
-		TitleGameImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::title)->EngTexture, true);
+		//TitleGameImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::title)->EngTexture, true);
 		//CameraImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::camera)->EngTexture, true);
 		MouseSensitiveImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::mouse)->EngTexture, true);
 		LanguageImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::language)->EngTexture, true);
@@ -93,7 +93,7 @@ void UUserSettingGameUI::SetLanguage()
 	}
 	else if (GameInstance->language == Language::KOR)
 	{
-		TitleGameImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::title)->KorTexture, true);
+		//TitleGameImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::title)->KorTexture, true);
 		//CameraImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::camera)->KorTexture, true);
 		MouseSensitiveImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::mouse)->KorTexture, true);
 		LanguageImage->SetBrushFromTexture(ImageTextures.Find(EGameSettings::language)->KorTexture, true);
@@ -102,7 +102,5 @@ void UUserSettingGameUI::SetLanguage()
 		LightSettingButton->WidgetStyle.Pressed.SetResourceObject(ImageTextures.Find(EGameSettings::brightnesspressed)->KorTexture);
 		//WBP_Camera_Button->ChangeLanguage();
 	}
-
-	
 }
 

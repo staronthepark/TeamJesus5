@@ -10,6 +10,7 @@ void AJesusPlayerController::BeginPlay()
 
 	bAutoManageActiveCameraTarget = false;
 
+	SetInputMode(FInputModeUIOnly());
 	bShowMouseCursor = true;
 
 	ChangeTargetMouseValue = 3.0f;
@@ -135,6 +136,7 @@ void AJesusPlayerController::PressDodge()
 		if (character->UserSettingUI->IsInViewport())
 		{
 			SetPause(false);
+			SetInputMode(FInputModeGameOnly());
 			bShowMouseCursor = false;
 			character->UserSettingUI->RemoveFromParent();
 			return;
@@ -249,12 +251,15 @@ void AJesusPlayerController::Save()
 void AJesusPlayerController::Load()
 {
 	UJesusSaveGame::GetInstance().Load(character, character->GameInstance);
+
+	character->LoadMap();
 }
 
 void AJesusPlayerController::PressLockon()
 {	
 	if (GameInstance->MainMenuWidget->IsInViewport())
 	{
+		SetInputMode(FInputModeGameOnly());
 		bShowMouseCursor = false;
 		character->UserSettingUI->RemoveFromParent();
 	}
@@ -408,6 +413,7 @@ void AJesusPlayerController::OpenMenu()
 	{
 		CurrentSequncePlayer->Stop();
 		character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
+		CurrentSequncePlayer = nullptr;
 		return;
 	}
 	if (!GameInstance->MainMenuWidget->IsInViewport())
@@ -421,12 +427,14 @@ void AJesusPlayerController::OpenMenu()
 		if (!character->UserSettingUI->IsInViewport())
 		{
 			SetPause(true);
+			character->UserSettingUI->AddToViewport();
+			SetInputMode(FInputModeUIOnly());
 			bShowMouseCursor = true;
-			character->UserSettingUI->AddToViewport();			
 		}
 		else
 		{
 			SetPause(false);
+			SetInputMode(FInputModeGameOnly());
 			bShowMouseCursor = false;
 			character->UserSettingUI->RemoveFromParent();
 		}
@@ -439,6 +447,7 @@ void AJesusPlayerController::CloseMenu()
 	{
 		CurrentSequncePlayer->Stop();
 		character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
+		CurrentSequncePlayer = nullptr;
 		return;
 	}
 
@@ -453,8 +462,9 @@ void AJesusPlayerController::CloseMenu()
 		if (character->UserSettingUI->IsInViewport())
 		{
 			SetPause(false);
-			bShowMouseCursor = false;	
 			character->UserSettingUI->RemoveFromParent();
+			SetInputMode(FInputModeGameOnly());
+			bShowMouseCursor = false;
 		}
 	}
 }

@@ -129,6 +129,18 @@ AJesusBoss2::AJesusBoss2()
 			Boss2->IsAttacking = false;
 		}));
 
+	MontageStartMap.Add(Boss2AnimationType::BACKSTEP, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{			
+			Boss2->IsAttackMontageEnd = false;
+			Boss2->CanMove = false;
+		}));
+	MontageEndMap.Add(Boss2AnimationType::BACKSTEP, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->CanMove = true;
+			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
+		}));
+
 	MontageStartMap.Add(Boss2AnimationType::GROGGY, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 			Boss2->IsLockOn = false;
@@ -167,6 +179,8 @@ AJesusBoss2::AJesusBoss2()
 
 			UE_LOG(LogTemp, Warning, TEXT("Timer SET"));
 			
+			Boss2->HitCount++;
+
 			Boss2->CanMove = true;
 			Boss2->IsLockOn = true;
 			Boss2->DrawCircle(Boss2->PlayerCharacter->GetActorLocation());
@@ -255,6 +269,7 @@ AJesusBoss2::AJesusBoss2()
 
 	MontageStartMap.Add(Boss2AnimationType::SCREAMATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
+			Boss2->HitCount++;
 			Boss2->IsAttackMontageEnd = false;
 			Boss2->CanMove = false;
 		}));
@@ -313,8 +328,21 @@ AJesusBoss2::AJesusBoss2()
 			Boss2->Damage = 0.f;
 		}));
 
+	MontageStartMap.Add(Boss2AnimationType::RUNATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->IsAttackMontageEnd = false;
+			Boss2->CanMove = false;
+		}));
+	MontageEndMap.Add(Boss2AnimationType::RUNATTACK, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->CanMove = true;
+			Boss2->IsLockOn = true;
+			Boss2->Damage = 0.f;
+		}));
+
 	MontageStartMap.Add(Boss2AnimationType::HEADING, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
+			Boss2->HitCount++;
 			Boss2->AreaAtkPos->AttachToComponent(Boss2->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("Bip001-Head"));
 			Boss2->IsAttackMontageEnd = false;
 			Boss2->CanMove = false;
@@ -445,6 +473,11 @@ AJesusBoss2::AJesusBoss2()
 			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, true, Boss2AnimationType::LEFTWALK, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
 		}));
 
+	BossAttackMap.Add(Boss2ActionType::B2_BACKSTEP, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
+		{
+			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::BACKSTEP, Boss2, Boss2->MeleeActionArr, Boss2AttackType::B2_MELEE);
+		}));
+
 	BossAttackMap.Add(Boss2ActionType::B2_DOUBLESMASH, TFunction<void(AJesusBoss2*)>([](AJesusBoss2* Boss2)
 		{
 			Boss2->DoTypeAttack(Boss2->CurrentActionTemp.Distance, Boss2->MaxAtkRange, 0.f, false, Boss2AnimationType::DOUBLESMASH, Boss2, Boss2->FollowUpActionArr, Boss2AttackType::B2_FOLLOWUP);
@@ -503,6 +536,16 @@ AJesusBoss2::AJesusBoss2()
 				InitPercentageMap[CurrentActionTemp.AttackType]();
 			else
 				ChangePercentageMap[CurrentActionTemp.AttackType](&CurrentActionTemp);
+
+			
+			//TODO : 후속타 코드에도 넣어주기. 원거리에는 넣지 말기.
+			if (HitCount >= 3)
+			{
+				HitCount = 0;
+				CurrentActionTemp = MeleeActionArr.Last();
+				SetBTAction(CurrentActionTemp);
+				return;
+			}
 
 			if (Type != Boss2AnimationType::RIGHT_TURN_ATTACK && Type != Boss2AnimationType::LEFT_TURN_ATTACK)
 			{
@@ -563,6 +606,12 @@ AJesusBoss2::AJesusBoss2()
 					PlayAttackAnim(Boss2AnimationType::LEFT_TURN_ATTACK);
 					return;
 				}
+			}
+
+			if (Type == Boss2AnimationType::CHARGE)
+			{
+				PlayAttackAnim(Boss2AnimationType::RUNATTACK);
+				return;
 			}
 
 			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
@@ -1184,7 +1233,6 @@ void AJesusBoss2::PostInitializeComponents()
 		Boss2AnimInstance->OnRightLockOn.AddUObject(this, &AJesusBoss2::RightLockOn);
 		Boss2AnimInstance->OnRightLockOff.AddUObject(this, &AJesusBoss2::RightLockOff);
 
-
 		Boss2AnimInstance->OnMontageEnded.AddDynamic(this, &AJesusBoss2::GetEndedMontage);
 	}
 }
@@ -1433,7 +1481,7 @@ void AJesusBoss2::DoTypeAttack(float MinRange, float MaxRange, float Dist, bool 
 
 		if (Type != Boss2AnimationType::LEFTWALK)
 			Boss2->CanMove = false;
-		Boss2->GetCharacterMovement()->MaxWalkSpeed = CurrentActionTemp.Speed;
+		//Boss2->GetCharacterMovement()->MaxWalkSpeed = CurrentActionTemp.Speed;
 		Boss2->PlayAttackAnim(Type);
 		Boss2->IsLockOn = LockOn;
 		Boss2->IsMontagePlay = false;
@@ -1497,11 +1545,10 @@ void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 
 	if (OtherComp->GetName() == "ShieldCollision")
 	{
-		Player->SetShieldHP(-BossDataStruct.DamageList[Type]);
+		Player->SetShieldHP(-BossDataStruct.DamageList[Type], GetActorLocation());
 		CameraShake(PlayerCameraShake);
 		VibrateGamePad(0.4f, 0.4f);
-		objectpool.SpawnObject(objectpool.ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		objectpool.SpawnObject(objectpool.ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 		objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 		return;
 	}
@@ -1514,8 +1561,7 @@ void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 			return;
 		
 		OtherActor->TakeDamage(Damage, DamageEvent, GetController(), this);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[8].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 	}
 }
@@ -1588,12 +1634,6 @@ void AJesusBoss2::ActivateLockOnImage(bool value, UPrimitiveComponent* comp)
 FVector AJesusBoss2::Lerp(const FVector& start, const FVector& end, const float t)
 {
 	FVector NewLoc = FMath::Lerp(start, end, t);
-	return NewLoc;
-}
-
-FVector AJesusBoss2::VLerp(const FVector& start, const FVector& end, const float t)
-{
-	FVector NewLoc = FMath::VInterpTo(start, end, GetWorld()->DeltaTimeSeconds, t);
 	return NewLoc;
 }
 

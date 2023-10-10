@@ -34,6 +34,9 @@ enum class EffectType : uint8
 	SALVATIONEFFECT,
 	CRYSTALEFFECT,
 	CRYSTALEFFECT_BUSRT,
+	TELEPORT_IN,
+	TELEPORT_OUT,
+	CRYSTALEFFECT_START,
 };
 
 UCLASS()
@@ -76,7 +79,7 @@ public:
 	TObjectPtr<USphereComponent> RangeAttackCollision;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 	float Delay = 1.f;
-	 
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Curve")
 	bool IsCurve = false;	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Curve")
@@ -108,6 +111,7 @@ public:
 	FTimerHandle DotTimerHandle;
 	FTimerHandle ShotTimerHandle;
 	FTimerHandle TraceHandle;
+	FTimerHandle SweepTimerHandle;
 
 	ABaseCharacter* PlayerCharacter;
 
@@ -121,6 +125,8 @@ public:
 	void ShotProjectile(ABaseCharacter* Player);
 	void ShotProjectile(FVector Target);
 	void ShotProjectile(bool val, FVector Target);
+
+	void SweepSingle(float delay, float Radius,float damage, bool Isillusion, AController* Controller);
 
 	void MidPointCalc();
 	void CurveControlPoint();

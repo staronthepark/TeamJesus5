@@ -72,8 +72,8 @@ class SERVAME_API UPlayerHUD : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 		UImage* Interaction_Image;
 
-	UPROPERTY(meta = (BindWidget))
-		UPlayerShieldUI* WBP_Player_ShieldsUI;
+	//UPROPERTY(meta = (BindWidget))
+	//	UPlayerShieldUI* WBP_Player_ShieldsUI;
 
 	//UPROPERTY(meta = (BindWidget))
 	//	UImage* Exit_Image;
@@ -86,6 +86,7 @@ class SERVAME_API UPlayerHUD : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 		UPlayerGuideUI* WBP_PlayerGuideUI;
+
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* HUDOpenAnimation;
@@ -134,12 +135,15 @@ public:
 	void SetStamina(float value);
 	void DecreaseStaminaGradual(AActor* Actor, float value);
 
+	void SetSoul(float value);
+	void DecreaseSoulGradual(AActor* Actor, float value);
+
 	void SetSkill(float value);
 	
 	void SetGamepad(bool isPad);
 
 	void PlayAnimations(EGuides type, bool IsOpen);
-	void SetShield(int value);
+	//void SetShield(int value);
 
 	void PlayGuidesAnimation(EGuides type ,bool IsOpen);
 	void PlayKeyGuideAnimation(bool IsOpen);

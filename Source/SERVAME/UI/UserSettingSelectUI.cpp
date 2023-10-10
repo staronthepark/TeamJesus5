@@ -4,11 +4,10 @@
 #include "UserSettingSelectUI.h"
 #include <SERVAME/Manager/JesusGameInstance.h>
 
-void UUserSettingSelectUI::ChangeLanguage()
+void UUserSettingSelectUI::ChangeLanguage(Language& language)
 {
-	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	WBP_Setting_SelectText_Camera->ChangeLanguage();
-	WBP_Setting_SelectText_Audio->ChangeLanguage();
-	WBP_Setting_SelectText_Graphics->ChangeLanguage();
-	WBP_Setting_SelectText_Quit->ChangeLanguage();
+	WBP_Setting_SelectText_Camera->ChangeLanguage(language);
+	WBP_Setting_SelectText_Audio->ChangeLanguage(language);
+	WBP_Setting_SelectText_Graphics->ChangeLanguage(language);
+	WBP_Setting_SelectText_Quit->ChangeLanguage(language);
 }

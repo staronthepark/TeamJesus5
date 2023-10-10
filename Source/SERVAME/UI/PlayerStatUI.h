@@ -6,12 +6,24 @@
 #include "Blueprint/UserWidget.h"
 #include <Components/Button.h>
 #include <Components/TextBlock.h>
-#include "StatUI.h"
 #include "PlayerStatUI.generated.h"
 
 /**
  * 
  */
+
+class UStatUI;
+class UImage;
+
+UENUM()
+enum class EStatsType : uint8
+{
+	str		UMETA(DisplayName = "Strength"),
+	stamina	UMETA(DisplayName = "Stamina"),
+	hp		UMETA(DiaplayName = "Hp"),
+	shield	UMETA(DisplayName = "Shield")
+};
+
 USTRUCT(BlueprintType)
 struct SERVAME_API FStatButtonExplainTextures
 {
@@ -45,19 +57,64 @@ class SERVAME_API UPlayerStatUI : public UUserWidget
 	
 	UPROPERTY(meta = (BindWidget))
 	UStatUI* StrButton3;
+
+	UPROPERTY(meta = (BindWidget))
+	UStatUI* StrButton4;
 	
 
-	UPROPERTY(EditAnywhere)
 	TArray<UStatUI*> StaminaButtons;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* StaminaButton0;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* StaminaButton1;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* StaminaButton2;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* StaminaButton3;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* StaminaButton4;
+
 	TArray<UStatUI*> HpButtons;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* HpButton0;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* HpButton1;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* HpButton2;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* HpButton3;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* HpButton4;
+
 	TArray<UStatUI*> ShieldButtons;
 
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* ShieldButton0;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* ShieldButton1;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* ShieldButton2;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* ShieldButton3;
+
+	UPROPERTY(meta = (BindWidget))
+		UStatUI* ShieldButton4;
+
 	UPROPERTY(EditAnywhere)
-	TMap<EStateType, FStatButtonExplainTextures> ExplainTextures;
+	TMap<EStatsType, FStatButtonExplainTextures> ExplainTextures;
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* ExplainTitle;
@@ -75,6 +132,7 @@ class SERVAME_API UPlayerStatUI : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 	UButton* ResetButton;
 
+
 	UPROPERTY(meta = (BindiWidget))
 	UTextBlock* RemainSoulText;
 
@@ -82,6 +140,8 @@ public:
 	UStatUI* SelectedButton;
 
 	virtual void NativeOnInitialized();
+
+	virtual void NativeConstruct();
 
 	UFUNCTION()
 	void OnStrButtonClicked();
@@ -97,4 +157,13 @@ public:
 
 	UFUNCTION()
 	void OnPurchaseButtonClicked();
+
+	// 이게 남은 영혼!!
+	void SetRemainSoul(int value);
+
+	void Open();
+
+	void Close();
+
+	/*virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent);*/
 };

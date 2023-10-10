@@ -5,11 +5,14 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include <Components/Button.h>
+#include <Components/Image.h>
 #include "GameExitUI.generated.h"
 
 /**
  * 
  */
+
+enum class Language :uint8;
 
 UENUM()
 enum class EExitSettings : uint8
@@ -51,11 +54,18 @@ class SERVAME_API UGameExitUI : public UUserWidget
 
 public:
 	virtual void NativeOnInitialized() override;
+
+	UFUNCTION()
+	void Open();
+	
+	UFUNCTION()
+	void Close();
+
 	UFUNCTION()
 	void YesButtonClicked();
 	UFUNCTION()
 	void NoButtonClicked();
 
 	UFUNCTION()
-	void ChangeLanguage();
+	void ChangeLanguage(Language& language);
 };

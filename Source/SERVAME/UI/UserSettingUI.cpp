@@ -4,6 +4,7 @@
 #include "UserSettingUI.h"
 #include "..\Manager\SoundManager.h"
 #include <SERVAME/Manager/JesusGameInstance.h>
+#include <SERVAME/Player/JesusPlayerController.h>
 
 #define Game 0
 #define Audio 1
@@ -39,6 +40,7 @@ void UUserSettingUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 	PlayAnimation(OpenAnimation);
+	Open();
 }
 
 void UUserSettingUI::NativeDestruct()
@@ -101,11 +103,53 @@ void UUserSettingUI::ChangeLanguage()
 {
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
-	WBP_UserSetting_SelectUI->ChangeLanguage();
-	WBP_UserSetting_AudioUI->ChangeLanguage();
-	WBP_UserSetting_LightUI->ChangeLanguage();
-	WBP_UserSetting_GraphicsUI->ChangeLanguage();
-	UMG_GameExit->ChangeLanguage();
+	WBP_UserSetting_SelectUI->ChangeLanguage(GameInstance->language);
+	WBP_UserSetting_AudioUI->ChangeLanguage(GameInstance->language);
+	WBP_UserSetting_LightUI->ChangeLanguage(GameInstance->language);
+	WBP_UserSetting_GraphicsUI->ChangeLanguage(GameInstance->language);
+	UMG_GameExit->ChangeLanguage(GameInstance->language);
+}
+
+void UUserSettingUI::Open()
+{
+	this->SetVisibility(ESlateVisibility::Visible);
+	APlayerController* Controller = GetWorld()->GetFirstPlayerController();
+	Controller->SetInputMode(FInputModeUIOnly());
+	Controller->bShowMouseCursor = true;
+	Controller->SetPause(true);
+	this->SetKeyboardFocus();
+	WBP_UserSetting_SelectUI->SetFocus();
+	PlayAnimation(OpenAnimation);
+}
+
+void UUserSettingUI::Close()
+{
+	this->SetVisibility(ESlateVisibility::Collapsed);
+	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (!GameInstance->MainMenuWidget->IsInViewport())
+	{
+		Controller->SetInputMode(FInputModeGameOnly());
+		Controller->bShowMouseCursor = false;
+		Controller->SetPause(false);
+	}
+	else {
+		Controller->SetInputMode(FInputModeUIOnly());
+		Controller->bShowMouseCursor = true;
+		Controller->SetPause(true);
+	}
+	this->RemoveFromParent();
+}
+
+FReply UUserSettingUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	FReply Reply = FReply::Unhandled();
+	if (InKeyEvent.GetKey() == EKeys::Escape)
+	{
+		Close();
+		Reply = FReply::Handled();
+	}
+	return Reply;
 }
 
 

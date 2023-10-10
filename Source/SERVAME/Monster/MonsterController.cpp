@@ -5,6 +5,11 @@
 
 AMonsterController::AMonsterController()
 {
+	static ConstructorHelpers::FClassFinder<UBossUI> BossUIAsset(TEXT("/Game/02_Resource/04_UI/01_WBP/02_BossUI/WBP_BossUI"));
+
+	if (BossUIAsset.Succeeded())
+		BossUIClass = BossUIAsset.Class;
+
 	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComp"));
 
 	Sight = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
@@ -44,7 +49,7 @@ void AMonsterController::Tick(float DeltaTime)
 
 	if (Player != nullptr)
 	{
-		if (Player->PlayerDataStruct.CharacterHp > 0)
+		if (Player->PlayerDataStruct.CharacterHp > 0 && !Monster->IsDie)
 		{
 			if (DetectedActorArr.Num() >= 1)
 			{
@@ -56,6 +61,12 @@ void AMonsterController::Tick(float DeltaTime)
 		else
 		{
 			DetectedActorArr.Empty();
+
+			if (IsUIActivate.Exchange(false))
+			{
+				if (IsValid(BossUI))
+					BossUI->RemoveFromParent();
+			}
 		}
 	}
 }
@@ -143,14 +154,22 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 	}
 
 	auto Dist = FVector::Distance(Player->GetActorLocation(), Monster->GetActorLocation());
+	Monster->PlayerCharacter = Player;
 
-	//퍼셉션 시야각 거리 - 100
-	if (Dist <= PerceptionSight)
+	if (Dist <= PerceptionSight - 100.f)
 	{
 		if (GetTeamAttitudeTowards(*Actor) == ETeamAttitude::Hostile)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("FindPlayer"));
 			FindPlayer = true;
+
+			if (Monster->MyMonsterType == MonsterType::NUN)
+			{
+				BossUI->AddToViewport();
+				Monster->PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->LeftButton->OnClicked.AddDynamic(this, &AMonsterController::ChangeLanguage);
+				Monster->PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->RightButton->OnClicked.AddDynamic(this, &AMonsterController::ChangeLanguage);
+				BossUI->PlayBossHPOpenAnimation(true, EBossSettings::phase1);
+			}
 		}
 	}
 	else
@@ -158,21 +177,60 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		UE_LOG(LogTemp, Warning, TEXT("LostPlayer"));
 		FindPlayer = false;
 
-		if (Monster->MyMonsterType == MonsterType::KNIGHT)
-		{
-			auto Knight = Cast<AKinghtMonster>(Monster);
-
-			Knight->MonsterMoveEventIndex = 0;
-			Knight->ChangeActionType(MonsterActionType::MOVE);
-			Knight->KnightAnimInstance->BlendSpeed = Knight->WalkBlend;
-			Knight->WalkToRunBlend = false;
-		}
-		else
+		if (Monster->MyMonsterType == MonsterType::NUN)
 		{
 			Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			Monster->MonsterMoveEventIndex = 1;
+			if (IsValid(BossUI))
+			{
+				BossUI->RemoveFromParent();
+			}
+		}
+		else
+		{
+			auto Knight = Cast<AKinghtMonster>(Monster);
+
+			if (Knight->IsSpawn)
+				return;
+
+			if (Monster->MyMonsterType == MonsterType::KNIGHT || Monster->MyMonsterType == MonsterType::PERSISTENTKNIGHT)
+			{
+				Knight->MonsterMoveEventIndex = 0;
+				Knight->ChangeActionType(MonsterActionType::MOVE);
+				Knight->KnightAnimInstance->BlendSpeed = Knight->WalkBlend;
+				Knight->WalkToRunBlend = false;
+			}
+			else if (Monster->MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
+			{
+				if (!Knight->Reviving)
+				{
+					Knight->MonsterMoveEventIndex = 0;
+					Knight->ChangeActionType(MonsterActionType::MOVE);
+					Knight->KnightAnimInstance->BlendSpeed = Knight->WalkBlend;
+					Knight->WalkToRunBlend = false;
+				}
+				else
+				{
+					Knight->ChangeActionType(MonsterActionType::NONE);
+					StopMovement();
+				}
+				return;
+			}
+			else if (Monster->MyMonsterType == MonsterType::ELITEKNIGHT)
+			{
+				Knight->ChangeActionType(MonsterActionType::NONE);
+				Knight->TracePlayer = true;
+				Knight->isReturnBlend = true;
+				Knight->WalkToRunBlend = false;
+				Knight->IsMoveStart = false;
+			}
 		}
 	}
+}
+
+void AMonsterController::ChangeLanguage()
+{
+	BossUI->ChangeLanguage();
 }
 
 void AMonsterController::OnPossess(APawn* InPawn)
@@ -180,6 +238,12 @@ void AMonsterController::OnPossess(APawn* InPawn)
 	Super::OnPossess(InPawn);
 	
 	AIPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AMonsterController::OnPerception);
+
+	if (IsValid(BossUIClass))
+	{
+		BossUI = Cast<UBossUI>(CreateWidget(GetWorld(), BossUIClass));
+		BossUI->SetHP(1);
+	}
 }
 
 void AMonsterController::OnUnPossess()

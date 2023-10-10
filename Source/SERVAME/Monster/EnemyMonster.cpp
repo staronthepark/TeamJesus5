@@ -51,6 +51,8 @@ AEnemyMonster::AEnemyMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::POWERATTACK1, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::RANGEATTACK1, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::DASHATTACK1, MonsterStateType::BEFOREATTACK);
+	AnimTypeToStateType.Add(MonsterAnimationType::STINGaTTACK1, MonsterStateType::BEFOREATTACK);
+	AnimTypeToStateType.Add(MonsterAnimationType::SPRINTATTACK, MonsterStateType::BEFOREATTACK);
 
 	AnimTypeToStateType.Add(MonsterAnimationType::HIT, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::BACKHIT, MonsterStateType::CANTACT);
@@ -98,7 +100,7 @@ AEnemyMonster::AEnemyMonster()
 		});
 	CheckDIstanceMap.Add(true, [&]()
 		{
-			if(PlayerCharacter != nullptr)
+			if (PlayerCharacter != nullptr)
 				CurrentDistance = FVector::Distance(GetActorLocation(), PlayerCharacter->GetActorLocation());
 		});
 
@@ -153,6 +155,15 @@ AEnemyMonster::AEnemyMonster()
 
 	MonsterTickEventMap.Add(MonsterActionType::DEAD, [&]()
 		{	
+			if (MyMonsterType == MonsterType::TUTORIAL)
+			{
+				MeshOpacity -= fDeltaTime * 0.25f;
+				WeaponOpacity -= fDeltaTime * 0.25f;
+
+				SkeletalMeshComp->SetScalarParameterValueOnMaterials("Opacity", MeshOpacity);
+				SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity);
+			}
+
 			if (MeshOpacity < 0.0f)
 			{
 				SetActive(false);
@@ -201,12 +212,24 @@ AEnemyMonster::AEnemyMonster()
 	MontageEndEventMap.Add(MonsterAnimationType::PARRYING, [&]()
 		{
 			ActivateRightWeapon();
+
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+			}
+			else
+			{
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			}
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
 		{
-			//ChangeMontageAnimation(MonsterAnimationType::DEADLOOP);
-			//IsStun = true;
+			ChangeMontageAnimation(MonsterAnimationType::DEADLOOP);
+			IsStun = true;
 			//CanExecution = true;
 		});
 
@@ -217,7 +240,8 @@ AEnemyMonster::AEnemyMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::EXECUTION, [&]()
 		{
-			ChangeActionType(MonsterActionType::DEAD);
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			//ChangeActionType(MonsterActionType::DEAD);
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::STANDBY, [&]()
@@ -265,6 +289,8 @@ AEnemyMonster::AEnemyMonster()
 	MontageEndEventMap.Add(MonsterAnimationType::POWERATTACK1, MontageEndEventMap[MonsterAnimationType::ATTACK1]);
 	MontageEndEventMap.Add(MonsterAnimationType::RANGEATTACK1, MontageEndEventMap[MonsterAnimationType::ATTACK1]);
 	MontageEndEventMap.Add(MonsterAnimationType::DASHATTACK1, MontageEndEventMap[MonsterAnimationType::ATTACK1]);
+	MontageEndEventMap.Add(MonsterAnimationType::STINGaTTACK1, MontageEndEventMap[MonsterAnimationType::ATTACK1]);
+	MontageEndEventMap.Add(MonsterAnimationType::SPRINTATTACK, MontageEndEventMap[MonsterAnimationType::ATTACK1]);
 
 	MontageEndEventMap.Add(MonsterAnimationType::HIT, [&]()
 		{
@@ -337,6 +363,15 @@ AEnemyMonster::AEnemyMonster()
 	NotifyBeginEndEventMap[MonsterAnimationType::DASHATTACK1].Add(true, NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1][true]);
 	NotifyBeginEndEventMap[MonsterAnimationType::DASHATTACK1].Add(false, NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1][false]);
 
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::STINGaTTACK1, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::STINGaTTACK1].Add(true, NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1][true]);
+	NotifyBeginEndEventMap[MonsterAnimationType::STINGaTTACK1].Add(false, NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1][false]);
+
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::SPRINTATTACK, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::SPRINTATTACK].Add(true, NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1][true]);
+	NotifyBeginEndEventMap[MonsterAnimationType::SPRINTATTACK].Add(false, NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1][false]);
+
+
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::RANGEATTACK1, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::RANGEATTACK1].Add(true, [&]()
 		{
@@ -358,7 +393,6 @@ AEnemyMonster::AEnemyMonster()
 
 	RotateMap.Add(false, [&]()
 		{
-
 		});
 
 	RotateMap.Add(true, [&]()
@@ -383,7 +417,7 @@ AEnemyMonster::AEnemyMonster()
 
 	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
 		{
-			if (percent >= 0.5)
+			if (percent >= 0.5f)
 			{
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
@@ -494,8 +528,6 @@ void AEnemyMonster::BeginPlay()
 	MeshOpacity = 0.171653f;
 	//MonsterHpWidget = Cast<UMonsterWidget>(HpWidget->GetWidget());
 	
-	DeactivateHpBar();
-
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &AEnemyMonster::OnTargetDetectionBeginOverlap);
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &AEnemyMonster::OnTargetDetectionEndOverlap);
 
@@ -544,6 +576,7 @@ void AEnemyMonster::TickOverlap()
 		return;
 
 	IsOverlap = false;
+	IsDetect = true;
 
 	if (ActionType == MonsterActionType::DEAD)
 		return;
@@ -551,7 +584,6 @@ void AEnemyMonster::TickOverlap()
 		return;
 
 	TracePlayer = true;
-	IsDetect = true;
 	MonsterMoveEventIndex = 1;
 
 	TargetDetectEventMap[AttackType]();
@@ -559,13 +591,14 @@ void AEnemyMonster::TickOverlap()
 
 void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
 	otherActor = OtherActor;
 	IsOverlap = true;
 }
 
 void AEnemyMonster::OnTargetDetectionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (MyMonsterType == MonsterType::NUN)
+	if (MyMonsterType == MonsterType::NUN || MyMonsterType == MonsterType::ILLUSION_NUN)
 	{
 		return;
 	}
@@ -584,7 +617,7 @@ void AEnemyMonster::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedComponen
 		AObjectPool& objectpool = AObjectPool::GetInstance();
 		if (OtherComp->GetName() == "ShieldCollision")
 		{
-			PlayerCharacter->SetShieldHP(-SkillInfoMap[AttackAnimationType].Damage);
+			PlayerCharacter->SetShieldHP(-SkillInfoMap[AttackAnimationType].Damage, GetActorLocation());
 			CameraShake(PlayerCameraShake);
 			VibrateGamePad(0.4f, 0.4f);
 			objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
@@ -638,6 +671,13 @@ void AEnemyMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, 
 	objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
 }
 
+int AEnemyMonster::GetRandNum(int Min, int Max)
+{
+	std::srand(time(NULL));
+	auto Val = rand() % Max + Min;
+	return Val;
+}
+
 void AEnemyMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
 	TracePlayer = false;
@@ -672,7 +712,7 @@ void AEnemyMonster::ShotProjectile()
 void AEnemyMonster::Rotate()
 {
 	if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP
-		|| AnimationType == MonsterAnimationType::EXECUTION)return;
+		/*|| AnimationType == MonsterAnimationType::EXECUTION*/)return;
 
 	auto Rot = FRotator(0.f, GetActorRotation().Yaw, GetActorRotation().Roll);
 
@@ -703,13 +743,17 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 	DeactivateHitCollision();
 
-	MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
-	MonsterDataStruct.CharacterHp -= DamageAmount;
+	if (MyMonsterType != MonsterType::NUN)
+	{
+		MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
+		MonsterDataStruct.CharacterHp -= DamageAmount;
 
-	float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
-	MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
+		float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
+		MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
+	}
 
-	Die(DamageAmount);
+	if (MonsterDataStruct.CharacterHp <= 0)
+		Die(DamageAmount);
 
 	return DamageAmount;
 }
@@ -792,7 +836,7 @@ void AEnemyMonster::RespawnCharacter()
 	WeaponOpacity = 0.171653f;
 	MeshOpacity = 0.171653f;
 	SkeletalMeshComp->SetScalarParameterValueOnMaterials("Opacity", MeshOpacity);
-	SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity);
+	//SwordMeshComp->SetScalarParameterValueOnMaterials("Opacity", WeaponOpacity);
 
 	ActivateHitCollision();
 	MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
@@ -806,9 +850,6 @@ void AEnemyMonster::RespawnCharacter()
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
 	SetActorTickEnabled(true);
-
-	ChangeActionType(MonsterActionType::NONE);
-	ChangeMontageAnimation(MonsterAnimationType::IDLE);
 }
 
 void AEnemyMonster::ResumeMontage()

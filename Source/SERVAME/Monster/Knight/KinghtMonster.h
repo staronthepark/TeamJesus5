@@ -44,7 +44,7 @@ public:
 	float KnockBackDelayTime = 1.f;
 
 	bool IsInterpStart;
-
+	bool Reviving = true;
 	bool Spawning = false;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
@@ -62,24 +62,32 @@ public:
 	bool CircleWalkEnd = false;
 
 	UPROPERTY(EditAnyWhere, Category = "RunableDistance")
-	float RunableDistance = 1000.f;
+	float RunableDistance = 800.f;
 	UPROPERTY(EditAnyWhere, Category = "RunableDistance")
 	float AccelerationDist = 700.f;
 	float InterpolationDuration = 0.5f;
 	float InterpolationTime = 0.0f;
+	float ReturnInterpTime = 0.f;
+	float IdleToWalkInterpTime = 0.f;
 	bool WalkToRunBlend;
 
 	bool StartRun;
 	float CalcedDist;
 	float Temp = 0.f;
 
-	bool CanCancle = true;
+	bool CanCancle = false;
 
 	const float IdleBlend = 0.f;
 	const float WalkBlend = 300.f;
 	const float RunBlend = 600.f;
 
 	bool MinusOpacity = false;
+	bool IsSpawn = false;
+	bool isReturnBlend = false;
+
+	bool IsMoveStart = false;
+	float SprintDeltaTime;
+	float MinWalkTime;
 
 	//Notify
 	void InterpStart();
@@ -103,9 +111,10 @@ public:
 	void InterpMove();
 	void ActivateAttackTrigger();
 	void DeactivateAttackTrigger();
-	void Rotate();
 	void DrawCircle(FVector Center);
 	void SearchPlayer();
+	void ReturnBlendFunc(float delta);
+	void IdleToWalkBlendFunc(float delta);
 
 	UFUNCTION()
 	void OnKnightTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

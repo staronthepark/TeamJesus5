@@ -55,6 +55,7 @@ enum Boss2ActionType
 	B2_LEFTWALK UMETA(DisplayNAme = "B2_LEFTWALK"),
 	B2_FOLLOWUP_CHARGE UMETA(DisplayNAme = "B2_FOLLOWUP_CHARGE"),
 	B2_FOLLOWUP_SCREAMATTACK UMETA(DisplayNAme = "B2_FOLLOWUP_SCREAMATTACK"),
+	B2_BACKSTEP UMETA(DisplayNAme = "B2_BACKSTEP"),
 	B2_ENUMEND,
 };
 
@@ -473,7 +474,6 @@ public:
 	void SetLockOn() { AttackLockOn = true; }
 	void SetLockOff() { AttackLockOn = false; LastPlayerLoc = PlayerCharacter->GetActorLocation(); }
 	FVector Lerp(const FVector& start, const FVector& end, const float t);
-	FVector VLerp(const FVector& start, const FVector& end, const float t);
 	Boss2ActionTemp GetRandomPattern(float Dist);
 	void SpawnInit();
 	void StartBoneRot();

@@ -394,7 +394,6 @@ public:
 	BossAnimationType GetTypeFromMetaData(UAnimMontage* Montage);
 	FBossAction* GetActionData(FName Name);
 	FVector Lerp(const FVector& start, const FVector& end, const float t);
-	FVector VLerp(const FVector& start, const FVector& end, const float t);
 	void SpawnInit();
 	void SetBTAction(BossActionTemp Temp);
 	int GetRandomNum(int Min, int Max);

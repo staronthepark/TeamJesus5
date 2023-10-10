@@ -13,6 +13,8 @@
  * 
  */
 
+enum class Language :uint8;
+
 UENUM()
 enum class EAudioSettings : uint8
 {
@@ -52,8 +54,8 @@ public:
 	//UPROPERTY(meta = (BindWidget))
 	//USliderUI* WBP_Setting_Slider_Voice;
 
-	UPROPERTY(meta = (BindWidget))
-	UImage* TitleAudioImage;
+	//UPROPERTY(meta = (BindWidget))
+	//UImage* TitleAudioImage;
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* MasterAudioImage;
@@ -85,6 +87,6 @@ public:
 	//void SetVoiceVolume(float value);
 
 	UFUNCTION()
-	void ChangeLanguage();
+	void ChangeLanguage(Language& language);
 
 };

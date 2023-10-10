@@ -19,5 +19,11 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	
+
+	UPROPERTY(EditAnyWhere, Category = "Sprint")
+	float SprintAttackRadius = 100.f;
+	float SprintDuration = 1.f;
+	float SprintTime;
+	float BlendSpeed;
+	float BlendDirection;
 };

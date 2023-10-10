@@ -30,6 +30,7 @@ enum class MonsterActionType : uint8
 	POWERATTACK,
 	MOVE,
 	RUN,
+	SPRINT,
 	HIT,
 	DEAD,
 };
@@ -52,6 +53,7 @@ enum class MonsterType : uint8
 	TUTORIAL,
 	KNIGHT,
 	NUN,
+	ILLUSION_NUN,
 	DEADBODYOFKNIGHT,
 	PERSISTENTKNIGHT,
 	ELITEKNIGHT,
@@ -167,6 +169,7 @@ public:
 	bool TracePlayer;
 	bool IsOverlap = false;
 	bool IsAttacking = false;
+	bool IsDie = false;
 
 	bool asd = false;
 	bool asd2 = false;
@@ -189,6 +192,7 @@ protected:
 	TMap<MonsterAttackType, TFunction<void()>>TargetDetectEventMap;
 
 public:
+	int GetRandNum(int Min, int Max);
 
 	virtual void ChangeMontageAnimation(MonsterAnimationType type);
 	void ChangeActionType(MonsterActionType type);

@@ -35,7 +35,9 @@ void UUserSetting_GraphicsUI::NativeOnInitialized()
 void UUserSetting_GraphicsUI::NativeConstruct()
 {
 	Super::NativeConstruct();
-	ChangeLanguage();
+	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	ChangeLanguage(GameInstance->language);
 }
 
 void UUserSetting_GraphicsUI::SetVolumetic()
@@ -70,21 +72,20 @@ void UUserSetting_GraphicsUI::SetReflect()
 
 
 
-void UUserSetting_GraphicsUI::ChangeLanguage()
+void UUserSetting_GraphicsUI::ChangeLanguage(Language& language)
 {
-	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	if (GameInstance->language == Language::ENG)
+	if (language == Language::ENG)
 	{
-		TitleGraphicImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::title)->EngTexture, true);
+		//TitleGraphicImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::title)->EngTexture, true);
 		VolumetricImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::volumetric)->EngTexture, true);
 		ShadowImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::shadow)->EngTexture, true);
 		GIImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::Gi)->EngTexture, true);
 		EffectImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::effect)->EngTexture, true);
 		ReflectImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::reflect)->EngTexture, true);
 	}
-	else if (GameInstance->language == Language::KOR)
+	else if (language == Language::KOR)
 	{
-		TitleGraphicImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::title)->KorTexture, true);
+		//TitleGraphicImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::title)->KorTexture, true);
 		VolumetricImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::volumetric)->KorTexture, true);
 		ShadowImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::shadow)->KorTexture, true);
 		GIImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::Gi)->KorTexture, true);
@@ -92,9 +93,9 @@ void UUserSetting_GraphicsUI::ChangeLanguage()
 		ReflectImage->SetBrushFromTexture(ImageTextures.Find(EGraphicsSettings::reflect)->KorTexture, true);
 	}
 
-	WBP_Volumetric_Button->ChangeLanguage();
-	WBP_Shadow_Button->ChangeLanguage();
-	WBP_GI_Button->ChangeLanguage();
-	WBP_Effect_Button->ChangeLanguage();
-	WBP_Reflect_Button->ChangeLanguage();
+	WBP_Volumetric_Button->ChangeLanguage(language);
+	WBP_Shadow_Button->ChangeLanguage(language);
+	WBP_GI_Button->ChangeLanguage(language);
+	WBP_Effect_Button->ChangeLanguage(language);
+	WBP_Reflect_Button->ChangeLanguage(language);
 }

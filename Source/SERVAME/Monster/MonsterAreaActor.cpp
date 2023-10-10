@@ -69,9 +69,10 @@ void AMonsterAreaActor::CheckMonster()
 	{
 		for (auto HitActor : OutHits)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("?"));
 			auto MonsterActor = Cast<AEnemyMonster>(HitActor.GetActor());
-			MonsterArr.AddUnique(Cast<AEnemyMonster>(MonsterActor));
+
+			if (MonsterActor->MyMonsterType != MonsterType::NUN && MonsterActor->MyMonsterType != MonsterType::ELITEKNIGHT)
+				MonsterArr.AddUnique(Cast<AEnemyMonster>(MonsterActor));
 		}
 	}
 }

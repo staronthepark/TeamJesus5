@@ -74,15 +74,15 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 {
 	GENERATED_BODY()
 
-	int32 SoulCount;
+		float SoulCount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TMap<AnimationType, FPlayerDamageInfo>DamageList;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float MaxSoulCount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 MaxHealCount;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int32 ShieldRecoverySoulCount;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MaxStamina;  
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -108,11 +108,27 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float ShieldDashMoveDistance;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float ShieldHP;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float MaxShieldHP;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float BaseDamage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 StrengthIndex;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 StaminaIndex;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 HPIndex;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 ShieldIndex;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 SoulBonusCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 SkillSoulCost;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 ShieldBashSoulCost;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float ShieldCoolDown;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float SkillCoolDown;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float ShieldDecreaseSoulPercent;
 };
 
 UCLASS()
@@ -187,7 +203,7 @@ public:
 
 	float ShieldDashSpeed;
 
-	int ShieldCount;
+	FName SaveMapName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraSpringArm")
 		USpringArmComponent* CameraBoom1;
@@ -239,6 +255,19 @@ public:
 	UPROPERTY()
 		UUserSettingUI* UserSettingUI;
 
+	UPROPERTY(EditAnywhere)
+		float SkillDistance;
+	UPROPERTY(EditAnywhere)
+		int32 SkillCount;
+
+	UPROPERTY(EditAnywhere)
+		float PowerAttackDefDistance;
+	UPROPERTY(EditAnywhere)
+		float AttackDefDistance;
+
+	TArray<float> SkillRotateLUT;
+
+
 	ABaseCharacter* ExecutionCharacter;
 
 	TArray<UPrimitiveComponent*>TargetCompArray;
@@ -259,6 +288,8 @@ public:
 
 	float ChangeTargetTime;	
 
+	FTimerHandle ShieldCoolDownTimer;
+	FTimerHandle SkillCoolDownTimer;
 	FTimerHandle SprintStartTimer;
 	FTimerHandle SprintEndTimer;
 	FTimerHandle DeadTimer;
@@ -289,6 +320,8 @@ public:
 	bool IsDead;
 	bool IsGrab;
 	bool IsInputPad;
+	bool CanShieldDeploy;
+	bool CanUseSkill;
 	
 	float TargetOpacity;
 
@@ -399,9 +432,12 @@ public:
 
 	void Sprint();
 	void Run();
-	void SetShieldHP(float HP);
+	void SetShieldHP(float HP, FVector Location);
 
 	void RecoverStamina();
+
+	void RecoverShield();
+	void RecoverSkill();
 
 	virtual void IsNotifyActive(bool value) override;
 
@@ -410,6 +446,8 @@ public:
 	bool UseStamina(float value);
 
 	void CheckInputKey();
+
+	bool CanActivate(int32 SoulCount);
 
 	void SetSpeed(float speed);
 
@@ -435,6 +473,8 @@ public:
 	void SetSoul(int32 value);
 
 	void LoadFile();
+
+	void LoadMap();
 
 	UFUNCTION()
 		void PlayStartAnimation();

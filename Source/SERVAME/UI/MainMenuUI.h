@@ -17,7 +17,7 @@
  * 
  */
 UCLASS()
-class SERVAME_API UMainMenuUI : public UUserWidget
+class SERVAME_API UMainMenuUI: public UUserWidget
 {
 	GENERATED_BODY()
 		//UPROPERTY(meta = (BindWidget))
@@ -28,9 +28,6 @@ class SERVAME_API UMainMenuUI : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 		UImage* ContinueBackgroundImage;
-
-	UPROPERTY(meta = (BindWidget))
-		UButton* ContinueButton;
 
 	UPROPERTY(meta = (BindWidget))
 		UImage* OptionBackgroundImage;
@@ -55,6 +52,8 @@ class SERVAME_API UMainMenuUI : public UUserWidget
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* MainMenuCloseAnimation;
 
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		UWidgetAnimation* FadeInAnimation;
 	//ALevelSequenceActor* LevelSequenceActor;
 	//UPROPERTY(EditAnywhere)
 	//	ULevelSequence* LevelSequence;
@@ -74,6 +73,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 		UButton* StartButton;
+
+	UPROPERTY(meta = (BindWidget))
+		UButton* ContinueButton;
 
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;

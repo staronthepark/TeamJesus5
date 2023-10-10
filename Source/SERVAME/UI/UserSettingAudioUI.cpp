@@ -32,17 +32,22 @@ void UUserSettingAudioUI::NativeConstruct()
 	WBP_Setting_Slider_BGM->SetValue(ASoundManager::ASoundManager::GetInstance().GetBGMVolume());
 	WBP_Setting_Slider_SE->SetValue(ASoundManager::ASoundManager::GetInstance().GetSFXVolume());
 	//WBP_Setting_Slider_Voice->SetValue(ASoundManager::ASoundManager::GetInstance().GetVoiceVolume());
+	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
-	ChangeLanguage();
+	ChangeLanguage(GameInstance->language);
 }
 
 void UUserSettingAudioUI::SetMuteSound()
 {
 	if (WBP_Setting_Button->GetValue() == On) {
 		ASoundManager::ASoundManager::GetInstance().MuteSound(false);		
+		WBP_Setting_Slider_BGM->Slider_1->SetIsEnabled(true);
+		WBP_Setting_Slider_SE->Slider_1->SetIsEnabled(true);
 	}
 	else {
 		ASoundManager::ASoundManager::GetInstance().MuteSound(true);
+		WBP_Setting_Slider_BGM->Slider_1->SetIsEnabled(false);
+		WBP_Setting_Slider_SE->Slider_1->SetIsEnabled(false);
 	}
 	//WBP_Setting_Slider_BGM->SetValue(ASoundManager::ASoundManager::GetInstance().GetBGMVolume());
 	//WBP_Setting_Slider_SE->SetValue(ASoundManager::ASoundManager::GetInstance().GetSFXVolume());
@@ -71,21 +76,20 @@ void UUserSettingAudioUI::SetSFXVolume(float value)
 //	//WBP_Setting_Button->SetValue(On);
 //}
 
-void UUserSettingAudioUI::ChangeLanguage()
+void UUserSettingAudioUI::ChangeLanguage(Language& language)
 {
-	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
-	if (GameInstance->language == Language::ENG)
+	if (language == Language::ENG)
 	{
-		TitleAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::title)->EngTexture, true);
+		//TitleAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::title)->EngTexture, true);
 		MasterAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::master)->EngTexture, true);
 		BGMAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::bgm)->EngTexture, true);
 		SEAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::se)->EngTexture, true);
 		//VoiceAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::voice)->EngTexture, true);
 	}
-	else if (GameInstance->language == Language::KOR)
+	else if (language == Language::KOR)
 	{
-		TitleAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::title)->KorTexture, true);
+		//TitleAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::title)->KorTexture, true);
 		MasterAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::master)->KorTexture, true);
 		BGMAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::bgm)->KorTexture, true);
 		SEAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::se)->KorTexture, true);

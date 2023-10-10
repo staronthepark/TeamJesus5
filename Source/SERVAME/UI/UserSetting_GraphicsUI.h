@@ -14,6 +14,8 @@
  * 
  */
 
+enum class Language :uint8;
+
 UENUM()
 enum class EGraphicsSettings : uint8
 {
@@ -40,8 +42,8 @@ UCLASS()
 class SERVAME_API UUserSetting_GraphicsUI : public USubUserSettingUI
 {
 	GENERATED_BODY()
-	UPROPERTY(meta = (BindWidget))
-		UImage* TitleGraphicImage;
+	//UPROPERTY(meta = (BindWidget))
+	//	UImage* TitleGraphicImage;
 
 	UPROPERTY(meta = (BindWidget))
 		UImage* VolumetricImage;
@@ -98,7 +100,7 @@ public:
 		void SetReflect();
 
 	UFUNCTION()
-		void ChangeLanguage();
+		void ChangeLanguage(Language& language);
 
 
 };

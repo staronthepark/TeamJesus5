@@ -48,6 +48,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UNunAttackTriggerComp* AttackTrigger;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AttackRadius")
+	float FirstRange = 500.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AttackRadius")
+	float SecondRange = 1000.f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
 	TSubclassOf<AKinghtMonster> KnightClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
@@ -57,12 +62,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
 	float KnightSpawnRadius = 400.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
-	float KnightSpawnVal = 0.3f;
+	float KnightSpawnVal = 0.2f;
 
 	TArray<AActor*> TeleportArr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
-	float TeleportVal = 0.1f;
+	float TeleportVal = 0.05f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
+	float TeleportDelayVal = 0.1f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
+	float TeleportCoolTime = 10.f;
+	static int CurrentNum;
+	FTimerHandle TeleportTimer;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
 	float HealVal = 500.f;
@@ -81,9 +92,17 @@ public:
 	float DotTime = 15.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JudementAttack")
-	float JudementRange = 500;
+	float JudementRange = 1000;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JudementAttack")
 	float JudementTime = 15.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JudementAttack")
+	float JudementDelay = 0.5f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JudementAttack")
+	int JudementMaxCount = 15;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JudementAttack")
+	float JudementProjectileRange = 150.f;
+	int JudementCurrentCount = 0;
+	FTimerHandle JudementTimer;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CrystalAttack")
 	float CrystalRange = 400.f;
@@ -92,14 +111,60 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PrayAttack")
 	float PrayObjSpawnDelay = 0.2f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PrayDamage")
+	float PrayDamage = 5.f;
 	int PraySpawnCount = 0;
 
 	float TeleportDamageSum = 0.f;
 	float SpawnDamageSum = 0.f;
+	float IllusionDamageSum = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FragmentsAttack")
+	float FragmentRange = 500.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "fasdfasfasdfasdfasd")
+	bool test = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
+	TSubclassOf<ANunMonster> IllusionNunClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
+	TSubclassOf<ANunMonster> OriginNunClass;
+	ANunMonster* Illusion;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
+	float IllusionTime = 10.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
+	float IllusionVal = 0.25f;
+	bool useIllusion = false;
+	bool IsIllusion = false;
+	bool MinusOpacity = false;
+	FTimerHandle IllusionTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PaternDelay")
+	int MinDelayTime = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PaternDelay")
+	int MaxDelayTime = 3.f;
+	bool IsCoolTime = false;
+	bool CheckDetect = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float Dark_Group_Percent_1 = 0.4f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float Dark_Group_Percent_2 = 0.7f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float SingleHeal_Group_Percent_1 = 0.4f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float SingleHeal_Group_Percent_2 = 0.6f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float MultiHeal_Group_Percent_1 = 0.3f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
+	float MultiHeal_Group_Percent_2 = 0.5f;
+
+	void SelfHealTimer();
 
 	//수녀 a타입 스킬
 	void TelePort();
-	void SpawnKnight();
+	void SpawnKnight(int knightnum = 0);
+
 	void SingleHeal();
 	void MultiHeal();
 	void SelfHeal();
@@ -116,6 +181,10 @@ public:
 
 	FTimerHandle SelfHealTimerHandle;
 	FTimerHandle DelayTimerHandle;
+	FTimerHandle PaternDelay;
+	FTimerHandle TeleportHandle;
+
+	void SetYaw();
 
 	UFUNCTION()
 	void OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
