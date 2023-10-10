@@ -18,9 +18,12 @@
 #include <Components/CanvasPanel.h>
 #include "PlayerHUD.generated.h"
 
+
 /**
  * 
  */
+
+class USkillUI;
 
 UENUM()
 enum class EInteractions : uint8
@@ -71,6 +74,9 @@ class SERVAME_API UPlayerHUD : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 		UImage* Interaction_Image;
+
+	UPROPERTY(meta = (BindWidget))
+		USkillUI* SkillUI;
 
 	//UPROPERTY(meta = (BindWidget))
 	//	UPlayerShieldUI* WBP_Player_ShieldsUI;
