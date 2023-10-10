@@ -209,6 +209,7 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SHIELDLOOP, PlayerAction::CANWALK);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SHIELDEND, PlayerAction::NONE);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::EOSTOEXECUTION, PlayerAction::CANTACT);
+	PlayerEnumToAnimTypeMap.Add(AnimationType::SHIELDKNOCKBACK, PlayerAction::CANTACT);
 
 
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SHIELDATTACK, PlayerAction::CANTACT);
