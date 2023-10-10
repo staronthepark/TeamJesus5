@@ -440,6 +440,16 @@ APlayerCharacter::APlayerCharacter()
 
 		});
 
+	NotifyBeginEndEventMap.Add(AnimationType::SHIELDKNOCKBACK, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::SHIELDKNOCKBACK].Add(true, [&]()
+		{
+			PlayerCurAction = PlayerAction::AFTERATTACK;
+		});
+	NotifyBeginEndEventMap[AnimationType::SHIELDKNOCKBACK].Add(false, [&]()
+		{
+
+		});
+
 	NotifyBeginEndEventMap.Add(AnimationType::HITBACKRIGHT, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::HITBACKRIGHT].Add(true, [&]()
 		{
@@ -758,7 +768,10 @@ APlayerCharacter::APlayerCharacter()
 		{
 		});
 	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::DEAD, [&]() {});
-
+	MontageEndEventMap.Add(AnimationType::SHIELDKNOCKBACK, [&]()
+		{
+			CheckInputKey();
+		});
 	MontageEndEventMap.Add(AnimationType::BATTLEDODGE, [&]()
 		{	
 			SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
@@ -2136,9 +2149,11 @@ void APlayerCharacter::SetShieldHP(float HP, FVector Location)
 {
 	SetSoul(HP * PlayerDataStruct.ShieldDecreaseSoulPercent);
 
-	float Distance = HP <= 60 ? AttackDefDistance : PowerAttackDefDistance;
+	//float Distance = HP <= 60 ? AttackDefDistance : PowerAttackDefDistance;
+	//
+	//LaunchCharacter(-GetActorRotation().Vector() * Distance, false, false);
 
-	LaunchCharacter(-GetActorRotation().Vector() * Distance, false, false);
+	ChangeMontageAnimation(AnimationType::SHIELDKNOCKBACK);
 
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[38].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
@@ -2191,7 +2206,11 @@ bool APlayerCharacter::UseStamina(float value)
 
 void APlayerCharacter::CheckInputKey()
 {
-	if (AxisX != 1  || AxisY != 1)
+	if (IsGrab)
+	{
+		ChangeMontageAnimation(AnimationType::SHIELDLOOP);
+	}
+	else if (AxisX != 1  || AxisY != 1)
 	{
 		if(AxisY == 2 && !IsGrab)
 		TargetCameraBoomLength = 350.0f;
@@ -2211,7 +2230,7 @@ void APlayerCharacter::CheckInputKey()
 		SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
 		ChangeActionType(ActionType::NONE);
 		ChangeMontageAnimation(AnimationType::IDLE);
-	}
+	}	
 }
 
 bool APlayerCharacter::CanActivate(int32 SoulCount)
