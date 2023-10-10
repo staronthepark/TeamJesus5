@@ -81,6 +81,7 @@ enum class AnimationType : uint8
 
 	SHIELDATTACK,
 	SHIELDMOVE,
+	SHIELDKNOCKBACK,
 
 	SKILL1,
 	SKILL2,
