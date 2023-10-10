@@ -142,24 +142,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::DARK, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(true, [&]()
 		{
-			UE_LOG(LogTemp, Warning, TEXT("DarkProjectile"));
-			if (SpawnLocArr.IsEmpty())
-				return;
-
-			int RandomValue = FMath::RandRange(0, SpawnLocArr.Num() - 1);
-
-			auto DarkPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
-				SpawnLocArr[RandomValue]->GetComponentLocation(), FRotator::ZeroRotator);
-
-			auto DarkObj = Cast<ANunEffectObjInPool>(DarkPoolObj);
-
-			if (IsIllusion)
-				DarkObj->Damage = 0.f;
-
-			DarkObj->SetCurrentEffect(EffectType::DARKEFFECT);
-			DarkObj->ActivateCurrentEffect();
-			DarkObj->ShotProjectile(PlayerCharacter);
-			DarkObj->SetActorTickEnabled(true);
+			DarkAttack();
 		});
 
 	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(false, [&]()
@@ -463,7 +446,12 @@ void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* Overlapp
 		{
 			SpawnKnight(2);
 			SelfHealTimer();
-			GetWorld()->GetTimerManager().SetTimer(TeleportHandle, this, &ANunMonster::TelePort, TeleportCoolTime);
+			TelePortAttack();
+			//GetWorld()->GetTimerManager().SetTimer(TeleportHandle, FTimerDelegate::CreateLambda([=]()
+			//	{
+			//		IsCoolTimeTeleport = true;
+			//		TelePort();
+			//	}), TeleportCoolTime, true, 0.f);
 		}
 
 		if (ActionType == MonsterActionType::DEAD)
@@ -602,38 +590,30 @@ void ANunMonster::SpawnKnight(int knightnum)
 		return;
 
 	if (knightnum == 0)
-	{
 		Num = KnightNum;
-
-		if (NavSystem->GetRandomPointInNavigableRadius(PlayerCharacter->GetActorLocation(), KnightSpawnRadius, RandomLocation))
-		{
-			FVector Temp = RandomLocation.Location;
-			SpawnLoc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
-			//SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
-		}
-	}
 	else
-	{
 		Num = knightnum;
 
+	for (int i = 0; i < Num; i++)
+	{
 		if (NavSystem->GetRandomPointInNavigableRadius(GetActorLocation(), KnightSpawnRadius, RandomLocation))
 		{
 			FVector Temp = RandomLocation.Location;
 			SpawnLoc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
 			//SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
 		}
-	}
 
-	for (int i = 0; i < Num; i++)
-	{
-		FActorSpawnParameters SpawnParams; 
+		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;;
 
 		auto Knight = GetWorld()->SpawnActor<AKinghtMonster>(KnightClass,SpawnLoc,SpawnRot,SpawnParams);
 		Knight->Imotal = true;
 
+		Knight->MonsterDataStruct.CharacterMaxHp = SpawnedKnightMaxHp;
+		Knight->MonsterDataStruct.CharacterHp = SpawnedKnightMaxHp;
 		Knight->IsSpawn = true;
 		Knight->PlayerCharacter = PlayerCharacter;
+		Knight->Super::PlayerCharacter = PlayerCharacter;
 		Knight->SpawnBegin();
 		Knight->ChangeMontageAnimation(MonsterAnimationType::SPAWNING);
 		Knight->MonsterController->FindPlayer = true;
@@ -957,6 +937,7 @@ void ANunMonster::PrayAttack()
 			PrayObj->ActivateCurrentEffect();
 			PrayObj->SetActorTickEnabled(true);
 			PrayObj->ShotProjectile(true, PlayerCharacter->GetActorLocation());
+			PrayObj->Delay = PrayDelay;
 			PrayObj->Speed = 1000.f;
 			if (IsIllusion)
 				PrayObj->Damage = 0.f;
@@ -1064,6 +1045,29 @@ void ANunMonster::IllusionAttack()
 			useIllusion = false;
 			GetWorld()->GetTimerManager().ClearTimer(IllusionTimer);
 		}), IllusionTime, false);
+}
+
+void ANunMonster::DarkAttack()
+{
+	UE_LOG(LogTemp, Warning, TEXT("DarkProjectile"));
+	if (SpawnLocArr.IsEmpty())
+		return;
+
+	int RandomValue = FMath::RandRange(0, SpawnLocArr.Num() - 1);
+
+	auto DarkPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		SpawnLocArr[RandomValue]->GetComponentLocation(), FRotator::ZeroRotator);
+
+	auto DarkObj = Cast<ANunEffectObjInPool>(DarkPoolObj);
+
+	if (IsIllusion)
+		DarkObj->Damage = 0.f;
+
+	DarkObj->SetCurrentEffect(EffectType::DARKEFFECT);
+	DarkObj->Delay = DarkDelay;
+	DarkObj->ActivateCurrentEffect();
+	DarkObj->ShotProjectile(PlayerCharacter);
+	DarkObj->SetActorTickEnabled(true);
 }
 
 void ANunMonster::SingleHeal()
@@ -1278,7 +1282,78 @@ void ANunMonster::TelePort()
 			FogAttack();
 			SetYaw();
 			GetWorld()->GetTimerManager().ClearTimer(TeleportTimer);
+
+			if (IsCoolTimeTeleport)
+			{
+				if (Count < 1)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("%d : test"), Count);
+					++Count;
+					TelePort();
+				}
+				else
+				{
+					IsCoolTimeTeleport = false;
+					Count = 0;
+				}
+			}
 		}), TeleportDelayVal, false);
+}
+
+void ANunMonster::TelePortAttack()
+{
+	DarkAttack();
+	TelePortTempFunc();
+
+	GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
+		{
+			DarkAttack();
+			TelePortTempFunc();
+
+			GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
+				{
+					CrystalAttack();
+				}), 1.f, false, 0.5f);
+
+		}),1.f, false, 0.5f);
+}
+
+void ANunMonster::TelePortTempFunc()
+{
+	SetActive(false);
+	GetMesh()->SetVisibility(false);
+	DeactivateHitCollision();
+
+	srand(time(NULL));
+	auto Num = rand() % TeleportArr.Num();
+	while (1)
+	{
+		if (CurrentNum != Num)
+			break;
+
+		srand(time(NULL));
+		Num = rand() % TeleportArr.Num();
+	}
+	CurrentNum = Num;
+
+	UE_LOG(LogTemp, Warning, TEXT("origin CurrentNum = %d"), CurrentNum);
+
+	SetActorLocation(TeleportArr[Num]->GetActorLocation());
+
+	SetActive(true);
+	GetMesh()->SetVisibility(true);
+	ActivateHitCollision();
+
+	auto TeleportOutObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		GetActorLocation(), FRotator::ZeroRotator);
+	auto Temp2 = Cast<ANunEffectObjInPool>(TeleportOutObj);
+	Temp2->SetCurrentEffect(EffectType::TELEPORT_OUT);
+	Temp2->ActivateCurrentEffect();
+
+	ChangeActionType(MonsterActionType::NONE);
+	ChangeMontageAnimation(MonsterAnimationType::IDLE);
+	FogAttack();
+	SetYaw();
 }
 
 void ANunMonster::CheckMontageEndNotify()
