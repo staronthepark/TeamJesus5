@@ -335,7 +335,14 @@ void AKinghtMonster::BeginPlay()
 void AKinghtMonster::Tick(float DeltaTime)
 {
 	if (Spawning)
+	{
+		OpactiyDeltaTime += 0.0001;
+		SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity += OpactiyDeltaTime);
+		KnightHeadMesh->SetScalarParameterValueOnMaterials("Dither", MeshOpacity += OpactiyDeltaTime);
+
+		UE_LOG(LogTemp, Warning, TEXT("%f"), OpactiyDeltaTime);
 		return;
+	}
 
 	Super::Tick(DeltaTime);
 
@@ -730,6 +737,12 @@ float AKinghtMonster::Die(float Dm)
 		{
 			Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true, PlayerCharacter->TargetComp);
 		}
+	}
+
+	if (IsSpawn)
+	{
+		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
+		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
 	}
 
 	Imotal = true;
