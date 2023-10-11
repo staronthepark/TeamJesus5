@@ -137,7 +137,7 @@ public:
 
 	virtual void RespawnCharacter();
 
-	virtual void ResumeMontage(){ HitStopTimer(); }
+	virtual void ResumeMontage(){ }
 
 	virtual void HitStop(){ HitStopTimer(); }
 	virtual void Stun(){}

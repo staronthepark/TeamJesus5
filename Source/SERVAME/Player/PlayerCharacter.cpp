@@ -951,7 +951,7 @@ APlayerCharacter::APlayerCharacter()
 			RestoreStat();
 			GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::FadeOut, 2.0f);
 
-			
+			PlayerHUD->SetSoul(PlayerDataStruct.SoulCount);
 			PlayerHUD->PlayExitAnimation(true);
 			SpawnLocation = GetActorLocation();
 			UJesusSaveGame::GetInstance().Save(this, GameInstance, SaveMapName);
@@ -2597,7 +2597,7 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	IsExecute = true;
 	CanShieldDeploy = false;
 
-
+	PlayerHUD->SetSkill(PlayerDataStruct.ShieldCoolDown);
 	GetWorldTimerManager().SetTimer(ShieldCoolDownTimer, this, &APlayerCharacter::RecoverShield, PlayerDataStruct.ShieldCoolDown);
 
 	//ShieldCoolDown
