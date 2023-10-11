@@ -23,3 +23,6 @@ void UKnightAnimInstance::AnimNotify_OnHitCancle() { CanHitCancle.Broadcast(); }
 
 void UKnightAnimInstance::AnimNotify_OffHitCancle() { CantHitCancle.Broadcast(); }
 
+void UKnightAnimInstance::AnimNotify_OnRotate() { CanRotate.Broadcast(); }
+
+void UKnightAnimInstance::AnimNotify_OffRotate() { CantRotate.Broadcast(); }

@@ -329,6 +329,8 @@ void AKinghtMonster::BeginPlay()
 		KnightAnimInstance->SpawningEnd.AddUObject(this, &AKinghtMonster::SpawnEnd);
 		KnightAnimInstance->CanHitCancle.AddUObject(this, &AKinghtMonster::OnHitCancle);
 		KnightAnimInstance->CantHitCancle.AddUObject(this, &AKinghtMonster::OffHitCancle);
+		KnightAnimInstance->CanRotate.AddUObject(this, &AKinghtMonster::OnRotate);
+		KnightAnimInstance->CantRotate.AddUObject(this, &AKinghtMonster::OffRotate);
 	}
 }
 
@@ -552,6 +554,16 @@ void AKinghtMonster::OnHitCancle()
 void AKinghtMonster::OffHitCancle()
 {
 	CanCancle = false;
+}
+
+void AKinghtMonster::OnRotate()
+{
+	CanRotate = true;
+}
+
+void AKinghtMonster::OffRotate()
+{
+	CanRotate = false;
 }
 
 void AKinghtMonster::Stun()

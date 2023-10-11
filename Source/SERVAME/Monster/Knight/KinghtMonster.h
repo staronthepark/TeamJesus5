@@ -98,6 +98,8 @@ public:
 	void SpawnEnd();
 	void OnHitCancle();
 	void OffHitCancle();
+	void OnRotate();
+	void OffRotate();
 
 private:
 

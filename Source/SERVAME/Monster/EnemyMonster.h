@@ -170,6 +170,7 @@ public:
 	bool IsOverlap = false;
 	bool IsAttacking = false;
 	bool IsDie = false;
+	bool CanRotate = true;
 
 	bool asd = false;
 	bool asd2 = false;
