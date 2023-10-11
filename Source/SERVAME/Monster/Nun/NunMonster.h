@@ -71,6 +71,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
 	float TeleportVal = 0.05f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
+	float TeleportAttackVal = 0.15f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
 	float TeleportDelayVal = 0.1f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
 	float TeleportCoolTime = 10.f;
@@ -127,6 +129,7 @@ public:
 	float DarkDelay = 2.f;
 
 	float TeleportDamageSum = 0.f;
+	float TeleportAttackDamageSum = 0.f;
 	float SpawnDamageSum = 0.f;
 	float IllusionDamageSum = 0.f;
 
