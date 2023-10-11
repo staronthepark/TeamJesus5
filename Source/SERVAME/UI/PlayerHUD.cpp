@@ -1,5 +1,6 @@
 #include "PlayerHUD.h"
 #include "Components/CanvasPanelSlot.h"
+#include "SkillUI.h"
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
@@ -98,7 +99,7 @@ void UPlayerHUD::DecreaseSoulGradual(AActor* Actor, float value)
 
 void UPlayerHUD::SetSkill(float value)
 {
-	/*WBP_PlayerHPUI->SetSkill(value);*/
+	SkillUI->SetSkill(value);
 }
 
 void UPlayerHUD::SetGamepad(bool isPad)

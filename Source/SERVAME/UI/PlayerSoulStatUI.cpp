@@ -17,7 +17,7 @@ void UPlayerSoulStatUI::NativeConstruct()
 	this->SetVisibility(ESlateVisibility::Visible);
 	WBP_PlayerRest_UI->SetVisibility(ESlateVisibility::Visible);
 	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
-	Controller->SetPause(true);
+	//Controller->SetPause(true);
 	Controller->SetShowMouseCursor(true);
 	Controller->SetInputMode(FInputModeUIOnly());
 	WBP_PlayerRest_UI->SetKeyboardFocus();
@@ -29,7 +29,6 @@ void UPlayerSoulStatUI::ClickPray()
 	APlayerController* Controller = GetWorld()->GetFirstPlayerController();
 	Controller->SetShowMouseCursor(false);
 	Controller->SetInputMode(FInputModeGameOnly());
-	Controller->SetPause(false);
 	this->RemoveFromParent();
 }
 
@@ -46,7 +45,6 @@ void UPlayerSoulStatUI::Close()
 	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 	Controller->SetInputMode(FInputModeGameOnly());
 	Controller->bShowMouseCursor = false;
-	Controller->SetPause(false);
 	WBP_Player_Stat_UI->Close();
 	this->RemoveFromParent();
 }
