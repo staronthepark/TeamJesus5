@@ -446,12 +446,12 @@ void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* Overlapp
 		{
 			SpawnKnight(2);
 			SelfHealTimer();
-			TelePortAttack();
-			//GetWorld()->GetTimerManager().SetTimer(TeleportHandle, FTimerDelegate::CreateLambda([=]()
-			//	{
-			//		IsCoolTimeTeleport = true;
-			//		TelePort();
-			//	}), TeleportCoolTime, true, 0.f);
+			//TelePortAttack();
+			GetWorld()->GetTimerManager().SetTimer(TeleportHandle, FTimerDelegate::CreateLambda([=]()
+				{
+					IsCoolTimeTeleport = true;
+					TelePort();
+				}), TeleportCoolTime, true, 0.f);
 		}
 
 		if (ActionType == MonsterActionType::DEAD)
@@ -1004,7 +1004,7 @@ void ANunMonster::FragmentsAttack()
 
 void ANunMonster::IllusionAttack()
 {
-	if (useIllusion)
+	if (useIllusion || IsIllusion)
 		return;
 
 	UE_LOG(LogTemp, Warning, TEXT("IllusionAttack"));
@@ -1208,6 +1208,7 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		Die(DamageAmount);
 
 	TeleportDamageSum += DamageAmount;
+	TeleportAttackDamageSum += DamageAmount;
 	SpawnDamageSum += DamageAmount;
 	IllusionDamageSum += DamageAmount;
 
@@ -1218,6 +1219,17 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		TelePort();
 		TeleportDamageSum = 0;
 	}
+
+	if (TeleportAttackDamageSum >= MonsterDataStruct.CharacterMaxHp * TeleportAttackVal)
+	{
+		if (IsIllusion)
+			return 0.f;
+		TelePortAttack();
+		TeleportAttackDamageSum = 0;
+		UE_LOG(LogTemp, Warning, TEXT("TeleportAttack"));
+		return 0.f;
+	}
+
 	if (SpawnDamageSum >= MonsterDataStruct.CharacterMaxHp * KnightSpawnVal)
 	{
 		SpawnKnight();
@@ -1303,19 +1315,28 @@ void ANunMonster::TelePort()
 void ANunMonster::TelePortAttack()
 {
 	DarkAttack();
-	TelePortTempFunc();
+
+	GetWorld()->GetTimerManager().PauseTimer(TeleportHandle);
+	GetWorld()->GetTimerManager().PauseTimer(PaternDelay);
 
 	GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
 		{
-			DarkAttack();
 			TelePortTempFunc();
-
 			GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
 				{
-					CrystalAttack();
-				}), 1.f, false, 0.5f);
-
-		}),1.f, false, 0.5f);
+					DarkAttack();
+					GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
+						{
+							TelePortTempFunc();
+							GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
+								{
+									CrystalAttack();
+									GetWorld()->GetTimerManager().UnPauseTimer(TeleportHandle);
+									GetWorld()->GetTimerManager().UnPauseTimer(PaternDelay);
+								}), 0.5f, false, 0.5f);
+						}), 2.5f, false, 2.5f);
+				}), 0.5f, false, 0.5f);
+		}), 2.5f, false, 2.5f);
 }
 
 void ANunMonster::TelePortTempFunc()
