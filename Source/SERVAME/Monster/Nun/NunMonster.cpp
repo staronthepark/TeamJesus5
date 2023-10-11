@@ -1334,9 +1334,9 @@ void ANunMonster::TelePortAttack()
 									GetWorld()->GetTimerManager().UnPauseTimer(TeleportHandle);
 									GetWorld()->GetTimerManager().UnPauseTimer(PaternDelay);
 								}), 0.5f, false, 0.5f);
-						}), 2.1f, false, 2.1f);
+						}), 2.5f, false, 2.5f);
 				}), 0.5f, false, 0.5f);
-		}), 2.1f, false, 2.1f);
+		}), 2.5f, false, 2.5f);
 }
 
 void ANunMonster::TelePortTempFunc()
