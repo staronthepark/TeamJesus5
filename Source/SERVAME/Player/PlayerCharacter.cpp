@@ -1478,7 +1478,18 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANTACT][ActionType::INTERACTION].Add(true, [&]() {});
 	InputEventMap[PlayerAction::CANTACT][ActionType::INTERACTION].Add(false, [&]() {});
 	InputEventMap[PlayerAction::CANTACT][ActionType::SHIELD].Add(true, [&]() {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::SHIELD].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANTACT][ActionType::SHIELD].Add(false, [&]()
+		{
+
+			if (!IsGrab)return;
+			IsGrab = false;
+			AxisY == 1 && AxisX == 1 ? ChangeMontageAnimation(AnimationType::SHIELDEND)
+				: ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
+			SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
+			AnimInstance->BodyBlendAlpha = 1.0f;
+			ShieldOff();
+			ShoulderView(IsShoulderView);
+		});
 
 	InputEventMap.Add(PlayerAction::CANATTACK, TMap<ActionType, TMap<bool, TFunction<void()>>>());
 	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::DODGE, TMap<bool, TFunction<void()>>());
@@ -2157,9 +2168,9 @@ void APlayerCharacter::SetShieldHP(float HP, FVector Location)
 {
 	SetSoul(HP * PlayerDataStruct.ShieldDecreaseSoulPercent);
 
-	//float Distance = HP <= 60 ? AttackDefDistance : PowerAttackDefDistance;
-	//
-	//LaunchCharacter(-GetActorRotation().Vector() * Distance, false, false);
+	float Distance = HP <= 60 ? AttackDefDistance : PowerAttackDefDistance;
+	
+	LaunchCharacter(-GetActorRotation().Vector() * Distance, false, false);
 
 	ChangeMontageAnimation(AnimationType::SHIELDKNOCKBACK);
 
@@ -2217,6 +2228,7 @@ void APlayerCharacter::CheckInputKey()
 	if (IsGrab)
 	{
 		ChangeMontageAnimation(AnimationType::SHIELDLOOP);
+		return;
 	}
 	else
 	{
