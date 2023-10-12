@@ -70,6 +70,7 @@ void AVomitObjectInPool::ReturnObject()
 
 void AVomitObjectInPool::ShootProjectile(FVector target)
 {
+	SphereCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	SpawnEffect->DeactivateImmediate();
 
 	targetLoc = target;
@@ -107,7 +108,7 @@ void AVomitObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* Overlapped
 
 void AVomitObjectInPool::OnGroundOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("????"));
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *OtherComp->GetName());
 
 	BurstEffect->Activate();
 	ProjectileEffect->Deactivate();
