@@ -26,4 +26,6 @@ public:
 	float SprintTime;
 	float BlendSpeed;
 	float BlendDirection;
+
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 };

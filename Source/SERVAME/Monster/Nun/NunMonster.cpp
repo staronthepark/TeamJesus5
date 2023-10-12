@@ -1098,7 +1098,7 @@ void ANunMonster::SingleHeal()
 		}
 	}
 
-	if (*KnightArr.begin() == nullptr)
+	if (*KnightArr.begin() == nullptr || KnightArr.IsEmpty())
 		return;
 
 	Min = KnightHpArr[0];
@@ -1205,9 +1205,6 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
 		MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
 	}
-
-	if (MonsterDataStruct.CharacterHp <= 0)
-		Die(DamageAmount);
 
 	TeleportDamageSum += DamageAmount;
 	TeleportAttackDamageSum += DamageAmount;

@@ -734,18 +734,19 @@ void AEnemyMonster::Stun()
 float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
 	if (Imotal)
 	{
 		return 0;
 	}
 
-	ActivateHpBar();
-	GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
-
 	DeactivateHitCollision();
 
-	if (MyMonsterType != MonsterType::NUN)
+	if (MyMonsterType != MonsterType::NUN && MyMonsterType != MonsterType::ELITEKNIGHT)
 	{
+		ActivateHpBar();
+		GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
+
 		MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
 		MonsterDataStruct.CharacterHp -= DamageAmount;
 
