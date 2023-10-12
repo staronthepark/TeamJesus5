@@ -176,6 +176,7 @@ void AJesusPlayerController::PressParring()
 
 void AJesusPlayerController::UnPressParring()
 {
+	character->IsGrab = false;
 	character->InputEventMap[character->PlayerCurAction][ActionType::PARRING][false]();
 }
 

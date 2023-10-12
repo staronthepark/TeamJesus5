@@ -63,17 +63,25 @@ public:
 	float KnightSpawnRadius = 400.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
 	float KnightSpawnVal = 0.2f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
+	float SpawnedKnightMaxHp = 200.f;
 
 	TArray<AActor*> TeleportArr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
 	float TeleportVal = 0.05f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
+	float TeleportAttackVal = 0.15f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
 	float TeleportDelayVal = 0.1f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeleportVal")
 	float TeleportCoolTime = 10.f;
+	float Count = 0;
 	static int CurrentNum;
+	bool IsCoolTimeTeleport = false;
 	FTimerHandle TeleportTimer;
+	FTimerHandle TeleportHandle;
+	FTimerHandle TeleportAttackHandle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
 	float HealVal = 500.f;
@@ -111,11 +119,17 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PrayAttack")
 	float PrayObjSpawnDelay = 0.2f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PrayDamage")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PrayAttack")
 	float PrayDamage = 5.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PrayAttack")
+	float PrayDelay = 2.f;
 	int PraySpawnCount = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DarkAttack")
+	float DarkDelay = 2.f;
+
 	float TeleportDamageSum = 0.f;
+	float TeleportAttackDamageSum = 0.f;
 	float SpawnDamageSum = 0.f;
 	float IllusionDamageSum = 0.f;
 
@@ -163,8 +177,11 @@ public:
 
 	//수녀 a타입 스킬
 	void TelePort();
+	void TelePortAttack();
+	void TelePortTempFunc();
 	void SpawnKnight(int knightnum = 0);
 
+	void DarkAttack();
 	void SingleHeal();
 	void MultiHeal();
 	void SelfHeal();
@@ -182,7 +199,6 @@ public:
 	FTimerHandle SelfHealTimerHandle;
 	FTimerHandle DelayTimerHandle;
 	FTimerHandle PaternDelay;
-	FTimerHandle TeleportHandle;
 
 	void SetYaw();
 

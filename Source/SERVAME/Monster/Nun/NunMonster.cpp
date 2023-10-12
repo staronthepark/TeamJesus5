@@ -142,24 +142,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::DARK, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(true, [&]()
 		{
-			UE_LOG(LogTemp, Warning, TEXT("DarkProjectile"));
-			if (SpawnLocArr.IsEmpty())
-				return;
-
-			int RandomValue = FMath::RandRange(0, SpawnLocArr.Num() - 1);
-
-			auto DarkPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
-				SpawnLocArr[RandomValue]->GetComponentLocation(), FRotator::ZeroRotator);
-
-			auto DarkObj = Cast<ANunEffectObjInPool>(DarkPoolObj);
-
-			if (IsIllusion)
-				DarkObj->Damage = 0.f;
-
-			DarkObj->SetCurrentEffect(EffectType::DARKEFFECT);
-			DarkObj->ActivateCurrentEffect();
-			DarkObj->ShotProjectile(PlayerCharacter);
-			DarkObj->SetActorTickEnabled(true);
+			DarkAttack();
 		});
 
 	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(false, [&]()
@@ -463,7 +446,12 @@ void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* Overlapp
 		{
 			SpawnKnight(2);
 			SelfHealTimer();
-			GetWorld()->GetTimerManager().SetTimer(TeleportHandle, this, &ANunMonster::TelePort, TeleportCoolTime);
+			//TelePortAttack();
+			GetWorld()->GetTimerManager().SetTimer(TeleportHandle, FTimerDelegate::CreateLambda([=]()
+				{
+					IsCoolTimeTeleport = true;
+					TelePort();
+				}), TeleportCoolTime, true, 0.f);
 		}
 
 		if (ActionType == MonsterActionType::DEAD)
@@ -602,38 +590,33 @@ void ANunMonster::SpawnKnight(int knightnum)
 		return;
 
 	if (knightnum == 0)
-	{
 		Num = KnightNum;
-
-		if (NavSystem->GetRandomPointInNavigableRadius(PlayerCharacter->GetActorLocation(), KnightSpawnRadius, RandomLocation))
-		{
-			FVector Temp = RandomLocation.Location;
-			SpawnLoc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
-			//SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
-		}
-	}
 	else
-	{
 		Num = knightnum;
 
+	for (int i = 0; i < Num; i++)
+	{
 		if (NavSystem->GetRandomPointInNavigableRadius(GetActorLocation(), KnightSpawnRadius, RandomLocation))
 		{
 			FVector Temp = RandomLocation.Location;
 			SpawnLoc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
 			//SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
 		}
-	}
 
-	for (int i = 0; i < Num; i++)
-	{
-		FActorSpawnParameters SpawnParams; 
+		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;;
+		auto Knight = GetWorld()->SpawnActor<AKinghtMonster>(KnightClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 
-		auto Knight = GetWorld()->SpawnActor<AKinghtMonster>(KnightClass,SpawnLoc,SpawnRot,SpawnParams);
+		Knight->SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", 0.f);
+		Knight->KnightHeadMesh->SetScalarParameterValueOnMaterials("Dither", 0.f);
+		Knight->SetActorLocation(SpawnLoc);
+		Knight->SetActorRotation(SpawnRot);
 		Knight->Imotal = true;
-
+		Knight->MonsterDataStruct.CharacterMaxHp = SpawnedKnightMaxHp;
+		Knight->MonsterDataStruct.CharacterHp = SpawnedKnightMaxHp;
 		Knight->IsSpawn = true;
 		Knight->PlayerCharacter = PlayerCharacter;
+		Knight->Super::PlayerCharacter = PlayerCharacter;
 		Knight->SpawnBegin();
 		Knight->ChangeMontageAnimation(MonsterAnimationType::SPAWNING);
 		Knight->MonsterController->FindPlayer = true;
@@ -688,7 +671,7 @@ void ANunMonster::MultiHeal()
 
 				if (FoundIndex != -1)
 				{
-					KnightArr.RemoveAt(FoundIndex);
+					KnightArr.RemoveAtSwap(FoundIndex);
 					return;
 				}
 			}
@@ -957,6 +940,7 @@ void ANunMonster::PrayAttack()
 			PrayObj->ActivateCurrentEffect();
 			PrayObj->SetActorTickEnabled(true);
 			PrayObj->ShotProjectile(true, PlayerCharacter->GetActorLocation());
+			PrayObj->Delay = PrayDelay;
 			PrayObj->Speed = 1000.f;
 			if (IsIllusion)
 				PrayObj->Damage = 0.f;
@@ -1023,7 +1007,7 @@ void ANunMonster::FragmentsAttack()
 
 void ANunMonster::IllusionAttack()
 {
-	if (useIllusion)
+	if (useIllusion || IsIllusion)
 		return;
 
 	UE_LOG(LogTemp, Warning, TEXT("IllusionAttack"));
@@ -1066,6 +1050,29 @@ void ANunMonster::IllusionAttack()
 		}), IllusionTime, false);
 }
 
+void ANunMonster::DarkAttack()
+{
+	UE_LOG(LogTemp, Warning, TEXT("DarkProjectile"));
+	if (SpawnLocArr.IsEmpty())
+		return;
+
+	int RandomValue = FMath::RandRange(0, SpawnLocArr.Num() - 1);
+
+	auto DarkPoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		SpawnLocArr[RandomValue]->GetComponentLocation(), FRotator::ZeroRotator);
+
+	auto DarkObj = Cast<ANunEffectObjInPool>(DarkPoolObj);
+
+	if (IsIllusion)
+		DarkObj->Damage = 0.f;
+
+	DarkObj->SetCurrentEffect(EffectType::DARKEFFECT);
+	DarkObj->Delay = DarkDelay;
+	DarkObj->ActivateCurrentEffect();
+	DarkObj->ShotProjectile(PlayerCharacter);
+	DarkObj->SetActorTickEnabled(true);
+}
+
 void ANunMonster::SingleHeal()
 {
 	UE_LOG(LogTemp, Warning, TEXT("SingleHeal"));
@@ -1081,15 +1088,14 @@ void ANunMonster::SingleHeal()
 	for (int i = 0; i < KnightArr.Num(); i++)
 	{
 		if (KnightArr[i]->MonsterDataStruct.CharacterHp <= 0)
+		{
 			RemoveIndex = KnightArr.Find(KnightArr[i]);
+			KnightArr.RemoveAtSwap(RemoveIndex);
+		}
 		else 		
+		{
 			KnightHpArr.Push(KnightArr[i]->MonsterDataStruct.CharacterHp);
-	}
-
-	if (RemoveIndex != -1)
-	{
-		KnightArr.RemoveAt(RemoveIndex);
-		KnightHpArr.RemoveAt(RemoveIndex);
+		}
 	}
 
 	if (*KnightArr.begin() == nullptr)
@@ -1204,6 +1210,7 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		Die(DamageAmount);
 
 	TeleportDamageSum += DamageAmount;
+	TeleportAttackDamageSum += DamageAmount;
 	SpawnDamageSum += DamageAmount;
 	IllusionDamageSum += DamageAmount;
 
@@ -1214,6 +1221,17 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		TelePort();
 		TeleportDamageSum = 0;
 	}
+
+	if (TeleportAttackDamageSum >= MonsterDataStruct.CharacterMaxHp * TeleportAttackVal)
+	{
+		if (IsIllusion)
+			return 0.f;
+		TelePortAttack();
+		TeleportAttackDamageSum = 0;
+		UE_LOG(LogTemp, Warning, TEXT("TeleportAttack"));
+		return 0.f;
+	}
+
 	if (SpawnDamageSum >= MonsterDataStruct.CharacterMaxHp * KnightSpawnVal)
 	{
 		SpawnKnight();
@@ -1278,7 +1296,87 @@ void ANunMonster::TelePort()
 			FogAttack();
 			SetYaw();
 			GetWorld()->GetTimerManager().ClearTimer(TeleportTimer);
+
+			if (IsCoolTimeTeleport)
+			{
+				if (Count < 1)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("%d : test"), Count);
+					++Count;
+					TelePort();
+				}
+				else
+				{
+					IsCoolTimeTeleport = false;
+					Count = 0;
+				}
+			}
 		}), TeleportDelayVal, false);
+}
+
+void ANunMonster::TelePortAttack()
+{
+	DarkAttack();
+
+	GetWorld()->GetTimerManager().PauseTimer(TeleportHandle);
+	GetWorld()->GetTimerManager().PauseTimer(PaternDelay);
+
+	GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
+		{
+			TelePortTempFunc();
+			GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
+				{
+					DarkAttack();
+					GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
+						{
+							TelePortTempFunc();
+							GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
+								{
+									CrystalAttack();
+									GetWorld()->GetTimerManager().UnPauseTimer(TeleportHandle);
+									GetWorld()->GetTimerManager().UnPauseTimer(PaternDelay);
+								}), 0.5f, false, 0.5f);
+						}), 2.5f, false, 2.5f);
+				}), 0.5f, false, 0.5f);
+		}), 2.5f, false, 2.5f);
+}
+
+void ANunMonster::TelePortTempFunc()
+{
+	SetActive(false);
+	GetMesh()->SetVisibility(false);
+	DeactivateHitCollision();
+
+	srand(time(NULL));
+	auto Num = rand() % TeleportArr.Num();
+	while (1)
+	{
+		if (CurrentNum != Num)
+			break;
+
+		srand(time(NULL));
+		Num = rand() % TeleportArr.Num();
+	}
+	CurrentNum = Num;
+
+	UE_LOG(LogTemp, Warning, TEXT("origin CurrentNum = %d"), CurrentNum);
+
+	SetActorLocation(TeleportArr[Num]->GetActorLocation());
+
+	SetActive(true);
+	GetMesh()->SetVisibility(true);
+	ActivateHitCollision();
+
+	auto TeleportOutObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		GetActorLocation(), FRotator::ZeroRotator);
+	auto Temp2 = Cast<ANunEffectObjInPool>(TeleportOutObj);
+	Temp2->SetCurrentEffect(EffectType::TELEPORT_OUT);
+	Temp2->ActivateCurrentEffect();
+
+	ChangeActionType(MonsterActionType::NONE);
+	ChangeMontageAnimation(MonsterAnimationType::IDLE);
+	FogAttack();
+	SetYaw();
 }
 
 void ANunMonster::CheckMontageEndNotify()

@@ -329,13 +329,22 @@ void AKinghtMonster::BeginPlay()
 		KnightAnimInstance->SpawningEnd.AddUObject(this, &AKinghtMonster::SpawnEnd);
 		KnightAnimInstance->CanHitCancle.AddUObject(this, &AKinghtMonster::OnHitCancle);
 		KnightAnimInstance->CantHitCancle.AddUObject(this, &AKinghtMonster::OffHitCancle);
+		KnightAnimInstance->CanRotate.AddUObject(this, &AKinghtMonster::OnRotate);
+		KnightAnimInstance->CantRotate.AddUObject(this, &AKinghtMonster::OffRotate);
 	}
 }
 
 void AKinghtMonster::Tick(float DeltaTime)
 {
 	if (Spawning)
+	{
+		OpactiyDeltaTime += 0.0001;
+		SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity += OpactiyDeltaTime);
+		KnightHeadMesh->SetScalarParameterValueOnMaterials("Dither", MeshOpacity += OpactiyDeltaTime);
+
+		UE_LOG(LogTemp, Warning, TEXT("%f"), OpactiyDeltaTime);
 		return;
+	}
 
 	Super::Tick(DeltaTime);
 
@@ -376,7 +385,7 @@ void AKinghtMonster::Tick(float DeltaTime)
 
 	if (MinusOpacity)
 	{
-		OpactiyDeltaTime += 0.01;
+		OpactiyDeltaTime += 0.005;
 		SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity -= OpactiyDeltaTime);
 		KnightHeadMesh->SetScalarParameterValueOnMaterials("Dither", MeshOpacity -= OpactiyDeltaTime);
 	}
@@ -545,6 +554,16 @@ void AKinghtMonster::OnHitCancle()
 void AKinghtMonster::OffHitCancle()
 {
 	CanCancle = false;
+}
+
+void AKinghtMonster::OnRotate()
+{
+	CanRotate = true;
+}
+
+void AKinghtMonster::OffRotate()
+{
+	CanRotate = false;
 }
 
 void AKinghtMonster::Stun()
@@ -716,6 +735,28 @@ void AKinghtMonster::SearchPlayer()
 
 float AKinghtMonster::Die(float Dm)
 {
+	if (PlayerCharacter->IsLockOn)
+	{
+		PlayerCharacter->TargetComp = nullptr;
+		PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
+		PlayerCharacter->GetFirstTarget();
+
+		if (PlayerCharacter->TargetComp == nullptr)
+		{
+			PlayerCharacter->LockOn();
+		}
+		else
+		{
+			Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true, PlayerCharacter->TargetComp);
+		}
+	}
+
+	if (IsSpawn)
+	{
+		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
+		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+	}
+
 	Imotal = true;
 	GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
 	DeactivateHpBar();
@@ -740,7 +781,7 @@ float AKinghtMonster::Die(float Dm)
 			CastObj->ActivateCurrentEffect();
 
 			MinusOpacity = true;
-		}), 10.f, false);
+		}), 4.5f, false);
 
 	return Dm;
 }

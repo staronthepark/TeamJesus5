@@ -61,9 +61,11 @@ void APlayerSkillObject::SetActive(bool active)
 			FDamageEvent DamageEvent;
 			auto Player = Cast<ABaseCharacter>(HitResult.GetActor());
 
-
-			Player->TakeDamage(Damage, DamageEvent, nullptr, this);
-			UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(Player);
+			if (Player != nullptr)
+			{
+				Player->TakeDamage(Damage, DamageEvent, nullptr, this);
+				UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(Player);
+			}
 		}
 	}
 }

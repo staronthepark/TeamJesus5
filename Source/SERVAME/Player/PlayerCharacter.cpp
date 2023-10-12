@@ -209,6 +209,7 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SHIELDLOOP, PlayerAction::CANWALK);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SHIELDEND, PlayerAction::NONE);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::EOSTOEXECUTION, PlayerAction::CANTACT);
+	PlayerEnumToAnimTypeMap.Add(AnimationType::SHIELDKNOCKBACK, PlayerAction::CANTACT);
 
 
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SHIELDATTACK, PlayerAction::CANTACT);
@@ -435,6 +436,16 @@ APlayerCharacter::APlayerCharacter()
 			PlayerCurAction = PlayerAction::AFTERATTACK;
 		});
 	NotifyBeginEndEventMap[AnimationType::HITBACKLEFT].Add(false, [&]()
+		{
+
+		});
+
+	NotifyBeginEndEventMap.Add(AnimationType::SHIELDKNOCKBACK, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::SHIELDKNOCKBACK].Add(true, [&]()
+		{
+			PlayerCurAction = PlayerAction::AFTERATTACK;
+		});
+	NotifyBeginEndEventMap[AnimationType::SHIELDKNOCKBACK].Add(false, [&]()
 		{
 
 		});
@@ -757,7 +768,10 @@ APlayerCharacter::APlayerCharacter()
 		{
 		});
 	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::DEAD, [&]() {});
-
+	MontageEndEventMap.Add(AnimationType::SHIELDKNOCKBACK, [&]()
+		{
+			CheckInputKey();
+		});
 	MontageEndEventMap.Add(AnimationType::BATTLEDODGE, [&]()
 		{	
 			SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
@@ -1402,7 +1416,11 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANWALK][ActionType::ATTACK].Add(false, [&]() {});
 	InputEventMap[PlayerAction::CANWALK][ActionType::POWERATTACK].Add(true, [&]() {});
 	InputEventMap[PlayerAction::CANWALK][ActionType::POWERATTACK].Add(false, [&]() {});
-	InputEventMap[PlayerAction::CANWALK][ActionType::PARRING].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANWALK][ActionType::PARRING].Add(true, [&]() {
+
+		if (IsGrab)
+			Parring();
+		});
 	InputEventMap[PlayerAction::CANWALK][ActionType::PARRING].Add(false, [&]() {});
 	InputEventMap[PlayerAction::CANWALK][ActionType::MOVE].Add(true, [&]()
 		{
@@ -1798,8 +1816,12 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 	PlayerDataStruct.SoulCount = 0;
-	//GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
-	//GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
+
+	SaveMapName = "Garden";
+
+	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
+	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
+
 	ASoundManager::GetInstance().Init();
 	CanShieldDeploy = true;
 	CanUseSkill = true;
@@ -2135,9 +2157,11 @@ void APlayerCharacter::SetShieldHP(float HP, FVector Location)
 {
 	SetSoul(HP * PlayerDataStruct.ShieldDecreaseSoulPercent);
 
-	float Distance = HP <= 60 ? AttackDefDistance : PowerAttackDefDistance;
+	//float Distance = HP <= 60 ? AttackDefDistance : PowerAttackDefDistance;
+	//
+	//LaunchCharacter(-GetActorRotation().Vector() * Distance, false, false);
 
-	LaunchCharacter(-GetActorRotation().Vector() * Distance, false, false);
+	ChangeMontageAnimation(AnimationType::SHIELDKNOCKBACK);
 
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[38].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
@@ -2190,6 +2214,21 @@ bool APlayerCharacter::UseStamina(float value)
 
 void APlayerCharacter::CheckInputKey()
 {
+	if (IsGrab)
+	{
+		ChangeMontageAnimation(AnimationType::SHIELDLOOP);
+	}
+	else
+	{
+
+		IsGrab = false;
+		AxisY == 1 && AxisX == 1 ? ChangeMontageAnimation(AnimationType::SHIELDEND)
+			: ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
+		SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
+		AnimInstance->BodyBlendAlpha = 1.0f;
+		ShieldOff();
+		ShoulderView(IsShoulderView);
+	}
 	if (AxisX != 1  || AxisY != 1)
 	{
 		if(AxisY == 2 && !IsGrab)
@@ -2210,7 +2249,7 @@ void APlayerCharacter::CheckInputKey()
 		SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
 		ChangeActionType(ActionType::NONE);
 		ChangeMontageAnimation(AnimationType::IDLE);
-	}
+	}	
 }
 
 bool APlayerCharacter::CanActivate(int32 SoulCount)
