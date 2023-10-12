@@ -800,7 +800,6 @@ void AEnemyMonster::Tick(float DeltaTime)
 
 	if (!IsPatrol && CanRotate)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("???"));
 		Rotate();
 	}
 
