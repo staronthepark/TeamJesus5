@@ -54,7 +54,6 @@ void AEliteKnight::Tick(float DeltaTime)
 
 		if (SprintDeltaTime >= MinWalkTime)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("SPRINT ATTACK"));
 			ChangeActionType(MonsterActionType::SPRINT);
 
 			SprintTime += DeltaTime;

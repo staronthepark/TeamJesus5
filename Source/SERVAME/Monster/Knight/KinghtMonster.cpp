@@ -106,6 +106,16 @@ AKinghtMonster::AKinghtMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::EXECUTION, [&]()
 		{
+			if (MyMonsterType != MonsterType::ELITEKNIGHT)
+			{
+				KnightAnimInstance->PauseAnimation(MontageMap[AnimationType]);
+				MonsterDataStruct.CharacterHp = 0;
+				float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
+				MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
+				//Die(0.f);
+				return;
+			}
+
 			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			WalkToRunBlend = false;
 			OnHitCancle();
@@ -568,6 +578,17 @@ void AKinghtMonster::OffRotate()
 
 void AKinghtMonster::Stun()
 {
+	//그로기 -> 그로기 아이들 -> 피 1로 만들기 -> 처형 애니 실행
+	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
+	MonsterController->StopMovement();
+	DeactivateSMOverlap();
+	ParryingCollision1->Deactivate();
+	DeactivateRightWeapon();
+	ChangeMontageAnimation(MonsterAnimationType::GROGGY_START);
+}
+
+void AKinghtMonster::ParryingStun()
+{
 	//CanExecution = true;
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
@@ -763,13 +784,14 @@ float AKinghtMonster::Die(float Dm)
 	DeactivateHitCollision();
 
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
-	ChangeActionType(MonsterActionType::DEAD);
-	StateType = MonsterStateType::CANTACT;
 
 	MonsterController->StopMovement();
 	DeactivateSMOverlap();
 	ParryingCollision1->Deactivate();
 	DeactivateRightWeapon();
+
+	ChangeActionType(MonsterActionType::DEAD);
+	StateType = MonsterStateType::CANTACT;
 	ChangeMontageAnimation(MonsterAnimationType::DEAD);
 
 	GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()

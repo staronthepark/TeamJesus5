@@ -61,6 +61,7 @@ AEnemyMonster::AEnemyMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::EXECUTION, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::SPAWNING, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::PARRYING, MonsterStateType::CANTACT);
+	AnimTypeToStateType.Add(MonsterAnimationType::GROGGY_START, MonsterStateType::CANTACT);
 
 	RandomRotateMap.Add(0, [&]()
 		{
@@ -166,7 +167,6 @@ AEnemyMonster::AEnemyMonster()
 
 			if (MeshOpacity <= 0.0f)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("asdfasf"));
 				SetActive(false);
 				SetActorHiddenInGame(true);
 				SetActorEnableCollision(false);
@@ -322,7 +322,6 @@ AEnemyMonster::AEnemyMonster()
 				ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			}
 		});
-
 
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::IDLE, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(true, [&]()
@@ -662,7 +661,7 @@ void AEnemyMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, 
 	//if (MyMonsterType == MonsterType::TUTORIAL && PlayerCharacter->IsAlive())
 	//	PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
 
-	Stun();
+	ParryingStun();
 
 	VibrateGamePad(1.0f, 0.4);
 	AObjectPool& objectpool = AObjectPool::GetInstance();
@@ -720,7 +719,7 @@ void AEnemyMonster::Rotate()
 	SetActorRotation(FMath::Lerp(Rot, YawRotation, MonsterDataStruct.RotateSpeed * fDeltaTime));
 }
 
-void AEnemyMonster::Stun()
+void AEnemyMonster::ParryingStun()
 {
 	//CanExecution = true;
 	AnimInstance->StopMontage(MontageMap[AnimationType]);
@@ -729,6 +728,16 @@ void AEnemyMonster::Stun()
 	ParryingCollision1->Deactivate();
 	DeactivateRightWeapon();
 	ChangeMontageAnimation(MonsterAnimationType::PARRYING);
+}
+
+void AEnemyMonster::Stun()
+{
+	AnimInstance->StopMontage(MontageMap[AnimationType]);
+	MonsterController->StopMovement();
+	DeactivateSMOverlap();
+	ParryingCollision1->Deactivate();
+	DeactivateRightWeapon();
+	ChangeMontageAnimation(MonsterAnimationType::GROGGY_START);
 }
 
 float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

@@ -229,6 +229,7 @@ public:
 
 	void Rotate();
 
+	virtual void ParryingStun();
 	virtual void Stun() override;
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
