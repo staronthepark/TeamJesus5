@@ -50,6 +50,7 @@ enum class MonsterAnimationType : uint8
 	STARTDEAD,
 	PARRYING,
 	GROGGY_START,
+	GROGGY_LOOP,
 };
 /**
  * 

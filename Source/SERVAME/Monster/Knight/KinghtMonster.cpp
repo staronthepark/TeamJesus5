@@ -106,16 +106,6 @@ AKinghtMonster::AKinghtMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::EXECUTION, [&]()
 		{
-			if (MyMonsterType != MonsterType::ELITEKNIGHT)
-			{
-				KnightAnimInstance->PauseAnimation(MontageMap[AnimationType]);
-				MonsterDataStruct.CharacterHp = 0;
-				float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
-				MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
-				//Die(0.f);
-				return;
-			}
-
 			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			WalkToRunBlend = false;
 			OnHitCancle();
@@ -199,6 +189,27 @@ AKinghtMonster::AKinghtMonster()
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::BACKHIT, [&]()
+		{
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				KnightAnimInstance->BlendSpeed = WalkBlend;
+				ChangeActionType(MonsterActionType::MOVE);
+			}
+			else
+			{
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			}
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::GROGGY_START, [&]()
+		{
+			ChangeMontageAnimation(MonsterAnimationType::GROGGY_LOOP);
+			MonsterDataStruct.CharacterHp = 0;
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::GROGGY_LOOP, [&]()
 		{
 			if (TracePlayer)
 			{
@@ -578,7 +589,8 @@ void AKinghtMonster::OffRotate()
 
 void AKinghtMonster::Stun()
 {
-	//그로기 -> 그로기 아이들 -> 피 1로 만들기 -> 처형 애니 실행
+	//IsStun이 true일 경우 groggy death 애니 재생
+	IsStun = true;
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
 	DeactivateSMOverlap();
@@ -596,6 +608,13 @@ void AKinghtMonster::ParryingStun()
 	ParryingCollision1->Deactivate();
 	DeactivateRightWeapon();
 	ChangeMontageAnimation(MonsterAnimationType::PARRYING);
+}
+
+void AKinghtMonster::PlayExecutionAnimation()
+{
+	IsStun = false;
+	CanExecution = false;
+	ChangeMontageAnimation(MonsterAnimationType::EXECUTION);
 }
 
 void AKinghtMonster::ChangeMontageAnimation(MonsterAnimationType type)
@@ -859,9 +878,3 @@ void AKinghtMonster::CheckMontageEndNotify()
 	}
 }
 
-void AKinghtMonster::PlayExecutionAnimation()
-{
-	IsStun = false;
-	CanExecution = false;
-	ChangeMontageAnimation(MonsterAnimationType::EXECUTION);
-}

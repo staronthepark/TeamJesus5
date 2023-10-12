@@ -856,6 +856,7 @@ void AEnemyMonster::RespawnCharacter()
 	MonsterHPWidget->SetHP(1.0f);
 
 	Imotal = false;
+	IsStun = false;
 	//PlayerCharacter = nullptr;
 	YawRotation = GetActorRotation();
 
