@@ -163,7 +163,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 			UE_LOG(LogTemp, Warning, TEXT("FindPlayer"));
 			FindPlayer = true;
 
-			if (Monster->MyMonsterType == MonsterType::NUN)
+			if (Monster->MyMonsterType == MonsterType::NUN || Monster->MyMonsterType == MonsterType::ELITEKNIGHT)
 			{
 				BossUI->AddToViewport();
 				Monster->PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->LeftButton->OnClicked.AddDynamic(this, &AMonsterController::ChangeLanguage);
@@ -177,7 +177,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		UE_LOG(LogTemp, Warning, TEXT("LostPlayer"));
 		FindPlayer = false;
 
-		if (Monster->MyMonsterType == MonsterType::NUN)
+		if (Monster->MyMonsterType == MonsterType::NUN || Monster->MyMonsterType == MonsterType::ELITEKNIGHT)
 		{
 			Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			Monster->MonsterMoveEventIndex = 1;
