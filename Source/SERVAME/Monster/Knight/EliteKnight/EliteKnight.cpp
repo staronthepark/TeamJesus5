@@ -36,7 +36,7 @@ AEliteKnight::AEliteKnight()
 void AEliteKnight::BeginPlay()
 {
 	Super::BeginPlay();
-
+	DeactivateHpBar();
 	MyMonsterType = MonsterType::ELITEKNIGHT;
 }
 
@@ -74,5 +74,16 @@ void AEliteKnight::Tick(float DeltaTime)
 		SprintDeltaTime = 0;
 		KnightAnimInstance->BlendDirection = 0.f;
 	}
+}
 
+float AEliteKnight::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	MonsterDataStruct.CharacterHp -= DamageAmount;
+
+	MonsterController->BossUI->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
+	MonsterController->BossUI->SetDamageText(DamageAmount);
+
+	return 0.0f;
 }

@@ -170,6 +170,7 @@ public:
 	bool IsOverlap = false;
 	bool IsAttacking = false;
 	bool IsDie = false;
+	bool CanRotate = true;
 
 	bool asd = false;
 	bool asd2 = false;
@@ -228,6 +229,7 @@ public:
 
 	void Rotate();
 
+	virtual void ParryingStun();
 	virtual void Stun() override;
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;

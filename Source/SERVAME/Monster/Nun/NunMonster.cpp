@@ -605,10 +605,13 @@ void ANunMonster::SpawnKnight(int knightnum)
 
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;;
+		auto Knight = GetWorld()->SpawnActor<AKinghtMonster>(KnightClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 
-		auto Knight = GetWorld()->SpawnActor<AKinghtMonster>(KnightClass,SpawnLoc,SpawnRot,SpawnParams);
+		Knight->SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", 0.f);
+		Knight->KnightHeadMesh->SetScalarParameterValueOnMaterials("Dither", 0.f);
+		Knight->SetActorLocation(SpawnLoc);
+		Knight->SetActorRotation(SpawnRot);
 		Knight->Imotal = true;
-
 		Knight->MonsterDataStruct.CharacterMaxHp = SpawnedKnightMaxHp;
 		Knight->MonsterDataStruct.CharacterHp = SpawnedKnightMaxHp;
 		Knight->IsSpawn = true;
@@ -668,7 +671,7 @@ void ANunMonster::MultiHeal()
 
 				if (FoundIndex != -1)
 				{
-					KnightArr.RemoveAt(FoundIndex);
+					KnightArr.RemoveAtSwap(FoundIndex);
 					return;
 				}
 			}
@@ -1085,18 +1088,17 @@ void ANunMonster::SingleHeal()
 	for (int i = 0; i < KnightArr.Num(); i++)
 	{
 		if (KnightArr[i]->MonsterDataStruct.CharacterHp <= 0)
+		{
 			RemoveIndex = KnightArr.Find(KnightArr[i]);
+			KnightArr.RemoveAtSwap(RemoveIndex);
+		}
 		else 		
+		{
 			KnightHpArr.Push(KnightArr[i]->MonsterDataStruct.CharacterHp);
+		}
 	}
 
-	if (RemoveIndex != -1)
-	{
-		KnightArr.RemoveAt(RemoveIndex);
-		KnightHpArr.RemoveAt(RemoveIndex);
-	}
-
-	if (*KnightArr.begin() == nullptr)
+	if (*KnightArr.begin() == nullptr || KnightArr.IsEmpty())
 		return;
 
 	Min = KnightHpArr[0];
@@ -1203,9 +1205,6 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
 		MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
 	}
-
-	if (MonsterDataStruct.CharacterHp <= 0)
-		Die(DamageAmount);
 
 	TeleportDamageSum += DamageAmount;
 	TeleportAttackDamageSum += DamageAmount;

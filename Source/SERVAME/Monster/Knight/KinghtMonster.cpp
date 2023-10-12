@@ -203,6 +203,27 @@ AKinghtMonster::AKinghtMonster()
 			}
 		});
 
+	MontageEndEventMap.Add(MonsterAnimationType::GROGGY_START, [&]()
+		{
+			ChangeMontageAnimation(MonsterAnimationType::GROGGY_LOOP);
+			MonsterDataStruct.CharacterHp = 0;
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::GROGGY_LOOP, [&]()
+		{
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				KnightAnimInstance->BlendSpeed = WalkBlend;
+				ChangeActionType(MonsterActionType::MOVE);
+			}
+			else
+			{
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			}
+		});
+
 	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
 		{
 			StateType = AnimTypeToStateType[MonsterAnimationType::IDLE];
@@ -214,7 +235,7 @@ AKinghtMonster::AKinghtMonster()
 			else
 			{
 				if (!IsMoveStart)
-					MinWalkTime = GetRandNum(3, 5);
+					MinWalkTime = GetRandNum(3, 4);
 
 				IsMoveStart = true;
 				Temp = 0.f;
@@ -329,13 +350,22 @@ void AKinghtMonster::BeginPlay()
 		KnightAnimInstance->SpawningEnd.AddUObject(this, &AKinghtMonster::SpawnEnd);
 		KnightAnimInstance->CanHitCancle.AddUObject(this, &AKinghtMonster::OnHitCancle);
 		KnightAnimInstance->CantHitCancle.AddUObject(this, &AKinghtMonster::OffHitCancle);
+		KnightAnimInstance->CanRotate.AddUObject(this, &AKinghtMonster::OnRotate);
+		KnightAnimInstance->CantRotate.AddUObject(this, &AKinghtMonster::OffRotate);
 	}
 }
 
 void AKinghtMonster::Tick(float DeltaTime)
 {
 	if (Spawning)
+	{
+		OpactiyDeltaTime += 0.0001;
+		SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity += OpactiyDeltaTime);
+		KnightHeadMesh->SetScalarParameterValueOnMaterials("Dither", MeshOpacity += OpactiyDeltaTime);
+
+		UE_LOG(LogTemp, Warning, TEXT("%f"), OpactiyDeltaTime);
 		return;
+	}
 
 	Super::Tick(DeltaTime);
 
@@ -547,7 +577,29 @@ void AKinghtMonster::OffHitCancle()
 	CanCancle = false;
 }
 
+void AKinghtMonster::OnRotate()
+{
+	CanRotate = true;
+}
+
+void AKinghtMonster::OffRotate()
+{
+	CanRotate = false;
+}
+
 void AKinghtMonster::Stun()
+{
+	//IsStun捞 true老 版快 groggy death 局聪 犁积
+	IsStun = true;
+	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
+	MonsterController->StopMovement();
+	DeactivateSMOverlap();
+	ParryingCollision1->Deactivate();
+	DeactivateRightWeapon();
+	ChangeMontageAnimation(MonsterAnimationType::GROGGY_START);
+}
+
+void AKinghtMonster::ParryingStun()
 {
 	//CanExecution = true;
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
@@ -556,6 +608,13 @@ void AKinghtMonster::Stun()
 	ParryingCollision1->Deactivate();
 	DeactivateRightWeapon();
 	ChangeMontageAnimation(MonsterAnimationType::PARRYING);
+}
+
+void AKinghtMonster::PlayExecutionAnimation()
+{
+	IsStun = false;
+	CanExecution = false;
+	ChangeMontageAnimation(MonsterAnimationType::EXECUTION);
 }
 
 void AKinghtMonster::ChangeMontageAnimation(MonsterAnimationType type)
@@ -732,19 +791,26 @@ float AKinghtMonster::Die(float Dm)
 		}
 	}
 
+	if (IsSpawn)
+	{
+		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
+		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+	}
+
 	Imotal = true;
 	GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
 	DeactivateHpBar();
 	DeactivateHitCollision();
 
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
-	ChangeActionType(MonsterActionType::DEAD);
-	StateType = MonsterStateType::CANTACT;
 
 	MonsterController->StopMovement();
 	DeactivateSMOverlap();
 	ParryingCollision1->Deactivate();
 	DeactivateRightWeapon();
+
+	ChangeActionType(MonsterActionType::DEAD);
+	StateType = MonsterStateType::CANTACT;
 	ChangeMontageAnimation(MonsterAnimationType::DEAD);
 
 	GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
@@ -812,9 +878,3 @@ void AKinghtMonster::CheckMontageEndNotify()
 	}
 }
 
-void AKinghtMonster::PlayExecutionAnimation()
-{
-	IsStun = false;
-	CanExecution = false;
-	ChangeMontageAnimation(MonsterAnimationType::EXECUTION);
-}
