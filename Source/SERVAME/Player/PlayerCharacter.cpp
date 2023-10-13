@@ -950,8 +950,8 @@ APlayerCharacter::APlayerCharacter()
 			ChangeMontageAnimation(AnimationType::SAVELOOP);
 			RestoreStat();
 			GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::FadeOut, 2.0f);
+			GameInstance->PlayerStatUI->SetRemainSoul(PlayerDataStruct.SoulCount);
 
-			PlayerHUD->SetSoul(PlayerDataStruct.SoulCount);
 			PlayerHUD->PlayExitAnimation(true);
 			SpawnLocation = GetActorLocation();
 			UJesusSaveGame::GetInstance().Save(this, GameInstance, SaveMapName);
@@ -1651,6 +1651,7 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEventFuncMap[AnimationType::EXECUTIONBOSS].Add(false, [&]()
 		{
 			UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(ExecutionCharacter);
+			CameraShake(PlayerCameraShake);
 			ExecutionCharacter->TakeDamage(PlayerDataStruct.BaseDamage * PlayerDataStruct.PlayerExecutionSecondDamage, CharacterDamageEvent, nullptr, this);
 			VibrateGamePad(0.4f, 0.4f);
 			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
@@ -2416,6 +2417,12 @@ void APlayerCharacter::ResetGame()
 	SpawnLocation = OriginLocation;
 	SetActorLocation(OriginLocation);
 	SetActorRotation(OriginRotation);
+
+	for (int i = 0; i < GameInstance->SavedTriggerActor.Num(); i++)
+	{
+		GameInstance->SavedTriggerActor[i]->IsActive = false;
+		GameInstance->SavedTriggerActor[i]->Init();
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -2635,7 +2642,7 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	if (ExecutionCharacter == nullptr)return;
 
 	PlayerHUD->ClearShield();
-	UGameplayStatics::SetGlobalTimeDilation(this, .25f);
+	//UGameplayStatics::SetGlobalTimeDilation(this, .25f);
 	VibrateGamePad(0.4f, 0.4f);
 	CameraShake(PlayerCameraShake);
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[38].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
