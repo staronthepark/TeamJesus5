@@ -19,8 +19,11 @@ class SERVAME_API USkillUI : public UUserWidget
 	class UImage* Background;
 
 	UMaterialInstanceDynamic* Material;
+
+	FTimerHandle TimerHandle;
+
 public:
 	virtual void NativeOnInitialized() override;
 
-	void SetSkill(float value);
+	void SetSkill(float seconds);
 };

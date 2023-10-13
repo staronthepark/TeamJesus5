@@ -10,9 +10,18 @@ void USkillUI::NativeOnInitialized()
 	Material = Background->GetDynamicMaterial();
 }
 
-void USkillUI::SetSkill(float value)
+void USkillUI::SetSkill(float seconds)
 {
-	Material->SetScalarParameterValue(TEXT("Value"), value);
+	float value = 0;
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	TimerManager.SetTimer(TimerHandle, [&]() {
+		value += 0.1f;
+		Material->SetScalarParameterValue(TEXT("Value"), value);
+		if (value >= 1) {
+			Material->SetScalarParameterValue(TEXT("Value"), 1);
+			TimerManager.ClearTimer(TimerHandle);
+		}
+		}, 10/seconds , false);
 }
 
 
