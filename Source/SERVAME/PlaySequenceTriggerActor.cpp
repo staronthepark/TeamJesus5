@@ -48,7 +48,7 @@ void APlaySequenceTriggerActor::EnableEvent()
 	Character->AxisX = 1;
 	Character->AxisY = 1;
 	Character->PlayerHUD->SetVisibility(ESlateVisibility::Collapsed);
-	Character->SetActorHiddenInGame(true);
+	//Character->SetActorHiddenInGame(true);
 
 	AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 

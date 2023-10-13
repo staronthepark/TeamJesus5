@@ -950,8 +950,8 @@ APlayerCharacter::APlayerCharacter()
 			ChangeMontageAnimation(AnimationType::SAVELOOP);
 			RestoreStat();
 			GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::FadeOut, 2.0f);
+			GameInstance->PlayerStatUI->SetRemainSoul(PlayerDataStruct.SoulCount);
 
-			PlayerHUD->SetSoul(PlayerDataStruct.SoulCount);
 			PlayerHUD->PlayExitAnimation(true);
 			SpawnLocation = GetActorLocation();
 			UJesusSaveGame::GetInstance().Save(this, GameInstance, SaveMapName);
