@@ -4,6 +4,7 @@
 #include "Math/RandomStream.h"
 #include "KnightAttackTriggerComp.h"
 #include "..\..\Manager\CombatManager.h"
+#include "..\..\ObjectPool\EffectObjectInPool.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 AKinghtMonster::AKinghtMonster()
@@ -105,7 +106,6 @@ AKinghtMonster::AKinghtMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::EXECUTION, [&]()
 		{
-			CanRotate = true;
 			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			WalkToRunBlend = false;
 			OnHitCancle();
@@ -121,6 +121,14 @@ AKinghtMonster::AKinghtMonster()
 				ChangeActionType(MonsterActionType::NONE);
 				ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			}
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
+		{
+			KnightAnimInstance->PauseAnimation(MontageMap[AnimationType]);
+			//GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
+			//GetMesh()->SetCollisionProfileName("Ragdoll");
+			//GetMesh()->SetSimulatePhysics(true);
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
@@ -141,6 +149,8 @@ AKinghtMonster::AKinghtMonster()
 				ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			}
 		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::POWERATTACK1, MontageEndEventMap[MonsterAnimationType::ATTACK1]);
 
 	MontageEndEventMap.Add(MonsterAnimationType::SPRINTATTACK, [&]()
 		{
@@ -193,6 +203,27 @@ AKinghtMonster::AKinghtMonster()
 			}
 		});
 
+	MontageEndEventMap.Add(MonsterAnimationType::GROGGY_START, [&]()
+		{
+			ChangeMontageAnimation(MonsterAnimationType::GROGGY_LOOP);
+			MonsterDataStruct.CharacterHp = 0;
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::GROGGY_LOOP, [&]()
+		{
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				KnightAnimInstance->BlendSpeed = WalkBlend;
+				ChangeActionType(MonsterActionType::MOVE);
+			}
+			else
+			{
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			}
+		});
+
 	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
 		{
 			StateType = AnimTypeToStateType[MonsterAnimationType::IDLE];
@@ -204,7 +235,7 @@ AKinghtMonster::AKinghtMonster()
 			else
 			{
 				if (!IsMoveStart)
-					MinWalkTime = GetRandNum(3, 5);
+					MinWalkTime = GetRandNum(3, 4);
 
 				IsMoveStart = true;
 				Temp = 0.f;
@@ -237,7 +268,7 @@ AKinghtMonster::AKinghtMonster()
 				Temp = speed;
 
 			KnightAnimInstance->BlendSpeed = Temp;
-			MonsterDataStruct.RunSpeed = FMath::Lerp(120.f, 240.f, (KnightAnimInstance->BlendSpeed - 300.f) / 300.f);
+			MonsterDataStruct.RunSpeed = FMath::Lerp(120.f, 600.f, (KnightAnimInstance->BlendSpeed - 300.f) / 300.f);
 
 			//KnightAnimInstance->Montage_Stop(0.25f, MontageMap[AnimationType]);
 		});
@@ -254,7 +285,7 @@ AKinghtMonster::AKinghtMonster()
 				Temp = speed;
 
 			KnightAnimInstance->BlendSpeed = Temp;
-			MonsterDataStruct.RunSpeed = FMath::Lerp(120.f, 500.f, (KnightAnimInstance->BlendSpeed - 300.f) / 300.f);
+			MonsterDataStruct.RunSpeed = FMath::Lerp(120.f, 600.f, (KnightAnimInstance->BlendSpeed - 300.f) / 300.f);
 
 			//KnightAnimInstance->Montage_Stop(0.25f, MontageMap[AnimationType]);
 		});
@@ -265,8 +296,16 @@ AKinghtMonster::AKinghtMonster()
 
 	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
 		{
-			ChangeActionType(MonsterActionType::ATTACK);
-			ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
+			if (percent <= 0.5f)
+			{
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
+			}
+			else
+			{
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::POWERATTACK1);
+			}
 		});
 
 	SetActionByRandomMap.Add(MonsterAnimationType::DASHATTACK1, [&](float percent)
@@ -311,13 +350,20 @@ void AKinghtMonster::BeginPlay()
 		KnightAnimInstance->SpawningEnd.AddUObject(this, &AKinghtMonster::SpawnEnd);
 		KnightAnimInstance->CanHitCancle.AddUObject(this, &AKinghtMonster::OnHitCancle);
 		KnightAnimInstance->CantHitCancle.AddUObject(this, &AKinghtMonster::OffHitCancle);
+		KnightAnimInstance->CanRotate.AddUObject(this, &AKinghtMonster::OnRotate);
+		KnightAnimInstance->CantRotate.AddUObject(this, &AKinghtMonster::OffRotate);
 	}
 }
 
 void AKinghtMonster::Tick(float DeltaTime)
 {
 	if (Spawning)
+	{
+		OpactiyDeltaTime += 0.0001;
+		SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity += OpactiyDeltaTime);
+		KnightHeadMesh->SetScalarParameterValueOnMaterials("Dither", MeshOpacity += OpactiyDeltaTime);
 		return;
+	}
 
 	Super::Tick(DeltaTime);
 
@@ -358,7 +404,7 @@ void AKinghtMonster::Tick(float DeltaTime)
 
 	if (MinusOpacity)
 	{
-		OpactiyDeltaTime += 0.01;
+		OpactiyDeltaTime += 0.005;
 		SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity -= OpactiyDeltaTime);
 		KnightHeadMesh->SetScalarParameterValueOnMaterials("Dither", MeshOpacity -= OpactiyDeltaTime);
 	}
@@ -377,8 +423,8 @@ void AKinghtMonster::ReturnBlendFunc(float delta)
 	KnightAnimInstance->BlendSpeed = FMath::Clamp(FMath::Lerp(Val, IdleBlend, ReturnInterpTime / InterpolationDuration), IdleBlend, RunBlend);
 	MonsterDataStruct.RunSpeed = FMath::Clamp(FMath::Lerp(GetCharacterMovement()->MaxWalkSpeed, 0.f, ReturnInterpTime / InterpolationDuration), IdleBlend, RunBlend);
 
-	UE_LOG(LogTemp, Warning, TEXT("%f"), ReturnInterpTime);
-	UE_LOG(LogTemp, Warning, TEXT("%f"), FMath::Lerp(Val, IdleBlend, ReturnInterpTime / InterpolationDuration));
+	//UE_LOG(LogTemp, Warning, TEXT("%f"), ReturnInterpTime);
+	//UE_LOG(LogTemp, Warning, TEXT("%f"), FMath::Lerp(Val, IdleBlend, ReturnInterpTime / InterpolationDuration));
 
 	GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.RunSpeed;
 
@@ -399,8 +445,8 @@ void AKinghtMonster::IdleToWalkBlendFunc(float delta)
 	KnightAnimInstance->BlendSpeed = FMath::Clamp(FMath::Lerp(Val, IdleBlend, IdleToWalkInterpTime / InterpolationDuration), IdleBlend, WalkBlend);
 	auto Speed = FMath::Clamp(FMath::Lerp(GetCharacterMovement()->MaxWalkSpeed, 120.f, IdleToWalkInterpTime / InterpolationDuration), IdleBlend, WalkBlend);
 
-	UE_LOG(LogTemp, Warning, TEXT("%f"), IdleToWalkInterpTime);
-	UE_LOG(LogTemp, Warning, TEXT("%f"), FMath::Lerp(Val, IdleBlend, IdleToWalkInterpTime / InterpolationDuration));
+	//UE_LOG(LogTemp, Warning, TEXT("%f"), IdleToWalkInterpTime);
+	//UE_LOG(LogTemp, Warning, TEXT("%f"), FMath::Lerp(Val, IdleBlend, IdleToWalkInterpTime / InterpolationDuration));
 
 	GetCharacterMovement()->MaxWalkSpeed = Speed;
 
@@ -412,8 +458,6 @@ void AKinghtMonster::IdleToWalkBlendFunc(float delta)
 
 void AKinghtMonster::RespawnCharacter()
 {
-	Super::RespawnCharacter();
-
 	if (IsSpawn)
 	{
 		//소환된 기사 삭제
@@ -423,6 +467,11 @@ void AKinghtMonster::RespawnCharacter()
 		GetWorld()->DestroyActor(this);
 		return;
 	}
+
+	Super::RespawnCharacter();
+
+	KnightAnimInstance->ResumeMontage(MontageMap[AnimationType]);
+	GetWorld()->GetTimerManager().ClearTimer(MonsterDeadTimer);
 
 	//TODO : 일반 기사, 끈질긴 기사 패트롤
 	if (MyMonsterType == MonsterType::KNIGHT || MyMonsterType == MonsterType::PERSISTENTKNIGHT)
@@ -449,6 +498,7 @@ void AKinghtMonster::RespawnCharacter()
 	WeaponOpacity = 1.0f;
 	MeshOpacity = 1.0f;
 
+	GetCapsuleComponent()->SetCollisionProfileName("AIPhysics");
 	SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity);
 	KnightHeadMesh->SetScalarParameterValueOnMaterials("Dither", WeaponOpacity);
 
@@ -472,7 +522,7 @@ void AKinghtMonster::InterpEnd() { IsInterpStart = false; }
 
 void AKinghtMonster::KnockBackStart()
 {
-/*	GetWorld()->GetTimerManager().SetTimer(KnockBackTimerHandle, FTimerDelegate::CreateLambda([=]()
+	GetWorld()->GetTimerManager().SetTimer(KnockBackTimerHandle, FTimerDelegate::CreateLambda([=]()
 		{
 			IsKnockBack = false;
 			GetWorld()->GetTimerManager().ClearTimer(KnockBackTimerHandle);
@@ -481,18 +531,16 @@ void AKinghtMonster::KnockBackStart()
 	GetWorld()->GetTimerManager().SetTimer(KnockBackDelayTimerHandle, FTimerDelegate::CreateLambda([=]()
 		{
 			ActivateAttackTrigger();
-			MontageEndEventMap[MonsterAnimationType::HIT]();
 			GetWorld()->GetTimerManager().ClearTimer(KnockBackDelayTimerHandle);
 		}), KnockBackDelayTime, false);
 
-	StopAnimMontage(MontageMap[AnimationType]); 
 	DeactivateAttackTrigger();
-	IsKnockBack = true;*/ 
+	IsKnockBack = true; 
 }
 
 void AKinghtMonster::KnockBackEmd() 
 { 
-	//IsKnockBack = false; 
+	IsKnockBack = false; 
 }
 
 void AKinghtMonster::SpawnBegin()
@@ -507,7 +555,7 @@ void AKinghtMonster::SpawnBegin()
 void AKinghtMonster::SpawnEnd()
 {
 	Imotal = false;
-	//CanCancle = true;
+	CanCancle = true;
 	Spawning = false;
 	StateType = MonsterStateType::NONE;
 	HitCollision->Activate();
@@ -516,10 +564,10 @@ void AKinghtMonster::SpawnEnd()
 
 void AKinghtMonster::OnHitCancle()
 {
-	//if (MyMonsterType == MonsterType::ELITEKNIGHT)
-	//	CanCancle = false;
-	//else
-	//	CanCancle = true;
+	if (MyMonsterType == MonsterType::ELITEKNIGHT)
+		CanCancle = false;
+	else
+		CanCancle = true;
 }
 
 void AKinghtMonster::OffHitCancle()
@@ -527,16 +575,44 @@ void AKinghtMonster::OffHitCancle()
 	CanCancle = false;
 }
 
-void AKinghtMonster::Stun()
+void AKinghtMonster::OnRotate()
+{
+	CanRotate = true;
+}
+
+void AKinghtMonster::OffRotate()
 {
 	CanRotate = false;
-	CanExecution = true;
+}
+
+void AKinghtMonster::Stun()
+{
+	//IsStun이 true일 경우 groggy death 애니 재생
+	IsStun = true;
+	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
+	MonsterController->StopMovement();
+	DeactivateSMOverlap();
+	ParryingCollision1->Deactivate();
+	DeactivateRightWeapon();
+	ChangeMontageAnimation(MonsterAnimationType::GROGGY_START);
+}
+
+void AKinghtMonster::ParryingStun()
+{
+	//CanExecution = true;
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
 	DeactivateSMOverlap();
 	ParryingCollision1->Deactivate();
 	DeactivateRightWeapon();
 	ChangeMontageAnimation(MonsterAnimationType::PARRYING);
+}
+
+void AKinghtMonster::PlayExecutionAnimation()
+{
+	IsStun = false;
+	CanExecution = false;
+	ChangeMontageAnimation(MonsterAnimationType::EXECUTION);
 }
 
 void AKinghtMonster::ChangeMontageAnimation(MonsterAnimationType type)
@@ -630,14 +706,6 @@ void AKinghtMonster::EndAttackTrigger(MonsterAnimationType AttackAnimType)
 	TracePlayer = true;
 }
 
-void AKinghtMonster::Rotate()
-{
-	if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP
-		|| AnimationType == MonsterAnimationType::EXECUTION)
-		return;
-	SetActorRotation(FMath::Lerp(GetActorRotation(), YawRotation, MonsterDataStruct.RotateSpeed * fDeltaTime));
-}
-
 void AKinghtMonster::DrawCircle(FVector Center)
 {
 	CirclePoints.SetNum(NumSegments);
@@ -705,29 +773,54 @@ void AKinghtMonster::SearchPlayer()
 
 float AKinghtMonster::Die(float Dm)
 {
-	if (MonsterDataStruct.CharacterHp <= 0)
+	if (PlayerCharacter->IsLockOn)
 	{
-		Imotal = true;
-		DeactivateHpBar();
-		DeactivateHitCollision();
+		PlayerCharacter->TargetComp = nullptr;
+		PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
+		PlayerCharacter->GetFirstTarget();
 
-		KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
-		ChangeActionType(MonsterActionType::DEAD);
-		StateType = MonsterStateType::CANTACT;
-
-		MonsterController->StopMovement();
-		DeactivateSMOverlap();
-		ParryingCollision1->Deactivate();
-		DeactivateRightWeapon();
-		ChangeMontageAnimation(MonsterAnimationType::DEAD);
-
-		GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
-			{
-				MinusOpacity = true;
-			}), 3.2f, false);
-
-		return Dm;
+		if (PlayerCharacter->TargetComp == nullptr)
+		{
+			PlayerCharacter->LockOn();
+		}
+		else
+		{
+			Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true, PlayerCharacter->TargetComp);
+		}
 	}
+
+	if (IsSpawn)
+	{
+		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
+		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+	}
+
+	Imotal = true;
+	GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
+	DeactivateHpBar();
+	DeactivateHitCollision();
+
+	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
+
+	MonsterController->StopMovement();
+	DeactivateSMOverlap();
+	ParryingCollision1->Deactivate();
+	DeactivateRightWeapon();
+
+	ChangeActionType(MonsterActionType::DEAD);
+	StateType = MonsterStateType::CANTACT;
+	ChangeMontageAnimation(MonsterAnimationType::DEAD);
+
+	GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
+		{
+			auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[44].ObjClass,
+			GetActorLocation(), FRotator::ZeroRotator);
+			auto CastObj = Cast<AEffectObjectInPool>(PoolObj);
+			CastObj->SetEffectType(SelectEffectType::KNIGHT_DEAD);
+			CastObj->ActivateCurrentEffect();
+
+			MinusOpacity = true;
+		}), 4.5f, false);
 
 	return Dm;
 }
@@ -783,9 +876,3 @@ void AKinghtMonster::CheckMontageEndNotify()
 	}
 }
 
-void AKinghtMonster::PlayExecutionAnimation()
-{
-	IsStun = false;
-	CanExecution = false;
-	ChangeMontageAnimation(MonsterAnimationType::EXECUTION);
-}

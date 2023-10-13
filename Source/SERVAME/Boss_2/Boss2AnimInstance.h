@@ -35,6 +35,7 @@ enum class Boss2AnimationType : uint8
 	GROGGY,
 	START,
 	BACKSTEP,
+	RUNATTACK,
 };
 
 UENUM(BlueprintType)

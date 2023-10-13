@@ -209,6 +209,7 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SHIELDLOOP, PlayerAction::CANWALK);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SHIELDEND, PlayerAction::NONE);
 	PlayerEnumToAnimTypeMap.Add(AnimationType::EOSTOEXECUTION, PlayerAction::CANTACT);
+	PlayerEnumToAnimTypeMap.Add(AnimationType::SHIELDKNOCKBACK, PlayerAction::CANTACT);
 
 
 	PlayerEnumToAnimTypeMap.Add(AnimationType::SHIELDATTACK, PlayerAction::CANTACT);
@@ -435,6 +436,16 @@ APlayerCharacter::APlayerCharacter()
 			PlayerCurAction = PlayerAction::AFTERATTACK;
 		});
 	NotifyBeginEndEventMap[AnimationType::HITBACKLEFT].Add(false, [&]()
+		{
+
+		});
+
+	NotifyBeginEndEventMap.Add(AnimationType::SHIELDKNOCKBACK, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[AnimationType::SHIELDKNOCKBACK].Add(true, [&]()
+		{
+			PlayerCurAction = PlayerAction::AFTERATTACK;
+		});
+	NotifyBeginEndEventMap[AnimationType::SHIELDKNOCKBACK].Add(false, [&]()
 		{
 
 		});
@@ -757,7 +768,10 @@ APlayerCharacter::APlayerCharacter()
 		{
 		});
 	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::DEAD, [&]() {});
-
+	MontageEndEventMap.Add(AnimationType::SHIELDKNOCKBACK, [&]()
+		{
+			CheckInputKey();
+		});
 	MontageEndEventMap.Add(AnimationType::BATTLEDODGE, [&]()
 		{	
 			SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
@@ -937,7 +951,7 @@ APlayerCharacter::APlayerCharacter()
 			RestoreStat();
 			GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::FadeOut, 2.0f);
 
-			
+			PlayerHUD->SetSoul(PlayerDataStruct.SoulCount);
 			PlayerHUD->PlayExitAnimation(true);
 			SpawnLocation = GetActorLocation();
 			UJesusSaveGame::GetInstance().Save(this, GameInstance, SaveMapName);
@@ -1402,7 +1416,11 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANWALK][ActionType::ATTACK].Add(false, [&]() {});
 	InputEventMap[PlayerAction::CANWALK][ActionType::POWERATTACK].Add(true, [&]() {});
 	InputEventMap[PlayerAction::CANWALK][ActionType::POWERATTACK].Add(false, [&]() {});
-	InputEventMap[PlayerAction::CANWALK][ActionType::PARRING].Add(true, [&]() {});
+	InputEventMap[PlayerAction::CANWALK][ActionType::PARRING].Add(true, [&]() {
+
+		if (IsGrab)
+			Parring();
+		});
 	InputEventMap[PlayerAction::CANWALK][ActionType::PARRING].Add(false, [&]() {});
 	InputEventMap[PlayerAction::CANWALK][ActionType::MOVE].Add(true, [&]()
 		{
@@ -1460,7 +1478,18 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANTACT][ActionType::INTERACTION].Add(true, [&]() {});
 	InputEventMap[PlayerAction::CANTACT][ActionType::INTERACTION].Add(false, [&]() {});
 	InputEventMap[PlayerAction::CANTACT][ActionType::SHIELD].Add(true, [&]() {});
-	InputEventMap[PlayerAction::CANTACT][ActionType::SHIELD].Add(false, [&]() {});
+	InputEventMap[PlayerAction::CANTACT][ActionType::SHIELD].Add(false, [&]()
+		{
+
+			if (!IsGrab)return;
+			IsGrab = false;
+			AxisY == 1 && AxisX == 1 ? ChangeMontageAnimation(AnimationType::SHIELDEND)
+				: ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
+			SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
+			AnimInstance->BodyBlendAlpha = 1.0f;
+			ShieldOff();
+			ShoulderView(IsShoulderView);
+		});
 
 	InputEventMap.Add(PlayerAction::CANATTACK, TMap<ActionType, TMap<bool, TFunction<void()>>>());
 	InputEventMap[PlayerAction::CANATTACK].Add(ActionType::DODGE, TMap<bool, TFunction<void()>>());
@@ -1729,7 +1758,7 @@ void APlayerCharacter::BeginPlay()
 
 	GameInstance->InitInstance();
 	GameInstance->InitDefaultSetting();
-	GameInstance->MainMenuWidget->StartButton->OnClicked.AddDynamic(this, &APlayerCharacter::PlayStartAnimation);
+	GameInstance->MainMenuWidget->StartButton->OnClicked.AddDynamic(this, &APlayerCharacter::NewGameButton);
 	GameInstance->MainMenuWidget->ContinueButton->OnClicked.AddDynamic(this, &APlayerCharacter::PlayStartAnimation);
 	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 
@@ -1798,13 +1827,42 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 	PlayerDataStruct.SoulCount = 0;
-	//GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
-	//GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
+
+	SaveMapName = "Garden";
+	PlayerOriginDataStruct = PlayerDataStruct;
+	OriginLocation = GetActorLocation();
+	OriginRotation = GetActorRotation();
+
+	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
+	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
+
 	ASoundManager::GetInstance().Init();
 	CanShieldDeploy = true;
 	CanUseSkill = true;
 
 	SetSoul(PlayerDataStruct.SoulCount);
+}
+
+
+
+void APlayerCharacter::PlayStartAnimation()
+{
+	GameStartSequncePlayer->Play();
+
+	MontageBlendInTime = 0.0f;
+	ChangeMontageAnimation(AnimationType::GAMESTART);
+	AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+	controller->DisableInput(controller);
+	controller->SetInputMode(FInputModeGameOnly());
+	controller->bShowMouseCursor = false;
+	LocketSKMesh->GetAnimInstance()->Montage_Play(MontageMap[AnimationType::NONE]);
+}
+
+
+void APlayerCharacter::NewGameButton()
+{
+	UJesusSaveGame::GetInstance().Delete();
+	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::ResetGame, 1.5f);
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -2136,8 +2194,10 @@ void APlayerCharacter::SetShieldHP(float HP, FVector Location)
 	SetSoul(HP * PlayerDataStruct.ShieldDecreaseSoulPercent);
 
 	float Distance = HP <= 60 ? AttackDefDistance : PowerAttackDefDistance;
-
+	
 	LaunchCharacter(-GetActorRotation().Vector() * Distance, false, false);
+
+	ChangeMontageAnimation(AnimationType::SHIELDKNOCKBACK);
 
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[38].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
@@ -2190,6 +2250,22 @@ bool APlayerCharacter::UseStamina(float value)
 
 void APlayerCharacter::CheckInputKey()
 {
+	if (IsGrab)
+	{
+		ChangeMontageAnimation(AnimationType::SHIELDLOOP);
+		return;
+	}
+	else
+	{
+
+		IsGrab = false;
+		AxisY == 1 && AxisX == 1 ? ChangeMontageAnimation(AnimationType::SHIELDEND)
+			: ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
+		SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
+		AnimInstance->BodyBlendAlpha = 1.0f;
+		ShieldOff();
+		ShoulderView(IsShoulderView);
+	}
 	if (AxisX != 1  || AxisY != 1)
 	{
 		if(AxisY == 2 && !IsGrab)
@@ -2210,7 +2286,7 @@ void APlayerCharacter::CheckInputKey()
 		SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
 		ChangeActionType(ActionType::NONE);
 		ChangeMontageAnimation(AnimationType::IDLE);
-	}
+	}	
 }
 
 bool APlayerCharacter::CanActivate(int32 SoulCount)
@@ -2330,6 +2406,16 @@ void APlayerCharacter::LookTarget()
 		&& AnimInstance->PlayerAnimationType != AnimationType::DEADLOOP
 		&& AnimInstance->PlayerAnimationType != AnimationType::DEADLOOP2)
 		YawRotation.Yaw = GetController()->GetControlRotation().Yaw;
+}
+
+void APlayerCharacter::ResetGame()
+{
+	PlayStartAnimation();
+	SaveMapName = "Garden";
+	PlayerDataStruct = PlayerOriginDataStruct;
+	SpawnLocation = OriginLocation;
+	SetActorLocation(OriginLocation);
+	SetActorRotation(OriginRotation);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -2558,7 +2644,7 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	IsExecute = true;
 	CanShieldDeploy = false;
 
-
+	PlayerHUD->SetSkill(PlayerDataStruct.ShieldCoolDown);
 	GetWorldTimerManager().SetTimer(ShieldCoolDownTimer, this, &APlayerCharacter::RecoverShield, PlayerDataStruct.ShieldCoolDown);
 
 	//ShieldCoolDown
@@ -2829,20 +2915,6 @@ void APlayerCharacter::LoadMap()
 		GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 1.0f);
 	}
 }
-
-void APlayerCharacter::PlayStartAnimation()
-{
-	GameStartSequncePlayer->Play();
-
-	MontageBlendInTime = 0.0f;
-	ChangeMontageAnimation(AnimationType::GAMESTART);
-	AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
-	controller->DisableInput(controller);
-	controller->SetInputMode(FInputModeGameOnly());
-	controller->bShowMouseCursor = false;
-	LocketSKMesh->GetAnimInstance()->Montage_Play(MontageMap[AnimationType::NONE]);
-}
-
 void APlayerCharacter::PlayerDead(bool IsFly)
 {
 	if (IsLockOn)

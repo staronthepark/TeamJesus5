@@ -84,6 +84,7 @@ void ANunEffectObjInPool::SetActive(bool active)
 void ANunEffectObjInPool::ReturnObject()
 {
 	Super::ReturnObject();
+	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 	SetActorTickEnabled(false);
 }
 
