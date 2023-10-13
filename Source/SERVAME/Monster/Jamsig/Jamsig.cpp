@@ -12,11 +12,16 @@ AJamsig::AJamsig()
 	AttackTrigger = CreateDefaultSubobject<UJamsigAttackTriggerComp>(TEXT("AttackTriggerCollision"));
 	AttackTrigger->SetupAttachment(GetMesh());
 
-	ParryingCollision1->SetupAttachment(GetMesh(), FName("Bip001-R-Hand"));
-	SwordTrailComp->SetupAttachment(GetMesh(), FName("Bip001-R-Hand"));
-	WeaponCollision->SetupAttachment(GetMesh(), FName("Bip001-R-Hand"));
-	WeaponOverlapStaticMeshCollision->SetupAttachment(GetMesh(), FName("Bip001-R-Hand"));
+	ParryingCollision1->SetupAttachment(GetMesh(), FName("RHand"));
+	SwordTrailComp->SetupAttachment(GetMesh(), FName("RHand"));
+	WeaponCollision->SetupAttachment(GetMesh(), FName("RHand"));
+	WeaponOverlapStaticMeshCollision->SetupAttachment(GetMesh(), FName("RHand"));
 	WeaponOverlapStaticMeshCollision->SetCollisionProfileName("Weapon");
+
+	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
+		{
+			JamsigAnimInstance->PauseAnimation(MontageMap[AnimationType]);
+		});
 }
 
 void AJamsig::BeginPlay()
@@ -43,6 +48,39 @@ void AJamsig::Tick(float DeltaTime)
 		OpactiyDeltaTime += 0.005;
 		SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity -= OpactiyDeltaTime);
 	}
+}
+
+void AJamsig::ActivateAttackTrigger()
+{
+	AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
+
+void AJamsig::DeactivateAttackTrigger()
+{
+	AttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void AJamsig::KnockBackStart()
+{
+	GetWorld()->GetTimerManager().SetTimer(KnockBackTimerHandle, FTimerDelegate::CreateLambda([=]()
+		{
+			IsKnockBack = false;
+			GetWorld()->GetTimerManager().ClearTimer(KnockBackTimerHandle);
+		}), KnockBackTime, false);
+
+	GetWorld()->GetTimerManager().SetTimer(KnockBackDelayTimerHandle, FTimerDelegate::CreateLambda([=]()
+		{
+			ActivateAttackTrigger();
+			GetWorld()->GetTimerManager().ClearTimer(KnockBackDelayTimerHandle);
+		}), KnockBackDelayTime, false);
+
+	DeactivateAttackTrigger();
+	IsKnockBack = true;
+}
+
+void AJamsig::KnockBackEnd()
+{
+	IsKnockBack = false;
 }
 
 void AJamsig::OnJamsigTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -91,7 +129,11 @@ void AJamsig::EndAttackTrigger(MonsterAnimationType AttackAnimType)
 {
 	if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP)
 		return;
+
 	TracePlayer = true;
+	MonsterMoveEventIndex = 1;
+	ChangeActionType(MonsterActionType::MOVE);
+	ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 }
 
 float AJamsig::Die(float Dm)
@@ -187,6 +229,8 @@ void AJamsig::ChangeMontageAnimation(MonsterAnimationType type)
 float AJamsig::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	
+	KnockBackStart();
 
 	DeactivateHitCollision();
 

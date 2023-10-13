@@ -30,6 +30,25 @@ public:
 
 	bool MinusOpacity = false;
 
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	APlayerCharacter* PlayerCharacter;
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	bool IsKnockBack = false;
+	UPROPERTY(EditAnyWhere, Category = "KnockBackTime")
+	float KnockBackTime = 0.2f;
+	UPROPERTY(EditAnyWhere, Category = "KnockBackDelayTime")
+	float KnockBackDelayTime = 1.f;
+
+	FTimerHandle KnockBackTimerHandle;
+	FTimerHandle KnockBackDelayTimerHandle;
+
+	void ActivateAttackTrigger();
+	void DeactivateAttackTrigger();
+
+	//Notify
+	void KnockBackStart();
+	void KnockBackEnd();
+
 	UFUNCTION()
 	void OnJamsigTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
