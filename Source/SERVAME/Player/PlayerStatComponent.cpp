@@ -68,6 +68,7 @@ void UPlayerStatComponent::BeginPlay()
 		{
 			Owner->PlayerDataStruct.MaxStamina += Owner->PlayerDataStruct.MaxStamina * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
 			Owner->PlayerDataStruct.StaminaIndex++;
+			Owner->PlayerHUD->SetStamina(Owner->PlayerDataStruct.MaxStamina);
 			return true;
 		}
 		return false;
@@ -78,6 +79,7 @@ void UPlayerStatComponent::BeginPlay()
 		{
 			Owner->PlayerDataStruct.MaxStamina += Owner->PlayerDataStruct.MaxStamina * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
 			Owner->PlayerDataStruct.StaminaIndex++;
+			Owner->PlayerHUD->SetStamina(Owner->PlayerDataStruct.MaxStamina);
 			return true;
 		}
 		return false;
@@ -88,6 +90,7 @@ void UPlayerStatComponent::BeginPlay()
 		{
 			Owner->PlayerDataStruct.MaxStamina += Owner->PlayerDataStruct.MaxStamina * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
 			Owner->PlayerDataStruct.StaminaIndex++;
+			Owner->PlayerHUD->SetStamina(Owner->PlayerDataStruct.MaxStamina);
 			return true;
 		}
 		return false;
@@ -129,6 +132,7 @@ void UPlayerStatComponent::BeginPlay()
 		{
 			Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
 			Owner->PlayerDataStruct.HPIndex++;
+			Owner->PlayerHUD->SetHP(Owner->PlayerDataStruct.CharacterMaxHp);
 			return true;
 		}
 		return false;
@@ -139,6 +143,7 @@ void UPlayerStatComponent::BeginPlay()
 		{
 			Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
 			Owner->PlayerDataStruct.HPIndex++;
+			Owner->PlayerHUD->SetHP(Owner->PlayerDataStruct.CharacterMaxHp);
 			return true;
 		}
 		return false;
@@ -149,6 +154,7 @@ void UPlayerStatComponent::BeginPlay()
 		{
 			Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
 			Owner->PlayerDataStruct.HPIndex++;
+			Owner->PlayerHUD->SetHP(Owner->PlayerDataStruct.CharacterMaxHp);
 			return true;
 		}
 		return false;
@@ -157,7 +163,7 @@ void UPlayerStatComponent::BeginPlay()
 	{
 		if (Owner->CanActivate(HpStatList[Owner->PlayerDataStruct.HPIndex].SoulCost))
 		{
-			Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
+			Owner->PlayerDataStruct.PlayerHealValue += Owner->PlayerDataStruct.PlayerHealValue * HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
 			Owner->PlayerDataStruct.HPIndex++;
 			return true;
 		}
@@ -167,7 +173,8 @@ void UPlayerStatComponent::BeginPlay()
 	{
 		if (Owner->CanActivate(HpStatList[Owner->PlayerDataStruct.HPIndex].SoulCost))
 		{
-			Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
+			Owner->PlayerDataStruct.MaxHealCount += HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
+			Owner->CurHealCount = Owner->PlayerDataStruct.MaxHealCount;
 			Owner->PlayerDataStruct.HPIndex++;
 			return true;
 		}

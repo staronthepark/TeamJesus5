@@ -145,7 +145,7 @@ void AJesusPlayerController::PressDodge()
 
 	if (character->AnimInstance->PlayerAnimationType == AnimationType::SAVELOOP && IsInputKeyDown(EKeys::Gamepad_FaceButton_Right))
 	{
-		character->ChangeMontageAnimation(AnimationType::SAVEEND);
+		character->ChangeMontageAnimation(AnimationType::SAVEEND);		
 		character->PlayerHUD->PlayExitAnimation(false);
 		return;
 	}
