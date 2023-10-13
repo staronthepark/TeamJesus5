@@ -31,7 +31,7 @@ void AJamsig::BeginPlay()
 	DeactivateHpBar();
 
 	SetActive(true);
-	PlayerCharacter = nullptr;
+	Player = nullptr;
 
 	JamsigAnimInstance = Cast<UJamsigAniminstance>(GetMesh()->GetAnimInstance());
 
@@ -87,10 +87,10 @@ void AJamsig::OnJamsigTargetDetectionBeginOverlap(UPrimitiveComponent* Overlappe
 {
 	if (ActionType == MonsterActionType::DEAD)
 		return;
-	if (PlayerCharacter == nullptr)
+	if (Player == nullptr)
 	{
-		PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
-		Super::PlayerCharacter = PlayerCharacter;
+		Player = Cast<APlayerCharacter>(OtherActor);
+		Super::PlayerCharacter = Player;
 	}
 }
 
@@ -100,11 +100,14 @@ void AJamsig::OnJamsigTargetDetectionEndOverlap(UPrimitiveComponent* OverlappedC
 }
 
 void AJamsig::StartAttackTrigger(MonsterAnimationType AttackAnimType)
-{
-	TracePlayer = false;
-	MonsterController->StopMovement();
-	ChangeMontageAnimation(MonsterAnimationType::IDLE);
-
+{ 
+	if (MonsterDataStruct.CharacterHp > 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("StartAttackTrigger"));
+		TracePlayer = false;
+		MonsterController->StopMovement();
+		ChangeMontageAnimation(MonsterAnimationType::IDLE);
+	}
 	//TracePlayer = false;
 	//if (StateType == MonsterStateType::CANTACT )
 	//	return;
@@ -127,30 +130,39 @@ void AJamsig::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 
 void AJamsig::EndAttackTrigger(MonsterAnimationType AttackAnimType)
 {
-	if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP)
-		return;
+	if (MonsterDataStruct.CharacterHp > 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EndAttackTrigger"));
+		if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP)
+			return;
 
-	TracePlayer = true;
-	MonsterMoveEventIndex = 1;
-	ChangeActionType(MonsterActionType::MOVE);
-	ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+		TracePlayer = true;
+		MonsterMoveEventIndex = 1;
+		ChangeActionType(MonsterActionType::MOVE);
+		ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+	}
 }
 
 float AJamsig::Die(float Dm)
 {
-	if (PlayerCharacter->IsLockOn)
+	UE_LOG(LogTemp, Warning, TEXT("Die"));
+	DeactivateAttackTrigger();
+	GetWorld()->GetTimerManager().ClearTimer(KnockBackTimerHandle);
+	GetWorld()->GetTimerManager().ClearTimer(KnockBackDelayTimerHandle);
+	
+	if (Player->IsLockOn)
 	{
-		PlayerCharacter->TargetComp = nullptr;
-		PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
-		PlayerCharacter->GetFirstTarget();
+		Player->TargetComp = nullptr;
+		Player->GetCompsInScreen(Player->TargetCompArray);
+		Player->GetFirstTarget();
 
-		if (PlayerCharacter->TargetComp == nullptr)
+		if (Player->TargetComp == nullptr)
 		{
-			PlayerCharacter->LockOn();
+			Player->LockOn();
 		}
 		else
 		{
-			Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true, PlayerCharacter->TargetComp);
+			Cast<ABaseCharacter>(Player->TargetComp->GetOwner())->ActivateLockOnImage(true, Player->TargetComp);
 		}
 	}
 
@@ -158,7 +170,7 @@ float AJamsig::Die(float Dm)
 	UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
 
 	Imotal = true;
-	GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
+	//GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
 	DeactivateHpBar();
 	DeactivateHitCollision();
 
@@ -175,6 +187,7 @@ float AJamsig::Die(float Dm)
 
 	GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
 		{
+			GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
 			auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[44].ObjClass,
 			GetActorLocation(), FRotator::ZeroRotator);
 			auto CastObj = Cast<AEffectObjectInPool>(PoolObj);

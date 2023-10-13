@@ -31,7 +31,7 @@ public:
 	bool MinusOpacity = false;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
-	APlayerCharacter* PlayerCharacter;
+	APlayerCharacter* Player;
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool IsKnockBack = false;
 	UPROPERTY(EditAnyWhere, Category = "KnockBackTime")
