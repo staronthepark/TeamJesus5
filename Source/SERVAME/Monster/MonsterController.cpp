@@ -154,6 +154,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 	}
 
 	auto Dist = FVector::Distance(Player->GetActorLocation(), Monster->GetActorLocation());
+	Monster->PlayerCharacter = Player;
 
 	if (Dist <= PerceptionSight - 100.f)
 	{
@@ -162,7 +163,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 			UE_LOG(LogTemp, Warning, TEXT("FindPlayer"));
 			FindPlayer = true;
 
-			if (Monster->MyMonsterType == MonsterType::NUN)
+			if (Monster->MyMonsterType == MonsterType::NUN || Monster->MyMonsterType == MonsterType::ELITEKNIGHT)
 			{
 				BossUI->AddToViewport();
 				Monster->PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->LeftButton->OnClicked.AddDynamic(this, &AMonsterController::ChangeLanguage);
@@ -176,14 +177,21 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		UE_LOG(LogTemp, Warning, TEXT("LostPlayer"));
 		FindPlayer = false;
 
-		if (Monster->MyMonsterType == MonsterType::NUN)
+		if (Monster->MyMonsterType == MonsterType::NUN || Monster->MyMonsterType == MonsterType::ELITEKNIGHT)
 		{
 			Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			Monster->MonsterMoveEventIndex = 1;
+			if (IsValid(BossUI))
+			{
+				BossUI->RemoveFromParent();
+			}
 		}
 		else
 		{
 			auto Knight = Cast<AKinghtMonster>(Monster);
+
+			if (Knight->IsSpawn)
+				return;
 
 			if (Monster->MyMonsterType == MonsterType::KNIGHT || Monster->MyMonsterType == MonsterType::PERSISTENTKNIGHT)
 			{
@@ -211,7 +219,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 			else if (Monster->MyMonsterType == MonsterType::ELITEKNIGHT)
 			{
 				Knight->ChangeActionType(MonsterActionType::NONE);
-				Knight->TracePlayer = true;
+				Knight->TracePlayer = false;
 				Knight->isReturnBlend = true;
 				Knight->WalkToRunBlend = false;
 				Knight->IsMoveStart = false;

@@ -98,6 +98,8 @@ public:
 	void SpawnEnd();
 	void OnHitCancle();
 	void OffHitCancle();
+	void OnRotate();
+	void OffRotate();
 
 private:
 
@@ -111,7 +113,6 @@ public:
 	void InterpMove();
 	void ActivateAttackTrigger();
 	void DeactivateAttackTrigger();
-	void Rotate();
 	void DrawCircle(FVector Center);
 	void SearchPlayer();
 	void ReturnBlendFunc(float delta);
@@ -129,6 +130,7 @@ public:
 	virtual float Die(float Dm) override;
 
 	virtual void Stun() override;
+	virtual void ParryingStun() override;
 
 	virtual void MonsterHitStop() override;
 

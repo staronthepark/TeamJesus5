@@ -14,6 +14,9 @@ DECLARE_MULTICAST_DELEGATE(FOnSpawningBegin);
 DECLARE_MULTICAST_DELEGATE(FOnSpawningEnd);
 DECLARE_MULTICAST_DELEGATE(FOnCanHitCancle);
 DECLARE_MULTICAST_DELEGATE(FOnCantHitCancle);
+DECLARE_MULTICAST_DELEGATE(FOnCanRotate);
+DECLARE_MULTICAST_DELEGATE(FOnCantRotate);
+
 
 UCLASS()
 class SERVAME_API UKnightAnimInstance : public UBaseAnimInstance
@@ -44,6 +47,12 @@ class SERVAME_API UKnightAnimInstance : public UBaseAnimInstance
 	UFUNCTION()
 	void AnimNotify_OffHitCancle();
 
+	UFUNCTION()
+	void AnimNotify_OnRotate();
+
+	UFUNCTION()
+	void AnimNotify_OffRotate();
+
 public:
 	UKnightAnimInstance();	
 	
@@ -55,6 +64,8 @@ public:
 	FOnSpawningEnd SpawningEnd;
 	FOnCanHitCancle CanHitCancle;
 	FOnCantHitCancle CantHitCancle;
+	FOnCanRotate CanRotate;
+	FOnCanRotate CantRotate;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = true))
 	float BlendSpeed = 0.f;
