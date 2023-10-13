@@ -64,6 +64,7 @@ void APlaySequenceTriggerActor::EndSequence()
 	//Boss->BossAnimInstance->IsSequenceEnd = true;
 	//Boss->BossAnimInstance->ResumeMontage(Boss->GetCurrentMontage());
 	GetWorld()->GetFirstPlayerController()->SetViewTarget(Character);
+	Character->ChangeMontageAnimation(AnimationType::IDLE);
 	Character->SetActorHiddenInGame(false);
 	Character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
 }
