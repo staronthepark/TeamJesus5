@@ -1758,7 +1758,7 @@ void APlayerCharacter::BeginPlay()
 
 	GameInstance->InitInstance();
 	GameInstance->InitDefaultSetting();
-	GameInstance->MainMenuWidget->StartButton->OnClicked.AddDynamic(this, &APlayerCharacter::PlayStartAnimation);
+	GameInstance->MainMenuWidget->StartButton->OnClicked.AddDynamic(this, &APlayerCharacter::NewGameButton);
 	GameInstance->MainMenuWidget->ContinueButton->OnClicked.AddDynamic(this, &APlayerCharacter::PlayStartAnimation);
 	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 
@@ -1829,6 +1829,9 @@ void APlayerCharacter::BeginPlay()
 	PlayerDataStruct.SoulCount = 0;
 
 	SaveMapName = "Garden";
+	PlayerOriginDataStruct = PlayerDataStruct;
+	OriginLocation = GetActorLocation();
+	OriginRotation = GetActorRotation();
 
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
 	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
@@ -1838,6 +1841,28 @@ void APlayerCharacter::BeginPlay()
 	CanUseSkill = true;
 
 	SetSoul(PlayerDataStruct.SoulCount);
+}
+
+
+
+void APlayerCharacter::PlayStartAnimation()
+{
+	GameStartSequncePlayer->Play();
+
+	MontageBlendInTime = 0.0f;
+	ChangeMontageAnimation(AnimationType::GAMESTART);
+	AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+	controller->DisableInput(controller);
+	controller->SetInputMode(FInputModeGameOnly());
+	controller->bShowMouseCursor = false;
+	LocketSKMesh->GetAnimInstance()->Montage_Play(MontageMap[AnimationType::NONE]);
+}
+
+
+void APlayerCharacter::NewGameButton()
+{
+	UJesusSaveGame::GetInstance().Delete();
+	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::ResetGame, 1.5f);
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -2383,6 +2408,16 @@ void APlayerCharacter::LookTarget()
 		YawRotation.Yaw = GetController()->GetControlRotation().Yaw;
 }
 
+void APlayerCharacter::ResetGame()
+{
+	PlayStartAnimation();
+	SaveMapName = "Garden";
+	PlayerDataStruct = PlayerOriginDataStruct;
+	SpawnLocation = OriginLocation;
+	SetActorLocation(OriginLocation);
+	SetActorRotation(OriginRotation);
+}
+
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -2880,20 +2915,6 @@ void APlayerCharacter::LoadMap()
 		GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 1.0f);
 	}
 }
-
-void APlayerCharacter::PlayStartAnimation()
-{
-	GameStartSequncePlayer->Play();
-
-	MontageBlendInTime = 0.0f;
-	ChangeMontageAnimation(AnimationType::GAMESTART);
-	AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
-	controller->DisableInput(controller);
-	controller->SetInputMode(FInputModeGameOnly());
-	controller->bShowMouseCursor = false;
-	LocketSKMesh->GetAnimInstance()->Montage_Play(MontageMap[AnimationType::NONE]);
-}
-
 void APlayerCharacter::PlayerDead(bool IsFly)
 {
 	if (IsLockOn)
