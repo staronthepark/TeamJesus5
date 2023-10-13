@@ -362,8 +362,6 @@ void AKinghtMonster::Tick(float DeltaTime)
 		OpactiyDeltaTime += 0.0001;
 		SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity += OpactiyDeltaTime);
 		KnightHeadMesh->SetScalarParameterValueOnMaterials("Dither", MeshOpacity += OpactiyDeltaTime);
-
-		UE_LOG(LogTemp, Warning, TEXT("%f"), OpactiyDeltaTime);
 		return;
 	}
 
@@ -425,8 +423,8 @@ void AKinghtMonster::ReturnBlendFunc(float delta)
 	KnightAnimInstance->BlendSpeed = FMath::Clamp(FMath::Lerp(Val, IdleBlend, ReturnInterpTime / InterpolationDuration), IdleBlend, RunBlend);
 	MonsterDataStruct.RunSpeed = FMath::Clamp(FMath::Lerp(GetCharacterMovement()->MaxWalkSpeed, 0.f, ReturnInterpTime / InterpolationDuration), IdleBlend, RunBlend);
 
-	UE_LOG(LogTemp, Warning, TEXT("%f"), ReturnInterpTime);
-	UE_LOG(LogTemp, Warning, TEXT("%f"), FMath::Lerp(Val, IdleBlend, ReturnInterpTime / InterpolationDuration));
+	//UE_LOG(LogTemp, Warning, TEXT("%f"), ReturnInterpTime);
+	//UE_LOG(LogTemp, Warning, TEXT("%f"), FMath::Lerp(Val, IdleBlend, ReturnInterpTime / InterpolationDuration));
 
 	GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.RunSpeed;
 
@@ -447,8 +445,8 @@ void AKinghtMonster::IdleToWalkBlendFunc(float delta)
 	KnightAnimInstance->BlendSpeed = FMath::Clamp(FMath::Lerp(Val, IdleBlend, IdleToWalkInterpTime / InterpolationDuration), IdleBlend, WalkBlend);
 	auto Speed = FMath::Clamp(FMath::Lerp(GetCharacterMovement()->MaxWalkSpeed, 120.f, IdleToWalkInterpTime / InterpolationDuration), IdleBlend, WalkBlend);
 
-	UE_LOG(LogTemp, Warning, TEXT("%f"), IdleToWalkInterpTime);
-	UE_LOG(LogTemp, Warning, TEXT("%f"), FMath::Lerp(Val, IdleBlend, IdleToWalkInterpTime / InterpolationDuration));
+	//UE_LOG(LogTemp, Warning, TEXT("%f"), IdleToWalkInterpTime);
+	//UE_LOG(LogTemp, Warning, TEXT("%f"), FMath::Lerp(Val, IdleBlend, IdleToWalkInterpTime / InterpolationDuration));
 
 	GetCharacterMovement()->MaxWalkSpeed = Speed;
 

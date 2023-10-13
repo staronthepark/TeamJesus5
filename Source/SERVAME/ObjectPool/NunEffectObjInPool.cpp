@@ -84,6 +84,7 @@ void ANunEffectObjInPool::SetActive(bool active)
 void ANunEffectObjInPool::ReturnObject()
 {
 	Super::ReturnObject();
+	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 	SetActorTickEnabled(false);
 }
 
@@ -189,8 +190,7 @@ void ANunEffectObjInPool::CurveControlPoint()
 
 	CurvePoint = MidPoint + RotateAngleVal;
 }
-//ㄹㅇㅎㅇㅀ 더ㅗㅇ다 달ㅇ가 ㅎ
-//아 디지겠다
+
 void ANunEffectObjInPool::SetCurrentEffect(EffectType type)
 {
 	Type = type;

@@ -10,6 +10,7 @@
 #include "Components/WidgetComponent.h"
 #include "NumAnimInstance.h"
 #include "..\Knight\KinghtMonster.h"
+#include "..\Knight\EliteKnight\EliteKnight.h"
 #include "NunMonster.generated.h"
 
 /**
@@ -56,15 +57,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
 	TSubclassOf<AKinghtMonster> KnightClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
-	TArray<AKinghtMonster*> KnightArr;
+	TMap<int,int> KnightSpawnMap;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
-	int KnightNum = 4;
+	TArray<AKinghtMonster*> KnightArr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
 	float KnightSpawnRadius = 400.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
 	float KnightSpawnVal = 0.2f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
 	float SpawnedKnightMaxHp = 200.f;
+	int SpawnLevel = 1;
+	const int MaxSpawnLevel = 4;
 
 	TArray<AActor*> TeleportArr;
 
@@ -180,6 +183,7 @@ public:
 	void TelePortAttack();
 	void TelePortTempFunc();
 	void SpawnKnight(int knightnum = 0);
+	void SpawnEliteKnight(int eliteknightnum = 0);
 
 	void DarkAttack();
 	void SingleHeal();
@@ -201,6 +205,7 @@ public:
 	FTimerHandle PaternDelay;
 
 	void SetYaw();
+	void SpawnMagicCircle();
 
 	UFUNCTION()
 	void OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

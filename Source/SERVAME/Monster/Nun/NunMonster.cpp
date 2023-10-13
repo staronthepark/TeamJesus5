@@ -78,6 +78,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::HEAL1, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::HEAL1].Add(true, [&]()
 		{
+			SpawnMagicCircle();
 			SingleHeal();
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::HEAL1].Add(false, [&]()
@@ -87,6 +88,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::HEAL2, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::HEAL2].Add(true, [&]()
 		{
+			SpawnMagicCircle();
 			MultiHeal();
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::HEAL2].Add(false, [&]()
@@ -96,6 +98,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::SPAWNKNIGHT, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::SPAWNKNIGHT].Add(true, [&]()
 		{
+			SpawnMagicCircle();
 			SpawnKnight();
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::SPAWNKNIGHT].Add(false, [&]()
@@ -105,6 +108,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::WORSHIP, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::WORSHIP].Add(true, [&]()
 		{
+			SpawnMagicCircle();
 			DotFloor();
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::WORSHIP].Add(false, [&]()
@@ -114,6 +118,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::JUDEMENT, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::JUDEMENT].Add(true, [&]()
 		{
+			SpawnMagicCircle();
 			JudementAttack();
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::JUDEMENT].Add(false, [&]()
@@ -123,6 +128,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::CURSE, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::CURSE].Add(true, [&]()
 		{
+			SpawnMagicCircle();
 			Curse();
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::CURSE].Add(false, [&]()
@@ -132,7 +138,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::SELFHEAL, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::SELFHEAL].Add(true, [&]()
 		{
-			UE_LOG(LogTemp, Warning, TEXT("SelfHeal"));
+			SpawnMagicCircle();
 			SelfHeal();
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::SELFHEAL].Add(false, [&]()
@@ -142,6 +148,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::DARK, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(true, [&]()
 		{
+			SpawnMagicCircle();
 			DarkAttack();
 		});
 
@@ -152,6 +159,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::PRAY, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::PRAY].Add(true, [&]()
 		{
+			SpawnMagicCircle();
 			PrayAttack();
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::PRAY].Add(false, [&]()
@@ -161,6 +169,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::FRAGMENT, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::FRAGMENT].Add(true, [&]()
 		{
+			SpawnMagicCircle();
 			FragmentsAttack();
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::FRAGMENT].Add(false, [&]()
@@ -170,6 +179,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::CRYSTAL, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::CRYSTAL].Add(true, [&]()
 		{
+			SpawnMagicCircle();
 			CrystalAttack();
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::CRYSTAL].Add(false, [&]()
@@ -179,6 +189,7 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::ILLUSION, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::ILLUSION].Add(true, [&]()
 		{
+			SpawnMagicCircle();
 			IllusionAttack();
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::ILLUSION].Add(false, [&]()
@@ -579,8 +590,6 @@ void ANunMonster::SpawnKnight(int knightnum)
 	if (IsIllusion || MonsterDataStruct.CharacterHp < 500)
 		return;
 
-	int Num = 0;
-
 	FVector SpawnLoc = FVector::ZeroVector;
 	FRotator SpawnRot = FRotator::ZeroRotator;
 	FNavLocation RandomLocation;
@@ -589,12 +598,7 @@ void ANunMonster::SpawnKnight(int knightnum)
 	if (NavSystem == nullptr)
 		return;
 
-	if (knightnum == 0)
-		Num = KnightNum;
-	else
-		Num = knightnum;
-
-	for (int i = 0; i < Num; i++)
+	for (int i = 0; i < knightnum; i++)
 	{
 		if (NavSystem->GetRandomPointInNavigableRadius(GetActorLocation(), KnightSpawnRadius, RandomLocation))
 		{
@@ -843,7 +847,6 @@ void ANunMonster::JudementAttack()
 				JudementObj->SetCurrentEffect(EffectType::JUDGEMENTEFFECT);
 				JudementObj->ActivateCurrentEffect();
 				JudementObj->Damage = 20;
-				JudementObj->LifeTime = 5.f;
 				JudementObj->SweepSingle(1.f, JudementProjectileRange, SkillInfoMap[MonsterAnimationType::JUDEMENT].Damage,
 					IsIllusion, GetController());
 				
@@ -1087,15 +1090,16 @@ void ANunMonster::SingleHeal()
 
 	for (int i = 0; i < KnightArr.Num(); i++)
 	{
-		if (KnightArr[i]->MonsterDataStruct.CharacterHp <= 0)
+  		if (KnightArr[i]->MonsterDataStruct.CharacterHp <= 0)
 		{
 			RemoveIndex = KnightArr.Find(KnightArr[i]);
 			KnightArr.RemoveAtSwap(RemoveIndex);
 		}
-		else 		
-		{
-			KnightHpArr.Push(KnightArr[i]->MonsterDataStruct.CharacterHp);
-		}
+	}
+
+	for (int i = 0; i < KnightArr.Num(); i++)
+	{
+		KnightHpArr.Push(KnightArr[i]->MonsterDataStruct.CharacterHp);
 	}
 
 	if (*KnightArr.begin() == nullptr || KnightArr.IsEmpty())
@@ -1231,7 +1235,10 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 
 	if (SpawnDamageSum >= MonsterDataStruct.CharacterMaxHp * KnightSpawnVal)
 	{
-		SpawnKnight();
+		if (SpawnLevel > MaxSpawnLevel)
+			return 0.f;
+
+		SpawnKnight(KnightSpawnMap[SpawnLevel]);
 		SpawnDamageSum = 0;
 	}
 	if (IllusionDamageSum >= MonsterDataStruct.CharacterMaxHp * IllusionVal)
@@ -1241,6 +1248,24 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	}
 
 	return DamageAmount;
+}
+
+void ANunMonster::SpawnMagicCircle()
+{
+	if (IsIllusion)
+		return;
+
+	auto Loc = GetActorLocation();
+
+	auto Obj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
+		FVector(Loc.X, Loc.Y, Loc.Z - 160.f), FRotator::ZeroRotator);
+
+	Obj->SetActorScale3D(FVector(3.5f, 3.5f, 1.f));
+	auto MagicCircleObj = Cast<ANunEffectObjInPool>(Obj);
+	MagicCircleObj->SetCurrentEffect(EffectType::MAGICCIRCLE);
+	MagicCircleObj->ActivateCurrentEffect();
+
+	MagicCircleObj->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 }
 
 void ANunMonster::TelePort()
@@ -1413,6 +1438,7 @@ void ANunMonster::RespawnCharacter()
 	TeleportDamageSum = 0.f;
 	SpawnDamageSum = 0.f;
 	IllusionDamageSum = 0.f;
+	SpawnLevel = 0;
 
 	MeshOpacity = 1.0f;
 
