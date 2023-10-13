@@ -13,6 +13,7 @@ void USkillUI::NativeOnInitialized()
 void USkillUI::SetSkill(float seconds)
 {
 	float value = 0;
+	Material->SetScalarParameterValue(TEXT("Value"), 0);
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 	TimerManager.SetTimer(TimerHandle, [&]() {
 		value += 0.1f;
@@ -21,7 +22,7 @@ void USkillUI::SetSkill(float seconds)
 			Material->SetScalarParameterValue(TEXT("Value"), 1);
 			TimerManager.ClearTimer(TimerHandle);
 		}
-		}, 10/seconds , false);
+		}, 1/seconds , false);
 }
 
 
