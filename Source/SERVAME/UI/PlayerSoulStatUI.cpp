@@ -25,11 +25,7 @@ void UPlayerSoulStatUI::NativeConstruct()
 
 void UPlayerSoulStatUI::ClickPray()
 {
-	WBP_PlayerRest_UI->SetVisibility(ESlateVisibility::Collapsed);
-	APlayerController* Controller = GetWorld()->GetFirstPlayerController();
-	Controller->SetShowMouseCursor(false);
-	Controller->SetInputMode(FInputModeGameOnly());
-	this->RemoveFromParent();
+	Close();
 }
 
 void UPlayerSoulStatUI::OpenStat()
@@ -57,7 +53,7 @@ void UPlayerSoulStatUI::SetRemainSoul(int value)
 FReply UPlayerSoulStatUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
 	FReply Reply = FReply::Unhandled();
-	if (InKeyEvent.GetKey() == EKeys::Escape)
+	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Q)
 	{
 		Close();
 		Reply = FReply::Handled();

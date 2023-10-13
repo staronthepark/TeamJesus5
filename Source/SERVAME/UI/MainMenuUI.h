@@ -54,6 +54,13 @@ class SERVAME_API UMainMenuUI: public UUserWidget
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* FadeInAnimation;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		UWidgetAnimation* FadeOutForNewGame;
+
+	FWidgetAnimationDynamicEvent EndFadeInDelegate;
+	FWidgetAnimationDynamicEvent EndFadeOutDelegate;
+
 	//ALevelSequenceActor* LevelSequenceActor;
 	//UPROPERTY(EditAnywhere)
 	//	ULevelSequence* LevelSequence;
@@ -123,4 +130,10 @@ public:
 
 	//UFUNCTION()
 	//void SequenceFinish();
+
+	UFUNCTION()
+	void PlayFadeOutAnimation();
+
+	UFUNCTION()
+		void OnEndFadeOut();
 };
