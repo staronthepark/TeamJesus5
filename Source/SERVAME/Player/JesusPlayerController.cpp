@@ -414,6 +414,7 @@ void AJesusPlayerController::OpenMenu()
 	{
 		CurrentSequncePlayer->Stop();
 		character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
+		character->SetActorHiddenInGame(false);
 		CurrentSequncePlayer = nullptr;
 		return;
 	}
@@ -447,6 +448,7 @@ void AJesusPlayerController::CloseMenu()
 	if (CurrentSequncePlayer)
 	{
 		CurrentSequncePlayer->Stop();
+		character->SetActorHiddenInGame(false);
 		character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
 		CurrentSequncePlayer = nullptr;
 		return;
