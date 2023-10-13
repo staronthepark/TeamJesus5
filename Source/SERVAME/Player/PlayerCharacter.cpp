@@ -1829,6 +1829,9 @@ void APlayerCharacter::BeginPlay()
 	PlayerDataStruct.SoulCount = 0;
 
 	SaveMapName = "Garden";
+	PlayerOriginDataStruct = PlayerDataStruct;
+	OriginLocation = GetActorLocation();
+	OriginRotation = GetActorRotation();
 
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadFile, 0.2f);
 	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
@@ -1859,7 +1862,7 @@ void APlayerCharacter::PlayStartAnimation()
 void APlayerCharacter::NewGameButton()
 {
 	UJesusSaveGame::GetInstance().Delete();
-	PlayStartAnimation();
+	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::ResetGame, 1.5f);
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -2403,6 +2406,16 @@ void APlayerCharacter::LookTarget()
 		&& AnimInstance->PlayerAnimationType != AnimationType::DEADLOOP
 		&& AnimInstance->PlayerAnimationType != AnimationType::DEADLOOP2)
 		YawRotation.Yaw = GetController()->GetControlRotation().Yaw;
+}
+
+void APlayerCharacter::ResetGame()
+{
+	PlayStartAnimation();
+	SaveMapName = "Garden";
+	PlayerDataStruct = PlayerOriginDataStruct;
+	SpawnLocation = OriginLocation;
+	SetActorLocation(OriginLocation);
+	SetActorRotation(OriginRotation);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)

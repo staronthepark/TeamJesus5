@@ -306,7 +306,10 @@ public:
 	FRotator YawRotation;
 
 	FVector TargetDirection;
+	FVector OriginLocation;
+
 	FRotator Difference;
+	FRotator OriginRotation;
 
 	int32 PlayerCurAttackIndex;
 
@@ -336,6 +339,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerData")
 	FPlayerCharacterDataStruct PlayerDataStruct;
+
+	FPlayerCharacterDataStruct PlayerOriginDataStruct;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class USkeletalMeshComponent* LocketSKMesh;
@@ -397,6 +403,8 @@ public:
 	void UseItem();
 
 	void LookTarget();
+
+	void ResetGame();
 
 	void SetPlayerForwardRotAndDir();
 	void SetPlayerRightRotAndDir();
