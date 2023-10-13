@@ -2416,6 +2416,12 @@ void APlayerCharacter::ResetGame()
 	SpawnLocation = OriginLocation;
 	SetActorLocation(OriginLocation);
 	SetActorRotation(OriginRotation);
+
+	for (int i = 0; i < GameInstance->SavedTriggerActor.Num(); i++)
+	{
+		GameInstance->SavedTriggerActor[i]->IsActive = false;
+		GameInstance->SavedTriggerActor[i]->Init();
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
