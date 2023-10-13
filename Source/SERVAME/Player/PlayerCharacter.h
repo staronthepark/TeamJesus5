@@ -479,6 +479,9 @@ public:
 	UFUNCTION()
 		void PlayStartAnimation();
 
+	UFUNCTION()
+		void NewGameButton();
+
 	virtual void ResumeMontage() override;
 
 	virtual void HitStop() override;

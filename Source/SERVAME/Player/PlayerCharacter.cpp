@@ -1758,7 +1758,7 @@ void APlayerCharacter::BeginPlay()
 
 	GameInstance->InitInstance();
 	GameInstance->InitDefaultSetting();
-	GameInstance->MainMenuWidget->StartButton->OnClicked.AddDynamic(this, &APlayerCharacter::PlayStartAnimation);
+	GameInstance->MainMenuWidget->StartButton->OnClicked.AddDynamic(this, &APlayerCharacter::NewGameButton);
 	GameInstance->MainMenuWidget->ContinueButton->OnClicked.AddDynamic(this, &APlayerCharacter::PlayStartAnimation);
 	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 
@@ -1838,6 +1838,28 @@ void APlayerCharacter::BeginPlay()
 	CanUseSkill = true;
 
 	SetSoul(PlayerDataStruct.SoulCount);
+}
+
+
+
+void APlayerCharacter::PlayStartAnimation()
+{
+	GameStartSequncePlayer->Play();
+
+	MontageBlendInTime = 0.0f;
+	ChangeMontageAnimation(AnimationType::GAMESTART);
+	AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+	controller->DisableInput(controller);
+	controller->SetInputMode(FInputModeGameOnly());
+	controller->bShowMouseCursor = false;
+	LocketSKMesh->GetAnimInstance()->Montage_Play(MontageMap[AnimationType::NONE]);
+}
+
+
+void APlayerCharacter::NewGameButton()
+{
+	UJesusSaveGame::GetInstance().Delete();
+	PlayStartAnimation();
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -2880,20 +2902,6 @@ void APlayerCharacter::LoadMap()
 		GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 1.0f);
 	}
 }
-
-void APlayerCharacter::PlayStartAnimation()
-{
-	GameStartSequncePlayer->Play();
-
-	MontageBlendInTime = 0.0f;
-	ChangeMontageAnimation(AnimationType::GAMESTART);
-	AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
-	controller->DisableInput(controller);
-	controller->SetInputMode(FInputModeGameOnly());
-	controller->bShowMouseCursor = false;
-	LocketSKMesh->GetAnimInstance()->Montage_Play(MontageMap[AnimationType::NONE]);
-}
-
 void APlayerCharacter::PlayerDead(bool IsFly)
 {
 	if (IsLockOn)
