@@ -8,21 +8,23 @@ void USkillUI::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 	Material = Background->GetDynamicMaterial();
+	value = 1;
 }
 
 void USkillUI::SetSkill(float seconds)
 {
-	float value = 0;
+	value = 0;
 	Material->SetScalarParameterValue(TEXT("Value"), 0);
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 	TimerManager.SetTimer(TimerHandle, [&]() {
 		value += 0.1f;
 		Material->SetScalarParameterValue(TEXT("Value"), value);
 		if (value >= 1) {
-			Material->SetScalarParameterValue(TEXT("Value"), 1);
+			value = 1;
+			Material->SetScalarParameterValue(TEXT("Value"), value);
 			TimerManager.ClearTimer(TimerHandle);
 		}
-		}, 1/seconds , false);
+		}, 1/seconds , true);
 }
 
 
