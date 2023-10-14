@@ -126,11 +126,13 @@ AKinghtMonster::AKinghtMonster()
 	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
 		{
 			KnightAnimInstance->PauseAnimation(MontageMap[AnimationType]);
-			//GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
-			//GetMesh()->SetCollisionProfileName("Ragdoll");
-			//GetMesh()->SetSimulatePhysics(true);
 		});
 
+	MontageEndEventMap.Add(MonsterAnimationType::GROGGY_DEAD, [&]()
+		{
+			KnightAnimInstance->PauseAnimation(MontageMap[AnimationType]);
+		});
+	
 	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
 		{
 			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -205,22 +207,34 @@ AKinghtMonster::AKinghtMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::GROGGY_START, [&]()
 		{
+			CanRotate = false;
 			ChangeMontageAnimation(MonsterAnimationType::GROGGY_LOOP);
-			MonsterDataStruct.CharacterHp = 0;
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::GROGGY_LOOP, [&]()
 		{
-			if (TracePlayer)
+			if (MyMonsterType != MonsterType::ELITEKNIGHT)
 			{
-				MonsterMoveEventIndex = 1;
-				KnightAnimInstance->BlendSpeed = WalkBlend;
-				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::GROGGY_LOOP);
 			}
 			else
 			{
-				ChangeActionType(MonsterActionType::NONE);
-				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+				CanRotate = true;
+				AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+				WalkToRunBlend = false;
+				OnHitCancle();
+
+				if (TracePlayer)
+				{
+					MonsterMoveEventIndex = 1;
+					KnightAnimInstance->BlendSpeed = WalkBlend;
+					ChangeActionType(MonsterActionType::MOVE);
+				}
+				else
+				{
+					ChangeActionType(MonsterActionType::NONE);
+					ChangeMontageAnimation(MonsterAnimationType::IDLE);
+				}
 			}
 		});
 
@@ -613,6 +627,8 @@ void AKinghtMonster::ParryingStun()
 
 void AKinghtMonster::PlayExecutionAnimation()
 {
+	if (MyMonsterType != MonsterType::ELITEKNIGHT)
+		MonsterDataStruct.CharacterHp = 1;
 	IsStun = false;
 	CanExecution = false;
 	ChangeMontageAnimation(MonsterAnimationType::EXECUTION);
@@ -800,6 +816,19 @@ float AKinghtMonster::Die(float Dm)
 		}
 	}
 
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+	for (int32 i = 0; i < MonsterDataStruct.DropSoulCount; i++)
+	{
+		float x = FMath::RandRange(-300.0f, 300.0f);
+		float y = FMath::RandRange(-300.0f, 300.0f);
+		float z = FMath::RandRange(-300.0f, 300.0f);
+
+		FVector location = GetActorLocation() + FVector(x * 0.1f, y * 0.1f, z * 0.1f);
+		FRotator rotation = GetActorRotation() + FRotator(x, y, z);
+
+		objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
+	}
+
 	if (IsSpawn)
 	{
 		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
@@ -820,7 +849,11 @@ float AKinghtMonster::Die(float Dm)
 
 	ChangeActionType(MonsterActionType::DEAD);
 	StateType = MonsterStateType::CANTACT;
-	ChangeMontageAnimation(MonsterAnimationType::DEAD);
+
+	if (AnimationType == MonsterAnimationType::EXECUTION)
+		ChangeMontageAnimation(MonsterAnimationType::GROGGY_DEAD);
+	else
+		ChangeMontageAnimation(MonsterAnimationType::DEAD);
 
 	GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
 		{

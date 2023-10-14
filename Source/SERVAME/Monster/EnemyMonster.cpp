@@ -62,7 +62,9 @@ AEnemyMonster::AEnemyMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::EXECUTION, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::SPAWNING, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::PARRYING, MonsterStateType::CANTACT);
-	AnimTypeToStateType.Add(MonsterAnimationType::GROGGY_START, MonsterStateType::CANTACT);
+	AnimTypeToStateType.Add(MonsterAnimationType::GROGGY_START, MonsterStateType::CANTACT); 
+	AnimTypeToStateType.Add(MonsterAnimationType::GROGGY_DEAD, MonsterStateType::CANTACT);
+	AnimTypeToStateType.Add(MonsterAnimationType::GROGGY_LOOP, MonsterStateType::CANTACT);
 
 	RandomRotateMap.Add(0, [&]()
 		{
@@ -174,19 +176,6 @@ AEnemyMonster::AEnemyMonster()
 				SetActorTickEnabled(false);
 				if (PlayerCharacter != nullptr)
 				{
-					AObjectPool& objectpool = AObjectPool::GetInstance();
-					for (int32 i = 0; i < MonsterDataStruct.DropSoulCount; i++)
-					{
-						float x = FMath::RandRange(-300.0f, 300.0f);
-						float y = FMath::RandRange(-300.0f, 300.0f);
-						float z = FMath::RandRange(-300.0f, 300.0f);
-
-						FVector location = GetActorLocation() + FVector(x * 0.1f, y * 0.1f, z * 0.1f);
-						FRotator rotation = GetActorRotation() + FRotator(x, y, z);
-
-						objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
-					}
-
 					if (PlayerCharacter->IsLockOn)
 					{
 						SetActorTickEnabled(false);
@@ -774,6 +763,19 @@ float AEnemyMonster::Die(float Dm)
 {
 	if (MonsterDataStruct.CharacterHp <= 0)
 	{
+		AObjectPool& objectpool = AObjectPool::GetInstance();
+		for (int32 i = 0; i < MonsterDataStruct.DropSoulCount; i++)
+		{
+			float x = FMath::RandRange(-300.0f, 300.0f);
+			float y = FMath::RandRange(-300.0f, 300.0f);
+			float z = FMath::RandRange(-300.0f, 300.0f);
+
+			FVector location = GetActorLocation() + FVector(x * 0.1f, y * 0.1f, z * 0.1f);
+			FRotator rotation = GetActorRotation() + FRotator(x, y, z);
+
+			objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
+		}
+
 		DeactivateHitCollision();
 		Imotal = true;
 		ChangeActionType(MonsterActionType::DEAD);

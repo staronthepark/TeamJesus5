@@ -1579,6 +1579,7 @@ void AJesusBoss::RespawnCharacter()
 
 void AJesusBoss::PlayExecutionAnimation()
 {
+	CanExecution = false;
 	ChangeMontageAnimation(BossAnimationType::EXECUTION);
 }
 
