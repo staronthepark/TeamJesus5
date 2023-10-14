@@ -507,6 +507,9 @@ void AKinghtMonster::RespawnCharacter()
 	}
 	else
 	{
+		TracePlayer = false;
+		MonsterController->FindPlayer = false;
+		CalcedDist = IdleBlend;
 		ChangeActionType(MonsterActionType::NONE);
 		ChangeMontageAnimation(MonsterAnimationType::IDLE);
 	}
