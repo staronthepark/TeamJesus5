@@ -19,12 +19,12 @@ class SERVAME_API UDiedUI : public UUserWidget
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* DiedInAnimation;
-	UPROPERTY(Transient, meta = (BindWidgetAnim))
-		UWidgetAnimation* DiedOutAnimation;
+	//UPROPERTY(Transient, meta = (BindWidgetAnim))
+	//	UWidgetAnimation* DiedOutAnimation;
 
-	UFUNCTION()
-	void DiedFadeOutAnimation();
-	FWidgetAnimationDynamicEvent DiedInAnimationEvent;
+	//UFUNCTION()
+	//void DiedFadeOutAnimation();
+	//FWidgetAnimationDynamicEvent DiedInAnimationEvent;
 
 public:
 	virtual void NativeOnInitialized() override;

@@ -50,6 +50,30 @@ void UPlayerHUD::NativeOnInitialized()
 			PlayGuidesAnimation(EGuides::soul, value);
 		});
 
+	GuideAnimationFunction.Add(EGuides::LockOn, [&](bool value)
+		{
+			PlayTutorialAnimation(EGuides::LockOn, isGamePad);
+		});
+	GuideAnimationFunction.Add(EGuides::Parring, [&](bool value)
+		{
+			PlayTutorialAnimation(EGuides::Parring, isGamePad);
+		});
+	GuideAnimationFunction.Add(EGuides::Heal, [&](bool value)
+		{
+			PlayTutorialAnimation(EGuides::Heal, isGamePad);
+		});
+	GuideAnimationFunction.Add(EGuides::ShieldBash, [&](bool value)
+		{
+			PlayTutorialAnimation(EGuides::ShieldBash, isGamePad);
+		});
+	GuideAnimationFunction.Add(EGuides::Shield, [&](bool value)
+		{
+			PlayTutorialAnimation(EGuides::Shield, isGamePad);
+		});
+	GuideAnimationFunction.Add(EGuides::StrongAttack, [&](bool value)
+		{
+			PlayTutorialAnimation(EGuides::StrongAttack, isGamePad);
+		});
 	isGamePad = Keyboard;
 }
 
@@ -231,6 +255,12 @@ void UPlayerHUD::PlayMapUIAnimation(EMapName MapName)
 {
 	if (WBP_MapInfo)
 		WBP_MapInfo->PlayMapInfoAnimation(MapName);
+}
+
+void UPlayerHUD::PlayTutorialAnimation(EGuides type, int isPad)
+{
+	WBP_Tutorial->ChangeTexture(type, isPad);
+	PlayAnimation(TutorialAnimation);
 }
 
 void UPlayerHUD::FadeInAnimation(bool isFadeIn)

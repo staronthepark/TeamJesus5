@@ -16,6 +16,7 @@
 #include "PlayerGuideUI.h"
 #include "PlayerShieldUI.h"
 #include <Components/CanvasPanel.h>
+#include "TutorialUI.h"
 #include "PlayerHUD.generated.h"
 
 
@@ -68,6 +69,9 @@ class SERVAME_API UPlayerHUD : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 		UPlayerHPUI* WBP_PlayerHPUI;
+
+	UPROPERTY(meta = (BindWidget))
+		UTutorialUI* WBP_Tutorial;
 	
 	UPROPERTY(meta = (BindWidget))
 		UImage* PlayerControlGuid;
@@ -109,6 +113,9 @@ class SERVAME_API UPlayerHUD : public UUserWidget
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* InteractionOpacityOutAnimation;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		UWidgetAnimation* TutorialAnimation;
 
 	//UPROPERTY(Transient, meta = (BindWidgetAnim))
 	//	UWidgetAnimation* ExitOpenAnimation;
@@ -158,6 +165,7 @@ public:
 	void PlayInteractionAnimation(bool IsOpen);
 	void PlayExitAnimation(bool IsOpen);
 	void PlayMapUIAnimation(EMapName MapName);
+	void PlayTutorialAnimation(EGuides type, int isPad);
 
 	void FadeInAnimation(bool isFadeIn);
 	void ClearShield();

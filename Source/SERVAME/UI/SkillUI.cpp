@@ -17,14 +17,14 @@ void USkillUI::SetSkill(float seconds)
 	Material->SetScalarParameterValue(TEXT("Value"), 0);
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 	TimerManager.SetTimer(TimerHandle, [&]() {
-		value += 0.1f;
+		value += 1 / seconds;
 		Material->SetScalarParameterValue(TEXT("Value"), value);
 		if (value >= 1) {
 			value = 1;
 			Material->SetScalarParameterValue(TEXT("Value"), value);
 			TimerManager.ClearTimer(TimerHandle);
 		}
-		}, 1/seconds , true);
+		}, seconds / 10, true);
 }
 
 
