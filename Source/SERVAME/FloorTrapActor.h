@@ -36,6 +36,7 @@ public:
 			UBoxComponent* BoxComp;
 
 		bool IsPlaced;
+		bool IsTrigger;
 		
 private:
 

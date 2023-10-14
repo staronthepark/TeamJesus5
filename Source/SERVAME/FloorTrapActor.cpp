@@ -7,7 +7,7 @@ AFloorTrapActor::AFloorTrapActor()
 {
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("TrapMesh");
 	SceneComp = CreateDefaultSubobject<UStaticMeshComponent>("SceneComp");
-	BoxComp = CreateDefaultSubobject<UStaticMeshComponent>("BoxComp");
+	BoxComp = CreateDefaultSubobject<UBoxComponent>("BoxComp");
 	MeshComp->SetupAttachment(SceneComp);
 	BoxComp->SetupAttachment(SceneComp);
 }
@@ -16,25 +16,33 @@ void AFloorTrapActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsActive)
+	if (IsTrigger)
 	{
-		if (MeshComp->GetComponentLocation().Z < 0)
+		if (IsPlaced)
 		{
-			float Z = MeshComp->GetComponentLocation().Z;
-			MeshComp->SetRelativeLocation(FVector(0, 0, Z += Speed * DeltaTime));
+			if (MeshComp->GetComponentLocation().Z < 0)
+			{
+				float Z = MeshComp->GetComponentLocation().Z;
+				MeshComp->SetRelativeLocation(FVector(0, 0, Z -= Speed * DeltaTime));
+			}
+			else
+			{
+				IsPlaced = false;
+				BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			}
 		}
 		else
 		{
-			IsActive = false;
-			BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		}
-	}
-	else
-	{
-		if (MeshComp->GetComponentLocation().Z > -129.705314)
-		{
-			float Z = MeshComp->GetComponentLocation().Z;
-			MeshComp->SetRelativeLocation(FVector(0, 0, Z -= Speed * DeltaTime));
+			if (MeshComp->GetComponentLocation().Z > -129.705314)
+			{
+				float Z = MeshComp->GetComponentLocation().Z;
+				MeshComp->SetRelativeLocation(FVector(0, 0, Z -= Speed * DeltaTime));
+			}
+			else
+			{
+				IsPlaced = true;
+				IsTrigger = false;
+			}
 		}
 	}
 }
@@ -49,6 +57,9 @@ void AFloorTrapActor::BeginPlay()
 	{
 		GetWorldTimerManager().SetTimer(Timer, this, &AFloorTrapActor::EnableTrap, Time);
 	}
+
+	IsPlaced = true;
+	IsActive = false;
 }
 
 void AFloorTrapActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -68,8 +79,7 @@ void AFloorTrapActor::BeginTriggerEvent()
 {
 	Super::BeginTriggerEvent();
 
-	if (!IsActive)
-		IsActive = true;
+	IsTrigger = true;
 }
 
 void AFloorTrapActor::EndTriggerEvent()
@@ -81,7 +91,7 @@ void AFloorTrapActor::EnableEvent()
 {
 	Super::EnableEvent();
 
-	if(!IsTimer && IsActive)
+	if(!IsTimer && IsPlaced)
 	EnableTrap();
 }
 
@@ -91,7 +101,7 @@ void AFloorTrapActor::EnableTrap()
 
 	if (IsTimer)
 	{
-		IsActive = true;
+		IsPlaced = true;
 		GetWorldTimerManager().SetTimer(Timer, this, &AFloorTrapActor::EnableTrap, Time);
 	}
 }
