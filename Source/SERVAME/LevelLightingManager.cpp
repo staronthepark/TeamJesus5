@@ -53,7 +53,10 @@ void ALevelLightingManager::Tick(float DeltaTime)
 
 void ALevelLightingManager::ChangeTargetLightSetting(FString Name)
 {
-	TargetDirectionalLight = LightSettingMap[Name].DirectionalLight;
-	TargetHeightFog = LightSettingMap[Name].HeightFog;
-	TargetSkyLight = LightSettingMap[Name].SkyLight;
+	if (LightSettingMap.Contains(Name))
+	{
+		TargetDirectionalLight = LightSettingMap[Name].DirectionalLight;
+		TargetHeightFog = LightSettingMap[Name].HeightFog;
+		TargetSkyLight = LightSettingMap[Name].SkyLight;
+	}
 }

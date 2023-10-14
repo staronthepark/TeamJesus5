@@ -15,6 +15,7 @@
 #include "../JesusSaveGame.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "..\UI\PlayerHUD.h"
+#include "../LevelLightingManager.h"
 #include <SERVAME/UI/PlayerSoulStatUI.h>
 
 APlayerCharacter::APlayerCharacter()
@@ -2918,6 +2919,12 @@ void APlayerCharacter::LoadMap()
 
 	FLatentActionInfo LatentInfo;
 	UGameplayStatics::LoadStreamLevel(this, SaveMapName, true, true, LatentInfo);
+
+	ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
+
+
+	LightManager->ChangeTargetLightSetting(SaveMapName.ToString());
+
 	if (SaveMapName == "2-2Map")
 	{
 		SaveMapName = "A_KimMinYeongMap_Boss1";
