@@ -1162,6 +1162,7 @@ void AJesusBoss::BeginPlay()
 	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	DarkExplosionCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	MonsterLockOnWidget = Cast<UMonsterWidget>(LockOnWidget->GetWidget());
 	/*==========
@@ -2092,12 +2093,14 @@ void AJesusBoss::AttackCheck()
 void AJesusBoss::CollisionEnableNotify()
 {
 	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	ParringTrailComp->Activate();
 }
 
 void AJesusBoss::CollisionDisableNotify()
 {
 	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ParringTrailComp->Deactivate();
 	Damage = 0;
 }
