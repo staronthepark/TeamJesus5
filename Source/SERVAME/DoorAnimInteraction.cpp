@@ -31,13 +31,17 @@ void ADoorAnimInteraction::BeginPlay()
 	AnimInstance = Cast<UDoorAnimInstance>(MeshComp->GetAnimInstance());
 
 	FMovieSceneSequencePlaybackSettings PlaybackSettings;
-	BossRoomDoorOpenSequncePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), BossRoomDoorOpenSequence
-		, PlaybackSettings, LevelSequenceActor);
+	if (BossRoomDoorOpenSequence != nullptr)
+	{
+		BossRoomDoorOpenSequncePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), BossRoomDoorOpenSequence
+			, PlaybackSettings, LevelSequenceActor);
+
+		BossRoomDoorOpenSequncePlayer->OnFinished.AddDynamic(this, &ADoorAnimInteraction::EndSequence);
+	}
 
 	CineCameraActor = Cast<ACineCameraActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ACineCameraActor::StaticClass()));
 
 
-	BossRoomDoorOpenSequncePlayer->OnFinished.AddDynamic(this, &ADoorAnimInteraction::EndSequence);
 	CloseDoorComp->OnComponentBeginOverlap.AddDynamic(this, &ADoorAnimInteraction::OnCloseDoorOverlapBegin);
 	OpenDoorComp->OnComponentEndOverlap.AddDynamic(this, &ADoorAnimInteraction::OnOpenDoorOverlapEnd);
 	Init();
@@ -93,11 +97,16 @@ void ADoorAnimInteraction::EnableEvent()
 	Character->Imotal = true;
 	Character->AxisX = 1;
 	Character->AxisY = 1;
-	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 	Character->ChangeMontageAnimation(AnimationType::DOOROPEN);
 	TriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	BossRoomDoorOpenSequncePlayer->Play();
-	GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(CineCameraActor, 6.0f);
+
+	if (BossRoomDoorOpenSequence != nullptr)
+	{
+		BossRoomDoorOpenSequncePlayer->Play();
+		GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
+		GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(CineCameraActor, 6.0f);
+	}
+
 	IsActive = true;
 	
 	for (int i = 0; i < ParticleArray.Num(); i++)
