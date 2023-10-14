@@ -481,6 +481,8 @@ void AKinghtMonster::RespawnCharacter()
 		IsPatrol = true;
 		MonsterMoveEventIndex = 0;
 		ChangeActionType(MonsterActionType::MOVE);
+		ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	}		
 	else if (MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
 	{
@@ -766,9 +768,17 @@ void AKinghtMonster::SearchPlayer()
 	float RightSpeed = FVector::DotProduct(TargetLoc, Right);
 
 	if (ForwardSpeed > 0)
+	{
+		if (PlayerCharacter->CurActionType == ActionType::POWERATTACK ||
+			PlayerCharacter->CurActionType == ActionType::SKILL)
+			HitType = MonsterAnimationType::SUPER_HIT;
+
 		HitType = MonsterAnimationType::HIT;
+	}
 	else if (ForwardSpeed < 0)
+	{
 		HitType = MonsterAnimationType::BACKHIT;
+	}
 }
 
 float AKinghtMonster::Die(float Dm)
