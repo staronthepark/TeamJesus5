@@ -768,9 +768,17 @@ void AKinghtMonster::SearchPlayer()
 	float RightSpeed = FVector::DotProduct(TargetLoc, Right);
 
 	if (ForwardSpeed > 0)
+	{
+		if (PlayerCharacter->CurActionType == ActionType::POWERATTACK ||
+			PlayerCharacter->CurActionType == ActionType::SKILL)
+			HitType = MonsterAnimationType::SUPER_HIT;
+
 		HitType = MonsterAnimationType::HIT;
+	}
 	else if (ForwardSpeed < 0)
+	{
 		HitType = MonsterAnimationType::BACKHIT;
+	}
 }
 
 float AKinghtMonster::Die(float Dm)

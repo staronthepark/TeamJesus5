@@ -55,6 +55,7 @@ AEnemyMonster::AEnemyMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::SPRINTATTACK, MonsterStateType::BEFOREATTACK);
 
 	AnimTypeToStateType.Add(MonsterAnimationType::HIT, MonsterStateType::CANTACT);
+	AnimTypeToStateType.Add(MonsterAnimationType::SUPER_HIT, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::BACKHIT, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::DEAD, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::DEADLOOP, MonsterStateType::CANTACT);
