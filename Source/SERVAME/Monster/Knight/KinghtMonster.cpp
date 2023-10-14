@@ -334,6 +334,8 @@ void AKinghtMonster::BeginPlay()
 {
 	Super::BeginPlay(); 
 
+	MonsterController->CanPerception = true;
+
 	DeactivateHpBar();
 
 	if(IsPatrol)
