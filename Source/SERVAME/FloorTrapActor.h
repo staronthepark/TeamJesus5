@@ -22,10 +22,20 @@ public:
 		UPROPERTY(EditAnyWhere)
 			bool IsTimer;
 		UPROPERTY(EditAnywhere)
+			float Damage;
+		UPROPERTY(EditAnywhere)
+			float Speed;
+		UPROPERTY(EditAnywhere)
+			float Time;
+
+		UPROPERTY(EditAnywhere)
 			UStaticMeshComponent* MeshComp;
+		UPROPERTY(EditAnywhere)
+			USceneComponent* SceneComp;
+		
 private:
 
-
+	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
 	virtual void BeginTriggerEvent()override;
 	virtual void EndTriggerEvent()override;
