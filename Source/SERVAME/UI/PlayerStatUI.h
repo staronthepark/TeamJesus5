@@ -37,6 +37,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		UTexture2D* ExplainText;
+
+	UPROPERTY(EditAnywhere)
+		int Cost;
 };
 
 UCLASS()
@@ -113,6 +116,9 @@ class SERVAME_API UPlayerStatUI : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 		UStatUI* ShieldButton4;
 
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* CostText;
+
 	UPROPERTY(EditAnywhere)
 	TMap<EStatsType, FStatButtonExplainTextures> ExplainTextures;
 
@@ -160,6 +166,8 @@ public:
 
 	// 이게 남은 영혼!!
 	void SetRemainSoul(int value);
+
+	void SetCost(int value);
 
 	void Open();
 

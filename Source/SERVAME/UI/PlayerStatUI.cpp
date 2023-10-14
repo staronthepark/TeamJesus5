@@ -108,6 +108,11 @@ void UPlayerStatUI::SetRemainSoul(int value)
 	RemainSoulText->SetText(FText::AsNumber(value));
 }
 
+void UPlayerStatUI::SetCost(int value)
+{
+	CostText->SetText(FText::AsNumber(value));
+}
+
 void UPlayerStatUI::Open()
 {
 	this->SetVisibility(ESlateVisibility::Visible);
