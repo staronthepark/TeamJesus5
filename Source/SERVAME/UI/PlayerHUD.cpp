@@ -57,10 +57,10 @@ void UPlayerHUD::NativeOnInitialized()
 			currentLanguage = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->language;
 			PlayMapUIAnimation(EGuides::Repent);
 		});
-	GuideAnimationFunction.Add(EGuides::shield, [&](bool value)
-		{
-			PlayGuidesAnimation(EGuides::shield, value);
-		});
+	//GuideAnimationFunction.Add(EGuides::shield, [&](bool value)
+	//	{
+	//		PlayGuidesAnimation(EGuides::shield, value);
+	//	});
 	GuideAnimationFunction.Add(EGuides::shieldattack, [&](bool value)
 		{
 			PlayGuidesAnimation(EGuides::shieldattack, value);
