@@ -26,6 +26,10 @@ ANunMonster::ANunMonster()
 	ProjectileRootComp = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileRootComp"));
 	ProjectileRootComp->SetupAttachment(RootComponent);
 
+	CheckPerceptionTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("PerceptionCheckTrigger"));
+	CheckPerceptionTrigger->SetupAttachment(GetMesh());
+	CheckPerceptionTrigger->SetCollisionProfileName("DetectPlayer");
+
 	Loc1 = CreateDefaultSubobject<UBoxComponent>(TEXT("Loc1"));
 	Loc1->SetupAttachment(ProjectileRootComp);
 	Loc2 = CreateDefaultSubobject<UBoxComponent>(TEXT("Loc2"));
@@ -404,6 +408,7 @@ void ANunMonster::BeginPlay()
 
 	PlayerCharacter = nullptr;
 	
+	CheckPerceptionTrigger->OnComponentBeginOverlap.AddDynamic(this, &ANunMonster::OnPerceptionTriggerBeginOverlap);
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &ANunMonster::OnNunTargetDetectionBeginOverlap);
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &ANunMonster::OnNunTargetDetectionEndOverlap);
 
@@ -443,10 +448,13 @@ void ANunMonster::SetYaw()
 	YawRotation = TargetRotation;
 }
 
-void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ANunMonster::OnPerceptionTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	MonsterController->CanPerception = true;
-	
+}
+
+void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{	
 	if (MonsterController->FindPlayer && !CheckDetect)
 	{
 		CheckDetect = true;
