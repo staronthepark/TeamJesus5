@@ -445,6 +445,8 @@ void ANunMonster::SetYaw()
 
 void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	MonsterController->CanPerception = true;
+	
 	if (MonsterController->FindPlayer && !CheckDetect)
 	{
 		CheckDetect = true;
@@ -556,6 +558,7 @@ float ANunMonster::Die(float Dm)
 		DeactivateHpBar();
 	}
 
+	MonsterController->CanPerception = false;
 	CheckDetect = false;
 	IsDie = true;
 	Imotal = true;
@@ -1431,6 +1434,7 @@ void ANunMonster::RespawnCharacter()
 	GetWorld()->GetTimerManager().ClearTimer(TeleportHandle);
 	MonsterController->BossUI->SetHP(1);
 	CheckDetect = false;
+	MonsterController->CanPerception = false;
 
 	KnightArr.Empty();
 	PlayerCharacter = nullptr;
