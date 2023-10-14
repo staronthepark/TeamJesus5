@@ -32,10 +32,30 @@ void UPlayerHUD::NativeOnInitialized()
 		{
 			PlayGuidesAnimation(EGuides::savepoint, value);
 		});
-	GuideAnimationFunction.Add(EGuides::map, [&](bool value)
+	GuideAnimationFunction.Add(EGuides::Haros, [&](bool value)
 		{
 			currentLanguage = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->language;
-			PlayMapUIAnimation(EMapName::Haros);
+			PlayMapUIAnimation(EGuides::Haros);
+		});
+	GuideAnimationFunction.Add(EGuides::LostWay, [&](bool value)
+		{
+			currentLanguage = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->language;
+			PlayMapUIAnimation(EGuides::LostWay);
+		});
+	GuideAnimationFunction.Add(EGuides::HouseOfAbandoned, [&](bool value)
+		{
+			currentLanguage = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->language;
+			PlayMapUIAnimation(EGuides::HouseOfAbandoned);
+		});
+	GuideAnimationFunction.Add(EGuides::MainHall, [&](bool value)
+		{
+			currentLanguage = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->language;
+			PlayMapUIAnimation(EGuides::MainHall);
+		});
+	GuideAnimationFunction.Add(EGuides::Repent, [&](bool value)
+		{
+			currentLanguage = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->language;
+			PlayMapUIAnimation(EGuides::Repent);
 		});
 	GuideAnimationFunction.Add(EGuides::shield, [&](bool value)
 		{
@@ -251,7 +271,7 @@ void UPlayerHUD::PlayExitAnimation(bool IsOpen)
 	//IsOpen ? PlayAnimation(ExitOpenAnimation) : PlayAnimation(ExitCloseAnimation);
 }
 
-void UPlayerHUD::PlayMapUIAnimation(EMapName MapName)
+void UPlayerHUD::PlayMapUIAnimation(EGuides MapName)
 {
 	if (WBP_MapInfo)
 		WBP_MapInfo->PlayMapInfoAnimation(MapName);

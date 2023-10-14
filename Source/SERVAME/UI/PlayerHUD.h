@@ -164,7 +164,7 @@ public:
 	void PlayInteractionAnimation(bool IsOpen, EInteractions interactions);
 	void PlayInteractionAnimation(bool IsOpen);
 	void PlayExitAnimation(bool IsOpen);
-	void PlayMapUIAnimation(EMapName MapName);
+	void PlayMapUIAnimation(EGuides MapName);
 	void PlayTutorialAnimation(EGuides type, int isPad);
 
 	void FadeInAnimation(bool isFadeIn);

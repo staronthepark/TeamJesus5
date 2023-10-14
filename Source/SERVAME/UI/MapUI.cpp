@@ -5,7 +5,7 @@
 #include <SERVAME/Manager/JesusGameInstance.h>
 
 
-void UMapUI::PlayMapInfoAnimation(EMapName MapName, bool isOpen)
+void UMapUI::PlayMapInfoAnimation(EGuides MapName, bool isOpen)
 {
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (GameInstance->language == Language::ENG)

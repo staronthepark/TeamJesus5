@@ -43,6 +43,7 @@ EStatState UStatUI::GetState()
 
 void UStatUI::OnButtonClicked()
 {
+	ParentUI->SetCost(Cost);
 	if (state == EStatState::closed || state == EStatState::activated)
 		return;
 

@@ -68,6 +68,9 @@ class SERVAME_API UStatUI : public UUserWidget
 	UPROPERTY(EditAnywhere)
 	UStatUI* NextStat;
 
+	UPROPERTY(EditAnywhere)
+	int Cost;
+
 	UPROPERTY(meta = (BindWidget))
 	UImage* ActiveBackground;
 

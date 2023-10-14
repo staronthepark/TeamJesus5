@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include <Components/Image.h>
+#include "PlayerGuideUI.h"
 #include "MapUI.generated.h"
 
 
@@ -13,16 +14,16 @@
  * 
  */
 
-UENUM()
-enum class EMapName : uint8
-{
-	Haros	UMETA(DisplayName = "Haros"),
-	LostWay UMETA(DisplayName = "LostWay"),
-	HouseOfAbandoned	UMETA(DisplayName = "HouseOfAbandoned"),
-	MainHall	UMETA(DisplayName = "MainHall"),
-	Repent	UMETA(DisplayName = "Repent")
-
-};
+//UENUM()
+//enum class EMapName : uint8
+//{
+//	Haros	UMETA(DisplayName = "Haros"),
+//	LostWay UMETA(DisplayName = "LostWay"),
+//	HouseOfAbandoned	UMETA(DisplayName = "HouseOfAbandoned"),
+//	MainHall	UMETA(DisplayName = "MainHall"),
+//	Repent	UMETA(DisplayName = "Repent")
+//
+//};
 
 USTRUCT(BlueprintType)
 struct SERVAME_API FLanguageTextures 
@@ -44,11 +45,11 @@ class SERVAME_API UMapUI : public UUserWidget
 	UImage* MapInformation;
 
 	UPROPERTY(EditAnywhere)
-	TMap<EMapName, FLanguageTextures> Textures;
+	TMap<EGuides, FLanguageTextures> Textures;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	UWidgetAnimation* MapInfoOpenAnimation;
 
 public:
-	void PlayMapInfoAnimation(EMapName MapName, bool isOpen = true);
+	void PlayMapInfoAnimation(EGuides MapName, bool isOpen = true);
 };
