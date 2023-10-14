@@ -416,6 +416,7 @@ AJesusBoss::AJesusBoss()
 			Boss->IsStun = false;
 			Boss->IsMontagePlay = false;
 			Boss->CanMove = true;
+			Boss->CanExecution = false;
 		}));
 
 	MontageStartMap.Add(BossAnimationType::STUN, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
@@ -1579,6 +1580,7 @@ void AJesusBoss::RespawnCharacter()
 
 void AJesusBoss::PlayExecutionAnimation()
 {
+	CanExecution = false;
 	ChangeMontageAnimation(BossAnimationType::EXECUTION);
 }
 
