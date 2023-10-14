@@ -26,6 +26,7 @@ public:
 
 	bool IsArrived = false;
 	bool FindPlayer = false;
+	bool CanPerception = false;
 	TAtomic<bool> IsUIActivate = false;
 
 	void Movement(FVector Location);
