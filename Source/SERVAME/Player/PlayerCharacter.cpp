@@ -2314,6 +2314,8 @@ void APlayerCharacter::SetSpeed(float speed)
 	{
 		CameraBoom1->CameraLagSpeed = 6.0f;
 	}
+	if(IsSprint)
+		CameraBoom1->CameraLagSpeed = 3.0f;
 
 	GetCharacterMovement()->MaxWalkSpeed = speed;
 }
@@ -2648,7 +2650,6 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[38].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[39].ObjClass, ShieldMeshComp->GetComponentLocation(), GetActorRotation() + FRotator(0, 90, 0));
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
-	IsExecute = true;
 	CanShieldDeploy = false;
 
 	PlayerHUD->SetSkill(PlayerDataStruct.ShieldCoolDown);
@@ -2672,6 +2673,7 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	}
 
 	ExecutionCharacter->Stun();
+	ChangeMontageAnimation(AnimationType::ENDOFHEAL);
 }
 
 void APlayerCharacter::ActivateRightWeapon()
