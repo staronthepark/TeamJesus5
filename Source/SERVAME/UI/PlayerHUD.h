@@ -149,6 +149,7 @@ public:
 	void SetGamepad(bool isPad);
 
 	void PlayAnimations(EGuides type, bool IsOpen);
+
 	//void SetShield(int value);
 
 	void PlayGuidesAnimation(EGuides type ,bool IsOpen);

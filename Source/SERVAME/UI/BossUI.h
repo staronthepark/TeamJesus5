@@ -19,7 +19,9 @@ UENUM()
 enum class EBossSettings :uint8
 {
 	phase1	UMETA(DisplayName = "Phase1"),
-	phase2	UMETA(DisplayName = "Phase2")
+	phase2	UMETA(DisplayName = "Phase2"),
+	paladin	UMETA(DisplayName = "Paladin"),
+	isahel	UMETA(DisplayName = "Isahel")
 };
 
 USTRUCT(BlueprintType)
