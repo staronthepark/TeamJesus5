@@ -1,4 +1,5 @@
 #include "LevelLightingManager.h"
+#include "Kismet/GameplayStatics.h"
 
 ALevelLightingManager::ALevelLightingManager()
 {
@@ -8,6 +9,10 @@ ALevelLightingManager::ALevelLightingManager()
 void ALevelLightingManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+	DirectionalLight = Cast<ADirectionalLight>(UGameplayStatics::GetActorOfClass(GetWorld(), ADirectionalLight::StaticClass()));
+	ExponentialHeightFog = Cast<AExponentialHeightFog>(UGameplayStatics::GetActorOfClass(GetWorld(), AExponentialHeightFog::StaticClass()));
+	SkyLight = Cast<ASkyLight>(UGameplayStatics::GetActorOfClass(GetWorld(), ASkyLight::StaticClass()));
 
 	DirectionalLightComp
 		= Cast<UDirectionalLightComponent>(DirectionalLight->GetComponentByClass(UDirectionalLightComponent::StaticClass()));
@@ -36,9 +41,9 @@ void ALevelLightingManager::Tick(float DeltaTime)
 	ExponentialHeightFogComp->SetVolumetricFogScatteringDistribution(FMath::Lerp(ExponentialHeightFogComp->VolumetricFogScatteringDistribution, TargetHeightFog.ScatteringDistribution, FadeSpeed * DeltaTime));
 	ExponentialHeightFogComp->SetVolumetricFogEmissive(FMath::Lerp(ExponentialHeightFogComp->VolumetricFogEmissive, TargetHeightFog.Emissive, FadeSpeed * DeltaTime));
 
-	float Red   = FMath::Lerp(ExponentialHeightFogComp->VolumetricFogAlbedo.R, TargetHeightFog.Albedo.R, FadeSpeed * DeltaTime);
-	float Green = FMath::Lerp(ExponentialHeightFogComp->VolumetricFogAlbedo.G, TargetHeightFog.Albedo.G, FadeSpeed * DeltaTime);
-	float Blue  = FMath::Lerp(ExponentialHeightFogComp->VolumetricFogAlbedo.B, TargetHeightFog.Albedo.B, FadeSpeed * DeltaTime);
+	uint8 Red   = FMath::Lerp(ExponentialHeightFogComp->VolumetricFogAlbedo.R, TargetHeightFog.Albedo.R, FadeSpeed * DeltaTime);
+	uint8 Green = FMath::Lerp(ExponentialHeightFogComp->VolumetricFogAlbedo.G, TargetHeightFog.Albedo.G, FadeSpeed * DeltaTime);
+	uint8 Blue  = FMath::Lerp(ExponentialHeightFogComp->VolumetricFogAlbedo.B, TargetHeightFog.Albedo.B, FadeSpeed * DeltaTime);
 
 	ExponentialHeightFogComp->SetVolumetricFogAlbedo(FColor(Red, Green, Blue));
 	

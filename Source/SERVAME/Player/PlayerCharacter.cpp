@@ -1824,6 +1824,7 @@ void APlayerCharacter::BeginPlay()
 		ABaseTriggerActor* TriggerActorCast = Cast<ABaseTriggerActor>(TriggerActor);
 		if (TriggerActorCast)
 		{
+			if(TriggerActorCast->Index >= 0)
 			GameInstance->SavedTriggerActor.Add(TriggerActorCast->Index, TriggerActorCast);
 		}
 	}

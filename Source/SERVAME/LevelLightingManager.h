@@ -18,7 +18,7 @@ struct FMyDirectionalLight
 		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float Intensity;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FColor LightColor;
+		FLinearColor LightColor;
 };
 
 USTRUCT(BlueprintType)
@@ -73,10 +73,14 @@ public:
 	ALevelLightingManager();
 		
 	UPROPERTY(Editanywhere)
-		float FadeSpeed;
+	float FadeSpeed;
 
 	UPROPERTY(Editanywhere)
-		TArray<FLightSetting> LightSetting;
+	TArray<FLightSetting> LightSetting;
+
+	ADirectionalLight* DirectionalLight;
+	AExponentialHeightFog* ExponentialHeightFog;
+	ASkyLight* SkyLight;
 
 	TMap<FString, FLightSetting>LightSettingMap;
 
@@ -84,9 +88,6 @@ public:
 	FMYExponentialHeightFog TargetHeightFog;
 	FMySkyLight TargetSkyLight;
 
-	ADirectionalLight* DirectionalLight;
-	AExponentialHeightFog* ExponentialHeightFog;
-	ASkyLight* SkyLight;
 
 	UDirectionalLightComponent* DirectionalLightComp;
 	UExponentialHeightFogComponent* ExponentialHeightFogComp;
