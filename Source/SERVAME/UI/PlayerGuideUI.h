@@ -26,7 +26,14 @@ enum class EGuides : uint8
 	map			UMETA(DisplayName = "Map"),
 	shield			UMETA(DisplayName = "Shield"),
 	shieldattack			UMETA(DisplayName = "Shieldattack"),
-	soul			UMETA(DisplayName = "Soul")
+	soul			UMETA(DisplayName = "Soul"),
+	
+	LockOn		UMETA(DisplayName = "LockOn"),
+	Parring		UMETA(DisplayName = "Parring"),
+	Heal		UMETA(DisplayName = "Heal"),
+	ShieldBash	UMETA(DisplayName = "ShieldBash"),
+	Shield		UMETA(DisplayName = "Shield"),
+	StrongAttack	UMETA(DisplayName = "StrongAttack"),
 };
 
 USTRUCT(BlueprintType)

@@ -19,6 +19,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		EGuides DrawImageType;
 
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool KeepActive;
 
