@@ -23,22 +23,22 @@ enum class EGuides : uint8
 	grogy		UMETA(DisplayName = "Grogy"),
 	parrying	UMETA(DisplayName = "Parrying"),
 	savepoint	UMETA(DisplayName = "SavePoint"),
-	shield			UMETA(DisplayName = "Shield"),
+	//shield			UMETA(DisplayName = "Shield"),
 	shieldattack			UMETA(DisplayName = "Shieldattack"),
 	soul			UMETA(DisplayName = "Soul"),
 	
-	LockOn		UMETA(DisplayName = "LockOn"),
-	Parring		UMETA(DisplayName = "Parring"),
-	Heal		UMETA(DisplayName = "Heal"),
-	ShieldBash	UMETA(DisplayName = "ShieldBash"),
-	Shield		UMETA(DisplayName = "Shield"),
-	StrongAttack	UMETA(DisplayName = "StrongAttack"),
+	LockOn		UMETA(DisplayName = "Tutorial_LockOn"),
+	Parring		UMETA(DisplayName = "Tutorial_Parring"),
+	Heal		UMETA(DisplayName = "Tutorial_Heal"),
+	ShieldBash	UMETA(DisplayName = "Tutorial_ShieldBash"),
+	Shield		UMETA(DisplayName = "Tutorial_Shield"),
+	StrongAttack	UMETA(DisplayName = "Tutorial_StrongAttack"),
 
-	Haros	UMETA(DisplayName = "Haros"),
-	LostWay UMETA(DisplayName = "LostWay"),
-	HouseOfAbandoned	UMETA(DisplayName = "HouseOfAbandoned"),
-	MainHall	UMETA(DisplayName = "MainHall"),
-	Repent	UMETA(DisplayName = "Repent")
+	Haros	UMETA(DisplayName = "Map_Haros"),
+	LostWay UMETA(DisplayName = "Map_LostWay"),
+	HouseOfAbandoned	UMETA(DisplayName = "Map_HouseOfAbandoned"),
+	MainHall	UMETA(DisplayName = "Map_MainHall"),
+	Repent	UMETA(DisplayName = "Map_Repent")
 };
 
 USTRUCT(BlueprintType)
