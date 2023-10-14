@@ -416,6 +416,7 @@ AJesusBoss::AJesusBoss()
 			Boss->IsStun = false;
 			Boss->IsMontagePlay = false;
 			Boss->CanMove = true;
+			Boss->CanExecution = false;
 		}));
 
 	MontageStartMap.Add(BossAnimationType::STUN, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
