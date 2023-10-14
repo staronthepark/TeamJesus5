@@ -27,6 +27,9 @@ public:
 	UPROPERTY()
 	UNumAnimInstance* NunAnimInstance;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UBoxComponent* CheckPerceptionTrigger;
+
 	TArray<UBoxComponent*> SpawnLocArr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USceneComponent* ProjectileRootComp;
@@ -206,6 +209,9 @@ public:
 
 	void SetYaw();
 	void SpawnMagicCircle();
+
+	UFUNCTION()
+	void OnPerceptionTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 	void OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
