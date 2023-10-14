@@ -207,14 +207,9 @@ AKinghtMonster::AKinghtMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::GROGGY_START, [&]()
 		{
-			CanRotate = false;
-			ChangeMontageAnimation(MonsterAnimationType::GROGGY_LOOP);
-		});
-
-	MontageEndEventMap.Add(MonsterAnimationType::GROGGY_LOOP, [&]()
-		{
 			if (MyMonsterType != MonsterType::ELITEKNIGHT)
 			{
+				CanRotate = false;
 				ChangeMontageAnimation(MonsterAnimationType::GROGGY_LOOP);
 			}
 			else
@@ -236,6 +231,11 @@ AKinghtMonster::AKinghtMonster()
 					ChangeMontageAnimation(MonsterAnimationType::IDLE);
 				}
 			}
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::GROGGY_LOOP, [&]()
+		{
+			ChangeMontageAnimation(MonsterAnimationType::GROGGY_LOOP);
 		});
 
 	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
