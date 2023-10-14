@@ -30,11 +30,14 @@ public:
 			float Time;
 
 		UPROPERTY(EditAnywhere)
-			UStaticMeshComponent* MeshComp;
-		UPROPERTY(EditAnywhere)
 			USceneComponent* SceneComp;
 		
 private:
+
+	UPROPERTY(EditAnywhere, Meta = (AllowPrivateAccess = true))
+		UStaticMeshComponent* MeshComp;
+
+protected:
 
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
@@ -42,5 +45,5 @@ private:
 	virtual void EndTriggerEvent()override;
 	virtual void EnableEvent()override;
 
-	void EnableTrap();
+	virtual void EnableTrap();
 };
