@@ -857,6 +857,7 @@ void AEnemyMonster::RespawnCharacter()
 
 	Imotal = false;
 	IsStun = false;
+	CanRotate = true;
 	//PlayerCharacter = nullptr;
 	YawRotation = GetActorRotation();
 
