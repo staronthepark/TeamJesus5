@@ -10,6 +10,7 @@
 #include "..\UI\MonsterWidget.h"
 #include "../UI/MonsterHPUI.h"
 #include "Components/WidgetComponent.h"
+#include "../DoorAnimInteraction.h"
 #include "EnemyMonster.generated.h"
 
 UENUM(BlueprintType)
@@ -104,6 +105,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FMonsterDataStruct MonsterDataStruct;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		ADoorAnimInteraction* OpenDoor;
 
 	UPROPERTY()
 	UMonsterAnimInstance* AnimInstance;

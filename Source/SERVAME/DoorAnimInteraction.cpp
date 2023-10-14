@@ -46,6 +46,10 @@ void ADoorAnimInteraction::BeginPlay()
 	OpenDoorComp->OnComponentEndOverlap.AddDynamic(this, &ADoorAnimInteraction::OnOpenDoorOverlapEnd);
 	Init();
 
+	BoxComp = Cast<UBoxTriggerComp>(GetComponentByClass(UBoxTriggerComp::StaticClass()));
+
+	if (DisableTriggerWhenStart)
+		BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ADoorAnimInteraction::BeginTriggerEvent()

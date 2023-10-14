@@ -6,6 +6,7 @@
 #include "AnimationInteraction.h"
 #include "DoorAnimInstance.h"
 #include "CineCameraActor.h"
+#include "../SERVAME/BoxTriggerComp.h"
 #include "DoorAnimInteraction.generated.h"
 
 /**
@@ -26,12 +27,18 @@ public:
 	UDoorAnimInstance* AnimInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool DisableTriggerWhenStart;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UBoxComponent* CloseDoorComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UBoxComponent* OpenDoorComp;
 
 	ACineCameraActor* CineCameraActor;
+
+	UBoxTriggerComp* BoxComp;
+
 
 	ALevelSequenceActor* LevelSequenceActor;
 	UPROPERTY(EditAnywhere)
