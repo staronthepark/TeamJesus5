@@ -3,3 +3,27 @@
 
 #include "FloorTrapActor.h"
 
+AFloorTrapActor::AFloorTrapActor()
+{
+	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>("TrapMesh");
+}
+
+void AFloorTrapActor::BeginPlay()
+{
+
+}
+
+void AFloorTrapActor::BeginTriggerEvent()
+{
+
+}
+
+void AFloorTrapActor::EndTriggerEvent()
+{
+
+}
+
+void AFloorTrapActor::EnableEvent()
+{
+
+}
