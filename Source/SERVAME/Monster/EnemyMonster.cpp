@@ -615,20 +615,22 @@ void AEnemyMonster::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedComponen
 			objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 			return;
 		}
-		if (OtherActor->TakeDamage(SkillInfoMap[AttackAnimationType].Damage, CharacterDamageEvent, nullptr, this))
+		if (SkillInfoMap.Contains(AttackAnimationType))
 		{
-			if (!IsStun)
-				HitStop();
+			if (OtherActor->TakeDamage(SkillInfoMap[AttackAnimationType].Damage, CharacterDamageEvent, nullptr, this))
+			{
+				if (!IsStun)
+					HitStop();
 
-			CameraShake(PlayerCameraShake);
+				CameraShake(PlayerCameraShake);
 
-			VibrateGamePad(0.4f, 0.4f);
+				VibrateGamePad(0.4f, 0.4f);
 
-			objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-			//objectpool.SpawnObject(objectpool.ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-			objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
+				objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+				//objectpool.SpawnObject(objectpool.ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+				objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
+			}
 		}
-
 	}
 }
 
