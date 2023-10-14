@@ -235,10 +235,7 @@ AKinghtMonster::AKinghtMonster()
 			else
 			{
 				if (!IsMoveStart)
-				{
 					MinWalkTime = GetRandNum(3, 4);
-
-				}
 
 				IsMoveStart = true;
 				Temp = 0.f;
