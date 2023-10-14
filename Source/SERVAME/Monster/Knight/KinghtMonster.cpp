@@ -235,7 +235,10 @@ AKinghtMonster::AKinghtMonster()
 			else
 			{
 				if (!IsMoveStart)
+				{
 					MinWalkTime = GetRandNum(3, 4);
+
+				}
 
 				IsMoveStart = true;
 				Temp = 0.f;
@@ -481,6 +484,8 @@ void AKinghtMonster::RespawnCharacter()
 		IsPatrol = true;
 		MonsterMoveEventIndex = 0;
 		ChangeActionType(MonsterActionType::MOVE);
+		ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	}		
 	else if (MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
 	{
