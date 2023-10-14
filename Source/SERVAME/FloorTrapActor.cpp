@@ -23,6 +23,11 @@ void AFloorTrapActor::Tick(float DeltaTime)
 void AFloorTrapActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (IsTimer)
+	{
+		GetWorldTimerManager().SetTimer(Timer, this, &AFloorTrapActor::EnableTrap, Time);
+	}
 }
 
 void AFloorTrapActor::BeginTriggerEvent()
@@ -39,6 +44,12 @@ void AFloorTrapActor::EnableEvent()
 {
 	Super::EnableEvent();
 
+	if(!IsTimer)
+	EnableTrap();
+}
+
+void AFloorTrapActor::EnableTrap()
+{
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
 
@@ -52,12 +63,12 @@ void AFloorTrapActor::EnableEvent()
 		Params);
 
 	FColor DrawColor;
-	
+
 	if (bResult)
 		DrawColor = FColor::Green;
 	else
 		DrawColor = FColor::Red;
-	
+
 	DrawDebugSphere(GetWorld(), GetActorLocation(), 200.0f, 16, DrawColor, false, 2.f);
 
 	if (bResult && HitResult.GetActor())
@@ -70,4 +81,8 @@ void AFloorTrapActor::EnableEvent()
 			Player->TakeDamage(Damage, DamageEvent, nullptr, this);
 		}
 	}
+
+	if(IsTimer)
+		GetWorldTimerManager().SetTimer(Timer, this, &AFloorTrapActor::EnableTrap, Time);
+
 }

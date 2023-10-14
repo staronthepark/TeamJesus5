@@ -18,6 +18,7 @@ public:
 		AFloorTrapActor();
 
 
+		FTimerHandle Timer;
 
 		UPROPERTY(EditAnyWhere)
 			bool IsTimer;
@@ -40,4 +41,6 @@ private:
 	virtual void BeginTriggerEvent()override;
 	virtual void EndTriggerEvent()override;
 	virtual void EnableEvent()override;
+
+	void EnableTrap();
 };
