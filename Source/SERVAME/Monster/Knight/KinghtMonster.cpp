@@ -590,6 +590,7 @@ void AKinghtMonster::OffRotate()
 void AKinghtMonster::Stun()
 {
 	//IsStun捞 true老 版快 groggy death 局聪 犁积
+	CanExecution = true;
 	IsStun = true;
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
@@ -601,7 +602,7 @@ void AKinghtMonster::Stun()
 
 void AKinghtMonster::ParryingStun()
 {
-	//CanExecution = true;
+	CanExecution = true;
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
 	DeactivateSMOverlap();
