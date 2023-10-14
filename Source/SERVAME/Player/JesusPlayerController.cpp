@@ -145,7 +145,7 @@ void AJesusPlayerController::PressDodge()
 
 	if (character->AnimInstance->PlayerAnimationType == AnimationType::SAVELOOP && IsInputKeyDown(EKeys::Gamepad_FaceButton_Right))
 	{
-		character->ChangeMontageAnimation(AnimationType::SAVEEND);
+		character->ChangeMontageAnimation(AnimationType::SAVEEND);		
 		character->PlayerHUD->PlayExitAnimation(false);
 		return;
 	}
@@ -176,8 +176,8 @@ void AJesusPlayerController::PressParring()
 
 void AJesusPlayerController::UnPressParring()
 {
-	character->IsGrab = false;
 	character->InputEventMap[character->PlayerCurAction][ActionType::PARRING][false]();
+	character->IsGrab = false;
 }
 
 void AJesusPlayerController::PressUseItem()
@@ -414,6 +414,7 @@ void AJesusPlayerController::OpenMenu()
 	{
 		CurrentSequncePlayer->Stop();
 		character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
+		character->SetActorHiddenInGame(false);
 		CurrentSequncePlayer = nullptr;
 		return;
 	}
@@ -447,6 +448,7 @@ void AJesusPlayerController::CloseMenu()
 	if (CurrentSequncePlayer)
 	{
 		CurrentSequncePlayer->Stop();
+		character->SetActorHiddenInGame(false);
 		character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
 		CurrentSequncePlayer = nullptr;
 		return;

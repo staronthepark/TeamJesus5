@@ -30,6 +30,12 @@ void UMainMenuUI::NativeOnInitialized()
 	ContinueButton->OnClicked.AddDynamic(this, &UMainMenuUI::ClickContinueButton);
 	OptionButton->OnClicked.AddDynamic(this, &UMainMenuUI::ClickOptionButton);
 	QuitButton->OnClicked.AddDynamic(this, &UMainMenuUI::ClickQuitButton);
+
+	EndFadeInDelegate.BindDynamic(this, &UMainMenuUI::PlayFadeOutAnimation);
+	BindToAnimationFinished(FadeInAnimation, EndFadeInDelegate);
+
+	EndFadeOutDelegate.BindDynamic(this, &UMainMenuUI::OnEndFadeOut);
+	BindToAnimationFinished(FadeOutAnimation, EndFadeOutDelegate);
 }
 
 void UMainMenuUI::NativeConstruct()
@@ -100,9 +106,6 @@ void UMainMenuUI::ClickStartButton()
 	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 	Controller->SetInputMode(FInputModeGameOnly());
 	Controller->bShowMouseCursor = false;
-	/*RenderTargetImage->SetVisibility(ESlateVisibility::Collapsed);*/
-	//if(LevelSequencePlayer)
-	//	LevelSequencePlayer->Play();
 	Controller->SetPause(false);
 }
 
@@ -133,6 +136,15 @@ void UMainMenuUI::ClickQuitButton()
 	//if (UserSettingUI)
 	//	UserSettingUI->ClickQuitSettingButton();
 	UMG_GameExit->Open();
+}
+
+void UMainMenuUI::PlayFadeOutAnimation()
+{
+	PlayAnimation(FadeOutForNewGame);
+}
+
+void UMainMenuUI::OnEndFadeOut()
+{
 }
 
 //void UMainMenuUI::SequenceFinish()

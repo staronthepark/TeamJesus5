@@ -98,6 +98,8 @@ public:
 	void SpawnEnd();
 	void OnHitCancle();
 	void OffHitCancle();
+	void OnRotate();
+	void OffRotate();
 
 private:
 
@@ -128,6 +130,7 @@ public:
 	virtual float Die(float Dm) override;
 
 	virtual void Stun() override;
+	virtual void ParryingStun() override;
 
 	virtual void MonsterHitStop() override;
 

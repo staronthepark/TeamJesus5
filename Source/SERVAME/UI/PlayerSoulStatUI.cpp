@@ -17,7 +17,7 @@ void UPlayerSoulStatUI::NativeConstruct()
 	this->SetVisibility(ESlateVisibility::Visible);
 	WBP_PlayerRest_UI->SetVisibility(ESlateVisibility::Visible);
 	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
-	Controller->SetPause(true);
+	//Controller->SetPause(true);
 	Controller->SetShowMouseCursor(true);
 	Controller->SetInputMode(FInputModeUIOnly());
 	WBP_PlayerRest_UI->SetKeyboardFocus();
@@ -25,12 +25,7 @@ void UPlayerSoulStatUI::NativeConstruct()
 
 void UPlayerSoulStatUI::ClickPray()
 {
-	WBP_PlayerRest_UI->SetVisibility(ESlateVisibility::Collapsed);
-	APlayerController* Controller = GetWorld()->GetFirstPlayerController();
-	Controller->SetShowMouseCursor(false);
-	Controller->SetInputMode(FInputModeGameOnly());
-	Controller->SetPause(false);
-	this->RemoveFromParent();
+	Close();
 }
 
 void UPlayerSoulStatUI::OpenStat()
@@ -46,7 +41,6 @@ void UPlayerSoulStatUI::Close()
 	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 	Controller->SetInputMode(FInputModeGameOnly());
 	Controller->bShowMouseCursor = false;
-	Controller->SetPause(false);
 	WBP_Player_Stat_UI->Close();
 	this->RemoveFromParent();
 }
@@ -59,7 +53,7 @@ void UPlayerSoulStatUI::SetRemainSoul(int value)
 FReply UPlayerSoulStatUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
 	FReply Reply = FReply::Unhandled();
-	if (InKeyEvent.GetKey() == EKeys::Escape)
+	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Q)
 	{
 		Close();
 		Reply = FReply::Handled();

@@ -17,6 +17,11 @@ UENUM()
 enum class EMapName : uint8
 {
 	Haros	UMETA(DisplayName = "Haros"),
+	LostWay UMETA(DisplayName = "LostWay"),
+	HouseOfAbandoned	UMETA(DisplayName = "HouseOfAbandoned"),
+	MainHall	UMETA(DisplayName = "MainHall"),
+	Repent	UMETA(DisplayName = "Repent")
+
 };
 
 USTRUCT(BlueprintType)

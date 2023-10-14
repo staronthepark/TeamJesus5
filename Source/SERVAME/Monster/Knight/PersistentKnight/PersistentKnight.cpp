@@ -36,9 +36,7 @@ APersistentKnight::APersistentKnight()
 			}
 			else
 			{
-				//ChangeMontageAnimation(MonsterAnimationType::DEADLOOP);
-				//IsStun = true;
-				//CanExecution = true;
+				KnightAnimInstance->PauseAnimation(MontageMap[AnimationType]);
 			}
 		});
 

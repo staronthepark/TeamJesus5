@@ -106,7 +106,7 @@ void ABaseCharacter::Tick(float DeltaTime)
 
 void ABaseCharacter::HitStopTimer()
 {
-	GetWorldTimerManager().SetTimer(TimerHandler, this, &ABaseCharacter::ResumeMontage, 0.1f);
+	GetWorldTimerManager().SetTimer(TimerHandler, this, &ABaseCharacter::ResumeMontage, 0.2f);
 }
 
 void ABaseCharacter::SwordVFXSpawn()

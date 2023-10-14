@@ -416,6 +416,7 @@ AJesusBoss::AJesusBoss()
 			Boss->IsStun = false;
 			Boss->IsMontagePlay = false;
 			Boss->CanMove = true;
+			Boss->CanExecution = false;
 		}));
 
 	MontageStartMap.Add(BossAnimationType::STUN, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
@@ -1162,6 +1163,7 @@ void AJesusBoss::BeginPlay()
 	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	DarkExplosionCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	MonsterLockOnWidget = Cast<UMonsterWidget>(LockOnWidget->GetWidget());
 	/*==========
@@ -1578,6 +1580,7 @@ void AJesusBoss::RespawnCharacter()
 
 void AJesusBoss::PlayExecutionAnimation()
 {
+	CanExecution = false;
 	ChangeMontageAnimation(BossAnimationType::EXECUTION);
 }
 
@@ -2092,12 +2095,14 @@ void AJesusBoss::AttackCheck()
 void AJesusBoss::CollisionEnableNotify()
 {
 	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	ParringTrailComp->Activate();
 }
 
 void AJesusBoss::CollisionDisableNotify()
 {
 	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ParringTrailComp->Deactivate();
 	Damage = 0;
 }

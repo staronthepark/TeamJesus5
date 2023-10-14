@@ -163,7 +163,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 			UE_LOG(LogTemp, Warning, TEXT("FindPlayer"));
 			FindPlayer = true;
 
-			if (Monster->MyMonsterType == MonsterType::NUN)
+			if (Monster->MyMonsterType == MonsterType::NUN || Monster->MyMonsterType == MonsterType::ELITEKNIGHT)
 			{
 				BossUI->AddToViewport();
 				Monster->PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->LeftButton->OnClicked.AddDynamic(this, &AMonsterController::ChangeLanguage);
@@ -177,7 +177,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		UE_LOG(LogTemp, Warning, TEXT("LostPlayer"));
 		FindPlayer = false;
 
-		if (Monster->MyMonsterType == MonsterType::NUN)
+		if (Monster->MyMonsterType == MonsterType::NUN || Monster->MyMonsterType == MonsterType::ELITEKNIGHT)
 		{
 			Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			Monster->MonsterMoveEventIndex = 1;
@@ -190,39 +190,48 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		{
 			auto Knight = Cast<AKinghtMonster>(Monster);
 
-			if (Knight->IsSpawn)
-				return;
+			if(Knight != nullptr)
+			{
+				if (Knight->IsSpawn)
+					return;
 
-			if (Monster->MyMonsterType == MonsterType::KNIGHT || Monster->MyMonsterType == MonsterType::PERSISTENTKNIGHT)
-			{
-				Knight->MonsterMoveEventIndex = 0;
-				Knight->ChangeActionType(MonsterActionType::MOVE);
-				Knight->KnightAnimInstance->BlendSpeed = Knight->WalkBlend;
-				Knight->WalkToRunBlend = false;
-			}
-			else if (Monster->MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
-			{
-				if (!Knight->Reviving)
+				if (Monster->MyMonsterType == MonsterType::KNIGHT || Monster->MyMonsterType == MonsterType::PERSISTENTKNIGHT)
 				{
 					Knight->MonsterMoveEventIndex = 0;
 					Knight->ChangeActionType(MonsterActionType::MOVE);
 					Knight->KnightAnimInstance->BlendSpeed = Knight->WalkBlend;
 					Knight->WalkToRunBlend = false;
 				}
-				else
+				else if (Monster->MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
+				{
+					if (!Knight->Reviving)
+					{
+						Knight->MonsterMoveEventIndex = 0;
+						Knight->ChangeActionType(MonsterActionType::MOVE);
+						Knight->KnightAnimInstance->BlendSpeed = Knight->WalkBlend;
+						Knight->WalkToRunBlend = false;
+					}
+					else
+					{
+						Knight->ChangeActionType(MonsterActionType::NONE);
+						StopMovement();
+					}
+					return;
+				}
+				else if (Monster->MyMonsterType == MonsterType::ELITEKNIGHT)
 				{
 					Knight->ChangeActionType(MonsterActionType::NONE);
-					StopMovement();
+					Knight->TracePlayer = false;
+					Knight->isReturnBlend = true;
+					Knight->WalkToRunBlend = false;
+					Knight->IsMoveStart = false;
 				}
-				return;
 			}
-			else if (Monster->MyMonsterType == MonsterType::ELITEKNIGHT)
+			else
 			{
-				Knight->ChangeActionType(MonsterActionType::NONE);
-				Knight->TracePlayer = false;
-				Knight->isReturnBlend = true;
-				Knight->WalkToRunBlend = false;
-				Knight->IsMoveStart = false;
+				Monster->ChangeActionType(MonsterActionType::NONE);
+				Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
+				Monster->TracePlayer = false;
 			}
 		}
 	}

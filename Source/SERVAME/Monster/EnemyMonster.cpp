@@ -55,12 +55,16 @@ AEnemyMonster::AEnemyMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::SPRINTATTACK, MonsterStateType::BEFOREATTACK);
 
 	AnimTypeToStateType.Add(MonsterAnimationType::HIT, MonsterStateType::CANTACT);
+	AnimTypeToStateType.Add(MonsterAnimationType::SUPER_HIT, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::BACKHIT, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::DEAD, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::DEADLOOP, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::EXECUTION, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::SPAWNING, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::PARRYING, MonsterStateType::CANTACT);
+	AnimTypeToStateType.Add(MonsterAnimationType::GROGGY_START, MonsterStateType::CANTACT); 
+	AnimTypeToStateType.Add(MonsterAnimationType::GROGGY_DEAD, MonsterStateType::CANTACT);
+	AnimTypeToStateType.Add(MonsterAnimationType::GROGGY_LOOP, MonsterStateType::CANTACT);
 
 	RandomRotateMap.Add(0, [&]()
 		{
@@ -166,26 +170,12 @@ AEnemyMonster::AEnemyMonster()
 
 			if (MeshOpacity <= 0.0f)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("asdfasf"));
 				SetActive(false);
 				SetActorHiddenInGame(true);
 				SetActorEnableCollision(false);
 				SetActorTickEnabled(false);
 				if (PlayerCharacter != nullptr)
 				{
-					AObjectPool& objectpool = AObjectPool::GetInstance();
-					for (int32 i = 0; i < MonsterDataStruct.DropSoulCount; i++)
-					{
-						float x = FMath::RandRange(-300.0f, 300.0f);
-						float y = FMath::RandRange(-300.0f, 300.0f);
-						float z = FMath::RandRange(-300.0f, 300.0f);
-
-						FVector location = GetActorLocation() + FVector(x * 0.1f, y * 0.1f, z * 0.1f);
-						FRotator rotation = GetActorRotation() + FRotator(x, y, z);
-
-						objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
-					}
-
 					if (PlayerCharacter->IsLockOn)
 					{
 						SetActorTickEnabled(false);
@@ -322,7 +312,6 @@ AEnemyMonster::AEnemyMonster()
 				ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			}
 		});
-
 
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::IDLE, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(true, [&]()
@@ -662,7 +651,7 @@ void AEnemyMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, 
 	//if (MyMonsterType == MonsterType::TUTORIAL && PlayerCharacter->IsAlive())
 	//	PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
 
-	Stun();
+	ParryingStun();
 
 	VibrateGamePad(1.0f, 0.4);
 	AObjectPool& objectpool = AObjectPool::GetInstance();
@@ -720,7 +709,7 @@ void AEnemyMonster::Rotate()
 	SetActorRotation(FMath::Lerp(Rot, YawRotation, MonsterDataStruct.RotateSpeed * fDeltaTime));
 }
 
-void AEnemyMonster::Stun()
+void AEnemyMonster::ParryingStun()
 {
 	//CanExecution = true;
 	AnimInstance->StopMontage(MontageMap[AnimationType]);
@@ -731,21 +720,32 @@ void AEnemyMonster::Stun()
 	ChangeMontageAnimation(MonsterAnimationType::PARRYING);
 }
 
+void AEnemyMonster::Stun()
+{
+	AnimInstance->StopMontage(MontageMap[AnimationType]);
+	MonsterController->StopMovement();
+	DeactivateSMOverlap();
+	ParryingCollision1->Deactivate();
+	DeactivateRightWeapon();
+	ChangeMontageAnimation(MonsterAnimationType::GROGGY_START);
+}
+
 float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
 	if (Imotal)
 	{
 		return 0;
 	}
 
-	ActivateHpBar();
-	GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
-
 	DeactivateHitCollision();
 
-	if (MyMonsterType != MonsterType::NUN)
+	if (MyMonsterType != MonsterType::NUN && MyMonsterType != MonsterType::ELITEKNIGHT)
 	{
+		ActivateHpBar();
+		GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
+
 		MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
 		MonsterDataStruct.CharacterHp -= DamageAmount;
 
@@ -763,6 +763,19 @@ float AEnemyMonster::Die(float Dm)
 {
 	if (MonsterDataStruct.CharacterHp <= 0)
 	{
+		AObjectPool& objectpool = AObjectPool::GetInstance();
+		for (int32 i = 0; i < MonsterDataStruct.DropSoulCount; i++)
+		{
+			float x = FMath::RandRange(-300.0f, 300.0f);
+			float y = FMath::RandRange(-300.0f, 300.0f);
+			float z = FMath::RandRange(-300.0f, 300.0f);
+
+			FVector location = GetActorLocation() + FVector(x * 0.1f, y * 0.1f, z * 0.1f);
+			FRotator rotation = GetActorRotation() + FRotator(x, y, z);
+
+			objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
+		}
+
 		DeactivateHitCollision();
 		Imotal = true;
 		ChangeActionType(MonsterActionType::DEAD);
@@ -797,8 +810,10 @@ void AEnemyMonster::Tick(float DeltaTime)
 	CheckDIstanceMap[IsDetect]();
 	MonsterTickEventMap[ActionType]();	
 
-	if (!IsPatrol)
+	if (!IsPatrol && CanRotate)
+	{
 		Rotate();
+	}
 
 	if (MonsterDataStruct.CharacterHp <= 0)
 	{
@@ -844,6 +859,8 @@ void AEnemyMonster::RespawnCharacter()
 	MonsterHPWidget->SetHP(1.0f);
 
 	Imotal = false;
+	IsStun = false;
+	CanRotate = true;
 	//PlayerCharacter = nullptr;
 	YawRotation = GetActorRotation();
 
