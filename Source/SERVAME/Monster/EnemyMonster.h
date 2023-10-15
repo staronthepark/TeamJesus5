@@ -169,6 +169,9 @@ public:
 	int CircleIndexCount = 1;
 	int PatrolIndexCount = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsBoss = false;
+
 	bool IsDetect;
 	bool TracePlayer;
 	bool IsOverlap = false;

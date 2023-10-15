@@ -80,10 +80,12 @@ float AEliteKnight::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	MonsterDataStruct.CharacterHp -= DamageAmount;
+	if (IsBoss)
+	{
+		MonsterDataStruct.CharacterHp -= DamageAmount;
 
-	MonsterController->BossUI->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
-	MonsterController->BossUI->SetDamageText(DamageAmount);
-
+		MonsterController->BossUI->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
+		MonsterController->BossUI->SetDamageText(DamageAmount);
+	}
 	return 0.0f;
 }
