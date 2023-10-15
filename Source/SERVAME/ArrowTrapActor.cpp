@@ -6,6 +6,12 @@
 
 AArrowTrapActor::AArrowTrapActor()
 {
+	SceneComp1 = CreateDefaultSubobject<USceneComponent>("SceneComp1");
+	SceneComp2 = CreateDefaultSubobject<USceneComponent>("SceneComp2");
+	SceneComp3 = CreateDefaultSubobject<USceneComponent>("SceneComp3");
+	SceneComp1->SetupAttachment(SceneComp);
+	SceneComp2->SetupAttachment(SceneComp);
+	SceneComp3->SetupAttachment(SceneComp);
 }
 
 void AArrowTrapActor::Tick(float DeltaTime)
@@ -17,10 +23,6 @@ void AArrowTrapActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (IsTimer)
-	{
-		GetWorldTimerManager().SetTimer(Timer, this, &AArrowTrapActor::EnableTrap, Time);
-	}
 }
 
 void AArrowTrapActor::BeginTriggerEvent()
@@ -37,7 +39,6 @@ void AArrowTrapActor::EnableEvent()
 {
 	Super::EnableEvent();
 
-	if (!IsTimer)
 		EnableTrap();
 }
 
@@ -45,10 +46,7 @@ void AArrowTrapActor::EnableTrap()
 {
 	AObjectPool& ObjectPool = AObjectPool::GetInstance();
 
-	ObjectPool.SpawnObject(ObjectPool.ObjectArray[45].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-
-
-	if (IsTimer)
-		GetWorldTimerManager().SetTimer(Timer, this, &AArrowTrapActor::EnableTrap, Time);
-
+	ObjectPool.SpawnObject(ObjectPool.ObjectArray[45].ObjClass, SceneComp1->GetComponentLocation(), GetActorRotation());
+	ObjectPool.SpawnObject(ObjectPool.ObjectArray[45].ObjClass, SceneComp2->GetComponentLocation(), GetActorRotation());
+	ObjectPool.SpawnObject(ObjectPool.ObjectArray[45].ObjClass, SceneComp3->GetComponentLocation(), GetActorRotation());
 }

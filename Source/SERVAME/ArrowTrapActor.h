@@ -18,6 +18,13 @@ class SERVAME_API AArrowTrapActor : public AFloorTrapActor
 public:
 	AArrowTrapActor();
 
+	UPROPERTY(Editanywhere)
+		USceneComponent* SceneComp1;
+	UPROPERTY(Editanywhere)
+		USceneComponent* SceneComp2;
+	UPROPERTY(Editanywhere)
+		USceneComponent* SceneComp3;
+
 protected:
 
 	virtual void Tick(float DeltaTime) override;

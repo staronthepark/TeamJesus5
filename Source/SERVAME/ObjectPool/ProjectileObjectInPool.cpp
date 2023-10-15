@@ -66,13 +66,12 @@ void AProjectileObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* Overl
 	{		
 		AObjectPool & objectpool = AObjectPool::GetInstance();
 
+		objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherActor->GetActorLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 		objectpool.SpawnObject(objectpool.ObjectArray[20].ObjClass, OtherActor->GetActorLocation(), Rotation);
 		objectpool.SpawnObject(objectpool.ObjectArray[21].ObjClass, OtherActor->GetActorLocation(), Rotation);
-		objectpool.SpawnObject(objectpool.ObjectArray[22].ObjClass, OtherActor->GetActorLocation(), Rotation);
-		objectpool.SpawnObject(objectpool.ObjectArray[0].ObjClass, OtherActor->GetActorLocation(), Rotation);
-		objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OtherActor->GetActorLocation(), Rotation);
+		objectpool.SpawnObject(objectpool.ObjectArray[22].ObjClass, OtherActor->GetActorLocation(), Rotation);	
 		objectpool.SpawnObject(objectpool.ObjectArray[5].ObjClass, OverlappedComponent->GetComponentLocation(), Rotation);
-		objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 	}
 }
 

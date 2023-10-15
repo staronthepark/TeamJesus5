@@ -6,7 +6,7 @@
 AFloorTrapActor::AFloorTrapActor()
 {
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("TrapMesh");
-	SceneComp = CreateDefaultSubobject<UStaticMeshComponent>("SceneComp");
+	SceneComp = CreateDefaultSubobject<USceneComponent>("SceneComp");
 	BoxComp = CreateDefaultSubobject<UBoxComponent>("BoxComp");
 	MeshComp->SetupAttachment(SceneComp);
 	BoxComp->SetupAttachment(SceneComp);
@@ -64,6 +64,7 @@ void AFloorTrapActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 		AObjectPool& objectpool = AObjectPool::GetInstance();
 		objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, Player->GetActorLocation(), FRotator::ZeroRotator);
 		objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[5].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator::ZeroRotator);
 		Player->TakeDamage(Damage, DamageEvent, nullptr, this);
 	}
 	BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
