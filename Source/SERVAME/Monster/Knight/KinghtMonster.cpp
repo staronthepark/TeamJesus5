@@ -288,7 +288,7 @@ AKinghtMonster::AKinghtMonster()
 			MonsterMoveMap[MonsterMoveEventIndex]();
 
 			auto speed = FMath::Clamp(CalcedDist, 0.f, 600.f);
-			
+
 			if (speed > Temp)
 				Temp = speed;
 
@@ -410,11 +410,15 @@ void AKinghtMonster::Tick(float DeltaTime)
 		{
 			InterpolationTime += DeltaTime;
 			CalcedDist = FMath::Lerp(WalkBlend, RunBlend, InterpolationTime / InterpolationDuration);
+			UE_LOG(LogTemp, Warning, TEXT("WalkToRunBlend : %f"), CalcedDist);
+			UE_LOG(LogTemp, Warning, TEXT("InterpolationTime : %f"), InterpolationTime);
 		}
 		else if (CurrentDistance >= AccelerationDist)
 		{
 			InterpolationTime += DeltaTime;
 			CalcedDist = FMath::Lerp(IdleBlend, RunBlend, InterpolationTime / InterpolationDuration);
+			UE_LOG(LogTemp, Warning, TEXT("CurrentDistance >= AccelerationDist : %f"), CalcedDist);
+			UE_LOG(LogTemp, Warning, TEXT("InterpolationTime : %f"), InterpolationTime);
 		}
 		else
 		{
