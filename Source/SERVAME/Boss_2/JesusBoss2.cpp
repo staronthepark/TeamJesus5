@@ -1284,7 +1284,8 @@ void AJesusBoss2::BeginPlay()
 	RightFingerOverlapCollision->OnComponentEndOverlap.AddDynamic(this, &AJesusBoss2::OnSMOverlapEnd);
 	RightFingerOverlapCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	UCombatManager::GetInstance().MonsterInfoArray.Add(this);
+	UCombatManager::GetInstance().AddMonsterInfo(this);
+
 
 	SetActive(false);
 	UCombatManager::GetInstance().Boss2 = this;

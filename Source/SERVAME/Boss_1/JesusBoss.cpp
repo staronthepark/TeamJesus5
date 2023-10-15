@@ -1143,7 +1143,7 @@ void AJesusBoss::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UCombatManager::GetInstance().MonsterInfoArray.Add(this);
+	UCombatManager::GetInstance().AddMonsterInfo(this);
 
 	BossActionEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("BossActionType"), true);
 
@@ -1203,6 +1203,9 @@ void AJesusBoss::BeginPlay()
 
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	MonsterLockOnWidget->LockOnImage->SetVisibility(ESlateVisibility::Hidden);
+
+	SetActive(false);
+
 }
 
 void AJesusBoss::Tick(float DeltaTime)

@@ -501,6 +501,7 @@ APlayerCharacter::APlayerCharacter()
 	NotifyBeginEndEventMap[AnimationType::SAVESTART].Add(true, [&]()
 		{
 			PlayerHUD->FadeInAnimation(true);
+			GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::RespawnCharacter, 2.0f);
 		});
 
 	NotifyBeginEndEventMap.Add(AnimationType::GAMESTART, TMap<bool, TFunction<void()>>());
@@ -2787,7 +2788,6 @@ void APlayerCharacter::SkillAttack()
 void APlayerCharacter::FadeIn()
 {
 	PlayerHUD->FadeInAnimation(true);
-	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::RespawnCharacter, 2.0f);
 }
 
 void APlayerCharacter::ComboAttackEnd()

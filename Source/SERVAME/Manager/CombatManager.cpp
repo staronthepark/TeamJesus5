@@ -39,3 +39,8 @@ void UCombatManager::DeactivateCollider()
 		HitMonsterInfoArray[i]->DeactivateHitCollision();
 	}
 }
+
+void UCombatManager::AddMonsterInfo(ABaseCharacter* character)
+{
+	MonsterInfoMap.Add(character->MapName, character);
+}

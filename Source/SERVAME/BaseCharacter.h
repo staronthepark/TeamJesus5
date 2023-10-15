@@ -70,6 +70,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EArmorType ArmorType;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FString MapName;
+
 	bool Imotal;
 	bool IsLockOn;
 	bool IsPlayer;
