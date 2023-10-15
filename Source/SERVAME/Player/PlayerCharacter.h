@@ -535,6 +535,8 @@ public:
 
 	void PlayerDead(bool IsFly);
 
+	void LoadingMonster();
+
 	float GetPercent(float value, float min, float max);
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)override;

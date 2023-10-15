@@ -527,7 +527,7 @@ void AEnemyMonster::BeginPlay()
 
 	ParryingCollision1->OnComponentBeginOverlap.AddDynamic(this, &AEnemyMonster::OnParryingOverlap);
 
-	SetActive(false);
+	UCombatManager::GetInstance().AddMonsterInfo(this);
 }
 
 void AEnemyMonster::ChangeMontageAnimation(MonsterAnimationType type)

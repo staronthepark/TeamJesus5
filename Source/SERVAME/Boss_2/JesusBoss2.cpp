@@ -1286,8 +1286,6 @@ void AJesusBoss2::BeginPlay()
 
 	UCombatManager::GetInstance().AddMonsterInfo(this);
 
-
-	SetActive(false);
 	UCombatManager::GetInstance().Boss2 = this;
 }
 

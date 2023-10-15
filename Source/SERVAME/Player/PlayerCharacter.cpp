@@ -1873,6 +1873,7 @@ void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	UCombatManager::GetInstance().MonsterInfoArray.Empty();
 	UCombatManager::GetInstance().HitMonsterInfoArray.Empty();
+	UCombatManager::GetInstance().MonsterInfoMap.Empty();
 }
 
 void APlayerCharacter::UseItem()
@@ -2935,7 +2936,9 @@ void APlayerCharacter::LoadMap()
 	{
 		SaveMapName = "A_KimMinYeongMap_Boss1";
 		GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 1.0f);
+		UCombatManager::GetInstance().MonsterInfoMap[SaveMapName.ToString()][0]->RespawnCharacter();
 	}
+	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadingMonster, 2.0f);
 }
 void APlayerCharacter::PlayerDead(bool IsFly)
 {
@@ -2961,6 +2964,21 @@ void APlayerCharacter::PlayerDead(bool IsFly)
 	MontageBlendInTime = 0.0f;
 	IsFly ? ChangeMontageAnimation(AnimationType::DEADLOOP2) : ChangeMontageAnimation(AnimationType::DEAD);
 	IsPhaseTwo = false;
+}
+
+void APlayerCharacter::LoadingMonster()
+{
+	UCombatManager& combatmanager = UCombatManager::GetInstance();
+
+	for (int32 i = 0; i < combatmanager.MonsterInfoArray.Num(); i++)
+	{
+		combatmanager.MonsterInfoArray[i]->SetActive(false);
+	}
+
+	for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
+	{
+		combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+	}
 }
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
