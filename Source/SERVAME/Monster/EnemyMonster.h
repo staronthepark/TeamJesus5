@@ -173,7 +173,6 @@ public:
 	bool TracePlayer;
 	bool IsOverlap = false;
 	bool IsAttacking = false;
-	bool IsDie = false;
 	bool CanRotate = true;
 
 	bool asd = false;

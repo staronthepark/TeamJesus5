@@ -1454,7 +1454,6 @@ void ANunMonster::RespawnCharacter()
 
 	MeshOpacity = 1.0f;
 
-	IsDie = false;
 
 	MinusOpacity = false;
 

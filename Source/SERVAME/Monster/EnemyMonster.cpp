@@ -822,6 +822,7 @@ void AEnemyMonster::Tick(float DeltaTime)
 
 	if (MonsterDataStruct.CharacterHp <= 0)
 	{
+		IsDie = true;
 		ChangeActionType(MonsterActionType::DEAD);
 		StateType = MonsterStateType::CANTACT;
 

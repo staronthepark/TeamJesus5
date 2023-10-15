@@ -78,6 +78,7 @@ public:
 	bool IsPlayer;
 	bool IsStun = false;
 	bool CanExecution = false;
+	bool IsDie = false;
 
 	float RotSpeed;
 	float fDeltaTime;

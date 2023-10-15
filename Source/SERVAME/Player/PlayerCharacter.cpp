@@ -1998,6 +1998,7 @@ void APlayerCharacter::RestoreStat()
 
 	for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
 	{
+		if(SaveMapName != "A_KimMinYeongMap_Boss1" && !combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
 		combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
 	}
 }
