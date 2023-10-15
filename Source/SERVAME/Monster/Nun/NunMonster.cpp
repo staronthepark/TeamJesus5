@@ -666,7 +666,7 @@ void ANunMonster::MultiHeal()
 	else
 		DrawColor = FColor::Red;
 
-	DrawDebugSphere(GetWorld(), Center, HealRadius, 16, DrawColor, false, 1.f);
+	//DrawDebugSphere(GetWorld(), Center, HealRadius, 16, DrawColor, false, 1.f);
 
 	//CameraShake(PlayerCameraShake);
 	//VibrateGamePad(1.0f, 0.5f);
@@ -1002,7 +1002,7 @@ void ANunMonster::FragmentsAttack()
 	else
 		DrawColor = FColor::Red;
 
-	DrawDebugSphere(GetWorld(), GetActorLocation(), FragmentRange, 16, DrawColor, false, 2.f);
+	//DrawDebugSphere(GetWorld(), GetActorLocation(), FragmentRange, 16, DrawColor, false, 2.f);
 
 	//CameraShake(PlayerCameraShake);
 	//VibrateGamePad(1.0f, 0.5f);

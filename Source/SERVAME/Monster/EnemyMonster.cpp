@@ -746,7 +746,7 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 	DeactivateHitCollision();
 
-	if (MyMonsterType != MonsterType::NUN && MyMonsterType != MonsterType::ELITEKNIGHT && !IsBoss)
+	if (!IsBoss)
 	{
 		ActivateHpBar();
 		GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
