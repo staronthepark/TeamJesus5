@@ -53,7 +53,7 @@ ADeadBodyOfKinght::ADeadBodyOfKinght()
 			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			TracePlayer = true;
 
-			ActivateHpBar();
+			//ActivateHpBar();
 			ActivateHitCollision();
 			ActivateSMOverlap();
 			ActivateRightWeapon();
