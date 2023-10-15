@@ -2434,6 +2434,17 @@ void APlayerCharacter::ResetGame()
 		GameInstance->SavedTriggerActor[i]->IsActive = false;
 		GameInstance->SavedTriggerActor[i]->Init();
 	}
+
+	UCombatManager& combatmanager = UCombatManager::GetInstance();
+
+	for (int32 i = 0; i < combatmanager.MonsterInfoArray.Num(); i++)
+	{
+		combatmanager.MonsterInfoArray[i]->SetActive(false);
+		combatmanager.MonsterInfoArray[i]->IsDie = false;
+		combatmanager.MonsterInfoArray[i]->RespawnCharacter();
+	}
+
+	RespawnCharacter();
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
