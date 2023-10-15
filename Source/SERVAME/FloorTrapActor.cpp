@@ -32,7 +32,7 @@ void AFloorTrapActor::Tick(float DeltaTime)
 		{
 			MeshComp->SetRelativeLocation(FVector(0, 0, MeshComp->GetRelativeLocation().Z - Speed * 0.1f * DeltaTime));
 			BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			if(MeshComp->GetRelativeLocation().Z <= 0)
+			if(MeshComp->GetRelativeLocation().Z <= -129.705314)
 			IsTrigger = false;
 		}
 	}
