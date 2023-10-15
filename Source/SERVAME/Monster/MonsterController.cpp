@@ -166,14 +166,14 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 			UE_LOG(LogTemp, Warning, TEXT("FindPlayer"));
 			FindPlayer = true;
 
-			if (Monster->MyMonsterType == MonsterType::NUN)
+			if (Monster->MyMonsterType == MonsterType::NUN && Monster->IsBoss)
 			{
 				BossUI->AddToViewport();
 				Monster->PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->LeftButton->OnClicked.AddDynamic(this, &AMonsterController::ChangeLanguage);
 				Monster->PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->RightButton->OnClicked.AddDynamic(this, &AMonsterController::ChangeLanguage);
 				BossUI->PlayBossHPOpenAnimation(true, EBossSettings::isahel);
 			}
-			else if (Monster->MyMonsterType == MonsterType::ELITEKNIGHT)
+			else if (Monster->MyMonsterType == MonsterType::ELITEKNIGHT && Monster->IsBoss)
 			{
 				BossUI->AddToViewport();
 				Monster->PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->LeftButton->OnClicked.AddDynamic(this, &AMonsterController::ChangeLanguage);

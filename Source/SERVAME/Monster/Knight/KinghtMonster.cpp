@@ -503,7 +503,7 @@ void AKinghtMonster::RespawnCharacter()
 
 	KnightAnimInstance->ResumeMontage(MontageMap[AnimationType]);
 	GetWorld()->GetTimerManager().ClearTimer(MonsterDeadTimer);
-	InterpolationDuration = 0.f;
+	InterpolationTime = 0.f;
 	//TODO : 일반 기사, 끈질긴 기사 패트롤
 	if (MyMonsterType == MonsterType::KNIGHT || MyMonsterType == MonsterType::PERSISTENTKNIGHT)
 	{
