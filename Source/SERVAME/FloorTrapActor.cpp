@@ -44,6 +44,7 @@ void AFloorTrapActor::BeginPlay()
 
 	IsTrigger = false;
 	IsEnable = false;
+	BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &AFloorTrapActor::OnBeginOverlap);
 
@@ -66,8 +67,8 @@ void AFloorTrapActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 		objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 		objectpool.SpawnObject(objectpool.ObjectArray[5].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator::ZeroRotator);
 		Player->TakeDamage(Damage, DamageEvent, nullptr, this);
+		BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
-	BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void AFloorTrapActor::BeginTriggerEvent()
