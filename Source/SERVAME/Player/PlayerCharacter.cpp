@@ -2422,13 +2422,6 @@ void APlayerCharacter::LookTarget()
 
 void APlayerCharacter::ResetGame()
 {
-	PlayStartAnimation();
-	SaveMapName = "Garden";
-	PlayerDataStruct = PlayerOriginDataStruct;
-	SpawnLocation = OriginLocation;
-	SetActorLocation(OriginLocation);
-	SetActorRotation(OriginRotation);
-
 	for (int i = 0; i < GameInstance->SavedTriggerActor.Num(); i++)
 	{
 		GameInstance->SavedTriggerActor[i]->IsActive = false;
@@ -2445,6 +2438,13 @@ void APlayerCharacter::ResetGame()
 	}
 
 	RespawnCharacter();
+
+	PlayStartAnimation();
+	SaveMapName = "Garden";
+	PlayerDataStruct = PlayerOriginDataStruct;
+	SpawnLocation = OriginLocation;
+	SetActorLocation(OriginLocation);
+	SetActorRotation(OriginRotation);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -2482,7 +2482,7 @@ float APlayerCharacter::GetPercent(float value, float min, float max)
 void APlayerCharacter::RespawnCharacter()
 {
 	Super::RespawnCharacter();
-	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::FadeOut, 4.0f);
+	GetWorldTimerManager().SetTimer(SprintStartTimer, this, &APlayerCharacter::FadeOut, 3.0f);
 
 	ASoundManager::GetInstance().StartBGMSound(IsPhaseTwo);
 
