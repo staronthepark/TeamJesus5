@@ -35,8 +35,8 @@ public:
 		UPROPERTY(EditAnywhere)
 			UBoxComponent* BoxComp;
 
-		bool IsPlaced;
 		bool IsTrigger;
+		bool IsEnable;
 		
 private:
 

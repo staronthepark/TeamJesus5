@@ -2074,7 +2074,6 @@ void APlayerCharacter::GetFirstTarget()
 	{
 		CompLocation = TargetCompInScreenArray[i]->GetComponentLocation();
 		Distance = FVector::DistSquared(CameraLocation, CompLocation);
-		//if (Distance > 1.0f)continue;
 		if (Distance < ClosestDistance)
 		{
 			ClosestDistance = Distance;
