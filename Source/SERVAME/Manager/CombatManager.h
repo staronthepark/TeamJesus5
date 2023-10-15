@@ -28,7 +28,7 @@ public:
 		UPROPERTY(EditAnywhere)
 			TArray<ABaseCharacter*> MonsterInfoArray;
 
-		TMap<FString, ABaseCharacter*> MonsterInfoMap;
+		TMap<FString, TArray<ABaseCharacter*> > MonsterInfoMap;
 
 		ABaseCharacter* Boss2;
 

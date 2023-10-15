@@ -1992,7 +1992,12 @@ void APlayerCharacter::RestoreStat()
 
 	for (int32 i = 0; i < combatmanager.MonsterInfoArray.Num(); i++)
 	{
-		combatmanager.MonsterInfoArray[i]->RespawnCharacter();
+		combatmanager.MonsterInfoArray[i]->SetActive(false);
+	}
+
+	for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
+	{
+		combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
 	}
 }
 
