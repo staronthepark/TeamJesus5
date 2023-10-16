@@ -350,7 +350,7 @@ void AKinghtMonster::BeginPlay()
 {
 	Super::BeginPlay(); 
 
-	MonsterController->CanPerception = true;
+	 MonsterController->CanPerception = true;
 
 	DeactivateHpBar();
 
@@ -368,7 +368,7 @@ void AKinghtMonster::BeginPlay()
 	PlayerCharacter = nullptr;
 
 	KnightAnimInstance = Cast<UKnightAnimInstance>(GetMesh()->GetAnimInstance());
-
+	
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &AKinghtMonster::OnKnightTargetDetectionBeginOverlap);
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &AKinghtMonster::OnKnightTargetDetectionEndOverlap);
 
