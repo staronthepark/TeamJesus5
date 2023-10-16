@@ -202,7 +202,7 @@ ANunMonster::ANunMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::IDLE, [&]()
 		{
-			if (PlayerCharacter)
+			if (PlayerCharacter && AnimationType != MonsterAnimationType::FRAGMENT)
 				StartAttackTrigger(AttackAnimationType);
 			else
 				ChangeMontageAnimation(MonsterAnimationType::IDLE);
