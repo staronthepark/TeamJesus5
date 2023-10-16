@@ -547,7 +547,7 @@ float ANunMonster::Die(float Dm)
 	if (MyMonsterType == MonsterType::NUN)
 	{
 		MonsterController->BossUI->PlayBossDiedAnimtion();
-		MonsterController->BossUI->SetVisibility(ESlateVisibility::Hidden);
+		MonsterController->BossUI->RemoveFromParent();
 
 		//소환한 환영과 기사 삭제
 		for (auto SpawnedKnight : KnightArr)

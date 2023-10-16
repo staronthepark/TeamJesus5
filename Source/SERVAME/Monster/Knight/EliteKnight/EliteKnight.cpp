@@ -76,10 +76,27 @@ void AEliteKnight::Tick(float DeltaTime)
 	}
 }
 
+float AEliteKnight::Die(float Dm)
+{
+	Super::Die(Dm);
+
+	if (IsBoss)
+	{
+		MonsterController->BossUI->PlayBossDiedAnimtion();
+		//이거 맞으면 수녀도 이렇게 수정
+		MonsterController->BossUI->RemoveFromParent();
+	}
+	return 0.0f;
+}
+
+void AEliteKnight::RespawnCharacter()
+{
+	Super::RespawnCharacter();
+	MonsterController->BossUI->SetHP(1);
+}
+
 float AEliteKnight::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
 	if (IsBoss)
 	{
 		MonsterDataStruct.CharacterHp -= DamageAmount;
@@ -87,8 +104,9 @@ float AEliteKnight::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 		MonsterController->BossUI->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
 		MonsterController->BossUI->SetDamageText(DamageAmount);
 	}
+
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
 	return 0.0f;
 }
 
-//MonsterController->BossUI->PlayBossDiedAnimtion();
-//MonsterController->BossUI->SetVisibility(ESlateVisibility::Hidden);
