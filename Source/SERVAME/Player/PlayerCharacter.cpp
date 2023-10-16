@@ -1999,7 +1999,6 @@ void APlayerCharacter::RestoreStat()
 	{
 		if(SaveMapName != "A_KimMinYeongMap_Boss1" && !combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
 		combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
-		combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->SetActive(true);
 	}
 }
 
@@ -2937,21 +2936,12 @@ void APlayerCharacter::LoadFile()
 
 void APlayerCharacter::LoadMap()
 {
-
 	FLatentActionInfo LatentInfo;
 	UGameplayStatics::LoadStreamLevel(this, SaveMapName, true, true, LatentInfo);
 
 	ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
 
-
 	LightManager->ChangeTargetLightSetting(SaveMapName.ToString());
-
-	if (SaveMapName == "2-2Map")
-	{
-		SaveMapName = "A_KimMinYeongMap_Boss1";
-		GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 1.0f);
-		UCombatManager::GetInstance().MonsterInfoMap[SaveMapName.ToString()][0]->RespawnCharacter();
-	}
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadingMonster, 2.0f);
 }
 void APlayerCharacter::PlayerDead(bool IsFly)
@@ -2988,16 +2978,10 @@ void APlayerCharacter::LoadingMonster()
 	{
 		combatmanager.MonsterInfoArray[i]->SetActive(false);
 	}
-
-	
-	if (SaveMapName == "A_KimMinYeongMap_Boss1")
-	{
-		SaveMapName = "2-2Map";
-	}
+		
 	for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
 	{
 		combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
-		combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->SetActive(true);
 	}
 }
 
