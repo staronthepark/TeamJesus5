@@ -37,25 +37,25 @@ void UPlayerStatUI::NativeOnInitialized()
 
 	for (int i = 0; i < StrButtons.Num(); i++)
 	{
-		StrButtons[i]->Button->OnClicked.AddDynamic(this, &UPlayerStatUI::OnStrButtonClicked);
+		//StrButtons[i]->Button->OnClicked.AddDynamic(this, &UPlayerStatUI::OnStrButtonClicked);
 		StrButtons[i]->ParentUI = this;
 	}
 
 	for (int i = 0; i < StaminaButtons.Num(); i++)
 	{
-		StaminaButtons[i]->Button->OnClicked.AddDynamic(this, &UPlayerStatUI::OnStaminaButtonClicked);
+		//StaminaButtons[i]->Button->OnClicked.AddDynamic(this, &UPlayerStatUI::OnStaminaButtonClicked);
 		StaminaButtons[i]->ParentUI = this;
 	}
 
 	for (int i = 0; i < HpButtons.Num(); i++)
 	{
-		HpButtons[i]->Button->OnClicked.AddDynamic(this, &UPlayerStatUI::OnHpButtonClicked);
+		//HpButtons[i]->Button->OnClicked.AddDynamic(this, &UPlayerStatUI::OnHpButtonClicked);
 		HpButtons[i]->ParentUI = this;
 	}
 
 	for (int i = 0; i < ShieldButtons.Num(); i++)
 	{
-		ShieldButtons[i]->Button->OnClicked.AddDynamic(this, &UPlayerStatUI::OnShieldButtonClicked);
+		//ShieldButtons[i]->Button->OnClicked.AddDynamic(this, &UPlayerStatUI::OnShieldButtonClicked);
 		ShieldButtons[i]->ParentUI = this;
 	}
 
@@ -67,33 +67,33 @@ void UPlayerStatUI::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UPlayerStatUI::OnStrButtonClicked()
-{
-	ExplainTitle->SetBrushFromTexture(ExplainTextures.Find(EStatsType::str)->TitleTexture, true);
-	ExplainIcon->SetBrushFromTexture(ExplainTextures.Find(EStatsType::str)->IconTexture, true);
-	ExplainText->SetBrushFromTexture(ExplainTextures.Find(EStatsType::str)->ExplainText, true);
-}
-
-void UPlayerStatUI::OnStaminaButtonClicked()
-{
-	ExplainTitle->SetBrushFromTexture(ExplainTextures.Find(EStatsType::stamina)->TitleTexture, true);
-	ExplainIcon->SetBrushFromTexture(ExplainTextures.Find(EStatsType::stamina)->IconTexture, true);
-	ExplainText->SetBrushFromTexture(ExplainTextures.Find(EStatsType::stamina)->ExplainText, true);
-}
-
-void UPlayerStatUI::OnHpButtonClicked()
-{
-	ExplainTitle->SetBrushFromTexture(ExplainTextures.Find(EStatsType::hp)->TitleTexture, true);
-	ExplainIcon->SetBrushFromTexture(ExplainTextures.Find(EStatsType::hp)->IconTexture, true);
-	ExplainText->SetBrushFromTexture(ExplainTextures.Find(EStatsType::hp)->ExplainText, true);
-}
-
-void UPlayerStatUI::OnShieldButtonClicked()
-{
-	ExplainTitle->SetBrushFromTexture(ExplainTextures.Find(EStatsType::shield)->TitleTexture, true);
-	ExplainIcon->SetBrushFromTexture(ExplainTextures.Find(EStatsType::shield)->IconTexture, true);
-	ExplainText->SetBrushFromTexture(ExplainTextures.Find(EStatsType::shield)->ExplainText, true);
-}
+//void UPlayerStatUI::OnStrButtonClicked()
+//{
+//	ExplainTitle->SetBrushFromTexture(ExplainTextures.Find(EStatsType::str)->TitleTexture, true);
+//	ExplainIcon->SetBrushFromTexture(ExplainTextures.Find(EStatsType::str)->IconTexture, true);
+//	ExplainText->SetBrushFromTexture(ExplainTextures.Find(EStatsType::str)->ExplainText, true);
+//}
+//
+//void UPlayerStatUI::OnStaminaButtonClicked()
+//{
+//	ExplainTitle->SetBrushFromTexture(ExplainTextures.Find(EStatsType::stamina)->TitleTexture, true);
+//	ExplainIcon->SetBrushFromTexture(ExplainTextures.Find(EStatsType::stamina)->IconTexture, true);
+//	ExplainText->SetBrushFromTexture(ExplainTextures.Find(EStatsType::stamina)->ExplainText, true);
+//}
+//
+//void UPlayerStatUI::OnHpButtonClicked()
+//{
+//	ExplainTitle->SetBrushFromTexture(ExplainTextures.Find(EStatsType::hp)->TitleTexture, true);
+//	ExplainIcon->SetBrushFromTexture(ExplainTextures.Find(EStatsType::hp)->IconTexture, true);
+//	ExplainText->SetBrushFromTexture(ExplainTextures.Find(EStatsType::hp)->ExplainText, true);
+//}
+//
+//void UPlayerStatUI::OnShieldButtonClicked()
+//{
+//	ExplainTitle->SetBrushFromTexture(ExplainTextures.Find(EStatsType::shield)->TitleTexture, true);
+//	ExplainIcon->SetBrushFromTexture(ExplainTextures.Find(EStatsType::shield)->IconTexture, true);
+//	ExplainText->SetBrushFromTexture(ExplainTextures.Find(EStatsType::shield)->ExplainText, true);
+//}
 
 void UPlayerStatUI::OnPurchaseButtonClicked()
 {
@@ -113,18 +113,28 @@ void UPlayerStatUI::SetCost(int value)
 	CostText->SetText(FText::AsNumber(value));
 }
 
+void UPlayerStatUI::SetValue(int value, float x, float y)
+{
+	ValueText->SetText(FText::AsNumber(value));
+	Cast<UCanvasPanelSlot>(ValueText->Slot)->SetPosition(FVector2D(x, y));
+}
+
 void UPlayerStatUI::Open()
 {
 	this->SetVisibility(ESlateVisibility::Visible);
 	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 	Controller->SetInputMode(FInputModeUIOnly());
 	Controller->bShowMouseCursor = true;
-	StrButton0->SetKeyboardFocus();
+	SetKeyboardFocus();
 }
 
 void UPlayerStatUI::Close()
 {
 	this->SetVisibility(ESlateVisibility::Collapsed);
+	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+	Controller->SetInputMode(FInputModeGameOnly());
+	Controller->bShowMouseCursor = false;
+
 	//AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 	//Controller->SetInputMode(FInputModeGameOnly());
 	//Controller->bShowMouseCursor = false;
@@ -133,10 +143,25 @@ void UPlayerStatUI::Close()
 
 }
 
+void UPlayerStatUI::SetExplainTitle(UTexture2D* texture)
+{
+	ExplainTitle->SetBrushFromTexture(texture, true);
+}
+
+void UPlayerStatUI::SetExplainIcon(UTexture2D* texture)
+{
+	ExplainIcon->SetBrushFromTexture(texture, true);
+}
+
+void UPlayerStatUI::SetExplainText(UTexture2D* texture)
+{
+	ExplainText->SetBrushFromTexture(texture, true);
+}
+
 //FReply UPlayerStatUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 //{
 //	FReply Reply = FReply::Unhandled();
-//	if (InKeyEvent.GetKey() == EKeys::Escape)
+//	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Q)
 //	{
 //		Close();
 //		Reply = FReply::Handled();
