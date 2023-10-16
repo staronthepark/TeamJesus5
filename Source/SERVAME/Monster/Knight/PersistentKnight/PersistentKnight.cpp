@@ -49,7 +49,6 @@ APersistentKnight::APersistentKnight()
 			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			TracePlayer = true;
 
-			ActivateHpBar();
 			ActivateHitCollision();        
 			ActivateSMOverlap();
 			ActivateRightWeapon();

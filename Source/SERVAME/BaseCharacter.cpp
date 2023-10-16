@@ -58,6 +58,7 @@ void ABaseCharacter::RespawnCharacter()
 {
 	SetActorLocation(SpawnLocation);
 	SetActorRotation(SpawnRotation);	
+	SetActive(true);
 }
 
 void ABaseCharacter::CameraShake(TSubclassOf< UCameraShakeBase> Shake)

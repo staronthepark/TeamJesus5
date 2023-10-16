@@ -19,6 +19,8 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	virtual float Die(float Dm) override;
+	virtual void RespawnCharacter() override;
 
 	UPROPERTY(EditAnyWhere, Category = "Sprint")
 	float SprintAttackRadius = 100.f;

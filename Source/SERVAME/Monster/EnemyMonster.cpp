@@ -330,7 +330,7 @@ AEnemyMonster::AEnemyMonster()
 	NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1].Add(true, [&]()
 		{
 			SwordTrailComp->Activate();
-			ParryingCollision1->Activate();
+			ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			ActivateSMOverlap();
 			ActivateRightWeapon();
 			AObjectPool& objectpool = AObjectPool::GetInstance();
@@ -341,7 +341,7 @@ AEnemyMonster::AEnemyMonster()
 		{
 			DeactivateRightWeapon();
 			ParryingCollision1->Deactivate();
-			SwordTrailComp->Deactivate();
+			ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			DeactivateSMOverlap();
 		});	
 
@@ -609,7 +609,8 @@ void AEnemyMonster::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedComponen
 		AObjectPool& objectpool = AObjectPool::GetInstance();
 		if (OtherComp->GetName() == "ShieldCollision")
 		{
-			PlayerCharacter->SetShieldHP(-SkillInfoMap[AttackAnimationType].Damage, GetActorLocation());
+			if(SkillInfoMap.Contains(AttackAnimationType))
+				PlayerCharacter->SetShieldHP(-SkillInfoMap[AttackAnimationType].Damage, GetActorLocation());
 			CameraShake(PlayerCameraShake);
 			VibrateGamePad(0.4f, 0.4f);
 			objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);

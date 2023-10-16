@@ -3,6 +3,7 @@
 
 #include "DeadBodyOfKinght.h"
 #include "..\KnightAttackTriggerComp.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ADeadBodyOfKinght::ADeadBodyOfKinght()
 {
@@ -33,6 +34,36 @@ ADeadBodyOfKinght::ADeadBodyOfKinght()
 			}
 		});
 
+	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
+		{
+			StateType = AnimTypeToStateType[MonsterAnimationType::IDLE];
+
+			//기사시체에만 적용?
+			if (CurrentDistance < AttackRange && MonsterController->FindPlayer)
+				StartAttackTrigger(AttackAnimationType);
+
+			if (CurrentDistance >= RunableDistance && !IsPatrol)
+			{
+				ChangeActionType(MonsterActionType::RUN);
+			}
+			else
+			{
+				if (!IsMoveStart)
+					MinWalkTime = GetRandNum(3, 4);
+
+				IsMoveStart = true;
+				Temp = 0.f;
+				CalcedDist = 0.f;
+				InterpolationTime = 0.f;
+				WalkToRunBlend = true;
+
+				GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.CharacterOriginSpeed;
+				KnightAnimInstance->BlendSpeed = WalkBlend;
+				RotateMap[PlayerCharacter != nullptr]();
+				MonsterMoveMap[MonsterMoveEventIndex]();
+			}
+		});
+
 	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
 		{
 			KnightAnimInstance->PauseAnimation(MontageMap[AnimationType]);
@@ -53,12 +84,7 @@ ADeadBodyOfKinght::ADeadBodyOfKinght()
 			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			TracePlayer = true;
 
-			//ActivateHpBar();
 			ActivateHitCollision();
-			ActivateSMOverlap();
-			ActivateRightWeapon();
-			ParryingCollision1->Activate();
-
 			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
 			MonsterMoveEventIndex = 1;
@@ -94,6 +120,21 @@ void ADeadBodyOfKinght::Tick(float DeltaTime)
 		return;
 
 	Super::Tick(DeltaTime);
+}
+
+void ADeadBodyOfKinght::RespawnCharacter()
+{
+	Super::RespawnCharacter();
+
+	MonsterController->StopMovement();
+	Trigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	StateType = MonsterStateType::CANTACT;
+	Imotal = true;
+	TracePlayer = false;
+	Reviving = true;
+	StateType = MonsterStateType::NONE;
+	HitCollision->Deactivate();
+	AttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ADeadBodyOfKinght::OnTriggerBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

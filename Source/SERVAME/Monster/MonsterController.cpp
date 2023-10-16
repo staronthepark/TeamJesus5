@@ -148,13 +148,16 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 	if (Player == nullptr)
 		return;
 
-	UE_LOG(LogTemp, Log, TEXT("OnPerception"));
-	SetFocus(Stimulus.WasSuccessfullySensed() ? Player : nullptr);
-
 	if (Monster == nullptr)
 	{
 		Monster = Cast<AEnemyMonster>(GetPawn());
 	}
+
+	if (Monster->MonsterDataStruct.CharacterHp <= 0)
+		return;
+
+	UE_LOG(LogTemp, Log, TEXT("OnPerception"));
+	SetFocus(Stimulus.WasSuccessfullySensed() ? Player : nullptr);
 
 	auto Dist = FVector::Distance(Player->GetActorLocation(), Monster->GetActorLocation());
 	Monster->PlayerCharacter = Player;

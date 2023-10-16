@@ -50,8 +50,8 @@ void UBTService_BossActionDecision::DecisionBossAction(UBehaviorTreeComponent& O
 		PushAction(BossFollowUpPatternArr);
 		PushAction(BossStepPatternArr);
 
-		Boss->CurrentActionTemp = Boss->MeleeActionArr[0];
 		IsExcute = true;
+		Boss->CurrentActionTemp = Boss->MeleeActionArr[0];
 		OwnerComp.GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("BossActionType")), Boss->CurrentActionTemp.ActionType);
 	}
 	if (!Boss->Push2PhasePattern && Boss->IsHalfHp)

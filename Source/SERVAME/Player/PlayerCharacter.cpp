@@ -1990,10 +1990,10 @@ void APlayerCharacter::RestoreStat()
 	PlayerHUD->ChangeHealCount(CurHealCount);
 	UCombatManager& combatmanager = UCombatManager::GetInstance();
 
-	for (int32 i = 0; i < combatmanager.MonsterInfoArray.Num(); i++)
-	{
-		combatmanager.MonsterInfoArray[i]->SetActive(false);
-	}
+	//for (int32 i = 0; i < combatmanager.MonsterInfoArray.Num(); i++)
+	//{
+	//	combatmanager.MonsterInfoArray[i]->SetActive(false);
+	//}
 
 	for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
 	{
@@ -2936,23 +2936,22 @@ void APlayerCharacter::LoadFile()
 
 void APlayerCharacter::LoadMap()
 {
-
 	FLatentActionInfo LatentInfo;
 	UGameplayStatics::LoadStreamLevel(this, SaveMapName, true, true, LatentInfo);
 
 	ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
-
 
 	LightManager->ChangeTargetLightSetting(SaveMapName.ToString());
 
 	if (SaveMapName == "2-2Map")
 	{
 		SaveMapName = "A_KimMinYeongMap_Boss1";
-		GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 1.0f);
-		UCombatManager::GetInstance().MonsterInfoMap[SaveMapName.ToString()][0]->RespawnCharacter();
+		GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadMap, 0.5f);
 	}
+
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadingMonster, 2.0f);
 }
+
 void APlayerCharacter::PlayerDead(bool IsFly)
 {
 	if (IsLockOn)
@@ -2982,12 +2981,7 @@ void APlayerCharacter::PlayerDead(bool IsFly)
 void APlayerCharacter::LoadingMonster()
 {
 	UCombatManager& combatmanager = UCombatManager::GetInstance();
-
-	for (int32 i = 0; i < combatmanager.MonsterInfoArray.Num(); i++)
-	{
-		combatmanager.MonsterInfoArray[i]->SetActive(false);
-	}
-
+		
 	for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
 	{
 		combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
