@@ -95,7 +95,6 @@ void ABaseCharacter::SetActive(bool active)
 {
 	SetActorHiddenInGame(!active);
 	SetActorEnableCollision(active);
-	SetActorTickEnabled(active);
 }
 
 void ABaseCharacter::Tick(float DeltaTime)
