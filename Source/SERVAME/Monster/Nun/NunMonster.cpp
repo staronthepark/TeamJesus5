@@ -822,7 +822,6 @@ void ANunMonster::DotFloor()
 			
 			auto NunEffect = Cast<ANunEffectObjInPool>(PoolObj);
 			NunEffect->DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-			NunEffect->DamageSphereTriggerComp->bHiddenInGame = false;
 			NunEffect->DamageSphereTriggerComp->Count = 10000;
 			if (IsIllusion)
 				NunEffect->DamageSphereTriggerComp->Damage = 0.f;
@@ -1113,7 +1112,7 @@ void ANunMonster::SingleHeal()
 		KnightHpArr.Push(KnightArr[i]->MonsterDataStruct.CharacterHp);
 	}
 
-	if (*KnightArr.begin() == nullptr || KnightArr.IsEmpty())
+	if (KnightArr.IsEmpty())
 		return;
 
 	Min = KnightHpArr[0];
@@ -1450,7 +1449,7 @@ void ANunMonster::RespawnCharacter()
 	TeleportDamageSum = 0.f;
 	SpawnDamageSum = 0.f;
 	IllusionDamageSum = 0.f;
-	SpawnLevel = 0;
+	SpawnLevel = 1;
 
 	MeshOpacity = 1.0f;
 
