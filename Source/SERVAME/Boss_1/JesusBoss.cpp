@@ -1327,6 +1327,12 @@ void AJesusBoss::CheckBossDie()
 	{
 		ASoundManager::GetInstance().PlaySoundWithCymbalSound(2);
 
+		FLatentActionInfo LatentInfo;
+		UGameplayStatics::LoadStreamLevel(this, "Boss2PhaseMap", true, true, LatentInfo);
+		UGameplayStatics::UnloadStreamLevel(this, "A_KimMinYeongMap_Boss1", LatentInfo, false);
+		UGameplayStatics::UnloadStreamLevel(this, "2-2Map", LatentInfo, false);
+
+
 		DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		PlayerCharacter->AxisX = 1;
 		PlayerCharacter->AxisY = 1;
@@ -1635,6 +1641,7 @@ void AJesusBoss::SpawnInit()
 	Push2PhasePattern = false;
 	CanExecution = false;
 	CanMove = true;
+	BossAnimInstance->IsStart = true;
 
 	//ÆÐÅÏÈ®·ü
 	InitPercentageMap[BossAttackType::MELEE]();
@@ -1657,9 +1664,12 @@ void AJesusBoss::SpawnInit()
 	ChangeMontageAnimation(BossAnimationType::IDLE);
 
 	//BT
+	if (!MeleeActionArr.IsEmpty())
+	{
+		CurrentActionTemp = MeleeActionArr[0];
+		AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("BossActionType")), CurrentActionTemp.ActionType);
+	}
 	AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("BossBaseAction")), SUPER_MOVE);
-	CurrentActionTemp = MeleeActionArr[0];
-	AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("BossActionType")), CurrentActionTemp.ActionType);
 }
 
 void AJesusBoss::GroundExplosionCheck()

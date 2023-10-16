@@ -1999,6 +1999,7 @@ void APlayerCharacter::RestoreStat()
 	{
 		if(SaveMapName != "A_KimMinYeongMap_Boss1" && !combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
 		combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+		combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->SetActive(true);
 	}
 }
 
@@ -2988,9 +2989,15 @@ void APlayerCharacter::LoadingMonster()
 		combatmanager.MonsterInfoArray[i]->SetActive(false);
 	}
 
+	
+	if (SaveMapName == "A_KimMinYeongMap_Boss1")
+	{
+		SaveMapName = "2-2Map";
+	}
 	for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
 	{
 		combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+		combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->SetActive(true);
 	}
 }
 
