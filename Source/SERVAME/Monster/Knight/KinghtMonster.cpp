@@ -42,6 +42,11 @@ AKinghtMonster::AKinghtMonster()
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(false, [&]()
 		{	
+			if (CurrentDistance < AttackRange)
+			{
+				StartAttackTrigger(AttackAnimationType);
+			}
+
 			if (TracePlayer && MonsterController->FindPlayer)
 			{
 				StateType = AnimTypeToStateType[MonsterAnimationType::IDLE];
@@ -252,6 +257,9 @@ AKinghtMonster::AKinghtMonster()
 	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
 		{
 			StateType = AnimTypeToStateType[MonsterAnimationType::IDLE];
+
+			if (CurrentDistance < AttackRange && MonsterController->FindPlayer)
+				StartAttackTrigger(AttackAnimationType);
 
 			if (CurrentDistance >= RunableDistance && !IsPatrol)
 			{
