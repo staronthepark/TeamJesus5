@@ -84,11 +84,7 @@ ADeadBodyOfKinght::ADeadBodyOfKinght()
 			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			TracePlayer = true;
 
-			//ActivateHpBar();
 			ActivateHitCollision();
-			ActivateSMOverlap();
-			ParryingCollision1->Activate();
-
 			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
 			MonsterMoveEventIndex = 1;
