@@ -114,6 +114,7 @@ void UUserSettingUI::Open()
 {
 	this->SetVisibility(ESlateVisibility::Visible);
 	APlayerController* Controller = GetWorld()->GetFirstPlayerController();
+	ChangeLanguage();
 	Controller->SetInputMode(FInputModeUIOnly());
 	Controller->bShowMouseCursor = true;
 	Controller->SetPause(true);

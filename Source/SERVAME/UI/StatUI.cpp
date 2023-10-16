@@ -44,6 +44,12 @@ EStatState UStatUI::GetState()
 void UStatUI::OnButtonClicked()
 {
 	ParentUI->SetCost(Cost);
+	ParentUI->SetValue(Value, x, y);
+
+	ParentUI->SetExplainTitle(ExplainTitle);
+	ParentUI->SetExplainIcon(ExplainIcon);
+	ParentUI->SetExplainText(ExplainText);
+
 	if (state == EStatState::closed || state == EStatState::activated)
 		return;
 
@@ -63,6 +69,7 @@ void UStatUI::Activate()
 	if (TypeAnimation[Type](index)) {
 		state = EStatState::activated;
 		ActiveBackground->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		ChangeButtonToActivate();
 
 		for (int i = 0; i < Lines.Num(); i++)
 			Lines[i]->SetBrushFromTexture(LineTexture, true);
@@ -72,4 +79,11 @@ void UStatUI::Activate()
 		NextStat->index = index + 1;
 		NextStat->ChangeState(EStatState::can);
 	}
+}
+
+void UStatUI::ChangeButtonToActivate()
+{
+	Button->WidgetStyle.Normal.SetResourceObject(ButtonStates.Find(EButtonState::pressed)->Texture);
+	Button->WidgetStyle.Hovered.SetResourceObject(ButtonStates.Find(EButtonState::hovered)->Texture);
+	Button->WidgetStyle.Pressed.SetResourceObject(ButtonStates.Find(EButtonState::pressed)->Texture);
 }

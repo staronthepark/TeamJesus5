@@ -41,6 +41,7 @@ void UJesusGameInstance::InitInstance()
 		PlayerStatUI = Cast<UPlayerSoulStatUI>(CreateWidget(GetWorld(), PlayerStatWidgetClass));
 	}
 
+	language = Language::KOR;
 }
 
 void UJesusGameInstance::InitDefaultSetting()
