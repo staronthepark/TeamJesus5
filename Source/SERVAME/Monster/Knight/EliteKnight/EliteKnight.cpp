@@ -83,7 +83,6 @@ float AEliteKnight::Die(float Dm)
 	if (IsBoss)
 	{
 		MonsterController->BossUI->PlayBossDiedAnimtion();
-		//이거 맞으면 수녀도 이렇게 수정
 		MonsterController->BossUI->RemoveFromParent();
 	}
 	return 0.0f;
