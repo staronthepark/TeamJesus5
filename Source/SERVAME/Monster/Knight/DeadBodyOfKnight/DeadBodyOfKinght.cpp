@@ -96,6 +96,19 @@ void ADeadBodyOfKinght::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void ADeadBodyOfKinght::RespawnCharacter()
+{
+	Super::RespawnCharacter();
+
+	Trigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	StateType = MonsterStateType::CANTACT;
+	Imotal = true;
+	TracePlayer = false;
+	StateType = MonsterStateType::NONE;
+	HitCollision->Deactivate();
+	AttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
 void ADeadBodyOfKinght::OnTriggerBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	ChangeActionType(MonsterActionType::NONE);

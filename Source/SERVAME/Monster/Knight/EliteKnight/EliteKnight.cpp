@@ -89,3 +89,6 @@ float AEliteKnight::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	}
 	return 0.0f;
 }
+
+//MonsterController->BossUI->PlayBossDiedAnimtion();
+//MonsterController->BossUI->SetVisibility(ESlateVisibility::Hidden);

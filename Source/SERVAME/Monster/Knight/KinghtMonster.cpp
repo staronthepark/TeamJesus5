@@ -410,15 +410,11 @@ void AKinghtMonster::Tick(float DeltaTime)
 		{
 			InterpolationTime += DeltaTime;
 			CalcedDist = FMath::Lerp(WalkBlend, RunBlend, InterpolationTime / InterpolationDuration);
-			UE_LOG(LogTemp, Warning, TEXT("WalkToRunBlend : %f"), CalcedDist);
-			UE_LOG(LogTemp, Warning, TEXT("InterpolationTime : %f"), InterpolationTime);
 		}
 		else if (CurrentDistance >= AccelerationDist)
 		{
 			InterpolationTime += DeltaTime;
 			CalcedDist = FMath::Lerp(IdleBlend, RunBlend, InterpolationTime / InterpolationDuration);
-			UE_LOG(LogTemp, Warning, TEXT("CurrentDistance >= AccelerationDist : %f"), CalcedDist);
-			UE_LOG(LogTemp, Warning, TEXT("InterpolationTime : %f"), InterpolationTime);
 		}
 		else
 		{
@@ -501,6 +497,7 @@ void AKinghtMonster::RespawnCharacter()
 
 	Super::RespawnCharacter();
 
+	LockOnComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	KnightAnimInstance->ResumeMontage(MontageMap[AnimationType]);
 	GetWorld()->GetTimerManager().ClearTimer(MonsterDeadTimer);
 	InterpolationTime = 0.f;
@@ -518,6 +515,7 @@ void AKinghtMonster::RespawnCharacter()
 	else if (MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
 	{
 		Imotal = true;
+		
 		AnimationType = MonsterAnimationType::STARTDEAD;
 		ChangeActionType(MonsterActionType::NONE);
 		ChangeMontageAnimation(MonsterAnimationType::STARTDEAD);
@@ -823,21 +821,9 @@ void AKinghtMonster::SearchPlayer()
 float AKinghtMonster::Die(float Dm)
 {
 	if (PlayerCharacter->IsLockOn)
-	{
-		PlayerCharacter->TargetComp = nullptr;
-		PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
-		PlayerCharacter->GetFirstTarget();
+		PlayerCharacter->LockOn();
 
-		if (PlayerCharacter->TargetComp == nullptr)
-		{
-			PlayerCharacter->LockOn();
-		}
-		else
-		{
-			Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true, PlayerCharacter->TargetComp);
-		}
-	}
-
+	LockOnComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	AObjectPool& objectpool = AObjectPool::GetInstance();
 	for (int32 i = 0; i < MonsterDataStruct.DropSoulCount; i++)
 	{
