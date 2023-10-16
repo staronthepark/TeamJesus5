@@ -87,7 +87,6 @@ ADeadBodyOfKinght::ADeadBodyOfKinght()
 			//ActivateHpBar();
 			ActivateHitCollision();
 			ActivateSMOverlap();
-			ActivateRightWeapon();
 			ParryingCollision1->Activate();
 
 			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
@@ -117,7 +116,6 @@ void ADeadBodyOfKinght::BeginPlay()
 	StateType = MonsterStateType::NONE;
 	HitCollision->Deactivate();
 	AttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ADeadBodyOfKinght::Tick(float DeltaTime)

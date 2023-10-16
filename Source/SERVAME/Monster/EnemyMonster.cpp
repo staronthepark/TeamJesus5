@@ -330,7 +330,7 @@ AEnemyMonster::AEnemyMonster()
 	NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1].Add(true, [&]()
 		{
 			SwordTrailComp->Activate();
-			ParryingCollision1->Activate();
+			ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			ActivateSMOverlap();
 			ActivateRightWeapon();
 			AObjectPool& objectpool = AObjectPool::GetInstance();
@@ -341,7 +341,7 @@ AEnemyMonster::AEnemyMonster()
 		{
 			DeactivateRightWeapon();
 			ParryingCollision1->Deactivate();
-			SwordTrailComp->Deactivate();
+			ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			DeactivateSMOverlap();
 		});	
 
