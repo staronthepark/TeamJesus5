@@ -258,9 +258,6 @@ AKinghtMonster::AKinghtMonster()
 		{
 			StateType = AnimTypeToStateType[MonsterAnimationType::IDLE];
 
-			if (CurrentDistance < AttackRange && MonsterController->FindPlayer)
-				StartAttackTrigger(AttackAnimationType);
-
 			if (CurrentDistance >= RunableDistance && !IsPatrol)
 			{
 				ChangeActionType(MonsterActionType::RUN);

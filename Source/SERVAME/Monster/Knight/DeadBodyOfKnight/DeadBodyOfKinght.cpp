@@ -3,6 +3,7 @@
 
 #include "DeadBodyOfKinght.h"
 #include "..\KnightAttackTriggerComp.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ADeadBodyOfKinght::ADeadBodyOfKinght()
 {
@@ -30,6 +31,36 @@ ADeadBodyOfKinght::ADeadBodyOfKinght()
 			{
 				ChangeActionType(MonsterActionType::ATTACK);
 				ChangeMontageAnimation(MonsterAnimationType::POWERATTACK1);
+			}
+		});
+
+	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
+		{
+			StateType = AnimTypeToStateType[MonsterAnimationType::IDLE];
+
+			//기사시체에만 적용?
+			if (CurrentDistance < AttackRange && MonsterController->FindPlayer)
+				StartAttackTrigger(AttackAnimationType);
+
+			if (CurrentDistance >= RunableDistance && !IsPatrol)
+			{
+				ChangeActionType(MonsterActionType::RUN);
+			}
+			else
+			{
+				if (!IsMoveStart)
+					MinWalkTime = GetRandNum(3, 4);
+
+				IsMoveStart = true;
+				Temp = 0.f;
+				CalcedDist = 0.f;
+				InterpolationTime = 0.f;
+				WalkToRunBlend = true;
+
+				GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.CharacterOriginSpeed;
+				KnightAnimInstance->BlendSpeed = WalkBlend;
+				RotateMap[PlayerCharacter != nullptr]();
+				MonsterMoveMap[MonsterMoveEventIndex]();
 			}
 		});
 
@@ -86,6 +117,7 @@ void ADeadBodyOfKinght::BeginPlay()
 	StateType = MonsterStateType::NONE;
 	HitCollision->Deactivate();
 	AttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ADeadBodyOfKinght::Tick(float DeltaTime)
