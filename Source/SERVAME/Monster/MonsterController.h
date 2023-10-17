@@ -55,9 +55,9 @@ public:
 
 	TArray<AActor*> DetectedActorArr;
 
-private:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
+private:
 	virtual void Tick(float DeltaTime) override;
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const;
 
