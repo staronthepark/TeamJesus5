@@ -502,6 +502,8 @@ void AKinghtMonster::RespawnCharacter()
 
 	Super::RespawnCharacter();
 
+	UE_LOG(LogTemp, Warning, TEXT("knight respawn"));
+
 	LockOnComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	KnightAnimInstance->ResumeMontage(MontageMap[AnimationType]);
 	GetWorld()->GetTimerManager().ClearTimer(MonsterDeadTimer);
