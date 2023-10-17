@@ -18,6 +18,12 @@ void UPlayerRestUI::NativeOnInitialized()
 
 }
 
+void UPlayerRestUI::NativeConstruct()
+{
+	Super::NativeConstruct();
+	Open();
+}
+
 void UPlayerRestUI::OnPrayButtonUnhovered()
 {
 	if (currentLanguage == Language::ENG)
@@ -82,26 +88,37 @@ void UPlayerRestUI::OnSoulButtonClicked()
 void UPlayerRestUI::Open()
 {
 	currentLanguage = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->language;
-	/*if (currentLanguage == Language::ENG)
-	{
-		PrayButton->WidgetStyle.Normal.SetResourceObject(ButtonTextures.Find(ERestButtons::PrayNormal)->EngTextures);
-		PrayButton->WidgetStyle.Hovered.SetResourceObject(ButtonTextures.Find(ERestButtons::PrayHovered)->EngTextures);
-		PrayButton->WidgetStyle.Pressed.SetResourceObject(ButtonTextures.Find(ERestButtons::PrayPressed)->EngTextures);
 
-		SoulButton->WidgetStyle.Normal.SetResourceObject(ButtonTextures.Find(ERestButtons::SoulNormal)->EngTextures);
-		SoulButton->WidgetStyle.Hovered.SetResourceObject(ButtonTextures.Find(ERestButtons::SoulHovered)->EngTextures);
-		SoulButton->WidgetStyle.Pressed.SetResourceObject(ButtonTextures.Find(ERestButtons::SoulPressed)->EngTextures);
+	if (currentLanguage == Language::ENG)
+	{
+		PrayImage->SetBrushFromTexture(ButtonTextures.Find(ERestButtons::PrayNormal)->EngTextures, true);
+		SoulImage->SetBrushFromTexture(ButtonTextures.Find(ERestButtons::SoulNormal)->EngTextures, true);
 	}
-	else if (currentLanguage == Language::KOR)
-	{
-		PrayButton->WidgetStyle.Normal.SetResourceObject(ButtonTextures.Find(ERestButtons::PrayNormal)->KorTextures);
-		PrayButton->WidgetStyle.Hovered.SetResourceObject(ButtonTextures.Find(ERestButtons::PrayHovered)->KorTextures);
-		PrayButton->WidgetStyle.Pressed.SetResourceObject(ButtonTextures.Find(ERestButtons::PrayPressed)->KorTextures);
+	else {
+		PrayImage->SetBrushFromTexture(ButtonTextures.Find(ERestButtons::PrayNormal)->KorTextures, true);
+		SoulImage->SetBrushFromTexture(ButtonTextures.Find(ERestButtons::SoulNormal)->KorTextures, true);
 
-		SoulButton->WidgetStyle.Normal.SetResourceObject(ButtonTextures.Find(ERestButtons::SoulNormal)->KorTextures);
-		SoulButton->WidgetStyle.Hovered.SetResourceObject(ButtonTextures.Find(ERestButtons::SoulHovered)->KorTextures);
-		SoulButton->WidgetStyle.Pressed.SetResourceObject(ButtonTextures.Find(ERestButtons::SoulPressed)->KorTextures);
-	}*/
+	}
+	//if (currentLanguage == Language::ENG)
+	//{
+	//	PrayButton->WidgetStyle.Normal.SetResourceObject(ButtonTextures.Find(ERestButtons::PrayNormal)->EngTextures);
+	//	PrayButton->WidgetStyle.Hovered.SetResourceObject(ButtonTextures.Find(ERestButtons::PrayHovered)->EngTextures);
+	//	PrayButton->WidgetStyle.Pressed.SetResourceObject(ButtonTextures.Find(ERestButtons::PrayHovered)->EngTextures);
+
+	//	SoulButton->WidgetStyle.Normal.SetResourceObject(ButtonTextures.Find(ERestButtons::SoulNormal)->EngTextures);
+	//	SoulButton->WidgetStyle.Hovered.SetResourceObject(ButtonTextures.Find(ERestButtons::SoulHovered)->EngTextures);
+	//	SoulButton->WidgetStyle.Pressed.SetResourceObject(ButtonTextures.Find(ERestButtons::SoulHovered)->EngTextures);
+	//}
+	//else if (currentLanguage == Language::KOR)
+	//{
+	//	PrayButton->WidgetStyle.Normal.SetResourceObject(ButtonTextures.Find(ERestButtons::PrayNormal)->KorTextures);
+	//	PrayButton->WidgetStyle.Hovered.SetResourceObject(ButtonTextures.Find(ERestButtons::PrayHovered)->KorTextures);
+	//	PrayButton->WidgetStyle.Pressed.SetResourceObject(ButtonTextures.Find(ERestButtons::PrayHovered)->KorTextures);
+
+	//	SoulButton->WidgetStyle.Normal.SetResourceObject(ButtonTextures.Find(ERestButtons::SoulNormal)->KorTextures);
+	//	SoulButton->WidgetStyle.Hovered.SetResourceObject(ButtonTextures.Find(ERestButtons::SoulHovered)->KorTextures);
+	//	SoulButton->WidgetStyle.Pressed.SetResourceObject(ButtonTextures.Find(ERestButtons::SoulHovered)->KorTextures);
+	//}
 
 	this->SetVisibility(ESlateVisibility::Visible);
 }
