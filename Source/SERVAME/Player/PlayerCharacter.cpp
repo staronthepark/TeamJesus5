@@ -2945,15 +2945,16 @@ void APlayerCharacter::LoadMap()
 
 	LightManager->ChangeTargetLightSetting(SaveMapName.ToString());
 
+	FTimerHandle MyTimer;
 	if (SaveMapName == "2-2Map")
 	{
 		SaveMapName = "A_KimMinYeongMap_Boss1";
-		GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadMap, 0.5f);
+		GetWorldTimerManager().SetTimer(MyTimer, this, &APlayerCharacter::LoadMap, 0.5f);
 	}
 	if (SaveMapName == "MainHall")
 	{
 		SaveMapName = "2-2Map";
-		GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadMap, 0.5f);
+		GetWorldTimerManager().SetTimer(MyTimer, this, &APlayerCharacter::LoadMap, 0.5f);
 	}
 
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadingMonster, 2.0f);
