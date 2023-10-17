@@ -283,6 +283,7 @@ AJesusBoss::AJesusBoss()
 		}));
 	MontageEndMap.Add(BossAnimationType::DARKEXPLOSION, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("asdf"));
 			Boss->IsExplosion = false;
 			Boss->ExplosionRange = 1;
 			Boss->DarkExplosionCollider->SetRelativeScale3D(FVector(Boss->ExplosionRange, Boss->ExplosionRange, Boss->ExplosionRange));
@@ -1238,7 +1239,7 @@ void AJesusBoss::Tick(float DeltaTime)
 
 	if (IsExplosion)
 	{
-		if (ExplosionRange >= 40)
+		if (ExplosionRange >= 100)
 			return;
 		ExplosionRange += 2.f;
 		DarkExplosionCollider->SetRelativeScale3D(FVector(ExplosionRange, ExplosionRange, ExplosionRange));
