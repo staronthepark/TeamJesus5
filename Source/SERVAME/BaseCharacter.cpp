@@ -58,6 +58,7 @@ void ABaseCharacter::RespawnCharacter()
 {
 	SetActorLocation(SpawnLocation);
 	SetActorRotation(SpawnRotation);	
+	SetActive(true);
 }
 
 void ABaseCharacter::CameraShake(TSubclassOf< UCameraShakeBase> Shake)
@@ -95,6 +96,7 @@ void ABaseCharacter::SetActive(bool active)
 {
 	SetActorHiddenInGame(!active);
 	SetActorEnableCollision(active);
+	SetActorTickEnabled(active);
 }
 
 void ABaseCharacter::Tick(float DeltaTime)

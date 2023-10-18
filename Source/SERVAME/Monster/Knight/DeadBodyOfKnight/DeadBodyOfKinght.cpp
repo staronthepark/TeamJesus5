@@ -126,10 +126,12 @@ void ADeadBodyOfKinght::RespawnCharacter()
 {
 	Super::RespawnCharacter();
 
+	MonsterController->StopMovement();
 	Trigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	StateType = MonsterStateType::CANTACT;
 	Imotal = true;
 	TracePlayer = false;
+	Reviving = true;
 	StateType = MonsterStateType::NONE;
 	HitCollision->Deactivate();
 	AttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);

@@ -35,7 +35,6 @@ void UUserSettingGameUI::NativeConstruct()
 	SetLanguage();
 
 	WBP_Setting_Slider->SetValue((GameInstance->PlayerOptionSetting.DPI - 20) / 40);
-
 }
 
 void UUserSettingGameUI::NativeDestruct()
@@ -76,9 +75,9 @@ void UUserSettingGameUI::SetLanguage()
 {
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (WBP_Language_Button->GetValue() == 0)
-		GameInstance->SetLanguage(Language::ENG);
-	else
 		GameInstance->SetLanguage(Language::KOR);
+	else
+		GameInstance->SetLanguage(Language::ENG);
 
 	if (GameInstance->language == Language::ENG)
 	{

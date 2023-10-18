@@ -283,6 +283,7 @@ AJesusBoss::AJesusBoss()
 		}));
 	MontageEndMap.Add(BossAnimationType::DARKEXPLOSION, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("asdf"));
 			Boss->IsExplosion = false;
 			Boss->ExplosionRange = 1;
 			Boss->DarkExplosionCollider->SetRelativeScale3D(FVector(Boss->ExplosionRange, Boss->ExplosionRange, Boss->ExplosionRange));
@@ -1238,7 +1239,7 @@ void AJesusBoss::Tick(float DeltaTime)
 
 	if (IsExplosion)
 	{
-		if (ExplosionRange >= 40)
+		if (ExplosionRange >= 100)
 			return;
 		ExplosionRange += 2.f;
 		DarkExplosionCollider->SetRelativeScale3D(FVector(ExplosionRange, ExplosionRange, ExplosionRange));
@@ -1326,6 +1327,13 @@ void AJesusBoss::CheckBossDie()
 	if (BossDataStruct.CharacterHp <= 0 && IsDead == false)
 	{
 		ASoundManager::GetInstance().PlaySoundWithCymbalSound(2);
+
+		FLatentActionInfo LatentInfo;
+		UGameplayStatics::LoadStreamLevel(this, "Boss2PhaseMap", true, true, LatentInfo);
+		UGameplayStatics::UnloadStreamLevel(this, "A_KimMinYeongMap_Boss1", LatentInfo, false);
+		UGameplayStatics::UnloadStreamLevel(this, "2-2Map", LatentInfo, false);
+		UCombatManager::GetInstance().MonsterInfoMap["Boss2PhaseMap"][0]->RespawnCharacter();
+
 
 		DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		PlayerCharacter->AxisX = 1;
@@ -1635,6 +1643,7 @@ void AJesusBoss::SpawnInit()
 	Push2PhasePattern = false;
 	CanExecution = false;
 	CanMove = true;
+	BossAnimInstance->IsStart = true;
 
 	//ÆÐÅÏÈ®·ü
 	InitPercentageMap[BossAttackType::MELEE]();
@@ -1657,9 +1666,12 @@ void AJesusBoss::SpawnInit()
 	ChangeMontageAnimation(BossAnimationType::IDLE);
 
 	//BT
+	if (!MeleeActionArr.IsEmpty())
+	{
+		CurrentActionTemp = MeleeActionArr[0];
+		AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("BossActionType")), CurrentActionTemp.ActionType);
+	}
 	AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("BossBaseAction")), SUPER_MOVE);
-	CurrentActionTemp = MeleeActionArr[0];
-	AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("BossActionType")), CurrentActionTemp.ActionType);
 }
 
 void AJesusBoss::GroundExplosionCheck()

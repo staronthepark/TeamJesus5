@@ -59,8 +59,6 @@ ANunMonster::ANunMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::CRYSTAL, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::ILLUSION, MonsterStateType::BEFOREATTACK);
 
-
-
 	MonsterMoveMap.Add(1, [&]()
 		{
 		});
@@ -455,7 +453,7 @@ void ANunMonster::OnPerceptionTriggerBeginOverlap(UPrimitiveComponent* Overlappe
 
 void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {	
-	if (MonsterController->FindPlayer && !CheckDetect)
+	if (MonsterController->FindPlayer && !CheckDetect && MonsterDataStruct.CharacterHp > 0)
 	{
 		CheckDetect = true;
 
@@ -1438,10 +1436,20 @@ void ANunMonster::RespawnCharacter()
 {
 	Super::RespawnCharacter();
 
+	if (MyMonsterType == MonsterType::ILLUSION_NUN)
+	{
+		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
+		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+		SetActorTickEnabled(false);
+		GetWorld()->DestroyActor(this);
+		return;
+	}
+
 	GetWorld()->GetTimerManager().ClearTimer(TeleportHandle);
-	MonsterController->BossUI->SetHP(1);
+	
 	CheckDetect = false;
 	MonsterController->CanPerception = false;
+	MonsterController->FindPlayer = false;
 
 	KnightArr.Empty();
 	PlayerCharacter = nullptr;
@@ -1453,10 +1461,8 @@ void ANunMonster::RespawnCharacter()
 
 	MeshOpacity = 1.0f;
 
-
 	MinusOpacity = false;
 
-	
 	//머테리얼에 Opacity 값 넣기 전까지 임시로 Visibility 꺼주기
 	GetMesh()->SetVisibility(true);
 
@@ -1465,7 +1471,7 @@ void ANunMonster::RespawnCharacter()
 
 	ActivateHitCollision();
 	MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
-	MonsterHPWidget->SetHP(1.0f);
+	MonsterController->BossUI->SetHP(1);
 	ChangeActionType(MonsterActionType::NONE);
 	ChangeMontageAnimation(MonsterAnimationType::IDLE);
 }

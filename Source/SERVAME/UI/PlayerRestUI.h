@@ -68,6 +68,8 @@ public:
 
 	virtual void NativeOnInitialized();
 
+	virtual void NativeConstruct();
+
 	UFUNCTION()
 	void OnPrayButtonUnhovered();	
 	UFUNCTION()

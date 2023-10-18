@@ -38,8 +38,6 @@ public:
 	UPROPERTY(EditAnywhere)
 		UTexture2D* ExplainText;
 
-	UPROPERTY(EditAnywhere)
-		int Cost;
 };
 
 UCLASS()
@@ -119,6 +117,9 @@ class SERVAME_API UPlayerStatUI : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* CostText;
 
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* ValueText;
+
 	UPROPERTY(EditAnywhere)
 	TMap<EStatsType, FStatButtonExplainTextures> ExplainTextures;
 
@@ -149,17 +150,17 @@ public:
 
 	virtual void NativeConstruct();
 
-	UFUNCTION()
-	void OnStrButtonClicked();
+	//UFUNCTION()
+	//void OnStrButtonClicked();
 
-	UFUNCTION()
-	void OnStaminaButtonClicked();
+	//UFUNCTION()
+	//void OnStaminaButtonClicked();
 
-	UFUNCTION()
-	void OnHpButtonClicked();
+	//UFUNCTION()
+	//void OnHpButtonClicked();
 
-	UFUNCTION()
-	void OnShieldButtonClicked();
+	//UFUNCTION()
+	//void OnShieldButtonClicked();
 
 	UFUNCTION()
 	void OnPurchaseButtonClicked();
@@ -169,9 +170,18 @@ public:
 
 	void SetCost(int value);
 
+	void SetValue(int value, float x, float y);
+
 	void Open();
 
 	void Close();
 
-	/*virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent);*/
+	void SetExplainTitle(UTexture2D* texture);
+
+	void SetExplainIcon(UTexture2D* texture);
+	
+	void SetExplainText(UTexture2D* texture);
+
+
+	//virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent);
 };

@@ -52,7 +52,6 @@ class SERVAME_API UStatUI : public UUserWidget
 {
 	GENERATED_BODY()
 
-
 	UPROPERTY(EditAnywhere)
 	TMap<EButtonState, FStatButtonTexture> ButtonStates;
 
@@ -63,13 +62,28 @@ class SERVAME_API UStatUI : public UUserWidget
 	UTexture2D* LineTexture;
 
 	UPROPERTY(EditAnywhere)
-	EStatState state;
+	UTexture2D* ExplainTitle;	
+	
+	UPROPERTY(EditAnywhere)
+	UTexture2D* ExplainIcon;	
+	
+	UPROPERTY(EditAnywhere)
+	UTexture2D* ExplainText;
+
 
 	UPROPERTY(EditAnywhere)
 	UStatUI* NextStat;
 
 	UPROPERTY(EditAnywhere)
+		float x;
+	UPROPERTY(EditAnywhere)
+		float y;
+
+	UPROPERTY(EditAnywhere)
 	int Cost;
+
+	UPROPERTY(EditAnywhere)
+	int Value;
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* ActiveBackground;
@@ -88,6 +102,9 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	UButton* Button;
 
+	UPROPERTY(EditAnywhere)
+	EStatState state;
+
 	int index;
 
 	virtual void NativeOnInitialized();
@@ -102,4 +119,7 @@ public:
 
 	UFUNCTION()
 	void Activate();
+
+	UFUNCTION()
+	void ChangeButtonToActivate();
 };
