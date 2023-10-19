@@ -1175,7 +1175,6 @@ APlayerCharacter::APlayerCharacter()
 
 	InputEventMap[PlayerAction::NONE][ActionType::MOVE].Add(true, [&]()
 		{
-
 			ChangeActionType(ActionType::MOVE);
 			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
 		});
@@ -1368,8 +1367,18 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::POWERATTACK].Add(false, InputEventMap[PlayerAction::NONE][ActionType::POWERATTACK][false]);
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::PARRING].Add(true, InputEventMap[PlayerAction::NONE][ActionType::PARRING][true]);
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::PARRING].Add(false, InputEventMap[PlayerAction::NONE][ActionType::PARRING][false]);
-	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(true, [&]() {});
-	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(false, [&]() {});
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(true, [&]()
+		{
+			ChangeActionType(ActionType::MOVE);
+			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
+			ComboAttackEnd();
+		});
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(false, [&]()
+		{
+			if(CurActionType == ActionType::MOVE)
+			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
+
+		});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::ROTATE].Add(true, [&]() {});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::ROTATE].Add(false, [&]() {});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::HEAL].Add(true, [&]() {});
@@ -1995,10 +2004,13 @@ void APlayerCharacter::RestoreStat()
 	//	combatmanager.MonsterInfoArray[i]->SetActive(false);
 	//}
 
-	for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
+	if (combatmanager.MonsterInfoMap.Contains(SaveMapName.ToString()))
 	{
-		if(SaveMapName != "A_KimMinYeongMap_Boss1" && !combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
-		combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+		for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
+		{
+			if (SaveMapName != "A_KimMinYeongMap_Boss1" && !combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
+				combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+		}
 	}
 }
 
@@ -2568,11 +2580,21 @@ void APlayerCharacter::Parring()
 void APlayerCharacter::OnEnemyDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	TargetCompArray.Add(OtherComp);
+
+	ABaseCharacter* character = Cast<ABaseCharacter>(OtherActor);
+
+
+	if(character != nullptr)
+	UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(character);
 }
 
 void APlayerCharacter::OnEnemyDetectionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {	
 	TargetCompArray.Remove(OtherComp);
+	ABaseCharacter* character = Cast<ABaseCharacter>(OtherActor);
+
+	if(character != nullptr)
+	UCombatManager::GetInstance().HitMonsterInfoArray.Remove(character);
 }
 
 void APlayerCharacter::PlayerMovement()
