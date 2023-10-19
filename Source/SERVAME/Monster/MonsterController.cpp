@@ -210,19 +210,23 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 
 				if (Monster->MyMonsterType == MonsterType::KNIGHT || Monster->MyMonsterType == MonsterType::PERSISTENTKNIGHT)
 				{
-					Knight->MonsterMoveEventIndex = 0;
-					Knight->ChangeActionType(MonsterActionType::MOVE);
+					Knight->IsPatrol = true;
 					Knight->KnightAnimInstance->BlendSpeed = Knight->WalkBlend;
 					Knight->WalkToRunBlend = false;
+					Knight->TracePlayer = false;
+					Knight->MonsterMoveEventIndex = 0;
+					Knight->ChangeActionType(MonsterActionType::MOVE);
 				}
 				else if (Monster->MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
 				{
 					if (!Knight->Reviving)
 					{
+						Knight->IsPatrol = true;
+						Knight->KnightAnimInstance->BlendSpeed = Knight->IdleBlend;
+						Knight->WalkToRunBlend = false;
+						Knight->TracePlayer = false;
 						Knight->MonsterMoveEventIndex = 0;
 						Knight->ChangeActionType(MonsterActionType::MOVE);
-						Knight->KnightAnimInstance->BlendSpeed = Knight->WalkBlend;
-						Knight->WalkToRunBlend = false;
 					}
 					else
 					{

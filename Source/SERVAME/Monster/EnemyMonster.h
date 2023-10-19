@@ -95,7 +95,6 @@ class SERVAME_API AEnemyMonster : public ABaseCharacter
 	GENERATED_BODY()
 	
 public:
-
 	AEnemyMonster();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -116,7 +115,10 @@ public:
 	TMap<MonsterAnimationType, UAnimMontage*> MontageMap;
 
 	UPROPERTY(EditAnyWhere, Category = "SkillInfoMap")
-		TMap<MonsterAnimationType, FSkillInfo>SkillInfoMap;
+	TMap<MonsterAnimationType, FSkillInfo>SkillInfoMap;
+
+	UPROPERTY(EditAnyWhere, Category = "MonsterID")
+	int MonsterID = 0;
 
 	TMap<bool, TFunction<void()>>RotateMap;
 	TMap<int, TFunction<void()>>RandomRotateMap;
@@ -209,6 +211,8 @@ public:
 	void ActivateHpBar();
 
 	void TickOverlap();
+
+	void MonsterLog(int id, FString str);
 
 	UFUNCTION()
 	void OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

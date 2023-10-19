@@ -83,7 +83,7 @@ AKinghtMonster::AKinghtMonster()
 			if (PatrolActorArr.IsEmpty())
 			{
 				IsPatrol = false;
-				WalkToRunBlend = false; 
+				WalkToRunBlend = false;
 				MonsterMoveEventIndex = 1;
 				KnightAnimInstance->BlendSpeed = IdleBlend;
 				ChangeActionType(MonsterActionType::NONE);
@@ -94,7 +94,10 @@ AKinghtMonster::AKinghtMonster()
 			GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.CharacterOriginSpeed;
 			KnightAnimInstance->BlendSpeed = WalkBlend;
 			if (PatrolActorArr[PatrolIndexCount] != nullptr)
+			{
 				MonsterController->Patrol(PatrolActorArr[PatrolIndexCount]->GetActorLocation(), PatrolActorArr.Num());
+				MonsterLog(999, "patrol");
+			}
 		});
 	MonsterMoveMap.Add(3, [&]()
 		{
@@ -256,6 +259,7 @@ AKinghtMonster::AKinghtMonster()
 
 	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
 		{
+			MonsterLog(999, "MonsterActionType::MOVE");
 			StateType = AnimTypeToStateType[MonsterAnimationType::IDLE];
 
 			if (CurrentDistance >= RunableDistance && !IsPatrol)
@@ -508,6 +512,7 @@ void AKinghtMonster::RespawnCharacter()
 	KnightAnimInstance->ResumeMontage(MontageMap[AnimationType]);
 	GetWorld()->GetTimerManager().ClearTimer(MonsterDeadTimer);
 	InterpolationTime = 0.f;
+
 	//TODO : 일반 기사, 끈질긴 기사 패트롤
 	if (MyMonsterType == MonsterType::KNIGHT || MyMonsterType == MonsterType::PERSISTENTKNIGHT)
 	{
@@ -516,8 +521,6 @@ void AKinghtMonster::RespawnCharacter()
 		IsPatrol = true;
 		MonsterMoveEventIndex = 0;
 		ChangeActionType(MonsterActionType::MOVE);
-		ChangeMontageAnimation(MonsterAnimationType::IDLE);
-		KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	}		
 	else if (MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
 	{
