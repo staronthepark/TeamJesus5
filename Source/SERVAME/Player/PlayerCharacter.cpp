@@ -2697,11 +2697,9 @@ void APlayerCharacter::OnExecutionOverlapEnd(UPrimitiveComponent* OverlappedComp
 
 void APlayerCharacter::OnParryingOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UGameplayStatics::SetGlobalTimeDilation(this, .5f);
 	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
 	CameraShake(PlayerCameraShake);
 	Imotal = true;
-	BossParryingSequncePlayer->Play();
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[15].ObjClass, OtherComp->GetComponentLocation(), FRotator(90, 180, 0));
 	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
