@@ -32,6 +32,8 @@ public:
 	UFUNCTION()
 		void OpenStat();
 
+	void Open();
+
 	void Close();
 
 	void SetRemainSoul(int value);

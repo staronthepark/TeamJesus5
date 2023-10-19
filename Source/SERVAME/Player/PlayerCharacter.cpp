@@ -934,12 +934,12 @@ APlayerCharacter::APlayerCharacter()
 		});
 	MontageEndEventMap.Add(AnimationType::SAVESTART, [&]()
 		{
-			GameInstance->PlayerStatUI->AddToViewport();
+			PlayerHUD->OpenStat();
 			PlayerHUD->PlayInteractionAnimation(true, EInteractions::close);
 			ChangeMontageAnimation(AnimationType::SAVELOOP);
 			RestoreStat();
 			GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::FadeOut, 2.0f);
-			GameInstance->PlayerStatUI->SetRemainSoul(PlayerDataStruct.SoulCount);
+			PlayerHUD->SetRemainSoul(PlayerDataStruct.SoulCount);
 
 			PlayerHUD->PlayExitAnimation(true);
 			SpawnLocation = GetActorLocation();
@@ -2958,7 +2958,7 @@ void APlayerCharacter::SetSoul(int32 value)
 
 	value < 0 ? PlayerHUD->DecreaseSoulGradual(this, PlayerDataStruct.SoulCount / PlayerDataStruct.MaxSoulCount) : 
 		PlayerHUD->SetSoul(PlayerDataStruct.SoulCount / PlayerDataStruct.MaxSoulCount);
-	GameInstance->PlayerStatUI->SetRemainSoul(PlayerDataStruct.SoulCount);
+	PlayerHUD->SetRemainSoul(PlayerDataStruct.SoulCount);
 
 	if (PlayerDataStruct.SoulCount <= 0)PlayerDataStruct.SoulCount = 0;
 	else if(PlayerDataStruct.SoulCount >= PlayerDataStruct.MaxSoulCount)PlayerDataStruct.SoulCount = 100;
