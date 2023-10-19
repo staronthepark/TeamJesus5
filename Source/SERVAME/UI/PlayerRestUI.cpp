@@ -82,7 +82,7 @@ void UPlayerRestUI::OnPrayButtonClicked()
 
 void UPlayerRestUI::OnSoulButtonClicked()
 {
-	this->SetVisibility(ESlateVisibility::Collapsed);
+	//this->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UPlayerRestUI::Open()

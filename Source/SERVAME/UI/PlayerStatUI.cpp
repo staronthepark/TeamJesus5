@@ -122,18 +122,17 @@ void UPlayerStatUI::SetValue(int value, float x, float y)
 void UPlayerStatUI::Open()
 {
 	this->SetVisibility(ESlateVisibility::Visible);
-	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
-	Controller->SetInputMode(FInputModeUIOnly());
-	Controller->bShowMouseCursor = true;
-	SetKeyboardFocus();
+	//AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+	//Controller->SetInputMode(FInputModeUIOnly());
+	//Controller->bShowMouseCursor = true;
 }
 
 void UPlayerStatUI::Close()
 {
 	this->SetVisibility(ESlateVisibility::Collapsed);
-	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
-	Controller->SetInputMode(FInputModeGameOnly());
-	Controller->bShowMouseCursor = false;
+	//AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+	//Controller->SetInputMode(FInputModeGameOnly());
+	//Controller->bShowMouseCursor = false;
 
 	//AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 	//Controller->SetInputMode(FInputModeGameOnly());

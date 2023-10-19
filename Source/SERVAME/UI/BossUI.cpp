@@ -18,7 +18,6 @@ void UBossUI::NativeOnInitialized()
 void UBossUI::NativeConstruct()
 {
 	Super::NativeConstruct();
-	CurrentBoss = EBossSettings::phase1;
 	PlayAnimation(BossHPOpenAnimation);
 }
 
@@ -71,7 +70,7 @@ void UBossUI::PlayGameClearAnimation()
 void UBossUI::SetDamageText(float value)
 {
 	CumulateDamage += value;
-	TakeDamageText->SetText(FText::AsNumber(CumulateDamage));
+	TakeDamageText->SetText(FText::AsNumber((int)CumulateDamage));
 
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 
