@@ -156,13 +156,11 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 	if (Monster->MonsterDataStruct.CharacterHp <= 0)
 		return;
 
-	UE_LOG(LogTemp, Log, TEXT("OnPerception"));
 	SetFocus(Stimulus.WasSuccessfullySensed() ? Player : nullptr);
-
 	auto Dist = FVector::Distance(Player->GetActorLocation(), Monster->GetActorLocation());
 	Monster->PlayerCharacter = Player;
 
-	if (Dist <= PerceptionSight - 100.f)
+	if (Stimulus.WasSuccessfullySensed())
 	{
 		if (GetTeamAttitudeTowards(*Actor) == ETeamAttitude::Hostile)
 		{

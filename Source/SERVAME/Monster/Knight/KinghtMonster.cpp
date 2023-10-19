@@ -85,7 +85,7 @@ AKinghtMonster::AKinghtMonster()
 				IsPatrol = false;
 				WalkToRunBlend = false;
 				MonsterMoveEventIndex = 1;
-				KnightAnimInstance->BlendSpeed = IdleBlend;
+				isReturnBlend = true;
 				ChangeActionType(MonsterActionType::NONE);
 				return;
 			}
@@ -515,6 +515,7 @@ void AKinghtMonster::RespawnCharacter()
 
 	UE_LOG(LogTemp, Warning, TEXT("knight respawn"));
 
+	MonsterController->FindPlayer = false;
 	LockOnComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	KnightAnimInstance->ResumeMontage(MontageMap[AnimationType]);
 	GetWorld()->GetTimerManager().ClearTimer(MonsterDeadTimer);
@@ -524,7 +525,6 @@ void AKinghtMonster::RespawnCharacter()
 	if (MyMonsterType == MonsterType::KNIGHT || MyMonsterType == MonsterType::PERSISTENTKNIGHT)
 	{
 		TracePlayer = false;
-		MonsterController->FindPlayer = false;
 		IsPatrol = true;
 		MonsterMoveEventIndex = 0;
 		ChangeActionType(MonsterActionType::MOVE);
@@ -540,7 +540,6 @@ void AKinghtMonster::RespawnCharacter()
 	else
 	{
 		TracePlayer = false;
-		MonsterController->FindPlayer = false;
 		CalcedDist = IdleBlend;
 		ChangeActionType(MonsterActionType::NONE);
 		ChangeMontageAnimation(MonsterAnimationType::IDLE);
