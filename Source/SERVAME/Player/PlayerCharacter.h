@@ -74,6 +74,7 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 {
 	GENERATED_BODY()
 
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float SoulCount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
