@@ -213,6 +213,8 @@ public:
 	void TickOverlap();
 
 	void MonsterLog(int id, FString str);
+	void MonsterLog(int id, float f);
+	void MonsterLog(int id, int i);
 
 	UFUNCTION()
 	void OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

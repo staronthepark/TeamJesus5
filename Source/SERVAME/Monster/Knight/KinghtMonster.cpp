@@ -403,6 +403,8 @@ void AKinghtMonster::Tick(float DeltaTime)
 
 	Super::Tick(DeltaTime);
 
+	MonsterLog(999, static_cast<int>(ActionType));
+
 	if (IsInterpStart)
 		InterpMove();
 
