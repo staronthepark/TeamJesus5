@@ -1436,6 +1436,8 @@ void ANunMonster::RespawnCharacter()
 {
 	Super::RespawnCharacter();
 
+	UE_LOG(LogTemp, Warning, TEXT("nun respawn"));
+
 	if (MyMonsterType == MonsterType::ILLUSION_NUN)
 	{
 		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);

@@ -1376,7 +1376,6 @@ void AJesusBoss2::LeftRotateToPlayerInterp()
 	FRotator CurrentRotation = GetActorRotation();
 
 	float RotationAngle = DesiredRotationAngle;
-	UE_LOG(LogTemp, Warning, TEXT("LeftRotate : %f"), RotationAngle);
 
 	FRotator RotationAmount(0.0f, RotationAngle, 0.0f);
 
@@ -1389,7 +1388,6 @@ void AJesusBoss2::RightRotateToPlayerInterp()
 	FRotator CurrentRotation = GetActorRotation();
 
 	float RotationAngle = -DesiredRotationAngle;
-	UE_LOG(LogTemp, Warning, TEXT("RightRotate : %f"), RotationAngle);
 
 	FRotator RotationAmount(0.0f, RotationAngle, 0.0f);
 
