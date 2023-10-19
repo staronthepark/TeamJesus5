@@ -1360,6 +1360,7 @@ void AJesusBoss::CheckBossDie()
 
 		GetWorldTimerManager().SetTimer(FadeInTimerHandle, FTimerDelegate::CreateLambda([=]()
 			{
+				UE_LOG(LogTemp, Warning, TEXT("FADEOUTANIMATION"));
 				AIController->BossUI->PlayFadeOutAnimation();
 				AIController->BossUI->SetVisibility(ESlateVisibility::Hidden);
 			}), 4.f, false);
