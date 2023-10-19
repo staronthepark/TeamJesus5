@@ -2044,6 +2044,7 @@ void APlayerCharacter::LockOn()
 	{
 		if (TargetComp == nullptr)
 		{
+			TargetCompFrontPlayerArray.Empty();
 			GetCompsInScreen(TargetCompArray);
 			GetFirstTarget();
 			if (TargetComp == nullptr)
@@ -2089,15 +2090,37 @@ void APlayerCharacter::GetFirstTarget()
 	float ClosestDistance = 999999999;
 	FVector CompLocation;
 	FVector CameraLocation = FollowCamera->GetComponentLocation();
-	for (int32 i = 0; i < TargetCompInScreenArray.Num(); i++)
+	RayCastOnTargets();
+	for (int32 i = 0; i < TargetCompFrontPlayerArray.Num(); i++)
 	{
-		CompLocation = TargetCompInScreenArray[i]->GetComponentLocation();
+		CompLocation = TargetCompFrontPlayerArray[i]->GetComponentLocation();
 		Distance = FVector::DistSquared(CameraLocation, CompLocation);
 		if (Distance < ClosestDistance)
 		{
 			ClosestDistance = Distance;
-			TargetComp = TargetCompInScreenArray[i];
+			TargetComp = TargetCompFrontPlayerArray[i];
 		}
+	}
+}
+
+void APlayerCharacter::RayCastOnTargets()
+{
+	FVector StartLocation = FollowCamera->GetComponentLocation();
+	FVector EndLocation;
+
+	FHitResult HitResult;
+
+	FCollisionQueryParams CollisionParams;
+
+	for (int32 i = 0; i < TargetCompInScreenArray.Num(); i++)
+	{
+		EndLocation = TargetCompInScreenArray[i]->GetComponentLocation();
+		CollisionParams.AddIgnoredActor(TargetCompInScreenArray[i]->GetOwner());
+		if (!GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_GameTraceChannel7, CollisionParams))
+		{
+			TargetCompFrontPlayerArray.AddUnique(TargetCompInScreenArray[i]);
+		}
+		//DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Green, false, 2, 0, 1);
 	}
 }
 
@@ -2141,17 +2164,20 @@ void APlayerCharacter::ChangeTarget(CameraDirection CamDirection)
 	FVector TargetDir = (TargetVector - CameraLocation).GetSafeNormal();
 	TArray<UPrimitiveComponent*> TargetArray;
 
-	for (int32 i = 0; i < TargetCompInScreenArray.Num(); i++)
+	RayCastOnTargets();
+
+
+	for (int32 i = 0; i < TargetCompFrontPlayerArray.Num(); i++)
 	{
-		if (!TargetCompInScreenArray[i]->GetOwner()->IsActorTickEnabled())continue;
-		if (TargetComp == TargetCompInScreenArray[i])continue;
-		FVector Direction = (TargetCompInScreenArray[i]->GetComponentLocation() - CameraLocation).GetSafeNormal();
+		if (!TargetCompFrontPlayerArray[i]->GetOwner()->IsActorTickEnabled())continue;
+		if (TargetComp == TargetCompFrontPlayerArray[i])continue;
+		FVector Direction = (TargetCompFrontPlayerArray[i]->GetComponentLocation() - CameraLocation).GetSafeNormal();
 		FVector Cross = FVector::CrossProduct(TargetDir, Direction);
 
 		if ((CamDirection == CameraDirection::LEFT && Cross.Z < 0.f)
 			|| (CamDirection == CameraDirection::RIGHT && Cross.Z > 0.f))
 		{
-			TargetArray.Add(TargetCompInScreenArray[i]);
+			TargetArray.Add(TargetCompFrontPlayerArray[i]);
 		}
 	}
 
