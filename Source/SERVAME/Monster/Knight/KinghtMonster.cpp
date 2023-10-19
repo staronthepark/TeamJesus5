@@ -502,6 +502,7 @@ void AKinghtMonster::RespawnCharacter()
 {
 	if (IsSpawn)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("spawned knight delete"));
 		//소환된 기사 삭제
 		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
 		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);

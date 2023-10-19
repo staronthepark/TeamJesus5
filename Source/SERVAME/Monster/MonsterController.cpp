@@ -166,7 +166,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 	{
 		if (GetTeamAttitudeTowards(*Actor) == ETeamAttitude::Hostile)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("FindPlayer"));
+			UE_LOG(LogTemp, Warning, TEXT("FindPlayer: %s"), *Monster->GetName());
 			FindPlayer = true;
 
 			if (Monster->MyMonsterType == MonsterType::NUN && Monster->IsBoss)
@@ -187,7 +187,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("LostPlayer"));
+		UE_LOG(LogTemp, Warning, TEXT("LostPlayer : %s"), *Monster->GetName());
 		FindPlayer = false;
 
 		if (Monster->MyMonsterType == MonsterType::NUN || Monster->MyMonsterType == MonsterType::ELITEKNIGHT)
@@ -286,7 +286,7 @@ ETeamAttitude::Type AMonsterController::GetTeamAttitudeTowards(const AActor& Oth
 			auto ID = TeamAgent->GetGenericTeamId();
 			auto intid = ID.GetId();
 
-			UE_LOG(LogTemp, Warning, TEXT("ID : %d"), intid);
+			//UE_LOG(LogTemp, Warning, TEXT("ID : %d"), intid);
 
 			if (ID == FGenericTeamId(1))
 			{
