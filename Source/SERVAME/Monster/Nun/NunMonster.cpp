@@ -80,6 +80,8 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::HEAL1, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::HEAL1].Add(true, [&]()
 		{
+			if (!MonsterController->FindPlayer)
+				return;
 			SpawnMagicCircle();
 			SingleHeal();
 		});
@@ -90,6 +92,8 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::HEAL2, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::HEAL2].Add(true, [&]()
 		{
+			if (!MonsterController->FindPlayer)
+				return;
 			SpawnMagicCircle();
 			MultiHeal();
 		});
@@ -100,6 +104,8 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::SPAWNKNIGHT, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::SPAWNKNIGHT].Add(true, [&]()
 		{
+			if (!MonsterController->FindPlayer)
+				return;
 			SpawnMagicCircle();
 			SpawnKnight();
 		});
@@ -110,6 +116,8 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::WORSHIP, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::WORSHIP].Add(true, [&]()
 		{
+			if (!MonsterController->FindPlayer)
+				return;
 			SpawnMagicCircle();
 			DotFloor();
 		});
@@ -120,6 +128,8 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::JUDEMENT, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::JUDEMENT].Add(true, [&]()
 		{
+			if (!MonsterController->FindPlayer)
+				return;
 			SpawnMagicCircle();
 			JudementAttack();
 		});
@@ -130,6 +140,8 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::CURSE, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::CURSE].Add(true, [&]()
 		{
+			if (!MonsterController->FindPlayer)
+				return;
 			SpawnMagicCircle();
 			Curse();
 		});
@@ -140,6 +152,8 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::SELFHEAL, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::SELFHEAL].Add(true, [&]()
 		{
+			if (!MonsterController->FindPlayer)
+				return;
 			SpawnMagicCircle();
 			SelfHeal();
 		});
@@ -150,6 +164,8 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::DARK, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::DARK].Add(true, [&]()
 		{
+			if (!MonsterController->FindPlayer)
+				return;
 			SpawnMagicCircle();
 			DarkAttack();
 		});
@@ -161,6 +177,8 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::PRAY, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::PRAY].Add(true, [&]()
 		{
+			if (!MonsterController->FindPlayer)
+				return;
 			SpawnMagicCircle();
 			PrayAttack();
 		});
@@ -171,6 +189,8 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::FRAGMENT, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::FRAGMENT].Add(true, [&]()
 		{
+			if (!MonsterController->FindPlayer)
+				return;
 			SpawnMagicCircle();
 			FragmentsAttack();
 		});
@@ -181,6 +201,8 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::CRYSTAL, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::CRYSTAL].Add(true, [&]()
 		{
+			if (!MonsterController->FindPlayer)
+				return;
 			SpawnMagicCircle();
 			CrystalAttack();
 		});
@@ -191,6 +213,8 @@ ANunMonster::ANunMonster()
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::ILLUSION, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::ILLUSION].Add(true, [&]()
 		{
+			if (!MonsterController->FindPlayer)
+				return;
 			SpawnMagicCircle();
 			IllusionAttack();
 		});
@@ -843,6 +867,9 @@ void ANunMonster::JudementAttack()
 
 	GetWorld()->GetTimerManager().SetTimer(JudementTimer, FTimerDelegate::CreateLambda([=]()
 		{
+			if (!MonsterController->FindPlayer)
+				return;
+
 			FNavLocation RandomLocation;
 			if (NavSystem->GetRandomPointInNavigableRadius(GetActorLocation(), JudementRange, RandomLocation))
 			{
@@ -1307,7 +1334,7 @@ void ANunMonster::TelePort()
 			}
 			CurrentNum = Num;
 
-			UE_LOG(LogTemp, Warning, TEXT("origin CurrentNum = %d"), CurrentNum);
+			//UE_LOG(LogTemp, Warning, TEXT("origin CurrentNum = %d"), CurrentNum);
 
 			SetActorLocation(TeleportArr[Num]->GetActorLocation());
 
@@ -1331,7 +1358,6 @@ void ANunMonster::TelePort()
 			{
 				if (Count < 1)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("%d : test"), Count);
 					++Count;
 					TelePort();
 				}
@@ -1388,8 +1414,6 @@ void ANunMonster::TelePortTempFunc()
 		Num = rand() % TeleportArr.Num();
 	}
 	CurrentNum = Num;
-
-	UE_LOG(LogTemp, Warning, TEXT("origin CurrentNum = %d"), CurrentNum);
 
 	SetActorLocation(TeleportArr[Num]->GetActorLocation());
 
@@ -1449,6 +1473,9 @@ void ANunMonster::RespawnCharacter()
 
 	GetWorld()->GetTimerManager().ClearTimer(TeleportHandle);
 	
+	for (auto Knight : KnightArr)
+		Knight->RespawnCharacter();
+
 	CheckDetect = false;
 	MonsterController->CanPerception = false;
 	MonsterController->FindPlayer = false;
@@ -1474,6 +1501,8 @@ void ANunMonster::RespawnCharacter()
 	ActivateHitCollision();
 	MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
 	MonsterController->BossUI->SetHP(1);
+	MonsterController->BossUI->RemoveFromParent();
+
 	ChangeActionType(MonsterActionType::NONE);
 	ChangeMontageAnimation(MonsterAnimationType::IDLE);
 }

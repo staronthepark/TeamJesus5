@@ -83,7 +83,7 @@ AKinghtMonster::AKinghtMonster()
 			if (PatrolActorArr.IsEmpty())
 			{
 				IsPatrol = false;
-				WalkToRunBlend = false; 
+				WalkToRunBlend = false;
 				MonsterMoveEventIndex = 1;
 				KnightAnimInstance->BlendSpeed = IdleBlend;
 				ChangeActionType(MonsterActionType::NONE);
@@ -151,6 +151,9 @@ AKinghtMonster::AKinghtMonster()
 	
 	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
 		{
+			if (IsPatrol)
+				return;
+
 			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			WalkToRunBlend = false;
 			OnHitCancle();
@@ -172,6 +175,9 @@ AKinghtMonster::AKinghtMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::SPRINTATTACK, [&]()
 		{
+			if (IsPatrol)
+				return;
+
 			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			WalkToRunBlend = false;
 			OnHitCancle();
@@ -311,6 +317,7 @@ AKinghtMonster::AKinghtMonster()
 
 			auto speed = FMath::Clamp(CalcedDist, 300.f, 600.f);
 
+
 			if (speed > Temp)
 				Temp = speed;
 
@@ -350,7 +357,10 @@ void AKinghtMonster::BeginPlay()
 {
 	Super::BeginPlay(); 
 
-	 MonsterController->CanPerception = true;
+	if (MyMonsterType != MonsterType::PERSISTENTKNIGHT && MyMonsterType != MonsterType::DEADBODYOFKNIGHT)
+		Reviving = false;
+
+	MonsterController->CanPerception = true;
 
 	DeactivateHpBar();
 
@@ -492,6 +502,7 @@ void AKinghtMonster::RespawnCharacter()
 {
 	if (IsSpawn)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("spawned knight delete"));
 		//소환된 기사 삭제
 		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
 		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
@@ -508,6 +519,7 @@ void AKinghtMonster::RespawnCharacter()
 	KnightAnimInstance->ResumeMontage(MontageMap[AnimationType]);
 	GetWorld()->GetTimerManager().ClearTimer(MonsterDeadTimer);
 	InterpolationTime = 0.f;
+
 	//TODO : 일반 기사, 끈질긴 기사 패트롤
 	if (MyMonsterType == MonsterType::KNIGHT || MyMonsterType == MonsterType::PERSISTENTKNIGHT)
 	{
@@ -516,8 +528,6 @@ void AKinghtMonster::RespawnCharacter()
 		IsPatrol = true;
 		MonsterMoveEventIndex = 0;
 		ChangeActionType(MonsterActionType::MOVE);
-		ChangeMontageAnimation(MonsterAnimationType::IDLE);
-		KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	}		
 	else if (MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
 	{
@@ -628,9 +638,12 @@ void AKinghtMonster::OffRotate()
 
 void AKinghtMonster::Stun()
 {
-	//IsStun이 true일 경우 groggy death 애니 재생
+	if (Reviving)
+		return;
+
 	if (MyMonsterType != MonsterType::ELITEKNIGHT)
 		CanExecution = true;
+
 	IsStun = true;
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
