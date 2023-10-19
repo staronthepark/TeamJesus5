@@ -167,6 +167,7 @@ void UPlayerStatComponent::BeginPlay()
 		{
 			Owner->PlayerDataStruct.MaxHealCount += HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
 			Owner->CurHealCount = Owner->PlayerDataStruct.MaxHealCount;
+			Owner->PlayerHUD->ChangeHealCount(Owner->CurHealCount);
 			Owner->PlayerDataStruct.HPIndex++;
 			return true;
 		}

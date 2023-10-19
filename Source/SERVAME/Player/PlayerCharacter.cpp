@@ -801,32 +801,26 @@ APlayerCharacter::APlayerCharacter()
 
 	MontageEndEventMap.Add(AnimationType::HIT, [&]()
 		{
-			ComboAttackEnd();
 			CheckInputKey();
 		});
 	MontageEndEventMap.Add(AnimationType::HITFRONTLEFT, [&]()
 		{
-			ComboAttackEnd();
 			CheckInputKey();
 		});
 	MontageEndEventMap.Add(AnimationType::HITFRONTRIGHT, [&]()
 		{
-			ComboAttackEnd();
 			CheckInputKey();
 		});
 	MontageEndEventMap.Add(AnimationType::HITBACKLEFT, [&]()
 		{
-			ComboAttackEnd();
 			CheckInputKey();
 		});
 	MontageEndEventMap.Add(AnimationType::HITBACKRIGHT, [&]()
 		{
-			ComboAttackEnd();
 			CheckInputKey();
 		});
 	MontageEndEventMap.Add(AnimationType::SUPERHIT, [&]()
 		{
-			ComboAttackEnd();
 			CheckInputKey();	
 			Imotal = false;
 		});
@@ -842,14 +836,12 @@ APlayerCharacter::APlayerCharacter()
 	MontageEndEventMap.Add(AnimationType::PARRING, [&]()
 		{
 			UGameplayStatics::SetGlobalTimeDilation(this, 1.0f);
-			ComboAttackEnd();
 			CheckInputKey();
 			Imotal = false;
 		});
 
 	MontageEndEventMap.Add(AnimationType::ATTACK1, [&]()
 		{
-			ComboAttackEnd();	
 			CheckInputKey();
 		});
 
@@ -909,7 +901,6 @@ APlayerCharacter::APlayerCharacter()
 
 	MontageEndEventMap.Add(AnimationType::DOOROPEN, [&]()
 		{
-			ComboAttackEnd();
 			AxisX = 1;
 			AxisY = 1;
 			CheckInputKey();
@@ -1060,12 +1051,10 @@ APlayerCharacter::APlayerCharacter()
 		});
 	MontageEndEventMap.Add(AnimationType::SKILL1, [&]()
 		{
-			ComboAttackEnd();
 			CheckInputKey();
 		});
 	MontageEndEventMap.Add(AnimationType::SKILL2, [&]()
 		{
-			ComboAttackEnd();
 			CheckInputKey();
 		});
 
@@ -2295,6 +2284,7 @@ bool APlayerCharacter::UseStamina(float value)
 
 void APlayerCharacter::CheckInputKey()
 {
+	ComboAttackEnd();
 	if (IsGrab)
 	{
 		ChangeMontageAnimation(AnimationType::SHIELDLOOP);
@@ -2408,8 +2398,15 @@ void APlayerCharacter::AfterAttackNotify(bool value)
 	if (value == true)
 	{
 		ChangePlayerAction(PlayerAction::AFTERATTACK);
-		ChangeActionType(ActionType::ATTACK);
 		CanNextAttack = true;
+		if (AxisX == 1 && AxisY == 1)
+		{
+			ChangeActionType(ActionType::ATTACK);
+		}
+		else
+		{
+			CheckInputKey();
+		}
 	}
 }
 
@@ -2973,6 +2970,7 @@ void APlayerCharacter::LoadFile()
 	UJesusSaveGame::GetInstance().Load(this, GameInstance);
 
 	SetSoul(PlayerDataStruct.SoulCount);
+	CurHealCount = PlayerDataStruct.MaxHealCount;
 }
 
 void APlayerCharacter::LoadMap()
