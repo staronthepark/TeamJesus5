@@ -338,7 +338,6 @@ APlayerCharacter::APlayerCharacter()
 	NotifyBeginEndEventMap[AnimationType::POWERATTACK1].Add(true, [&]()
 	{
 			NotifyBeginEndEventMap[AnimationType::ATTACK1][true]();
-			CameraShake(PlayerCameraShake);
 			VibrateGamePad(0.2f, 0.2f);
 		});
 	NotifyBeginEndEventMap[AnimationType::POWERATTACK1].Add(false, [&]()
@@ -378,7 +377,6 @@ APlayerCharacter::APlayerCharacter()
 		{
 			NotifyBeginEndEventMap[AnimationType::POWERATTACK1][false]();
 			PlayerCurAttackIndex = 0;
-			CameraShake(PlayerCameraShake);
 			VibrateGamePad(PlayerDataStruct.DamageList[AnimationType::POWERATTACK1].VibrateIntensity,
 			PlayerDataStruct.DamageList[AnimationType::POWERATTACK1].VibrateDuration);
 		});
@@ -465,7 +463,6 @@ APlayerCharacter::APlayerCharacter()
 	NotifyBeginEndEventMap.Add(AnimationType::EXECUTIONBOSS, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::EXECUTIONBOSS].Add(true, [&]()
 		{
-			CameraShake(PlayerCameraShake);
 			VibrateGamePad(0.2f, 0.2f);
 		});
 	NotifyBeginEndEventMap[AnimationType::EXECUTIONBOSS].Add(false, [&]()
@@ -2988,7 +2985,6 @@ void APlayerCharacter::LoadMap()
 	UGameplayStatics::LoadStreamLevel(this, SaveMapName, true, true, LatentInfo);
 
 	ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
-
 	LightManager->ChangeTargetLightSetting(SaveMapName.ToString());
 
 	FTimerHandle MyTimer;
@@ -3008,6 +3004,12 @@ void APlayerCharacter::LoadMap()
 
 void APlayerCharacter::PlayerDead(bool IsFly)
 {
+	if (IsPhaseTwo)
+	{
+		IsPhaseTwo = false;
+		ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
+		LightManager->ChangeTargetLightSetting("2-2Map");
+	}
 	if (IsLockOn)
 	{
 		LockOn();
@@ -3029,7 +3031,6 @@ void APlayerCharacter::PlayerDead(bool IsFly)
 	ChangeActionType(ActionType::DEAD);
 	MontageBlendInTime = 0.0f;
 	IsFly ? ChangeMontageAnimation(AnimationType::DEADLOOP2) : ChangeMontageAnimation(AnimationType::DEAD);
-	IsPhaseTwo = false;
 }
 
 void APlayerCharacter::LoadingMonster()
