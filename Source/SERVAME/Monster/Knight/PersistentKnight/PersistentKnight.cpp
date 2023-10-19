@@ -50,9 +50,6 @@ APersistentKnight::APersistentKnight()
 			TracePlayer = true;
 
 			ActivateHitCollision();        
-			ActivateSMOverlap();
-			ActivateRightWeapon();
-			ParryingCollision1->Activate();
 
 			ChangeActionType(MonsterActionType::NONE);
 			ChangeMontageAnimation(MonsterAnimationType::IDLE);

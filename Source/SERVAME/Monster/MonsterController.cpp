@@ -212,7 +212,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 				{
 					Knight->IsPatrol = true;
 					Knight->KnightAnimInstance->BlendSpeed = Knight->WalkBlend;
-					Knight->WalkToRunBlend = false;
+					Knight->WalkToRunBlend = true;
 					Knight->TracePlayer = false;
 					Knight->MonsterMoveEventIndex = 0;
 					Knight->ChangeActionType(MonsterActionType::MOVE);

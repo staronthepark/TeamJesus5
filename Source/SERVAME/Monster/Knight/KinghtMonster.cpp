@@ -94,10 +94,7 @@ AKinghtMonster::AKinghtMonster()
 			GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.CharacterOriginSpeed;
 			KnightAnimInstance->BlendSpeed = WalkBlend;
 			if (PatrolActorArr[PatrolIndexCount] != nullptr)
-			{
 				MonsterController->Patrol(PatrolActorArr[PatrolIndexCount]->GetActorLocation(), PatrolActorArr.Num());
-				MonsterLog(999, "patrol");
-			}
 		});
 	MonsterMoveMap.Add(3, [&]()
 		{
@@ -154,6 +151,9 @@ AKinghtMonster::AKinghtMonster()
 	
 	MontageEndEventMap.Add(MonsterAnimationType::ATTACK1, [&]()
 		{
+			if (IsPatrol)
+				return;
+
 			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			WalkToRunBlend = false;
 			OnHitCancle();
@@ -175,6 +175,9 @@ AKinghtMonster::AKinghtMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::SPRINTATTACK, [&]()
 		{
+			if (IsPatrol)
+				return;
+
 			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			WalkToRunBlend = false;
 			OnHitCancle();
@@ -259,7 +262,6 @@ AKinghtMonster::AKinghtMonster()
 
 	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
 		{
-			MonsterLog(999, "MonsterActionType::MOVE");
 			StateType = AnimTypeToStateType[MonsterAnimationType::IDLE];
 
 			if (CurrentDistance >= RunableDistance && !IsPatrol)
@@ -315,6 +317,7 @@ AKinghtMonster::AKinghtMonster()
 
 			auto speed = FMath::Clamp(CalcedDist, 300.f, 600.f);
 
+
 			if (speed > Temp)
 				Temp = speed;
 
@@ -354,7 +357,10 @@ void AKinghtMonster::BeginPlay()
 {
 	Super::BeginPlay(); 
 
-	 MonsterController->CanPerception = true;
+	if (MyMonsterType != MonsterType::PERSISTENTKNIGHT && MyMonsterType != MonsterType::DEADBODYOFKNIGHT)
+		Reviving = false;
+
+	MonsterController->CanPerception = true;
 
 	DeactivateHpBar();
 
@@ -402,8 +408,6 @@ void AKinghtMonster::Tick(float DeltaTime)
 	}
 
 	Super::Tick(DeltaTime);
-
-	MonsterLog(999, static_cast<int>(ActionType));
 
 	if (IsInterpStart)
 		InterpMove();
@@ -633,9 +637,12 @@ void AKinghtMonster::OffRotate()
 
 void AKinghtMonster::Stun()
 {
-	//IsStun捞 true老 版快 groggy death 局聪 犁积
+	if (Reviving)
+		return;
+
 	if (MyMonsterType != MonsterType::ELITEKNIGHT)
 		CanExecution = true;
+
 	IsStun = true;
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
