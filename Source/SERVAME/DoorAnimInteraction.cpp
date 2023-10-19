@@ -109,6 +109,7 @@ void ADoorAnimInteraction::EnableEvent()
 		BossRoomDoorOpenSequncePlayer->Play();
 		GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 		GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(CineCameraActor, 6.0f);
+		Character->WeaponMesh->SetVisibility(true);
 	}
 
 	IsActive = true;

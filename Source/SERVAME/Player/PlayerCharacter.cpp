@@ -956,7 +956,6 @@ APlayerCharacter::APlayerCharacter()
 			SpawnLocation = GetActorLocation();
 			SpawnRotation = GetActorRotation();
 			CheckInputKey();
-			UJesusSaveGame::GetInstance().Load(this, GameInstance);
 			Imotal = false;
 		});
 	MontageEndEventMap.Add(AnimationType::EXECUTIONBOSS, [&]()

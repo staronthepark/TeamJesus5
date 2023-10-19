@@ -48,6 +48,12 @@ void APlaySequenceTriggerActor::EnableEvent()
 	Character->AxisX = 1;
 	Character->AxisY = 1;
 	Character->PlayerHUD->SetVisibility(ESlateVisibility::Collapsed);
+
+
+	Character->AnimInstance->StopAllMontages(0.0f);
+	Character->ChangeActionType(ActionType::NONE);
+	Character->ChangePlayerAction(PlayerAction::CANTACT);
+
 	//Character->SetActorHiddenInGame(true);
 
 	AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
@@ -64,7 +70,9 @@ void APlaySequenceTriggerActor::EndSequence()
 	//Boss->BossAnimInstance->IsSequenceEnd = true;
 	//Boss->BossAnimInstance->ResumeMontage(Boss->GetCurrentMontage());
 	GetWorld()->GetFirstPlayerController()->SetViewTarget(Character);
+	Character->ChangePlayerAction(PlayerAction::NONE);
 	Character->ChangeMontageAnimation(AnimationType::IDLE);
 	Character->SetActorHiddenInGame(false);
 	Character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
+	Character->WeaponMesh->SetVisibility(true);
 }
