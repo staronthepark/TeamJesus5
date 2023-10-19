@@ -263,12 +263,12 @@ void AJesusPlayerController::PressLockon()
 		SetInputMode(FInputModeGameOnly());
 		bShowMouseCursor = false;
 		character->UserSettingUI->RemoveFromParent();
+		return;
 	}
 
 	if (character->AnimInstance->PlayerAnimationType == AnimationType::SAVELOOP)
 	{
 		character->ChangeMontageAnimation(AnimationType::SAVEEND);
-		character->PlayerHUD->PlayExitAnimation(false);
 		return;
 	}
 	character->LockOn();
@@ -433,13 +433,13 @@ void AJesusPlayerController::OpenMenu()
 			SetInputMode(FInputModeUIOnly());
 			bShowMouseCursor = true;
 		}
-		else
-		{
-			SetPause(false);
-			SetInputMode(FInputModeGameOnly());
-			bShowMouseCursor = false;
-			character->UserSettingUI->RemoveFromParent();
-		}
+		//else
+		//{
+		//	SetPause(false);
+		//	SetInputMode(FInputModeGameOnly());
+		//	bShowMouseCursor = false;
+		//	character->UserSettingUI->RemoveFromParent();
+		//}
 	}
 }
 
@@ -462,13 +462,13 @@ void AJesusPlayerController::CloseMenu()
 			character->PlayerHUD->PlayAnimations(EGuides::dodge, false);
 			return;
 		}
-		if (character->UserSettingUI->IsInViewport())
-		{
-			SetPause(false);
-			character->UserSettingUI->RemoveFromParent();
-			SetInputMode(FInputModeGameOnly());
-			bShowMouseCursor = false;
-		}
+		//if (character->UserSettingUI->IsInViewport())
+		//{
+		//	SetPause(false);
+		//	character->UserSettingUI->RemoveFromParent();
+		//	SetInputMode(FInputModeGameOnly());
+		//	bShowMouseCursor = false;
+		//}
 	}
 }
 

@@ -965,6 +965,7 @@ APlayerCharacter::APlayerCharacter()
 			SpawnLocation = GetActorLocation();
 			SpawnRotation = GetActorRotation();
 			CheckInputKey();
+			UJesusSaveGame::GetInstance().Load(this, GameInstance);
 			Imotal = false;
 		});
 	MontageEndEventMap.Add(AnimationType::EXECUTIONBOSS, [&]()
@@ -1849,7 +1850,6 @@ void APlayerCharacter::BeginPlay()
 	CanShieldDeploy = true;
 	CanUseSkill = true;
 
-	SetSoul(PlayerDataStruct.SoulCount);
 }
 
 
@@ -2971,10 +2971,6 @@ void APlayerCharacter::SetSoul(int32 value)
 void APlayerCharacter::LoadFile()
 {
 	UJesusSaveGame::GetInstance().Load(this, GameInstance);
-
-	ASoundManager::GetInstance().StartBGMSound(IsPhaseTwo);
-	if(IsPhaseTwo)
-		UCombatManager::GetInstance().Boss2->SetActive(true);
 
 	SetSoul(PlayerDataStruct.SoulCount);
 }
