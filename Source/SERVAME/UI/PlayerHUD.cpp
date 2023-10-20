@@ -190,6 +190,11 @@ void UPlayerHUD::OpenStat()
 	WBP_PlayerStat_UI->Open();
 }
 
+void UPlayerHUD::InitStat(int str, int stamina, int hp, int shield)
+{
+	WBP_PlayerStat_UI->InitStat(str, stamina, hp, shield);
+}
+
 void UPlayerHUD::SetRemainSoul(int value)
 {
 	WBP_PlayerStat_UI->SetRemainSoul(value);

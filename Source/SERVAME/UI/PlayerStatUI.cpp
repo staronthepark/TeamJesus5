@@ -95,6 +95,18 @@ void UPlayerStatUI::NativeConstruct()
 //	ExplainText->SetBrushFromTexture(ExplainTextures.Find(EStatsType::shield)->ExplainText, true);
 //}
 
+void UPlayerStatUI::Init(int str, int stamina, int hp, int shield)
+{
+	for (int i = 0; i < str; i++)
+		StrButtons[i]->Init();
+	for (int i = 0; i < stamina; i++)
+		StaminaButtons[i]->Init();
+	for (int i = 0; i < hp; i++)
+		HpButtons[i]->Init();
+	for (int i = 0; i < shield; i++)
+		ShieldButtons[i]->Init();
+}
+
 void UPlayerStatUI::OnPurchaseButtonClicked()
 {
 	if (SelectedButton == nullptr || SelectedButton->GetState() != EStatState::can)

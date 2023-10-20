@@ -41,6 +41,21 @@ EStatState UStatUI::GetState()
 	return state;
 }
 
+void UStatUI::Init()
+{
+	state = EStatState::activated;
+	ActiveBackground->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ChangeButtonToActivate();
+
+	for (int i = 0; i < Lines.Num(); i++)
+		Lines[i]->SetBrushFromTexture(LineTexture, true);
+
+	if (NextStat == NULL)
+		return;
+	NextStat->index = index + 1;
+	NextStat->ChangeState(EStatState::can);
+}
+
 void UStatUI::OnButtonClicked()
 {
 	ParentUI->SetCost(Cost);
@@ -67,17 +82,7 @@ void UStatUI::OnButtonUnclicked()
 void UStatUI::Activate()
 {
 	if (TypeAnimation[Type](index)) {
-		state = EStatState::activated;
-		ActiveBackground->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		ChangeButtonToActivate();
-
-		for (int i = 0; i < Lines.Num(); i++)
-			Lines[i]->SetBrushFromTexture(LineTexture, true);
-
-		if (NextStat == NULL)
-			return;
-		NextStat->index = index + 1;
-		NextStat->ChangeState(EStatState::can);
+		Init();
 	}
 }
 

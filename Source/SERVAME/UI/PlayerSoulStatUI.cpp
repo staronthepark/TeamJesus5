@@ -27,6 +27,11 @@ void UPlayerSoulStatUI::OpenStat()
 	WBP_Player_Stat_UI->Open();
 }
 
+void UPlayerSoulStatUI::InitStat(int str, int stamina, int hp, int shield)
+{
+	WBP_Player_Stat_UI->Init(str, stamina, hp, shield);
+}
+
 void UPlayerSoulStatUI::Open()
 {
 	this->SetVisibility(ESlateVisibility::Visible);

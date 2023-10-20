@@ -162,7 +162,10 @@ public:
 
 	//void SetShield(int value);
 
+
+	//Ω∫≈»
 	void OpenStat();
+	void InitStat(int str, int stamina, int hp, int shield);
 	void SetRemainSoul(int value);
 
 	void PlayGuidesAnimation(EGuides type ,bool IsOpen);
