@@ -166,6 +166,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("FindPlayer: %s"), *Monster->GetName());
 			FindPlayer = true;
+			Monster->TracePlayer = true;
 
 			if (Monster->MyMonsterType == MonsterType::NUN && Monster->IsBoss)
 			{
@@ -217,20 +218,13 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 				}
 				else if (Monster->MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
 				{
-					if (!Knight->Reviving)
-					{
-						Knight->IsPatrol = true;
-						Knight->KnightAnimInstance->BlendSpeed = Knight->IdleBlend;
-						Knight->WalkToRunBlend = false;
-						Knight->TracePlayer = false;
-						Knight->MonsterMoveEventIndex = 0;
-						Knight->ChangeActionType(MonsterActionType::MOVE);
-					}
-					else
-					{
-						Knight->ChangeActionType(MonsterActionType::NONE);
-						StopMovement();
-					}
+					Knight->IsPatrol = true;
+					Knight->isReturnBlend = true;
+					Knight->WalkToRunBlend = false;
+					Knight->TracePlayer = false;
+					Knight->MonsterMoveEventIndex = 0;
+					Knight->ChangeActionType(MonsterActionType::MOVE);
+
 					return;
 				}
 				else if (Monster->MyMonsterType == MonsterType::ELITEKNIGHT)

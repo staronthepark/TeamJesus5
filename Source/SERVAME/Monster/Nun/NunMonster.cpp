@@ -1458,10 +1458,6 @@ void ANunMonster::IsNotifyActive(bool value)
 
 void ANunMonster::RespawnCharacter()
 {
-	Super::RespawnCharacter();
-
-	UE_LOG(LogTemp, Warning, TEXT("nun respawn"));
-
 	if (MyMonsterType == MonsterType::ILLUSION_NUN)
 	{
 		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
@@ -1470,6 +1466,9 @@ void ANunMonster::RespawnCharacter()
 		GetWorld()->DestroyActor(this);
 		return;
 	}
+
+	Super::RespawnCharacter();
+	UE_LOG(LogTemp, Warning, TEXT("nun respawn"));
 
 	GetWorld()->GetTimerManager().ClearTimer(TeleportHandle);
 	

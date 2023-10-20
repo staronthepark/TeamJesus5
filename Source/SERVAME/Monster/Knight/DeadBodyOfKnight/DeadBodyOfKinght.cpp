@@ -42,7 +42,7 @@ ADeadBodyOfKinght::ADeadBodyOfKinght()
 			if (CurrentDistance < AttackRange && MonsterController->FindPlayer)
 				StartAttackTrigger(AttackAnimationType);
 
-			if (CurrentDistance >= RunableDistance && !IsPatrol)
+			if (CurrentDistance >= RunableDistance && !IsPatrol && MonsterController->FindPlayer)
 			{
 				ChangeActionType(MonsterActionType::RUN);
 			}
