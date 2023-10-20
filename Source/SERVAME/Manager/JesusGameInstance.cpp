@@ -19,13 +19,10 @@ UJesusGameInstance::UJesusGameInstance()
 {
 	static ConstructorHelpers::FClassFinder<UDebugLogWidget> DLW(TEXT("/Game/02_Resource/04_UI/01_WBP/99_Debug/WBP_DebugLog"));
 	static ConstructorHelpers::FClassFinder<UMainMenuUI> ASD(TEXT("/Game/02_Resource/04_UI/01_WBP/00_MainMenu/WBP_MainMenu"));
-	static ConstructorHelpers::FClassFinder<UPlayerSoulStatUI> PSU(TEXT("/Game/02_Resource/04_UI/01_WBP/07_StatUI/WBP_PlayerStat_UI"));
 
 	if (DLW.Succeeded())
 		DebugLogWidgetClass = DLW.Class;
 	MainMenuWidgetClass = ASD.Class;
-	if (PSU.Succeeded())
-		PlayerStatWidgetClass = PSU.Class;
 }
 
 void UJesusGameInstance::InitInstance()
@@ -36,10 +33,6 @@ void UJesusGameInstance::InitInstance()
 	}
 
 	MainMenuWidget = Cast<UMainMenuUI>(CreateWidget(GetWorld(), MainMenuWidgetClass));
-	if (IsValid(PlayerStatWidgetClass))
-	{
-		PlayerStatUI = Cast<UPlayerSoulStatUI>(CreateWidget(GetWorld(), PlayerStatWidgetClass));
-	}
 
 	language = Language::KOR;
 }

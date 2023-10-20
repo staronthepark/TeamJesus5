@@ -28,13 +28,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* Mesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		EMaterialType MaterialType;
-	
-	FTimerHandle TimeHandle;
-
-	TArray<UPrimitiveComponent*>CompArray;
-
 protected:
 	virtual void BeginPlay() override;
 

@@ -1,6 +1,8 @@
 #include "PlayerHUD.h"
 #include "Components/CanvasPanelSlot.h"
 #include "SkillUI.h"
+#include "PlayerSoulStatUI.h"
+#include <SERVAME/Player/JesusPlayerController.h>
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
@@ -182,6 +184,16 @@ void UPlayerHUD::PlayAnimations(EGuides type, bool IsOpen)
 //	WBP_Player_ShieldsUI->SetShield(value);
 //}
 
+
+void UPlayerHUD::OpenStat()
+{
+	WBP_PlayerStat_UI->Open();
+}
+
+void UPlayerHUD::SetRemainSoul(int value)
+{
+	WBP_PlayerStat_UI->SetRemainSoul(value);
+}
 
 void UPlayerHUD::PlayGuidesAnimation(EGuides type, bool IsOpen)
 {

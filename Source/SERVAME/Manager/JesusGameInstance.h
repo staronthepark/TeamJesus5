@@ -57,12 +57,6 @@ public:
 		UDebugLogWidget* DebugLogWidget;
 
 		UPROPERTY()
-		TSubclassOf<UPlayerSoulStatUI> PlayerStatWidgetClass;
-
-		UPROPERTY()
-		UPlayerSoulStatUI* PlayerStatUI;
-
-		UPROPERTY()
 		Language language;
 
 		TMap<int32, ABaseTriggerActor*>SavedTriggerActor;

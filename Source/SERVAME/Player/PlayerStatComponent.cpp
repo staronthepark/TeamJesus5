@@ -100,11 +100,7 @@ void UPlayerStatComponent::BeginPlay()
 		if (Owner->CanActivate(StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].SoulCost))
 		{
 
-			Owner->PlayerUseStaminaMap[ActionType::DODGE] -= Owner->PlayerUseStaminaMap[ActionType::DODGE] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
-			Owner->PlayerUseStaminaMap[ActionType::ATTACK] -= Owner->PlayerUseStaminaMap[ActionType::ATTACK] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
-			Owner->PlayerUseStaminaMap[ActionType::POWERATTACK] -= Owner->PlayerUseStaminaMap[ActionType::POWERATTACK] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
-			Owner->PlayerUseStaminaMap[ActionType::PARRING] -= Owner->PlayerUseStaminaMap[ActionType::PARRING] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
-			Owner->PlayerUseStaminaMap[ActionType::SHIELD] -= Owner->PlayerUseStaminaMap[ActionType::SHIELD] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
+			Owner->PlayerDataStruct.StaminaRecovery += Owner->PlayerDataStruct.StaminaRecovery * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
 			Owner->PlayerDataStruct.StaminaIndex++;
 			return true;
 		}
@@ -115,11 +111,7 @@ void UPlayerStatComponent::BeginPlay()
 	{
 		if (Owner->CanActivate(StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].SoulCost))
 		{
-			Owner->PlayerUseStaminaMap[ActionType::DODGE] -= Owner->PlayerUseStaminaMap[ActionType::DODGE] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
-			Owner->PlayerUseStaminaMap[ActionType::ATTACK] -= Owner->PlayerUseStaminaMap[ActionType::ATTACK] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
-			Owner->PlayerUseStaminaMap[ActionType::POWERATTACK] -= Owner->PlayerUseStaminaMap[ActionType::POWERATTACK] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
-			Owner->PlayerUseStaminaMap[ActionType::PARRING] -= Owner->PlayerUseStaminaMap[ActionType::PARRING] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
-			Owner->PlayerUseStaminaMap[ActionType::SHIELD] -= Owner->PlayerUseStaminaMap[ActionType::SHIELD] * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
+			Owner->PlayerDataStruct.StaminaRecovery += Owner->PlayerDataStruct.StaminaRecovery * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
 			Owner->PlayerDataStruct.StaminaIndex++;
 			return true;
 		}
@@ -175,6 +167,7 @@ void UPlayerStatComponent::BeginPlay()
 		{
 			Owner->PlayerDataStruct.MaxHealCount += HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
 			Owner->CurHealCount = Owner->PlayerDataStruct.MaxHealCount;
+			Owner->PlayerHUD->ChangeHealCount(Owner->CurHealCount);
 			Owner->PlayerDataStruct.HPIndex++;
 			return true;
 		}

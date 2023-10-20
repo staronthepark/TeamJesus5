@@ -263,12 +263,12 @@ void AJesusPlayerController::PressLockon()
 		SetInputMode(FInputModeGameOnly());
 		bShowMouseCursor = false;
 		character->UserSettingUI->RemoveFromParent();
+		return;
 	}
 
 	if (character->AnimInstance->PlayerAnimationType == AnimationType::SAVELOOP)
 	{
 		character->ChangeMontageAnimation(AnimationType::SAVEEND);
-		character->PlayerHUD->PlayExitAnimation(false);
 		return;
 	}
 	character->LockOn();
@@ -413,8 +413,12 @@ void AJesusPlayerController::OpenMenu()
 	if (CurrentSequncePlayer)
 	{
 		CurrentSequncePlayer->Stop();
+		character->ChangePlayerAction(PlayerAction::NONE);
+		character->ChangeMontageAnimation(AnimationType::IDLE);
 		character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
 		character->SetActorHiddenInGame(false);
+		character->WeaponMesh->SetVisibility(true);
+		SetViewTarget(character);
 		CurrentSequncePlayer = nullptr;
 		return;
 	}
@@ -422,7 +426,6 @@ void AJesusPlayerController::OpenMenu()
 	{
 		if (character->PlayerHUD->IsRender())
 		{
-			//UGameplayStatics::SetGlobalTimeDilation(this, 1.0f);
 			character->PlayerHUD->PlayAnimations(EGuides::dodge, false);
 			return;
 		}
@@ -433,13 +436,6 @@ void AJesusPlayerController::OpenMenu()
 			SetInputMode(FInputModeUIOnly());
 			bShowMouseCursor = true;
 		}
-		else
-		{
-			SetPause(false);
-			SetInputMode(FInputModeGameOnly());
-			bShowMouseCursor = false;
-			character->UserSettingUI->RemoveFromParent();
-		}
 	}
 }
 
@@ -448,8 +444,12 @@ void AJesusPlayerController::CloseMenu()
 	if (CurrentSequncePlayer)
 	{
 		CurrentSequncePlayer->Stop();
+		SetViewTarget(character);
 		character->SetActorHiddenInGame(false);
 		character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
+		character->ChangePlayerAction(PlayerAction::NONE);
+		character->ChangeMontageAnimation(AnimationType::IDLE);
+		character->WeaponMesh->SetVisibility(true);
 		CurrentSequncePlayer = nullptr;
 		return;
 	}
@@ -458,16 +458,8 @@ void AJesusPlayerController::CloseMenu()
 	{
 		if (character->PlayerHUD->IsRender())
 		{
-			//UGameplayStatics::SetGlobalTimeDilation(this, 1.0f);
 			character->PlayerHUD->PlayAnimations(EGuides::dodge, false);
 			return;
-		}
-		if (character->UserSettingUI->IsInViewport())
-		{
-			SetPause(false);
-			character->UserSettingUI->RemoveFromParent();
-			SetInputMode(FInputModeGameOnly());
-			bShowMouseCursor = false;
 		}
 	}
 }

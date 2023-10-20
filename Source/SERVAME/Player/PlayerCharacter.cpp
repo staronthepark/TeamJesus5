@@ -338,7 +338,6 @@ APlayerCharacter::APlayerCharacter()
 	NotifyBeginEndEventMap[AnimationType::POWERATTACK1].Add(true, [&]()
 	{
 			NotifyBeginEndEventMap[AnimationType::ATTACK1][true]();
-			CameraShake(PlayerCameraShake);
 			VibrateGamePad(0.2f, 0.2f);
 		});
 	NotifyBeginEndEventMap[AnimationType::POWERATTACK1].Add(false, [&]()
@@ -378,7 +377,6 @@ APlayerCharacter::APlayerCharacter()
 		{
 			NotifyBeginEndEventMap[AnimationType::POWERATTACK1][false]();
 			PlayerCurAttackIndex = 0;
-			CameraShake(PlayerCameraShake);
 			VibrateGamePad(PlayerDataStruct.DamageList[AnimationType::POWERATTACK1].VibrateIntensity,
 			PlayerDataStruct.DamageList[AnimationType::POWERATTACK1].VibrateDuration);
 		});
@@ -465,7 +463,6 @@ APlayerCharacter::APlayerCharacter()
 	NotifyBeginEndEventMap.Add(AnimationType::EXECUTIONBOSS, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::EXECUTIONBOSS].Add(true, [&]()
 		{
-			CameraShake(PlayerCameraShake);
 			VibrateGamePad(0.2f, 0.2f);
 		});
 	NotifyBeginEndEventMap[AnimationType::EXECUTIONBOSS].Add(false, [&]()
@@ -804,32 +801,26 @@ APlayerCharacter::APlayerCharacter()
 
 	MontageEndEventMap.Add(AnimationType::HIT, [&]()
 		{
-			ComboAttackEnd();
 			CheckInputKey();
 		});
 	MontageEndEventMap.Add(AnimationType::HITFRONTLEFT, [&]()
 		{
-			ComboAttackEnd();
 			CheckInputKey();
 		});
 	MontageEndEventMap.Add(AnimationType::HITFRONTRIGHT, [&]()
 		{
-			ComboAttackEnd();
 			CheckInputKey();
 		});
 	MontageEndEventMap.Add(AnimationType::HITBACKLEFT, [&]()
 		{
-			ComboAttackEnd();
 			CheckInputKey();
 		});
 	MontageEndEventMap.Add(AnimationType::HITBACKRIGHT, [&]()
 		{
-			ComboAttackEnd();
 			CheckInputKey();
 		});
 	MontageEndEventMap.Add(AnimationType::SUPERHIT, [&]()
 		{
-			ComboAttackEnd();
 			CheckInputKey();	
 			Imotal = false;
 		});
@@ -845,14 +836,12 @@ APlayerCharacter::APlayerCharacter()
 	MontageEndEventMap.Add(AnimationType::PARRING, [&]()
 		{
 			UGameplayStatics::SetGlobalTimeDilation(this, 1.0f);
-			ComboAttackEnd();
 			CheckInputKey();
 			Imotal = false;
 		});
 
 	MontageEndEventMap.Add(AnimationType::ATTACK1, [&]()
 		{
-			ComboAttackEnd();	
 			CheckInputKey();
 		});
 
@@ -912,7 +901,6 @@ APlayerCharacter::APlayerCharacter()
 
 	MontageEndEventMap.Add(AnimationType::DOOROPEN, [&]()
 		{
-			ComboAttackEnd();
 			AxisX = 1;
 			AxisY = 1;
 			CheckInputKey();
@@ -946,12 +934,12 @@ APlayerCharacter::APlayerCharacter()
 		});
 	MontageEndEventMap.Add(AnimationType::SAVESTART, [&]()
 		{
-			GameInstance->PlayerStatUI->AddToViewport();
+			PlayerHUD->OpenStat();
 			PlayerHUD->PlayInteractionAnimation(true, EInteractions::close);
 			ChangeMontageAnimation(AnimationType::SAVELOOP);
 			RestoreStat();
 			GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::FadeOut, 2.0f);
-			GameInstance->PlayerStatUI->SetRemainSoul(PlayerDataStruct.SoulCount);
+			PlayerHUD->SetRemainSoul(PlayerDataStruct.SoulCount);
 
 			PlayerHUD->PlayExitAnimation(true);
 			SpawnLocation = GetActorLocation();
@@ -1062,12 +1050,10 @@ APlayerCharacter::APlayerCharacter()
 		});
 	MontageEndEventMap.Add(AnimationType::SKILL1, [&]()
 		{
-			ComboAttackEnd();
 			CheckInputKey();
 		});
 	MontageEndEventMap.Add(AnimationType::SKILL2, [&]()
 		{
-			ComboAttackEnd();
 			CheckInputKey();
 		});
 
@@ -1175,7 +1161,6 @@ APlayerCharacter::APlayerCharacter()
 
 	InputEventMap[PlayerAction::NONE][ActionType::MOVE].Add(true, [&]()
 		{
-
 			ChangeActionType(ActionType::MOVE);
 			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
 		});
@@ -1368,8 +1353,18 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::POWERATTACK].Add(false, InputEventMap[PlayerAction::NONE][ActionType::POWERATTACK][false]);
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::PARRING].Add(true, InputEventMap[PlayerAction::NONE][ActionType::PARRING][true]);
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::PARRING].Add(false, InputEventMap[PlayerAction::NONE][ActionType::PARRING][false]);
-	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(true, [&]() {});
-	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(false, [&]() {});
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(true, [&]()
+		{
+			ChangeActionType(ActionType::MOVE);
+			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
+			ComboAttackEnd();
+		});
+	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(false, [&]()
+		{
+			if(CurActionType == ActionType::MOVE)
+			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
+
+		});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::ROTATE].Add(true, [&]() {});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::ROTATE].Add(false, [&]() {});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::HEAL].Add(true, [&]() {});
@@ -1843,7 +1838,6 @@ void APlayerCharacter::BeginPlay()
 	CanShieldDeploy = true;
 	CanUseSkill = true;
 
-	SetSoul(PlayerDataStruct.SoulCount);
 }
 
 
@@ -1995,10 +1989,13 @@ void APlayerCharacter::RestoreStat()
 	//	combatmanager.MonsterInfoArray[i]->SetActive(false);
 	//}
 
-	for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
+	if (combatmanager.MonsterInfoMap.Contains(SaveMapName.ToString()))
 	{
-		if(SaveMapName != "A_KimMinYeongMap_Boss1" && !combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
-		combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+		for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
+		{
+			if (SaveMapName != "A_KimMinYeongMap_Boss1" && !combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
+				combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+		}
 	}
 }
 
@@ -2032,6 +2029,7 @@ void APlayerCharacter::LockOn()
 	{
 		if (TargetComp == nullptr)
 		{
+			TargetCompFrontPlayerArray.Empty();
 			GetCompsInScreen(TargetCompArray);
 			GetFirstTarget();
 			if (TargetComp == nullptr)
@@ -2077,15 +2075,37 @@ void APlayerCharacter::GetFirstTarget()
 	float ClosestDistance = 999999999;
 	FVector CompLocation;
 	FVector CameraLocation = FollowCamera->GetComponentLocation();
-	for (int32 i = 0; i < TargetCompInScreenArray.Num(); i++)
+	RayCastOnTargets();
+	for (int32 i = 0; i < TargetCompFrontPlayerArray.Num(); i++)
 	{
-		CompLocation = TargetCompInScreenArray[i]->GetComponentLocation();
+		CompLocation = TargetCompFrontPlayerArray[i]->GetComponentLocation();
 		Distance = FVector::DistSquared(CameraLocation, CompLocation);
 		if (Distance < ClosestDistance)
 		{
 			ClosestDistance = Distance;
-			TargetComp = TargetCompInScreenArray[i];
+			TargetComp = TargetCompFrontPlayerArray[i];
 		}
+	}
+}
+
+void APlayerCharacter::RayCastOnTargets()
+{
+	FVector StartLocation = FollowCamera->GetComponentLocation();
+	FVector EndLocation;
+
+	FHitResult HitResult;
+
+	FCollisionQueryParams CollisionParams;
+
+	for (int32 i = 0; i < TargetCompInScreenArray.Num(); i++)
+	{
+		EndLocation = TargetCompInScreenArray[i]->GetComponentLocation();
+		CollisionParams.AddIgnoredActor(TargetCompInScreenArray[i]->GetOwner());
+		if (!GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_GameTraceChannel7, CollisionParams))
+		{
+			TargetCompFrontPlayerArray.AddUnique(TargetCompInScreenArray[i]);
+		}
+		//DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Green, false, 2, 0, 1);
 	}
 }
 
@@ -2129,17 +2149,20 @@ void APlayerCharacter::ChangeTarget(CameraDirection CamDirection)
 	FVector TargetDir = (TargetVector - CameraLocation).GetSafeNormal();
 	TArray<UPrimitiveComponent*> TargetArray;
 
-	for (int32 i = 0; i < TargetCompInScreenArray.Num(); i++)
+	RayCastOnTargets();
+
+
+	for (int32 i = 0; i < TargetCompFrontPlayerArray.Num(); i++)
 	{
-		if (!TargetCompInScreenArray[i]->GetOwner()->IsActorTickEnabled())continue;
-		if (TargetComp == TargetCompInScreenArray[i])continue;
-		FVector Direction = (TargetCompInScreenArray[i]->GetComponentLocation() - CameraLocation).GetSafeNormal();
+		if (!TargetCompFrontPlayerArray[i]->GetOwner()->IsActorTickEnabled())continue;
+		if (TargetComp == TargetCompFrontPlayerArray[i])continue;
+		FVector Direction = (TargetCompFrontPlayerArray[i]->GetComponentLocation() - CameraLocation).GetSafeNormal();
 		FVector Cross = FVector::CrossProduct(TargetDir, Direction);
 
 		if ((CamDirection == CameraDirection::LEFT && Cross.Z < 0.f)
 			|| (CamDirection == CameraDirection::RIGHT && Cross.Z > 0.f))
 		{
-			TargetArray.Add(TargetCompInScreenArray[i]);
+			TargetArray.Add(TargetCompFrontPlayerArray[i]);
 		}
 	}
 
@@ -2260,6 +2283,7 @@ bool APlayerCharacter::UseStamina(float value)
 
 void APlayerCharacter::CheckInputKey()
 {
+	ComboAttackEnd();
 	if (IsGrab)
 	{
 		ChangeMontageAnimation(AnimationType::SHIELDLOOP);
@@ -2373,8 +2397,15 @@ void APlayerCharacter::AfterAttackNotify(bool value)
 	if (value == true)
 	{
 		ChangePlayerAction(PlayerAction::AFTERATTACK);
-		ChangeActionType(ActionType::ATTACK);
 		CanNextAttack = true;
+		if (AxisX == 1 && AxisY == 1)
+		{
+			ChangeActionType(ActionType::ATTACK);
+		}
+		else
+		{
+			CheckInputKey();
+		}
 	}
 }
 
@@ -2503,6 +2534,8 @@ void APlayerCharacter::RespawnCharacter()
 
 	RestoreStat();
 
+	FLatentActionInfo LatentInfo;
+	UGameplayStatics::UnloadStreamLevel(this, "PrayRoom", LatentInfo, false);
 	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
 
 	SetSpeed(SpeedMap[false][false]);
@@ -2566,11 +2599,21 @@ void APlayerCharacter::Parring()
 void APlayerCharacter::OnEnemyDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	TargetCompArray.Add(OtherComp);
+
+	ABaseCharacter* character = Cast<ABaseCharacter>(OtherActor);
+
+
+	if(character != nullptr)
+	UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(character);
 }
 
 void APlayerCharacter::OnEnemyDetectionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {	
 	TargetCompArray.Remove(OtherComp);
+	ABaseCharacter* character = Cast<ABaseCharacter>(OtherActor);
+
+	if(character != nullptr)
+	UCombatManager::GetInstance().HitMonsterInfoArray.Remove(character);
 }
 
 void APlayerCharacter::PlayerMovement()
@@ -2647,11 +2690,9 @@ void APlayerCharacter::OnExecutionOverlapEnd(UPrimitiveComponent* OverlappedComp
 
 void APlayerCharacter::OnParryingOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UGameplayStatics::SetGlobalTimeDilation(this, .5f);
 	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
 	CameraShake(PlayerCameraShake);
 	Imotal = true;
-	BossParryingSequncePlayer->Play();
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[15].ObjClass, OtherComp->GetComponentLocation(), FRotator(90, 180, 0));
 	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
@@ -2917,7 +2958,7 @@ void APlayerCharacter::SetSoul(int32 value)
 
 	value < 0 ? PlayerHUD->DecreaseSoulGradual(this, PlayerDataStruct.SoulCount / PlayerDataStruct.MaxSoulCount) : 
 		PlayerHUD->SetSoul(PlayerDataStruct.SoulCount / PlayerDataStruct.MaxSoulCount);
-	GameInstance->PlayerStatUI->SetRemainSoul(PlayerDataStruct.SoulCount);
+	PlayerHUD->SetRemainSoul(PlayerDataStruct.SoulCount);
 
 	if (PlayerDataStruct.SoulCount <= 0)PlayerDataStruct.SoulCount = 0;
 	else if(PlayerDataStruct.SoulCount >= PlayerDataStruct.MaxSoulCount)PlayerDataStruct.SoulCount = 100;
@@ -2927,11 +2968,8 @@ void APlayerCharacter::LoadFile()
 {
 	UJesusSaveGame::GetInstance().Load(this, GameInstance);
 
-	ASoundManager::GetInstance().StartBGMSound(IsPhaseTwo);
-	if(IsPhaseTwo)
-		UCombatManager::GetInstance().Boss2->SetActive(true);
-
 	SetSoul(PlayerDataStruct.SoulCount);
+	CurHealCount = PlayerDataStruct.MaxHealCount;
 }
 
 void APlayerCharacter::LoadMap()
@@ -2940,13 +2978,18 @@ void APlayerCharacter::LoadMap()
 	UGameplayStatics::LoadStreamLevel(this, SaveMapName, true, true, LatentInfo);
 
 	ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
-
 	LightManager->ChangeTargetLightSetting(SaveMapName.ToString());
 
+	FTimerHandle MyTimer;
 	if (SaveMapName == "2-2Map")
 	{
 		SaveMapName = "A_KimMinYeongMap_Boss1";
-		GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadMap, 0.5f);
+		GetWorldTimerManager().SetTimer(MyTimer, this, &APlayerCharacter::LoadMap, 0.5f);
+	}
+	if (SaveMapName == "MainHall")
+	{
+		SaveMapName = "2-2Map";
+		GetWorldTimerManager().SetTimer(MyTimer, this, &APlayerCharacter::LoadMap, 0.5f);
 	}
 
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadingMonster, 2.0f);
@@ -2954,6 +2997,12 @@ void APlayerCharacter::LoadMap()
 
 void APlayerCharacter::PlayerDead(bool IsFly)
 {
+	if (IsPhaseTwo)
+	{
+		IsPhaseTwo = false;
+		ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
+		LightManager->ChangeTargetLightSetting("2-2Map");
+	}
 	if (IsLockOn)
 	{
 		LockOn();
@@ -2975,7 +3024,6 @@ void APlayerCharacter::PlayerDead(bool IsFly)
 	ChangeActionType(ActionType::DEAD);
 	MontageBlendInTime = 0.0f;
 	IsFly ? ChangeMontageAnimation(AnimationType::DEADLOOP2) : ChangeMontageAnimation(AnimationType::DEAD);
-	IsPhaseTwo = false;
 }
 
 void APlayerCharacter::LoadingMonster()

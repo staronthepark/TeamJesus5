@@ -14,13 +14,6 @@ void UPlayerSoulStatUI::NativeOnInitialized()
 void UPlayerSoulStatUI::NativeConstruct()
 {
 	Super::NativeConstruct();
-	this->SetVisibility(ESlateVisibility::Visible);
-	WBP_PlayerRest_UI->SetVisibility(ESlateVisibility::Visible);
-	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
-	//Controller->SetPause(true);
-	Controller->SetShowMouseCursor(true);
-	Controller->SetInputMode(FInputModeUIOnly());
-	WBP_PlayerRest_UI->SetKeyboardFocus();
 }
 
 void UPlayerSoulStatUI::ClickPray()
@@ -30,19 +23,26 @@ void UPlayerSoulStatUI::ClickPray()
 
 void UPlayerSoulStatUI::OpenStat()
 {
-	WBP_PlayerRest_UI->SetVisibility(ESlateVisibility::Collapsed);
 	//WBP_Player_Stat_UI->SetVisibility(ESlateVisibility::Visible);
 	WBP_Player_Stat_UI->Open();
 }
 
+void UPlayerSoulStatUI::Open()
+{
+	this->SetVisibility(ESlateVisibility::Visible);
+	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+	Controller->SetShowMouseCursor(true);
+	Controller->SetInputMode(FInputModeUIOnly());
+	this->SetKeyboardFocus();
+}
+
 void UPlayerSoulStatUI::Close()
 {
+	WBP_Player_Stat_UI->Close();
 	this->SetVisibility(ESlateVisibility::Collapsed);
 	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 	Controller->SetInputMode(FInputModeGameOnly());
 	Controller->bShowMouseCursor = false;
-	WBP_Player_Stat_UI->Close();
-	this->RemoveFromParent();
 }
 
 void UPlayerSoulStatUI::SetRemainSoul(int value)

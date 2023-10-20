@@ -97,6 +97,9 @@ class SERVAME_API UPlayerHUD : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 		UPlayerGuideUI* WBP_PlayerGuideUI;
 
+	UPROPERTY(meta = (BindWidget))
+		class UPlayerSoulStatUI* WBP_PlayerStat_UI;
+
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* HUDOpenAnimation;
@@ -158,6 +161,9 @@ public:
 	void PlayAnimations(EGuides type, bool IsOpen);
 
 	//void SetShield(int value);
+
+	void OpenStat();
+	void SetRemainSoul(int value);
 
 	void PlayGuidesAnimation(EGuides type ,bool IsOpen);
 	void PlayKeyGuideAnimation(bool IsOpen);

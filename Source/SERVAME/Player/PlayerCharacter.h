@@ -74,6 +74,7 @@ struct FPlayerCharacterDataStruct : public FCharacterBaseDataStruct
 {
 	GENERATED_BODY()
 
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float SoulCount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -272,6 +273,8 @@ public:
 
 	TArray<UPrimitiveComponent*>TargetCompArray;
 	TArray<UPrimitiveComponent*>TargetCompInScreenArray;
+	TArray<UPrimitiveComponent*>TargetCompFrontPlayerArray;
+
 	UPrimitiveComponent* TargetComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -395,6 +398,7 @@ public:
 	void GetCompsInScreen(TArray<UPrimitiveComponent*>Array);
 	void GetFirstTarget();
 	void ChangeTarget(CameraDirection Direction);
+	void RayCastOnTargets();
 
 	void ShoulderView(bool Value);
 
