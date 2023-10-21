@@ -111,6 +111,8 @@ public:
 	void ChangeState(EStatState changeState);
 	EStatState GetState();
 
+	void Init();
+
 	UFUNCTION()
 	void OnButtonClicked();
 
@@ -119,6 +121,7 @@ public:
 
 	UFUNCTION()
 	void Activate();
+
 
 	UFUNCTION()
 	void ChangeButtonToActivate();

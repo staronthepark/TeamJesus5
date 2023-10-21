@@ -161,6 +161,8 @@ public:
 
 	//UFUNCTION()
 	//void OnShieldButtonClicked();
+	UFUNCTION()
+	void Init(int str, int stamina, int hp, int shield);
 
 	UFUNCTION()
 	void OnPurchaseButtonClicked();

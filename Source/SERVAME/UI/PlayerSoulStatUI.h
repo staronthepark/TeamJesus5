@@ -32,6 +32,8 @@ public:
 	UFUNCTION()
 		void OpenStat();
 
+	void InitStat(int str, int stamina, int hp, int shield);
+
 	void Open();
 
 	void Close();
