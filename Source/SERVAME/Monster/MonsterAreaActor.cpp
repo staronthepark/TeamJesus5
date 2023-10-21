@@ -33,11 +33,14 @@ void AMonsterAreaActor::BeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 
 void AMonsterAreaActor::EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	UE_LOG(LogTemp, Warning, TEXT("EndOverlap : %s"), *OtherActor->GetName());
+
 	for (auto Monster : MonsterArr)
 	{
 		Monster->IsPatrol = true;
 		Monster->MonsterController->FindPlayer = false;
 		Monster->MonsterMoveEventIndex = 0;
+		Monster->ChangeActionType(MonsterActionType::MOVE);
 	}
 }
 
