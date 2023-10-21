@@ -12,21 +12,99 @@ AJamsig::AJamsig()
 	AttackTrigger = CreateDefaultSubobject<UJamsigAttackTriggerComp>(TEXT("AttackTriggerCollision"));
 	AttackTrigger->SetupAttachment(GetMesh());
 
-	ParryingCollision1->SetupAttachment(GetMesh(), FName("RHand"));
-	SwordTrailComp->SetupAttachment(GetMesh(), FName("RHand"));
-	WeaponCollision->SetupAttachment(GetMesh(), FName("RHand"));
-	WeaponOverlapStaticMeshCollision->SetupAttachment(GetMesh(), FName("RHand"));
-	WeaponOverlapStaticMeshCollision->SetCollisionProfileName("Weapon");
+	NotifyBeginEndEventMap.Add(MonsterAnimationType::IDLE, TMap<bool, TFunction<void()>>());
+	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(true, [&]()
+		{
+			if (TracePlayer && MonsterController->FindPlayer)
+			{
+				StateType = AnimTypeToStateType[MonsterAnimationType::IDLE];
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+				return;
+			}
+
+			if (AttackAnimationType != MonsterAnimationType::NONE && MonsterController->FindPlayer)
+				StartAttackTrigger(AttackAnimationType);
+		});
+	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(false, [&]()
+		{
+			if (CurrentDistance < AttackRange)
+			{
+				StartAttackTrigger(AttackAnimationType);
+			}
+
+			if (TracePlayer && MonsterController->FindPlayer)
+			{
+				StateType = AnimTypeToStateType[MonsterAnimationType::IDLE];
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+				return;
+			}
+
+			if (AttackAnimationType != MonsterAnimationType::NONE && MonsterController->FindPlayer)
+				StartAttackTrigger(AttackAnimationType);
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::IDLE, [&]()
+		{
+			if (PlayerCharacter && !TracePlayer)
+			{
+				StartAttackTrigger(AttackAnimationType);
+			}
+			else if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+			}
+			else
+			{
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			}
+		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
 		{
 			JamsigAnimInstance->PauseAnimation(MontageMap[AnimationType]);
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::HIT, [&]()
+		{
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+			}
+			else
+			{
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			}
+		});
+
+	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
+		{
+			if (percent <= 0.7f)
+			{
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::ATTACK1);
+			}
+			else
+			{
+				ChangeActionType(MonsterActionType::ATTACK);
+				ChangeMontageAnimation(MonsterAnimationType::POWERATTACK1);
+			}
 		});
 }
 
 void AJamsig::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MonsterController->CanPerception = true;
 
 	DeactivateHpBar();
 
@@ -100,47 +178,33 @@ void AJamsig::OnJamsigTargetDetectionEndOverlap(UPrimitiveComponent* OverlappedC
 }
 
 void AJamsig::StartAttackTrigger(MonsterAnimationType AttackAnimType)
-{ 
-	if (MonsterDataStruct.CharacterHp > 0)
+{ 	
+	TracePlayer = false;
+	if (StateType == MonsterStateType::CANTACT )
+		return;
+	AttackAnimationType = AttackAnimType;
+	if (ActionType != MonsterActionType::ATTACK)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("StartAttackTrigger"));
-		TracePlayer = false;
 		MonsterController->StopMovement();
-		ChangeMontageAnimation(MonsterAnimationType::IDLE);
+
+		if (MontageMap.Contains(AnimationType))
+			JamsigAnimInstance->StopMontage(MontageMap[AnimationType]);
+
+		float RandomValue = FMath::RandRange(0, 100) * 0.01f;
+		if (SetActionByRandomMap.Contains(AttackAnimType))
+		{
+			MonsterMoveEventIndex = 1;
+			SetActionByRandomMap[AttackAnimType](RandomValue);
+		}
 	}
-	//TracePlayer = false;
-	//if (StateType == MonsterStateType::CANTACT )
-	//	return;
-	//AttackAnimationType = AttackAnimType;
-	//if (ActionType != MonsterActionType::ATTACK)
-	//{
-	//	MonsterController->StopMovement();
-
-	//	if (MontageMap.Contains(AnimationType))
-	//		JamsigAnimInstance->StopMontage(MontageMap[AnimationType]);
-
-	//	float RandomValue = FMath::RandRange(0, 100) * 0.01f;
-	//	if (SetActionByRandomMap.Contains(AttackAnimType))
-	//	{
-	//		MonsterMoveEventIndex = 1;
-	//		SetActionByRandomMap[AttackAnimType](RandomValue);
-	//	}
-	//}
 }
 
 void AJamsig::EndAttackTrigger(MonsterAnimationType AttackAnimType)
 {
-	if (MonsterDataStruct.CharacterHp > 0)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("EndAttackTrigger"));
-		if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP)
-			return;
+	if (AnimationType == MonsterAnimationType::DEAD || AnimationType == MonsterAnimationType::DEADLOOP)
+		return;
 
-		TracePlayer = true;
-		MonsterMoveEventIndex = 1;
-		ChangeActionType(MonsterActionType::MOVE);
-		ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
-	}
+	TracePlayer = true;
 }
 
 float AJamsig::Die(float Dm)
@@ -251,21 +315,18 @@ float AJamsig::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, A
 		return 0.f;
 
 	//TODO : 잠식이 피격 애니 나오면 코드 수정
-	//if (DamageAmount >= 30 && MonsterDataStruct.CharacterHp > 0)
-	//{
-	//	if (CanCancle)
-	//	{
-	//		MonsterController->StopMovement();
+	if (DamageAmount >= 30 && MonsterDataStruct.CharacterHp > 0)
+	{
+		MonsterController->StopMovement();
 
-	//		JamsigAnimInstance->StopMontage(MontageMap[AnimationType]);
-	//		if (MontageEndEventMap.Contains(AnimationType))
-	//			MontageEndEventMap[AnimationType]();
+		JamsigAnimInstance->StopMontage(MontageMap[AnimationType]);
+		if (MontageEndEventMap.Contains(AnimationType))
+			MontageEndEventMap[AnimationType]();
 
-	//		//TODO : 앞 뒤 방향에 따른 피격
-	//		ChangeActionType(MonsterActionType::HIT);
-	//		ChangeMontageAnimation(HitType);
-	//	}
-	//}
+		//TODO : 앞 뒤 방향에 따른 피격
+		ChangeActionType(MonsterActionType::HIT);
+		ChangeMontageAnimation(MonsterAnimationType::HIT);
+	}
 
 	return DamageAmount;
 }

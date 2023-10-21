@@ -163,7 +163,7 @@ void AMonsterController::OnTargetPerceptionUpdated_Delegate(AActor* Actor, FAISt
 }
 
 void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
-{
+{		
 	if (!CanPerception)
 		return;
 
