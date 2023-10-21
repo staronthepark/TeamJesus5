@@ -5,6 +5,7 @@
 #include "PersistentKnight.h"
 #include "..\KnightAttackTriggerComp.h"
 #include "KnightHeadAnimInstance.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 APersistentKnight::APersistentKnight()
 {
@@ -42,17 +43,32 @@ APersistentKnight::APersistentKnight()
 
 	MontageEndEventMap.Add(MonsterAnimationType::REVIVE, [&]()
 		{
-			Imotal = false;
-			Reviving = false;
-			StateType = MonsterStateType::NONE;
-			HitCollision->Activate();
-			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-			TracePlayer = true;
+			if (MonsterController->FindPlayer)
+			{
+				Imotal = false;
+				Reviving = false;
+				StateType = MonsterStateType::NONE;
+				HitCollision->Activate();
+				AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+				TracePlayer = true;
 
-			ActivateHitCollision();        
+				ActivateHitCollision();
 
-			ChangeActionType(MonsterActionType::NONE);
-			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			}
+			else
+			{
+				Imotal = false;
+				Reviving = false;
+				StateType = MonsterStateType::NONE;
+				HitCollision->Activate();
+				AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+				IsPatrol = true;
+				MonsterMoveEventIndex = 0;
+				ActivateHitCollision();
+				ChangeActionType(MonsterActionType::MOVE);
+			}
 		});
 
 	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)

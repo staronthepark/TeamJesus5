@@ -37,7 +37,7 @@ AKinghtMonster::AKinghtMonster()
 
 			KnightAnimInstance->BlendSpeed = IdleBlend;
 
-			if (AttackAnimationType != MonsterAnimationType::NONE)
+			if (AttackAnimationType != MonsterAnimationType::NONE && MonsterController->FindPlayer)
 				StartAttackTrigger(AttackAnimationType);
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(false, [&]()
@@ -60,7 +60,7 @@ AKinghtMonster::AKinghtMonster()
 
 			KnightAnimInstance->BlendSpeed = IdleBlend;
 
-			if (AttackAnimationType != MonsterAnimationType::NONE)
+			if (AttackAnimationType != MonsterAnimationType::NONE && MonsterController->FindPlayer)
 				StartAttackTrigger(AttackAnimationType);
 		});
 
@@ -84,8 +84,8 @@ AKinghtMonster::AKinghtMonster()
 			{
 				IsPatrol = false;
 				WalkToRunBlend = false;
+				isReturnBlend = true;
 				MonsterMoveEventIndex = 1;
-				KnightAnimInstance->BlendSpeed = IdleBlend;
 				ChangeActionType(MonsterActionType::NONE);
 				return;
 			}
@@ -156,6 +156,7 @@ AKinghtMonster::AKinghtMonster()
 
 			AttackTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			WalkToRunBlend = false;
+			CanRotate = true;
 			OnHitCancle();
 
 			if (TracePlayer)
@@ -264,7 +265,7 @@ AKinghtMonster::AKinghtMonster()
 		{
 			StateType = AnimTypeToStateType[MonsterAnimationType::IDLE];
 
-			if (CurrentDistance >= RunableDistance && !IsPatrol)
+			if (CurrentDistance >= RunableDistance && !IsPatrol && MonsterController->FindPlayer)
 			{
 				ChangeActionType(MonsterActionType::RUN);
 			}
@@ -288,6 +289,9 @@ AKinghtMonster::AKinghtMonster()
 
 	MonsterTickEventMap.Add(MonsterActionType::RUN, [&]()
 		{
+			if (!MonsterController->FindPlayer)
+				return;
+
 			if (IsPatrol)
 			{
 				ChangeActionType(MonsterActionType::MOVE);
@@ -515,6 +519,7 @@ void AKinghtMonster::RespawnCharacter()
 
 	UE_LOG(LogTemp, Warning, TEXT("knight respawn"));
 
+	MonsterController->FindPlayer = false;
 	LockOnComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	KnightAnimInstance->ResumeMontage(MontageMap[AnimationType]);
 	GetWorld()->GetTimerManager().ClearTimer(MonsterDeadTimer);
@@ -524,7 +529,6 @@ void AKinghtMonster::RespawnCharacter()
 	if (MyMonsterType == MonsterType::KNIGHT || MyMonsterType == MonsterType::PERSISTENTKNIGHT)
 	{
 		TracePlayer = false;
-		MonsterController->FindPlayer = false;
 		IsPatrol = true;
 		MonsterMoveEventIndex = 0;
 		ChangeActionType(MonsterActionType::MOVE);
@@ -540,7 +544,6 @@ void AKinghtMonster::RespawnCharacter()
 	else
 	{
 		TracePlayer = false;
-		MonsterController->FindPlayer = false;
 		CalcedDist = IdleBlend;
 		ChangeActionType(MonsterActionType::NONE);
 		ChangeMontageAnimation(MonsterAnimationType::IDLE);
