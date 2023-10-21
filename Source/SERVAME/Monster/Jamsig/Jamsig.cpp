@@ -113,6 +113,12 @@ void AJamsig::BeginPlay()
 
 	JamsigAnimInstance = Cast<UJamsigAniminstance>(GetMesh()->GetAnimInstance());
 
+	if (JamsigAnimInstance != nullptr)
+	{
+		JamsigAnimInstance->KnockBackStart.AddUObject(this, &AJamsig::KnockBackStart);
+		//JamsigAnimInstance->KnockBackEnd.AddUObject(this, &AJamsig::KnockBackEmd);
+	}
+
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &AJamsig::OnJamsigTargetDetectionBeginOverlap);
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &AJamsig::OnJamsigTargetDetectionEndOverlap);
 }
@@ -140,6 +146,8 @@ void AJamsig::DeactivateAttackTrigger()
 
 void AJamsig::KnockBackStart()
 {
+	UE_LOG(LogTemp, Warning, TEXT("knockbackstart"));
+
 	GetWorld()->GetTimerManager().SetTimer(KnockBackTimerHandle, FTimerDelegate::CreateLambda([=]()
 		{
 			IsKnockBack = false;
@@ -307,7 +315,7 @@ float AJamsig::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, A
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	
-	KnockBackStart();
+	//KnockBackStart();
 
 	DeactivateHitCollision();
 
@@ -315,19 +323,17 @@ float AJamsig::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, A
 		return 0.f;
 
 	//TODO : 잠식이 피격 애니 나오면 코드 수정
-	if (DamageAmount >= 30 && MonsterDataStruct.CharacterHp > 0)
-	{
-		MonsterController->StopMovement();
 
-		JamsigAnimInstance->StopMontage(MontageMap[AnimationType]);
-		if (MontageEndEventMap.Contains(AnimationType))
-			MontageEndEventMap[AnimationType]();
+	MonsterController->StopMovement();
 
-		//TODO : 앞 뒤 방향에 따른 피격
-		ChangeActionType(MonsterActionType::HIT);
-		ChangeMontageAnimation(MonsterAnimationType::HIT);
-	}
+	JamsigAnimInstance->StopMontage(MontageMap[AnimationType]);
+	if (MontageEndEventMap.Contains(AnimationType))
+		MontageEndEventMap[AnimationType]();
 
+	//TODO : 앞 뒤 방향에 따른 피격
+	ChangeActionType(MonsterActionType::HIT);
+	ChangeMontageAnimation(MonsterAnimationType::HIT);
+	
 	return DamageAmount;
 }
 

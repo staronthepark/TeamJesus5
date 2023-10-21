@@ -7,3 +7,7 @@ UJamsigAniminstance::UJamsigAniminstance()
 {
 
 }
+
+void UJamsigAniminstance::AnimNotify_KnockBackStart() { KnockBackStart.Broadcast(); }
+
+void UJamsigAniminstance::AnimNotify_KnockBackEnd() { KnockBackEnd.Broadcast(); }
