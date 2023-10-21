@@ -80,7 +80,6 @@ AEnemyMonster::AEnemyMonster()
 		});
 	RandomRotateMap.Add(3, [&]()
 		{
-			
 		});
 
 	MonsterMoveMap.Add(0, [&]()

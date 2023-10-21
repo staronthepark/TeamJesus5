@@ -89,6 +89,30 @@ void AMonsterController::MoveWhenArrived(FVector Location)
 	}
 }
 
+void AMonsterController::MoveToStartLoc(FVector Location)
+{
+	auto type = MoveToLocation(Location);
+
+	FRotator ToTarget = UKismetMathLibrary::FindLookAtRotation(Monster->GetActorLocation(), Location);
+	FRotator RealToTarget = FRotator(0.f, ToTarget.Yaw, 0.f);
+
+	FRotator LookAtRotation = FMath::RInterpTo(Monster->GetActorRotation(), RealToTarget, GetWorld()->DeltaTimeSeconds, 3.f);
+	Monster->SetActorRotation(LookAtRotation);
+
+	if (type == EPathFollowingRequestResult::AlreadyAtGoal)
+	{
+		if(Monster->MyMonsterType == MonsterType::KNIGHT)
+		{
+			auto Knight = Cast<AKinghtMonster>(Monster);
+			Knight->IsPatrol = false;
+			Knight->WalkToRunBlend = false;
+			Knight->isReturnBlend = true;
+			Knight->MonsterMoveEventIndex = 1;
+			Knight->ChangeActionType(MonsterActionType::NONE);
+		}
+	}
+}
+
 void AMonsterController::Patrol(FVector Location, int PatrolArrNum)
 {
 	IsArrived = false;
@@ -139,7 +163,7 @@ void AMonsterController::OnTargetPerceptionUpdated_Delegate(AActor* Actor, FAISt
 }
 
 void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
-{
+{		
 	if (!CanPerception)
 		return;
 

@@ -82,11 +82,12 @@ AKinghtMonster::AKinghtMonster()
 
 			if (PatrolActorArr.IsEmpty())
 			{
-				IsPatrol = false;
-				WalkToRunBlend = false;
-				isReturnBlend = true;
-				MonsterMoveEventIndex = 1;
-				ChangeActionType(MonsterActionType::NONE);
+				//IsPatrol = false;
+				//WalkToRunBlend = false;
+				//isReturnBlend = true;
+				//MonsterMoveEventIndex = 1;
+				//ChangeActionType(MonsterActionType::NONE);
+				MonsterController->MoveToStartLoc(SpawnLocation);
 				return;
 			}
 

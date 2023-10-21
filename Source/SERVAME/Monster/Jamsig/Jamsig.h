@@ -42,6 +42,8 @@ public:
 	FTimerHandle KnockBackTimerHandle;
 	FTimerHandle KnockBackDelayTimerHandle;
 
+	MonsterAnimationType HitType;
+
 	void ActivateAttackTrigger();
 	void DeactivateAttackTrigger();
 
