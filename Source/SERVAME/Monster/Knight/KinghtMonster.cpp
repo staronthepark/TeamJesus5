@@ -105,11 +105,11 @@ AKinghtMonster::AKinghtMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::IDLE, [&]()
 		{
-			if (PlayerCharacter && !TracePlayer)
+/*			if (PlayerCharacter && !TracePlayer)
 			{
 				StartAttackTrigger(AttackAnimationType);
 			}
-			else if (TracePlayer)
+			else*/if (TracePlayer)
 			{
 				MonsterMoveEventIndex = 1;
 				KnightAnimInstance->BlendSpeed = WalkBlend;

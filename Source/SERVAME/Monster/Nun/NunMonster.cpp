@@ -576,6 +576,7 @@ float ANunMonster::Die(float Dm)
 			SpawnedKnight->Die(0.f);
 
 		KnightArr.Empty();
+
 		if (Illusion != nullptr)
 			Illusion->Die(0.f);
 	}
@@ -594,6 +595,7 @@ float ANunMonster::Die(float Dm)
 	Imotal = true;
 	GetWorld()->GetTimerManager().ClearTimer(SelfHealTimerHandle);
 	GetWorld()->GetTimerManager().ClearTimer(TeleportHandle);
+	GetWorld()->GetTimerManager().ClearTimer(TeleportAttackHandle);
 
 	DeactivateHitCollision();
 
@@ -1219,18 +1221,16 @@ void ANunMonster::ChangeMontageAnimation(MonsterAnimationType type)
 
 float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	
 	ChangeActionType(MonsterActionType::NONE);
-
 	if (Imotal)
 	{
 		return 0;
 	}
-
 	DeactivateHitCollision();
-
 	MonsterDataStruct.CharacterHp -= DamageAmount;
+
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
 	ChangeMontageAnimation(MonsterAnimationType::HIT);
 
 	if (MyMonsterType == MonsterType::NUN)
