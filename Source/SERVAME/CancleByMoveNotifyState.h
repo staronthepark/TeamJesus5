@@ -14,6 +14,5 @@ class SERVAME_API UCancleByMoveNotifyState : public UAnimNotifyState
 {
 	GENERATED_BODY()
 
-		GENERATED_BODY()
 		virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration);
 };
