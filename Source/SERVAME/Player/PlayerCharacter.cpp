@@ -2398,14 +2398,6 @@ void APlayerCharacter::AfterAttackNotify(bool value)
 	{
 		ChangePlayerAction(PlayerAction::AFTERATTACK);
 		CanNextAttack = true;
-		if (AxisX == 1 && AxisY == 1)
-		{
-			ChangeActionType(ActionType::ATTACK);
-		}
-		else
-		{
-			CheckInputKey();
-		}
 	}
 }
 
@@ -2993,6 +2985,18 @@ void APlayerCharacter::LoadMap()
 	}
 
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadingMonster, 2.0f);
+}
+
+void APlayerCharacter::AfterAttackNotify2()
+{
+	if (AxisX == 1 && AxisY == 1)
+	{
+		ChangeActionType(ActionType::ATTACK);
+	}
+	else
+	{
+		CheckInputKey();
+	}
 }
 
 void APlayerCharacter::PlayerDead(bool IsFly)
