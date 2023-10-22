@@ -1372,25 +1372,32 @@ void ANunMonster::TelePort()
 
 void ANunMonster::TelePortAttack()
 {
-	DarkAttack();
+	if (MonsterDataStruct.CharacterHp >= 0.f)
+		DarkAttack();
 
 	GetWorld()->GetTimerManager().PauseTimer(TeleportHandle);
 	GetWorld()->GetTimerManager().PauseTimer(PaternDelay);
 
 	GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
 		{
-			TelePortTempFunc();
+			if (MonsterDataStruct.CharacterHp >= 0.f)
+				TelePortTempFunc();
 			GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
 				{
-					DarkAttack();
+					if (MonsterDataStruct.CharacterHp >= 0.f)
+						DarkAttack();
 					GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
 						{
-							TelePortTempFunc();
+							if (MonsterDataStruct.CharacterHp >= 0.f)
+								TelePortTempFunc();
 							GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
 								{
-									CrystalAttack();
-									GetWorld()->GetTimerManager().UnPauseTimer(TeleportHandle);
-									GetWorld()->GetTimerManager().UnPauseTimer(PaternDelay);
+									if (MonsterDataStruct.CharacterHp >= 0.f)
+									{
+										CrystalAttack();
+										GetWorld()->GetTimerManager().UnPauseTimer(TeleportHandle);
+										GetWorld()->GetTimerManager().UnPauseTimer(PaternDelay);
+									}
 								}), 0.5f, false, 0.5f);
 						}), 2.5f, false, 2.5f);
 				}), 0.5f, false, 0.5f);
