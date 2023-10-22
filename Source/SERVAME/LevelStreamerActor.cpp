@@ -37,7 +37,7 @@ void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent
 		{
 			if (MonsterList[i]->IsAlive())
 			{
-				MonsterList[i]->SetActive(true);
+				MonsterList[i]->RespawnCharacter();
 			}
 		}
 	}

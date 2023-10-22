@@ -2727,6 +2727,7 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	}
 
 	ExecutionCharacter->Stun();
+	SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
 	ChangeMontageAnimation(AnimationType::ENDOFHEAL);
 }
 
