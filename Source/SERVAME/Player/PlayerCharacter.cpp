@@ -442,7 +442,7 @@ APlayerCharacter::APlayerCharacter()
 	NotifyBeginEndEventMap.Add(AnimationType::SHIELDKNOCKBACK, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::SHIELDKNOCKBACK].Add(true, [&]()
 		{
-			PlayerCurAction = PlayerAction::AFTERATTACK;
+			//PlayerCurAction = PlayerAction::AFTERATTACK;
 		});
 	NotifyBeginEndEventMap[AnimationType::SHIELDKNOCKBACK].Add(false, [&]()
 		{
@@ -2727,6 +2727,7 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	}
 
 	ExecutionCharacter->Stun();
+	SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
 	ChangeMontageAnimation(AnimationType::ENDOFHEAL);
 }
 
