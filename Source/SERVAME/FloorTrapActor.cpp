@@ -40,18 +40,19 @@ void AFloorTrapActor::Tick(float DeltaTime)
 		}
 	}
 
+	FVector Location = ButtonMeshComp->GetRelativeLocation();
 	if (OnTheButton)
 	{
 		if (ButtonMeshComp->GetRelativeLocation().Z > -129.705314)
 		{
-			ButtonMeshComp->SetRelativeLocation(FVector(0, 0, ButtonMeshComp->GetRelativeLocation().Z - Speed  * DeltaTime));
+			ButtonMeshComp->SetRelativeLocation(FVector(Location.X, Location.Y, Location.Z - Speed  * DeltaTime));
 		}
 	}
 	else
 	{
 		if (ButtonMeshComp->GetRelativeLocation().Z < 0.0f)
 		{
-			ButtonMeshComp->SetRelativeLocation(FVector(0, 0, ButtonMeshComp->GetRelativeLocation().Z + Speed * DeltaTime));
+			ButtonMeshComp->SetRelativeLocation(FVector(Location.X, Location.Y, Location.Z + Speed * DeltaTime));
 		}
 	}
 }
