@@ -1062,18 +1062,18 @@ void ANunMonster::IllusionAttack()
 	UE_LOG(LogTemp, Warning, TEXT("illusion CurrentNum = %d"), CurrentNum);
 
 	srand(time(NULL));
-	int Num = rand() % TeleportArr.Num();
+	IllusionPosNum = rand() % TeleportArr.Num();
 
 	while (1)
 	{
-		if (CurrentNum != Num)
+		if (CurrentNum != IllusionPosNum)
 			break;
 
 		srand(time(NULL));
-		Num = rand() % TeleportArr.Num();
+		IllusionPosNum = rand() % TeleportArr.Num();
 	}
 
-	Illusion->SetActorLocation(TeleportArr[Num]->GetActorLocation());
+	Illusion->SetActorLocation(TeleportArr[IllusionPosNum]->GetActorLocation());
 	Illusion->SetActorRotation(SpawnRot);
 	Illusion->MonsterController->FindPlayer = true;
 	Illusion->IsIllusion = true;
@@ -1326,7 +1326,7 @@ void ANunMonster::TelePort()
 			auto Num = rand() % TeleportArr.Num();
 			while (1)
 			{
-				if (CurrentNum != Num)
+				if (CurrentNum != Num && IllusionPosNum != Num)
 					break;
 
 				srand(time(NULL));

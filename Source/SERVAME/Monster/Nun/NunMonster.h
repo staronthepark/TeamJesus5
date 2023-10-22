@@ -84,6 +84,7 @@ public:
 	float TeleportCoolTime = 10.f;
 	float Count = 0;
 	static int CurrentNum;
+	int IllusionPosNum = 0;
 	bool IsCoolTimeTeleport = false;
 	FTimerHandle TeleportTimer;
 	FTimerHandle TeleportHandle;
