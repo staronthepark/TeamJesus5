@@ -442,7 +442,7 @@ APlayerCharacter::APlayerCharacter()
 	NotifyBeginEndEventMap.Add(AnimationType::SHIELDKNOCKBACK, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::SHIELDKNOCKBACK].Add(true, [&]()
 		{
-			PlayerCurAction = PlayerAction::AFTERATTACK;
+			//PlayerCurAction = PlayerAction::AFTERATTACK;
 		});
 	NotifyBeginEndEventMap[AnimationType::SHIELDKNOCKBACK].Add(false, [&]()
 		{

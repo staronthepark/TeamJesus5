@@ -93,8 +93,11 @@ void ADoorAnimInteraction::EnableEvent()
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[26].ObjClass, GetActorLocation(), GetActorForwardVector().Rotation() + FRotator(0, 0, -20));
 	AnimInstance->DoorAnimationType = DoorAnimationType::OPEN;
 	Character->SetActorLocation(TriggerComp->GetComponentLocation());
-	Character->YawRotation = FRotator::ZeroRotator;
-	Character->YawRotation = FRotator::ZeroRotator;
+
+
+	Character->SetActorRotation(GetActorRotation());
+	Character->YawRotation = GetActorRotation();
+
 	Character->CameraShake(Character->PlayerDoorCameraShake);
 	Character->WeaponMesh->SetVisibility(false);
 	Character->ChangeActionType(ActionType::INTERACTION);
@@ -102,6 +105,8 @@ void ADoorAnimInteraction::EnableEvent()
 	Character->AxisX = 1;
 	Character->AxisY = 1;
 	Character->ChangeMontageAnimation(AnimationType::DOOROPEN);
+	Character->ChangeActionType(ActionType::NONE);
+	Character->ChangePlayerAction(PlayerAction::CANATTACK);
 	TriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	if (BossRoomDoorOpenSequence != nullptr)
