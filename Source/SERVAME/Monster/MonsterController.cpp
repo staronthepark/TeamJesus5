@@ -101,9 +101,12 @@ void AMonsterController::MoveToStartLoc(FVector Location)
 
 	FindPlayer = false;
 
-	if (type == EPathFollowingRequestResult::AlreadyAtGoal)
+	auto Dist = FVector::Dist(Monster->GetActorLocation(), Location);
+
+	if (type == EPathFollowingRequestResult::AlreadyAtGoal
+		|| Dist <= 100.f)
 	{
-		if(Monster->MyMonsterType == MonsterType::KNIGHT)
+		if (Monster->MyMonsterType == MonsterType::KNIGHT)
 		{
 			auto Knight = Cast<AKinghtMonster>(Monster);
 			Knight->IsPatrol = false;
@@ -112,7 +115,7 @@ void AMonsterController::MoveToStartLoc(FVector Location)
 			Knight->MonsterMoveEventIndex = 1;
 			Knight->ChangeActionType(MonsterActionType::NONE);
 		}
-		else 
+		else
 		{
 			Monster->ChangeActionType(MonsterActionType::NONE);
 			Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
@@ -190,6 +193,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		return;
 
 	SetFocus(Stimulus.WasSuccessfullySensed() ? Player : nullptr);
+	
 	auto Dist = FVector::Distance(Player->GetActorLocation(), Monster->GetActorLocation());
 	Monster->PlayerCharacter = Player;
 

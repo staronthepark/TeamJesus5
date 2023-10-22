@@ -48,7 +48,6 @@ void AMonsterAreaActor::EndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		}
 
 		Monster->IsPatrol = true;
-		Monster->MonsterController->FindPlayer = false;
 		Monster->MonsterMoveEventIndex = 0;
 		Monster->ChangeActionType(MonsterActionType::MOVE);
 	}
