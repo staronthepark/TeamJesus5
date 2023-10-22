@@ -8,7 +8,10 @@ AFloorTrapActor::AFloorTrapActor()
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("TrapMesh");
 	SceneComp = CreateDefaultSubobject<USceneComponent>("SceneComp");
 	BoxComp = CreateDefaultSubobject<UBoxComponent>("BoxComp");
+	ButtonMeshComp = CreateDefaultSubobject<UStaticMeshComponent>("Button Mesh Comp");
+
 	MeshComp->SetupAttachment(SceneComp);
+	ButtonMeshComp->SetupAttachment(SceneComp);
 	BoxComp->SetupAttachment(SceneComp);
 }
 
@@ -34,6 +37,21 @@ void AFloorTrapActor::Tick(float DeltaTime)
 			BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			if(MeshComp->GetRelativeLocation().Z <= -129.705314)
 			IsTrigger = false;
+		}
+	}
+
+	if (OnTheButton)
+	{
+		if (ButtonMeshComp->GetRelativeLocation().Z > -129.705314)
+		{
+			ButtonMeshComp->SetRelativeLocation(FVector(0, 0, ButtonMeshComp->GetRelativeLocation().Z - Speed  * DeltaTime));
+		}
+	}
+	else
+	{
+		if (ButtonMeshComp->GetRelativeLocation().Z < 0.0f)
+		{
+			ButtonMeshComp->SetRelativeLocation(FVector(0, 0, ButtonMeshComp->GetRelativeLocation().Z + Speed * DeltaTime));
 		}
 	}
 }
@@ -74,12 +92,13 @@ void AFloorTrapActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 void AFloorTrapActor::BeginTriggerEvent()
 {
 	Super::BeginTriggerEvent();
-
+	OnTheButton = true;
 }
 
 void AFloorTrapActor::EndTriggerEvent()
 {
 	Super::EndTriggerEvent();
+	OnTheButton = false;
 }
 
 void AFloorTrapActor::EnableEvent()

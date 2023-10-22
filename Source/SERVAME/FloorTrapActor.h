@@ -33,10 +33,14 @@ public:
 			USceneComponent* SceneComp;
 
 		UPROPERTY(EditAnywhere)
+			UStaticMeshComponent* ButtonMeshComp;
+
+		UPROPERTY(EditAnywhere)
 			UBoxComponent* BoxComp;
 
 		bool IsTrigger;
 		bool IsEnable;
+		bool OnTheButton;
 		
 private:
 
