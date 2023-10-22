@@ -40,6 +40,12 @@ void AMonsterAreaActor::EndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		if (Monster->MonsterDataStruct.CharacterHp <= 0)
 			continue;
 
+		if (Monster->MyMonsterType == MonsterType::JAMSIG)
+		{
+			Monster->MonsterController->MoveToStartLoc(Monster->SpawnLocation);
+			continue;
+		}
+
 		Monster->IsPatrol = true;
 		Monster->MonsterController->FindPlayer = false;
 		Monster->MonsterMoveEventIndex = 0;

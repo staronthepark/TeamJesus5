@@ -381,6 +381,9 @@ void AJamsig::RespawnCharacter()
 {
 	Super::RespawnCharacter();
 
+	UE_LOG(LogTemp, Warning, TEXT("jamsig respawn"));
+
+	MonsterController->FindPlayer = false;
 	JamsigAnimInstance->ResumeMontage(MontageMap[AnimationType]);
 	GetWorld()->GetTimerManager().ClearTimer(MonsterDeadTimer);
 

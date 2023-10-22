@@ -110,6 +110,12 @@ void AMonsterController::MoveToStartLoc(FVector Location)
 			Knight->MonsterMoveEventIndex = 1;
 			Knight->ChangeActionType(MonsterActionType::NONE);
 		}
+		else 
+		{
+			Monster->ChangeActionType(MonsterActionType::NONE);
+			Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			Monster->TracePlayer = false;
+		}
 	}
 }
 
