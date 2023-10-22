@@ -488,6 +488,8 @@ public:
 
 	void LoadMap();
 
+	void AfterAttackNotify2();
+
 	UFUNCTION()
 		void PlayStartAnimation();
 
