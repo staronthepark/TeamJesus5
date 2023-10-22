@@ -256,7 +256,6 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 				else if (Monster->MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
 				{
 					Knight->IsPatrol = true;
-					Knight->isReturnBlend = true;
 					Knight->WalkToRunBlend = false;
 					Knight->TracePlayer = false;
 					Knight->MonsterMoveEventIndex = 0;

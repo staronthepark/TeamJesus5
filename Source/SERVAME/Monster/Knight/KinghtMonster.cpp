@@ -83,10 +83,10 @@ AKinghtMonster::AKinghtMonster()
 			if (PatrolActorArr.IsEmpty())
 			{
 				//IsPatrol = false;
-				//WalkToRunBlend = false;
 				//isReturnBlend = true;
 				//MonsterMoveEventIndex = 1;
 				//ChangeActionType(MonsterActionType::NONE);
+				KnightAnimInstance->BlendSpeed = WalkBlend;
 				MonsterController->MoveToStartLoc(SpawnLocation);
 				return;
 			}
