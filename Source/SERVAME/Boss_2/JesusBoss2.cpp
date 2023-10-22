@@ -1440,6 +1440,8 @@ FBoss2Action* AJesusBoss2::GetActionData(FName Name)
 
 void AJesusBoss2::DoTypeAttack(float MinRange, float MaxRange, float Dist, bool LockOn, Boss2AnimationType Type, AJesusBoss2* Boss2, TArray<Boss2ActionTemp> &arr, Boss2AttackType AtkType)
 {
+	UE_LOG(LogTemp, Warning, TEXT("DoTypeAttack"));
+
 	if (Dist >= MinRange && Dist <= MaxRange && !Boss2->CurrentActionTemp.IsExcute)
 	{
 		//InitIsExcute();

@@ -47,6 +47,12 @@ AJamsig::AJamsig()
 				StartAttackTrigger(AttackAnimationType);
 		});
 
+	MonsterMoveMap.Add(0, [&]()
+		{
+			MonsterController->MoveToStartLoc(SpawnLocation);
+		});
+
+
 	MontageEndEventMap.Add(MonsterAnimationType::IDLE, [&]()
 		{
 			if (PlayerCharacter && !TracePlayer)
@@ -83,6 +89,12 @@ AJamsig::AJamsig()
 				ChangeActionType(MonsterActionType::NONE);
 				ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			}
+		});
+
+	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
+		{
+			RotateMap[PlayerCharacter != nullptr]();
+			MonsterMoveMap[MonsterMoveEventIndex]();
 		});
 
 	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
@@ -217,7 +229,9 @@ void AJamsig::EndAttackTrigger(MonsterAnimationType AttackAnimType)
 
 float AJamsig::Die(float Dm)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Die"));
+	if (PlayerCharacter->IsLockOn)
+		PlayerCharacter->LockOn();
+
 	DeactivateAttackTrigger();
 	GetWorld()->GetTimerManager().ClearTimer(KnockBackTimerHandle);
 	GetWorld()->GetTimerManager().ClearTimer(KnockBackDelayTimerHandle);
@@ -281,10 +295,22 @@ void AJamsig::ResumeMontage()
 
 void AJamsig::Stun()
 {
+	FDamageEvent DamageEvent;
+
+	IsStun = true;
+	JamsigAnimInstance->StopMontage(MontageMap[AnimationType]);
+	MonsterController->StopMovement();
+	DeactivateSMOverlap();
+	ParryingCollision1->Deactivate();
+	DeactivateRightWeapon();
+	ChangeMontageAnimation(MonsterAnimationType::GROGGY_START);
+
+	TakeDamage(999.f, DamageEvent, PlayerCharacter->GetController(), PlayerCharacter);
 }
 
 void AJamsig::ParryingStun()
 {
+	
 }
 
 void AJamsig::MonsterHitStop()
@@ -322,17 +348,18 @@ float AJamsig::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, A
 	if (AnimationType == MonsterAnimationType::EXECUTION)
 		return 0.f;
 
-	//TODO : 잠식이 피격 애니 나오면 코드 수정
+	if (MonsterDataStruct.CharacterHp > 0)
+	{
+		MonsterController->StopMovement();
 
-	MonsterController->StopMovement();
+		JamsigAnimInstance->StopMontage(MontageMap[AnimationType]);
+		if (MontageEndEventMap.Contains(AnimationType))
+			MontageEndEventMap[AnimationType]();
 
-	JamsigAnimInstance->StopMontage(MontageMap[AnimationType]);
-	if (MontageEndEventMap.Contains(AnimationType))
-		MontageEndEventMap[AnimationType]();
-
-	//TODO : 앞 뒤 방향에 따른 피격
-	ChangeActionType(MonsterActionType::HIT);
-	ChangeMontageAnimation(MonsterAnimationType::HIT);
+		//TODO : 앞 뒤 방향에 따른 피격
+		ChangeActionType(MonsterActionType::HIT);
+		ChangeMontageAnimation(MonsterAnimationType::HIT);
+	}
 	
 	return DamageAmount;
 }
@@ -366,6 +393,9 @@ void AJamsig::RespawnCharacter()
 {
 	Super::RespawnCharacter();
 
+	UE_LOG(LogTemp, Warning, TEXT("jamsig respawn"));
+
+	MonsterController->FindPlayer = false;
 	JamsigAnimInstance->ResumeMontage(MontageMap[AnimationType]);
 	GetWorld()->GetTimerManager().ClearTimer(MonsterDeadTimer);
 

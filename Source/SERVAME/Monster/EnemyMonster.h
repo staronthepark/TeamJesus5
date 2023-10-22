@@ -58,6 +58,7 @@ enum class MonsterType : uint8
 	DEADBODYOFKNIGHT,
 	PERSISTENTKNIGHT,
 	ELITEKNIGHT,
+	JAMSIG,
 };
 
 USTRUCT(BlueprintType)

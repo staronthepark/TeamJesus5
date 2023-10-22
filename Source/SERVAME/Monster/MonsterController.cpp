@@ -99,9 +99,14 @@ void AMonsterController::MoveToStartLoc(FVector Location)
 	FRotator LookAtRotation = FMath::RInterpTo(Monster->GetActorRotation(), RealToTarget, GetWorld()->DeltaTimeSeconds, 3.f);
 	Monster->SetActorRotation(LookAtRotation);
 
-	if (type == EPathFollowingRequestResult::AlreadyAtGoal)
+	FindPlayer = false;
+
+	auto Dist = FVector::Dist(Monster->GetActorLocation(), Location);
+
+	if (type == EPathFollowingRequestResult::AlreadyAtGoal
+		|| Dist <= 100.f)
 	{
-		if(Monster->MyMonsterType == MonsterType::KNIGHT)
+		if (Monster->MyMonsterType == MonsterType::KNIGHT)
 		{
 			auto Knight = Cast<AKinghtMonster>(Monster);
 			Knight->IsPatrol = false;
@@ -109,6 +114,13 @@ void AMonsterController::MoveToStartLoc(FVector Location)
 			Knight->isReturnBlend = true;
 			Knight->MonsterMoveEventIndex = 1;
 			Knight->ChangeActionType(MonsterActionType::NONE);
+		}
+		else
+		{
+			Monster->ChangeActionType(MonsterActionType::NONE);
+			Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			Monster->TracePlayer = false;
+			Monster->MonsterMoveEventIndex = 1;
 		}
 	}
 }
@@ -181,6 +193,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		return;
 
 	SetFocus(Stimulus.WasSuccessfullySensed() ? Player : nullptr);
+	
 	auto Dist = FVector::Distance(Player->GetActorLocation(), Monster->GetActorLocation());
 	Monster->PlayerCharacter = Player;
 
@@ -243,7 +256,6 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 				else if (Monster->MyMonsterType == MonsterType::DEADBODYOFKNIGHT)
 				{
 					Knight->IsPatrol = true;
-					Knight->isReturnBlend = true;
 					Knight->WalkToRunBlend = false;
 					Knight->TracePlayer = false;
 					Knight->MonsterMoveEventIndex = 0;
@@ -262,8 +274,8 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 			}
 			else
 			{
-				Monster->ChangeActionType(MonsterActionType::NONE);
-				Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
+				Monster->MonsterMoveEventIndex = 0;
+				Monster->ChangeActionType(MonsterActionType::MOVE);
 				Monster->TracePlayer = false;
 			}
 		}

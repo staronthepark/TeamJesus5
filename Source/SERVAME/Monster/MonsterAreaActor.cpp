@@ -40,8 +40,14 @@ void AMonsterAreaActor::EndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		if (Monster->MonsterDataStruct.CharacterHp <= 0)
 			continue;
 
+		if (Monster->MyMonsterType == MonsterType::JAMSIG)
+		{
+			Monster->MonsterMoveEventIndex = 0;
+			Monster->ChangeActionType(MonsterActionType::MOVE);
+			continue;
+		}
+
 		Monster->IsPatrol = true;
-		Monster->MonsterController->FindPlayer = false;
 		Monster->MonsterMoveEventIndex = 0;
 		Monster->ChangeActionType(MonsterActionType::MOVE);
 	}
