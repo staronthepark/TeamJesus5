@@ -95,8 +95,8 @@ void ADoorAnimInteraction::EnableEvent()
 	Character->SetActorLocation(TriggerComp->GetComponentLocation());
 
 
-	Character->SetActorRotation(GetActorRotation());
-	Character->YawRotation = GetActorRotation();
+	Character->SetActorRotation(GetActorRotation() - FRotator(0, -90, 0));
+	Character->YawRotation = GetActorRotation() - FRotator(0, -90, 0);
 
 	Character->CameraShake(Character->PlayerDoorCameraShake);
 	Character->WeaponMesh->SetVisibility(false);
