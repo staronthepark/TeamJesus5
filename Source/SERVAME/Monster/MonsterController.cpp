@@ -99,6 +99,8 @@ void AMonsterController::MoveToStartLoc(FVector Location)
 	FRotator LookAtRotation = FMath::RInterpTo(Monster->GetActorRotation(), RealToTarget, GetWorld()->DeltaTimeSeconds, 3.f);
 	Monster->SetActorRotation(LookAtRotation);
 
+	FindPlayer = false;
+
 	if (type == EPathFollowingRequestResult::AlreadyAtGoal)
 	{
 		if(Monster->MyMonsterType == MonsterType::KNIGHT)
@@ -115,6 +117,7 @@ void AMonsterController::MoveToStartLoc(FVector Location)
 			Monster->ChangeActionType(MonsterActionType::NONE);
 			Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			Monster->TracePlayer = false;
+			Monster->MonsterMoveEventIndex = 1;
 		}
 	}
 }
@@ -268,8 +271,8 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 			}
 			else
 			{
-				Monster->ChangeActionType(MonsterActionType::NONE);
-				Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
+				Monster->MonsterMoveEventIndex = 0;
+				Monster->ChangeActionType(MonsterActionType::MOVE);
 				Monster->TracePlayer = false;
 			}
 		}

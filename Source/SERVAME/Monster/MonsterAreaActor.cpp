@@ -42,7 +42,8 @@ void AMonsterAreaActor::EndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 		if (Monster->MyMonsterType == MonsterType::JAMSIG)
 		{
-			Monster->MonsterController->MoveToStartLoc(Monster->SpawnLocation);
+			Monster->MonsterMoveEventIndex = 0;
+			Monster->ChangeActionType(MonsterActionType::MOVE);
 			continue;
 		}
 

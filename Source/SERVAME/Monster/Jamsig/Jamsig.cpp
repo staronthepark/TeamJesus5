@@ -47,6 +47,12 @@ AJamsig::AJamsig()
 				StartAttackTrigger(AttackAnimationType);
 		});
 
+	MonsterMoveMap.Add(0, [&]()
+		{
+			MonsterController->MoveToStartLoc(SpawnLocation);
+		});
+
+
 	MontageEndEventMap.Add(MonsterAnimationType::IDLE, [&]()
 		{
 			if (PlayerCharacter && !TracePlayer)
@@ -83,6 +89,12 @@ AJamsig::AJamsig()
 				ChangeActionType(MonsterActionType::NONE);
 				ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			}
+		});
+
+	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
+		{
+			RotateMap[PlayerCharacter != nullptr]();
+			MonsterMoveMap[MonsterMoveEventIndex]();
 		});
 
 	SetActionByRandomMap.Add(MonsterAnimationType::ATTACK1, [&](float percent)
