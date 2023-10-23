@@ -513,7 +513,7 @@ void ANunMonster::OnNunTargetDetectionEndOverlap(UPrimitiveComponent* Overlapped
 
 void ANunMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
-	if (!MonsterController->FindPlayer || IsCoolTime)
+	if (!MonsterController->FindPlayer || IsCoolTime || MonsterDataStruct.CharacterHp <= 0)
 		return;
 
 	if (NunAnimInstance == nullptr)
@@ -597,6 +597,7 @@ float ANunMonster::Die(float Dm)
 	if (PlayerCharacter->IsLockOn)
 		PlayerCharacter->LockOn();
 
+	NunAnimInstance->StopAllMontages(0.1f);
 	MonsterController->CanPerception = false;
 	CheckDetect = false;
 	IsDie = true;
