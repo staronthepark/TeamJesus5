@@ -2843,6 +2843,14 @@ void APlayerCharacter::SkillAttack()
 void APlayerCharacter::FadeIn()
 {
 	PlayerHUD->FadeInAnimation(true);
+	if (IsPhaseTwo)
+	{
+		FLatentActionInfo LatentInfo;
+		UGameplayStatics::UnloadStreamLevel(this, "Boss2PhaseMap", LatentInfo, false);
+		ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
+		LightManager->ChangeTargetLightSetting("2-2Map");
+		IsPhaseTwo = false;
+	}
 	GetWorldTimerManager().SetTimer(SprintStartTimer, this, &APlayerCharacter::RespawnCharacter, 2.0f);
 }
 
@@ -3006,12 +3014,6 @@ void APlayerCharacter::AfterAttackNotify2(bool value)
 
 void APlayerCharacter::PlayerDead(bool IsFly)
 {
-	if (IsPhaseTwo)
-	{
-		IsPhaseTwo = false;
-		ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
-		LightManager->ChangeTargetLightSetting("2-2Map");
-	}
 	if (IsLockOn)
 	{
 		LockOn();
