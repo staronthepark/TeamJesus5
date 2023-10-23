@@ -1670,6 +1670,7 @@ Boss2ActionTemp AJesusBoss2::GetRandomPattern(float Dist)
 
 void AJesusBoss2::SpawnInit()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Boss2 Respawn"));
 	BossDataStruct.CharacterHp = BossDataStruct.CharacterMaxHp;
 	BossDataStruct.CharacterOriginSpeed = 60.f;
 	AIController->BossUI->SetHP(1);
@@ -1680,6 +1681,8 @@ void AJesusBoss2::SpawnInit()
 	Boss2AnimInstance->IsStart = false;
 	CrossEvent = false;
 
+	Boss2AnimInstance->NeckAlpha = 0.f;
+	Boss2AnimInstance->Alpha = 0.f;
 
 	//패턴 확률 초기화
 	InitPercentageMap[Boss2AttackType::B2_MELEE]();

@@ -1626,6 +1626,8 @@ void AJesusBoss::DeactivateSMOverlap()
 
 void AJesusBoss::SpawnInit()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Boss1 Respawn"));
+
 	AIController->OnPossess(this);
 
 	//½ºÅÝ
