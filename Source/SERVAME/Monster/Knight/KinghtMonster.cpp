@@ -648,6 +648,7 @@ void AKinghtMonster::Stun()
 	if (MyMonsterType != MonsterType::ELITEKNIGHT)
 		CanExecution = true;
 
+	CanRotate = false;
 	IsStun = true;
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
