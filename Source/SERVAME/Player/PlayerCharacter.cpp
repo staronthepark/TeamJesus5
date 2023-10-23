@@ -2257,7 +2257,7 @@ void APlayerCharacter::SetShieldHP(float HP, FVector Location)
 
 void APlayerCharacter::RecoverStamina()
 {
-	PlayerDataStruct.PlayerStamina = FMath::Clamp(PlayerDataStruct.PlayerStamina += fDeltaTime * PlayerDataStruct.StaminaRecovery, 0.0f, 100.0f);
+	PlayerDataStruct.PlayerStamina = FMath::Clamp(PlayerDataStruct.PlayerStamina += fDeltaTime * PlayerDataStruct.StaminaRecovery, 0.0f, PlayerDataStruct.MaxStamina);
 	PlayerHUD->SetStamina(PlayerDataStruct.PlayerStamina / PlayerDataStruct.MaxStamina);
 	GameInstance->DebugLogWidget->T_PlayerStamina->SetText(FText::AsNumber(PlayerDataStruct.PlayerStamina));
 }
@@ -2980,15 +2980,11 @@ void APlayerCharacter::LoadMap()
 	FTimerHandle MyTimer;
 	if (SaveMapName == "2-2Map")
 	{
-		GetWorldTimerManager().SetTimer(MyTimer, [&]() {
-			UGameplayStatics::LoadStreamLevel(this, "A_KimMinYeongMap_Boss1", true, true, LatentInfo);
-			}, 0.5f, true);
+		UGameplayStatics::LoadStreamLevel(this, "A_KimMinYeongMap_Boss1", true, true, LatentInfo);
 	}
-	if (SaveMapName == "2-2Map")
+	if (SaveMapName == "MainHall")
 	{
-		GetWorldTimerManager().SetTimer(MyTimer, [&]() {
-			UGameplayStatics::LoadStreamLevel(this, SaveMapName, true, true, LatentInfo);
-			}, 0.5f, true);
+		UGameplayStatics::LoadStreamLevel(this, "2-2Map", true, true, LatentInfo);
 	}
 
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadingMonster, 2.0f);

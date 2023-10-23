@@ -67,6 +67,7 @@ void UPlayerStatComponent::BeginPlay()
 		if (Owner->CanActivate(StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].SoulCost))
 		{
 			Owner->PlayerDataStruct.MaxStamina += Owner->PlayerDataStruct.MaxStamina * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
+			Owner->PlayerDataStruct.PlayerStamina = Owner->PlayerDataStruct.MaxStamina;
 			Owner->PlayerDataStruct.StaminaIndex++;
 			Owner->PlayerHUD->SetStamina(1.0f);
 			return true;
@@ -78,6 +79,7 @@ void UPlayerStatComponent::BeginPlay()
 		if (Owner->CanActivate(StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].SoulCost))
 		{
 			Owner->PlayerDataStruct.MaxStamina += Owner->PlayerDataStruct.MaxStamina * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
+			Owner->PlayerDataStruct.PlayerStamina = Owner->PlayerDataStruct.MaxStamina;
 			Owner->PlayerDataStruct.StaminaIndex++;
 			Owner->PlayerHUD->SetStamina(1.0f);
 			return true;
@@ -89,6 +91,7 @@ void UPlayerStatComponent::BeginPlay()
 		if (Owner->CanActivate(StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].SoulCost))
 		{
 			Owner->PlayerDataStruct.MaxStamina += Owner->PlayerDataStruct.MaxStamina * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
+			Owner->PlayerDataStruct.PlayerStamina = Owner->PlayerDataStruct.MaxStamina;
 			Owner->PlayerDataStruct.StaminaIndex++;
 			Owner->PlayerHUD->SetStamina(1.0f);
 			return true;
