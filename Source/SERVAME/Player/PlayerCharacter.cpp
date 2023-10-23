@@ -1360,13 +1360,14 @@ APlayerCharacter::APlayerCharacter()
 			ChangeActionType(ActionType::MOVE);
 			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
 			ComboAttackEnd();
+			CancleByMove = false;
 		});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(false, [&]()
 		{
 			if (!CancleByMove)return;
 			if(CurActionType == ActionType::MOVE)
 			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
-
+			CancleByMove = false;
 		});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::ROTATE].Add(true, [&]() {});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::ROTATE].Add(false, [&]() {});
@@ -3000,6 +3001,7 @@ void APlayerCharacter::AfterAttackNotify2(bool value)
 	}
 	else
 	{
+		CancleByMove = false;
 		CheckInputKey();
 	}
 }
