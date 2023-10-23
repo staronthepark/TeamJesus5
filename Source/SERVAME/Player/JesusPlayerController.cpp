@@ -3,6 +3,7 @@
 #include "../JesusSaveGame.h"
 #include "GameFramework/GameUserSettings.h"
 #include "JesusPlayerController.h"
+#include "../LevelLightingManager.h"
 
 void AJesusPlayerController::BeginPlay()
 {
@@ -466,7 +467,13 @@ void AJesusPlayerController::CloseMenu()
 
 void AJesusPlayerController::Boss2()
 {
-	character->MoveSpawnLocation(FVector(-6912.570360, -60620.187377, 40.0f));
+	character->MoveSpawnLocation(FVector(-6743.140712, -61314.496862, -13.412763));
+
+	FLatentActionInfo LatentInfo;
+	UGameplayStatics::LoadStreamLevel(this, "Boss2PhaseMap", true, true, LatentInfo);
+
+	ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
+	LightManager->ChangeTargetLightSetting("Boss2PhaseMap");
 }
 
 void AJesusPlayerController::SetupInputComponent()
