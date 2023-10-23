@@ -226,14 +226,25 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		UE_LOG(LogTemp, Warning, TEXT("LostPlayer : %s"), *Monster->GetName());
 		FindPlayer = false;
 
-		if (Monster->MyMonsterType == MonsterType::NUN || Monster->MyMonsterType == MonsterType::ELITEKNIGHT)
+		if (Monster->MyMonsterType == MonsterType::NUN)
 		{
 			Monster->ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			Monster->MonsterMoveEventIndex = 1;
-			if (IsValid(BossUI))
+			if (IsValid(BossUI) && Monster->IsBoss)
 			{
 				BossUI->RemoveFromParent();
 			}
+		}
+		else if (Monster->MyMonsterType == MonsterType::ELITEKNIGHT)
+		{
+			auto Knight = Cast<AKinghtMonster>(Monster);
+
+			Knight->ChangeActionType(MonsterActionType::NONE);
+			Knight->TracePlayer = false;
+			Knight->isReturnBlend = true;
+			Knight->WalkToRunBlend = false;
+			Knight->IsMoveStart = false;
+			Knight->MonsterController->StopMovement();
 		}
 		else
 		{
@@ -260,16 +271,6 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 					Knight->TracePlayer = false;
 					Knight->MonsterMoveEventIndex = 0;
 					Knight->ChangeActionType(MonsterActionType::MOVE);
-
-					return;
-				}
-				else if (Monster->MyMonsterType == MonsterType::ELITEKNIGHT)
-				{
-					Knight->ChangeActionType(MonsterActionType::NONE);
-					Knight->TracePlayer = false;
-					Knight->isReturnBlend = true;
-					Knight->WalkToRunBlend = false;
-					Knight->IsMoveStart = false;
 				}
 			}
 			else

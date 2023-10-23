@@ -576,6 +576,7 @@ float ANunMonster::Die(float Dm)
 			SpawnedKnight->Die(0.f);
 
 		KnightArr.Empty();
+
 		if (Illusion != nullptr)
 			Illusion->Die(0.f);
 	}
@@ -594,6 +595,7 @@ float ANunMonster::Die(float Dm)
 	Imotal = true;
 	GetWorld()->GetTimerManager().ClearTimer(SelfHealTimerHandle);
 	GetWorld()->GetTimerManager().ClearTimer(TeleportHandle);
+	GetWorld()->GetTimerManager().ClearTimer(TeleportAttackHandle);
 
 	DeactivateHitCollision();
 
@@ -1060,18 +1062,18 @@ void ANunMonster::IllusionAttack()
 	UE_LOG(LogTemp, Warning, TEXT("illusion CurrentNum = %d"), CurrentNum);
 
 	srand(time(NULL));
-	int Num = rand() % TeleportArr.Num();
+	IllusionPosNum = rand() % TeleportArr.Num();
 
 	while (1)
 	{
-		if (CurrentNum != Num)
+		if (CurrentNum != IllusionPosNum)
 			break;
 
 		srand(time(NULL));
-		Num = rand() % TeleportArr.Num();
+		IllusionPosNum = rand() % TeleportArr.Num();
 	}
 
-	Illusion->SetActorLocation(TeleportArr[Num]->GetActorLocation());
+	Illusion->SetActorLocation(TeleportArr[IllusionPosNum]->GetActorLocation());
 	Illusion->SetActorRotation(SpawnRot);
 	Illusion->MonsterController->FindPlayer = true;
 	Illusion->IsIllusion = true;
@@ -1219,18 +1221,16 @@ void ANunMonster::ChangeMontageAnimation(MonsterAnimationType type)
 
 float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	
 	ChangeActionType(MonsterActionType::NONE);
-
 	if (Imotal)
 	{
 		return 0;
 	}
-
 	DeactivateHitCollision();
-
 	MonsterDataStruct.CharacterHp -= DamageAmount;
+
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
 	ChangeMontageAnimation(MonsterAnimationType::HIT);
 
 	if (MyMonsterType == MonsterType::NUN)
@@ -1326,7 +1326,7 @@ void ANunMonster::TelePort()
 			auto Num = rand() % TeleportArr.Num();
 			while (1)
 			{
-				if (CurrentNum != Num)
+				if (CurrentNum != Num && IllusionPosNum != Num)
 					break;
 
 				srand(time(NULL));
@@ -1372,25 +1372,32 @@ void ANunMonster::TelePort()
 
 void ANunMonster::TelePortAttack()
 {
-	DarkAttack();
+	if (MonsterDataStruct.CharacterHp >= 0.f)
+		DarkAttack();
 
 	GetWorld()->GetTimerManager().PauseTimer(TeleportHandle);
 	GetWorld()->GetTimerManager().PauseTimer(PaternDelay);
 
 	GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
 		{
-			TelePortTempFunc();
+			if (MonsterDataStruct.CharacterHp >= 0.f)
+				TelePortTempFunc();
 			GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
 				{
-					DarkAttack();
+					if (MonsterDataStruct.CharacterHp >= 0.f)
+						DarkAttack();
 					GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
 						{
-							TelePortTempFunc();
+							if (MonsterDataStruct.CharacterHp >= 0.f)
+								TelePortTempFunc();
 							GetWorld()->GetTimerManager().SetTimer(TeleportAttackHandle, FTimerDelegate::CreateLambda([=]()
 								{
-									CrystalAttack();
-									GetWorld()->GetTimerManager().UnPauseTimer(TeleportHandle);
-									GetWorld()->GetTimerManager().UnPauseTimer(PaternDelay);
+									if (MonsterDataStruct.CharacterHp >= 0.f)
+									{
+										CrystalAttack();
+										GetWorld()->GetTimerManager().UnPauseTimer(TeleportHandle);
+										GetWorld()->GetTimerManager().UnPauseTimer(PaternDelay);
+									}
 								}), 0.5f, false, 0.5f);
 						}), 2.5f, false, 2.5f);
 				}), 0.5f, false, 0.5f);
