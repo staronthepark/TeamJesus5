@@ -747,6 +747,7 @@ APlayerCharacter::APlayerCharacter()
 			PlayerHUD->DecreaseStaminaGradual(this, PlayerDataStruct.PlayerStamina / PlayerDataStruct.MaxStamina);
 			if (PlayerDataStruct.PlayerStamina <= 0)
 			{
+				IsSprint = false;
 				ChangeMontageAnimation(MovementAnimMap[IsLockOn]());
 				SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
 			}
@@ -1355,12 +1356,14 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::PARRING].Add(false, InputEventMap[PlayerAction::NONE][ActionType::PARRING][false]);
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(true, [&]()
 		{
+			if (!CancleByMove)return;
 			ChangeActionType(ActionType::MOVE);
 			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
 			ComboAttackEnd();
 		});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(false, [&]()
 		{
+			if (!CancleByMove)return;
 			if(CurActionType == ActionType::MOVE)
 			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
 
@@ -2954,7 +2957,7 @@ void APlayerCharacter::SetSoul(int32 value)
 	PlayerHUD->SetRemainSoul(PlayerDataStruct.SoulCount);
 
 	if (PlayerDataStruct.SoulCount <= 0)PlayerDataStruct.SoulCount = 0;
-	else if(PlayerDataStruct.SoulCount >= PlayerDataStruct.MaxSoulCount)PlayerDataStruct.SoulCount = 100;
+	else if(PlayerDataStruct.SoulCount >= PlayerDataStruct.MaxSoulCount)PlayerDataStruct.SoulCount = PlayerDataStruct.MaxSoulCount;
 }
 
 void APlayerCharacter::LoadFile()
@@ -2988,8 +2991,9 @@ void APlayerCharacter::LoadMap()
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadingMonster, 2.0f);
 }
 
-void APlayerCharacter::AfterAttackNotify2()
+void APlayerCharacter::AfterAttackNotify2(bool value)
 {
+	CancleByMove = !value;
 	if (AxisX == 1 && AxisY == 1)
 	{
 		ChangeActionType(ActionType::ATTACK);

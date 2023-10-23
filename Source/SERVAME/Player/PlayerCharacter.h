@@ -175,6 +175,8 @@ private:
 	float RotSpeed;
 
 	bool IsCollisionCamera;
+	bool CancleByMove;
+
 	float CameraDistanceToPlayer;
 
 	USkeletalMeshComponent* PlayerSKMesh;
@@ -488,7 +490,7 @@ public:
 
 	void LoadMap();
 
-	void AfterAttackNotify2();
+	void AfterAttackNotify2(bool value);
 
 	UFUNCTION()
 		void PlayStartAnimation();
