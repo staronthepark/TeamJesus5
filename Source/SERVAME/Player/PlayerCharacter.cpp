@@ -2980,13 +2980,15 @@ void APlayerCharacter::LoadMap()
 	FTimerHandle MyTimer;
 	if (SaveMapName == "2-2Map")
 	{
-		SaveMapName = "A_KimMinYeongMap_Boss1";
-		GetWorldTimerManager().SetTimer(MyTimer, this, &APlayerCharacter::LoadMap, 0.5f);
+		GetWorldTimerManager().SetTimer(MyTimer, [&]() {
+			UGameplayStatics::LoadStreamLevel(this, "A_KimMinYeongMap_Boss1", true, true, LatentInfo);
+			}, 0.5f, true);
 	}
-	if (SaveMapName == "MainHall")
+	if (SaveMapName == "2-2Map")
 	{
-		SaveMapName = "2-2Map";
-		GetWorldTimerManager().SetTimer(MyTimer, this, &APlayerCharacter::LoadMap, 0.5f);
+		GetWorldTimerManager().SetTimer(MyTimer, [&]() {
+			UGameplayStatics::LoadStreamLevel(this, SaveMapName, true, true, LatentInfo);
+			}, 0.5f, true);
 	}
 
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadingMonster, 2.0f);

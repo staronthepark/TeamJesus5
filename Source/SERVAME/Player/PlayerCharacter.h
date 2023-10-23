@@ -206,7 +206,8 @@ public:
 
 	float ShieldDashSpeed;
 
-	FName SaveMapName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FName SaveMapName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraSpringArm")
 		USpringArmComponent* CameraBoom1;
