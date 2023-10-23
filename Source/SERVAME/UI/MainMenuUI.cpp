@@ -46,6 +46,7 @@ void UMainMenuUI::NativeConstruct()
 	Controller->SetInputMode(FInputModeUIOnly());
 	Controller->bShowMouseCursor = true;
 	StartButton->SetFocus();
+
 }
 
 void UMainMenuUI::HoverStartButton()

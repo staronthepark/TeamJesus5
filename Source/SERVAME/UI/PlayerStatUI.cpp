@@ -120,6 +120,11 @@ void UPlayerStatUI::SetRemainSoul(int value)
 	RemainSoulText->SetText(FText::AsNumber(value));
 }
 
+void UPlayerStatUI::PlayActivatedAnimation()
+{
+	PlayAnimation(StatSucceededAnimation);
+}
+
 void UPlayerStatUI::SetCost(int value)
 {
 	CostText->SetText(FText::AsNumber(value));
