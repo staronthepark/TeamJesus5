@@ -586,8 +586,16 @@ float ANunMonster::Die(float Dm)
 		auto OriginNun = Cast<ANunMonster>(actor);
 		OriginNun->SelfHeal();
 
+		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
+		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+		SetActorTickEnabled(false);
+		GetWorld()->DestroyActor(this);
 		DeactivateHpBar();
+		return 0.f;
 	}
+
+	if (PlayerCharacter->IsLockOn)
+		PlayerCharacter->LockOn();
 
 	MonsterController->CanPerception = false;
 	CheckDetect = false;
@@ -611,6 +619,10 @@ float ANunMonster::Die(float Dm)
 
 	//머테리얼에 Opacity 값 넣기 전까지 임시로 Visibility 꺼주기
 	GetMesh()->SetVisibility(false);
+	SetActive(false);
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
+	SetActorTickEnabled(false);
 
 	GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
 		{
