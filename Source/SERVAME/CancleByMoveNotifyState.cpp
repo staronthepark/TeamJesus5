@@ -9,6 +9,15 @@ void UCancleByMoveNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAn
 	APlayerCharacter* character = Cast<APlayerCharacter>(MeshComp->GetOwner());
 	if (character != nullptr)
 	{
-		character->AfterAttackNotify2();
+		character->AfterAttackNotify2(true);
+	}
+}
+
+void UCancleByMoveNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
+{
+	APlayerCharacter* character = Cast<APlayerCharacter>(MeshComp->GetOwner());
+	if (character != nullptr)
+	{
+		character->AfterAttackNotify2(false);
 	}
 }
