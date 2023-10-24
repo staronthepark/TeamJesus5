@@ -31,13 +31,24 @@ void UJesusSaveGame::Save(APlayerCharacter* Player, UJesusGameInstance* GameInst
 	SaveInstance->SaveIndex = 0;
 	SaveInstance->IsPhaseTwo = Player->IsPhaseTwo;
 
-	for (int32 i = 0; i < 20; i++)
+	for (int32 i = 0; i < 100; i++)
 	{
 		if (GameInstance->SavedTriggerActor.Contains(i))
 		{
 			if (!SaveInstance->SavedTriggerActor.Contains(i))
 			{
 				SaveInstance->SavedTriggerActor.Add(i, GameInstance->SavedTriggerActor[i]->IsActive);
+			}
+		}
+	}
+
+	for (int32 i = 0; i < 100; i++)
+	{
+		if (GameInstance->MonsterArray.Contains(i))
+		{
+			if (!SaveInstance->MonsterArray.Contains(i))
+			{
+				SaveInstance->MonsterArray.Add(i, GameInstance->MonsterArray[i]);
 			}
 		}
 	}
@@ -70,12 +81,20 @@ UJesusSaveGame* UJesusSaveGame::Load(APlayerCharacter* Player, UJesusGameInstanc
 		//Player->YawRotation.Yaw = SaveInstance->PlayerRot.Yaw;
 		Player->IsPhaseTwo = SaveInstance->IsPhaseTwo;
 
-		for (int32 i = 0; i < 20; i++)
+		for (int32 i = 0; i < 100; i++)
 		{
 			if (SaveInstance->SavedTriggerActor.Contains(i))
 			{
 				GameInstance->SavedTriggerActor[i]->IsActive = SaveInstance->SavedTriggerActor[i];
 				GameInstance->SavedTriggerActor[i]->Init();
+			}
+		}
+
+		for (int32 i = 0; i < 100; i++)
+		{
+			if (SaveInstance->MonsterArray.Contains(i))
+			{
+				GameInstance->MonsterArray[i] = SaveInstance->MonsterArray[i];
 			}
 		}
 	}

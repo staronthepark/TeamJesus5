@@ -60,6 +60,7 @@ public:
 		Language language;
 
 		TMap<int32, ABaseTriggerActor*>SavedTriggerActor;
+		TMap<int32, bool>MonsterArray;
 
 
 		float GetPostProcessBrightness();

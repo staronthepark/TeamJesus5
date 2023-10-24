@@ -25,8 +25,6 @@ public:
 	static UJesusSaveGame* Instance;
 	static UJesusSaveGame& GetInstance();
 
-	TArray<ABaseTriggerActor> TriggerActor;
-	TArray<AEnemyMonster> MonsterArray;
 
 	UJesusSaveGame* SaveInstance;
 
@@ -52,6 +50,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
 		TMap<int32, bool>SavedTriggerActor;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
+		TMap<int32, bool>MonsterArray;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
 		FName MapName;
