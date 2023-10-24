@@ -2852,6 +2852,17 @@ void APlayerCharacter::FadeIn()
 		LightManager->ChangeTargetLightSetting("2-2Map");
 		IsPhaseTwo = false;
 	}
+	
+	UCombatManager& combatmanager = UCombatManager::GetInstance();
+	if (combatmanager.MonsterInfoMap.Contains(CurrentMapName.ToString()))
+	{
+		for (int32 i = 0; i < combatmanager.MonsterInfoMap[CurrentMapName.ToString()].Num(); i++)
+		{
+			if (SaveMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsAlive())
+				combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+		}
+	}
+
 	GetWorldTimerManager().SetTimer(SprintStartTimer, this, &APlayerCharacter::RespawnCharacter, 2.0f);
 }
 

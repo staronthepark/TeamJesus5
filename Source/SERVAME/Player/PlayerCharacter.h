@@ -208,6 +208,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FName SaveMapName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FName CurrentMapName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraSpringArm")
 		USpringArmComponent* CameraBoom1;
