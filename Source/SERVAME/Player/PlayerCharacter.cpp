@@ -15,6 +15,7 @@
 #include "../JesusSaveGame.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "..\UI\PlayerHUD.h"
+//#include "../SERVAME/Monster/EnemyMonster.h"
 #include "../LevelLightingManager.h"
 #include <SERVAME/UI/PlayerSoulStatUI.h>
 
@@ -1815,10 +1816,8 @@ void APlayerCharacter::BeginPlay()
 	ShoulderView(IsShoulderView);
 
 	TArray<AActor*> ActorsToFind;
-	if (UWorld* World = GetWorld())
-	{
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseTriggerActor::StaticClass(), ActorsToFind);
-	}
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseTriggerActor::StaticClass(), ActorsToFind);
+	
 	for (AActor* TriggerActor : ActorsToFind)
 	{
 		ABaseTriggerActor* TriggerActorCast = Cast<ABaseTriggerActor>(TriggerActor);
@@ -1828,6 +1827,20 @@ void APlayerCharacter::BeginPlay()
 			GameInstance->SavedTriggerActor.Add(TriggerActorCast->Index, TriggerActorCast);
 		}
 	}
+
+	//UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
+	//
+	//for (AActor* TriggerActor : ActorsToFind)
+	//{
+	//	ABaseTriggerActor* TriggerActorCast = Cast<ABaseTriggerActor>(TriggerActor);
+	//	if (TriggerActorCast)
+	//	{
+	//		if (TriggerActorCast->Index >= 0)
+	//			GameInstance->SavedTriggerActor.Add(TriggerActorCast->Index, TriggerActorCast);
+	//	}
+	//}
+
+
 	PlayerDataStruct.SoulCount = 0;
 
 	SaveMapName = "Garden";
@@ -2710,6 +2723,7 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 	CanShieldDeploy = false;
 
+	UE_LOG(LogTemp, Warning, TEXT("%f"), PlayerDataStruct.ShieldCoolDown);
 	PlayerHUD->SetSkill(PlayerDataStruct.ShieldCoolDown);
 	GetWorldTimerManager().SetTimer(ShieldCoolDownTimer, this, &APlayerCharacter::RecoverShield, PlayerDataStruct.ShieldCoolDown);
 

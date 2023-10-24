@@ -7,6 +7,7 @@
 #include "../SERVAME/Player/PlayerCharacter.h"
 #include "../SERVAME/BaseTriggerActor.h"
 #include "../SERVAME/Manager/JesusGameInstance.h"
+#include "../SERVAME/Monster/EnemyMonster.h"
 #include "JesusSaveGame.generated.h"
 
 UCLASS()
@@ -25,6 +26,7 @@ public:
 	static UJesusSaveGame& GetInstance();
 
 	TArray<ABaseTriggerActor> TriggerActor;
+	TArray<AEnemyMonster> MonsterArray;
 
 	UJesusSaveGame* SaveInstance;
 
