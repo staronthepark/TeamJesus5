@@ -1356,7 +1356,7 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::PARRING].Add(false, InputEventMap[PlayerAction::NONE][ActionType::PARRING][false]);
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(true, [&]()
 		{
-			if (!CancleByMove)return;
+			if (!CancleByMove || AnimInstance->PlayerAnimationType == AnimationType::SUPERHIT)return;
 			ChangeActionType(ActionType::MOVE);
 			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
 			ComboAttackEnd();
@@ -1364,7 +1364,7 @@ APlayerCharacter::APlayerCharacter()
 		});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(false, [&]()
 		{
-			if (!CancleByMove)return;
+			if (!CancleByMove || AnimInstance->PlayerAnimationType == AnimationType::SUPERHIT)return;
 			if(CurActionType == ActionType::MOVE)
 			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
 			CancleByMove = false;
@@ -2257,7 +2257,7 @@ void APlayerCharacter::SetShieldHP(float HP, FVector Location)
 
 void APlayerCharacter::RecoverStamina()
 {
-	PlayerDataStruct.PlayerStamina = FMath::Clamp(PlayerDataStruct.PlayerStamina += fDeltaTime * PlayerDataStruct.StaminaRecovery, 0.0f, 100.0f);
+	PlayerDataStruct.PlayerStamina = FMath::Clamp(PlayerDataStruct.PlayerStamina += fDeltaTime * PlayerDataStruct.StaminaRecovery, 0.0f, PlayerDataStruct.MaxStamina);
 	PlayerHUD->SetStamina(PlayerDataStruct.PlayerStamina / PlayerDataStruct.MaxStamina);
 	GameInstance->DebugLogWidget->T_PlayerStamina->SetText(FText::AsNumber(PlayerDataStruct.PlayerStamina));
 }
@@ -2351,7 +2351,7 @@ void APlayerCharacter::SetSpeed(float speed)
 	{
 		CameraBoom1->CameraLagSpeed = 6.0f;
 	}
-	if(IsSprint)
+	if(IsSprint && AxisY != 2)
 		CameraBoom1->CameraLagSpeed = 3.0f;
 
 	GetCharacterMovement()->MaxWalkSpeed = speed;
@@ -2843,6 +2843,26 @@ void APlayerCharacter::SkillAttack()
 void APlayerCharacter::FadeIn()
 {
 	PlayerHUD->FadeInAnimation(true);
+	if (IsPhaseTwo)
+	{
+		FLatentActionInfo LatentInfo;
+		UCombatManager::GetInstance().Boss2->SetActive(false);
+		UGameplayStatics::UnloadStreamLevel(this, "Boss2PhaseMap", LatentInfo, false);
+		ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
+		LightManager->ChangeTargetLightSetting("2-2Map");
+		IsPhaseTwo = false;
+	}
+	
+	UCombatManager& combatmanager = UCombatManager::GetInstance();
+	if (combatmanager.MonsterInfoMap.Contains(CurrentMapName.ToString()))
+	{
+		for (int32 i = 0; i < combatmanager.MonsterInfoMap[CurrentMapName.ToString()].Num(); i++)
+		{
+			if (SaveMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsAlive())
+				combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+		}
+	}
+
 	GetWorldTimerManager().SetTimer(SprintStartTimer, this, &APlayerCharacter::RespawnCharacter, 2.0f);
 }
 
@@ -2980,13 +3000,11 @@ void APlayerCharacter::LoadMap()
 	FTimerHandle MyTimer;
 	if (SaveMapName == "2-2Map")
 	{
-		SaveMapName = "A_KimMinYeongMap_Boss1";
-		GetWorldTimerManager().SetTimer(MyTimer, this, &APlayerCharacter::LoadMap, 0.5f);
+		UGameplayStatics::LoadStreamLevel(this, "A_KimMinYeongMap_Boss1", true, true, LatentInfo);
 	}
 	if (SaveMapName == "MainHall")
 	{
-		SaveMapName = "2-2Map";
-		GetWorldTimerManager().SetTimer(MyTimer, this, &APlayerCharacter::LoadMap, 0.5f);
+		UGameplayStatics::LoadStreamLevel(this, "2-2Map", true, true, LatentInfo);
 	}
 
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadingMonster, 2.0f);
@@ -3008,12 +3026,6 @@ void APlayerCharacter::AfterAttackNotify2(bool value)
 
 void APlayerCharacter::PlayerDead(bool IsFly)
 {
-	if (IsPhaseTwo)
-	{
-		IsPhaseTwo = false;
-		ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
-		LightManager->ChangeTargetLightSetting("2-2Map");
-	}
 	if (IsLockOn)
 	{
 		LockOn();

@@ -1,5 +1,6 @@
 #include "LevelStreamerActor.h"
 #include "Kismet/GameplayStatics.h"
+#include "../SERVAME/Player/PlayerCharacter.h"
 #include "./Manager/CombatManager.h"
 
 ALevelStreamerActor::ALevelStreamerActor()
@@ -17,10 +18,7 @@ void ALevelStreamerActor::BeginPlay()
 	OverlapVolume->OnComponentEndOverlap.AddDynamic(this, &ALevelStreamerActor::OverlapEnds);
 	OverlapVolume->OnComponentEndOverlap.AddDynamic(this, &ALevelStreamerActor::OverlapEndsLoad);
 
-	for (int32 i = 0; i < MonsterList.Num(); i++)
-	{
-		//MonsterList[i]->SetActive(false);
-	}
+	
 }
 
 void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -31,7 +29,8 @@ void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent
 		FLatentActionInfo LatentInfo;
 		UGameplayStatics::LoadStreamLevel(this, LevelToLoad, true, true, LatentInfo);
 		UCombatManager& CombatManager = UCombatManager::GetInstance();
-
+		APlayerCharacter* character = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+		character->CurrentMapName = LevelToLoad;
 
 		for (int32 i = 0; i < MonsterList.Num(); i++)
 		{
@@ -68,6 +67,8 @@ void ALevelStreamerActor::OverlapEndsLoad(UPrimitiveComponent* OverlappedCompone
 		FLatentActionInfo LatentInfo;
 		UGameplayStatics::LoadStreamLevel(this, LevelToLoad, true, true, LatentInfo);
 		UCombatManager& CombatManager = UCombatManager::GetInstance();
+		APlayerCharacter* character = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+		character->CurrentMapName = LevelToLoad;
 
 
 		for (int32 i = 0; i < MonsterList.Num(); i++)

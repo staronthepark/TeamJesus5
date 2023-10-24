@@ -9,9 +9,13 @@ AArrowTrapActor::AArrowTrapActor()
 	SceneComp1 = CreateDefaultSubobject<USceneComponent>("SceneComp1");
 	SceneComp2 = CreateDefaultSubobject<USceneComponent>("SceneComp2");
 	SceneComp3 = CreateDefaultSubobject<USceneComponent>("SceneComp3");
+	SceneComp4 = CreateDefaultSubobject<USceneComponent>("SceneComp4");
+	SceneComp5 = CreateDefaultSubobject<USceneComponent>("SceneComp5");
 	SceneComp1->SetupAttachment(SceneComp);
 	SceneComp2->SetupAttachment(SceneComp);
 	SceneComp3->SetupAttachment(SceneComp);
+	SceneComp4->SetupAttachment(SceneComp);
+	SceneComp5->SetupAttachment(SceneComp);
 }
 
 void AArrowTrapActor::Tick(float DeltaTime)
@@ -49,4 +53,6 @@ void AArrowTrapActor::EnableTrap()
 	ObjectPool.SpawnObject(ObjectPool.ObjectArray[45].ObjClass, SceneComp1->GetComponentLocation(), GetActorRotation());
 	ObjectPool.SpawnObject(ObjectPool.ObjectArray[45].ObjClass, SceneComp2->GetComponentLocation(), GetActorRotation());
 	ObjectPool.SpawnObject(ObjectPool.ObjectArray[45].ObjClass, SceneComp3->GetComponentLocation(), GetActorRotation());
+	ObjectPool.SpawnObject(ObjectPool.ObjectArray[45].ObjClass, SceneComp4->GetComponentLocation(), GetActorRotation());
+	ObjectPool.SpawnObject(ObjectPool.ObjectArray[45].ObjClass, SceneComp5->GetComponentLocation(), GetActorRotation());
 }
