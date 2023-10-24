@@ -1810,6 +1810,7 @@ void AJesusBoss2::CheckBossDie()
 		ChangeMontageAnimation(Boss2AnimationType::DIE);
 		
 		AIController->BossUI->PlayBossDiedAnimtion();
+		AIController->BossUI->PlayGameClearAnimation();
 		AIController->OnUnPossess();
 
 		for (auto iter = BossDataStruct.DamageList.begin(); iter != BossDataStruct.DamageList.end(); iter.operator++())

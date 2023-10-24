@@ -1334,7 +1334,6 @@ void AJesusBoss::CheckBossDie()
 		UGameplayStatics::UnloadStreamLevel(this, "2-2Map", LatentInfo, false);
 		UCombatManager::GetInstance().MonsterInfoMap["Boss2PhaseMap"][0]->RespawnCharacter();
 
-
 		DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		PlayerCharacter->AxisX = 1;
 		PlayerCharacter->AxisY = 1;

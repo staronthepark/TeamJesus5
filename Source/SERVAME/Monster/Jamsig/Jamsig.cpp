@@ -156,7 +156,7 @@ void AJamsig::BeginPlay()
 
 	if (SitJamsig)
 	{
-		//JamsigAnimInstance->
+		JamsigAnimInstance->StopMontage(MontageMap[AnimationType]);
 		ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
 	}
 }
@@ -257,6 +257,19 @@ float AJamsig::Die(float Dm)
 {
 	if (PlayerCharacter->IsLockOn)
 		PlayerCharacter->LockOn();
+
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+	for (int32 i = 0; i < MonsterDataStruct.DropSoulCount; i++)
+	{
+		float x = FMath::RandRange(-300.0f, 300.0f);
+		float y = FMath::RandRange(-300.0f, 300.0f);
+		float z = FMath::RandRange(-300.0f, 300.0f);
+
+		FVector location = GetActorLocation() + FVector(x * 0.1f, y * 0.1f, z * 0.1f);
+		FRotator rotation = GetActorRotation() + FRotator(x, y, z);
+
+		objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
+	}
 
 	DeactivateAttackTrigger();
 	GetWorld()->GetTimerManager().ClearTimer(KnockBackTimerHandle);
@@ -420,6 +433,12 @@ void AJamsig::RespawnCharacter()
 	Super::RespawnCharacter();
 
 	UE_LOG(LogTemp, Warning, TEXT("jamsig respawn"));
+
+	if (SitJamsig)
+	{
+		JamsigAnimInstance->StopMontage(MontageMap[AnimationType]);
+		ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
+	}
 
 	MonsterController->FindPlayer = false;
 	JamsigAnimInstance->ResumeMontage(MontageMap[AnimationType]);
