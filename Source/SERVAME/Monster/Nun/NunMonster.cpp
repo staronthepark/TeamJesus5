@@ -57,7 +57,7 @@ ANunMonster::ANunMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::CURSE, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::FRAGMENT, MonsterStateType::BEFOREATTACK);
 	AnimTypeToStateType.Add(MonsterAnimationType::CRYSTAL, MonsterStateType::BEFOREATTACK);
-	AnimTypeToStateType.Add(MonsterAnimationType::ILLUSION, MonsterStateType::BEFOREATTACK);
+	//AnimTypeToStateType.Add(MonsterAnimationType::ILLUSION, MonsterStateType::BEFOREATTACK);
 
 	MonsterMoveMap.Add(1, [&]()
 		{
@@ -210,17 +210,18 @@ ANunMonster::ANunMonster()
 		{
 		});
 
-	NotifyBeginEndEventMap.Add(MonsterAnimationType::ILLUSION, TMap<bool, TFunction<void()>>());
-	NotifyBeginEndEventMap[MonsterAnimationType::ILLUSION].Add(true, [&]()
-		{
-			if (!MonsterController->FindPlayer)
-				return;
-			SpawnMagicCircle();
-			IllusionAttack();
-		});
-	NotifyBeginEndEventMap[MonsterAnimationType::ILLUSION].Add(false, [&]()
-		{
-		});
+	//NotifyBeginEndEventMap.Add(MonsterAnimationType::ILLUSION, TMap<bool, TFunction<void()>>());
+	//NotifyBeginEndEventMap[MonsterAnimationType::ILLUSION].Add(true, [&]()
+	//	{
+	//		if (!MonsterController->FindPlayer)
+	//			return;
+	//		SpawnMagicCircle();
+	//		IllusionAttack();
+	//	});
+
+	//NotifyBeginEndEventMap[MonsterAnimationType::ILLUSION].Add(false, [&]()
+	//	{
+	//	});
 
 	MontageEndEventMap.Add(MonsterAnimationType::IDLE, [&]()
 		{
@@ -290,11 +291,11 @@ ANunMonster::ANunMonster()
 			ChangeMontageAnimation(MonsterAnimationType::IDLE);
 		});
 
-	MontageEndEventMap.Add(MonsterAnimationType::ILLUSION, [&]()
-		{
-			ChangeActionType(MonsterActionType::NONE);
-			ChangeMontageAnimation(MonsterAnimationType::IDLE);
-		});
+	//MontageEndEventMap.Add(MonsterAnimationType::ILLUSION, [&]()
+	//	{
+	//		ChangeActionType(MonsterActionType::NONE);
+	//		ChangeMontageAnimation(MonsterAnimationType::IDLE);
+	//	});
 
 	MontageEndEventMap.Add(MonsterAnimationType::CURSE, [&]()
 		{
@@ -1261,7 +1262,7 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	TeleportDamageSum += DamageAmount;
 	TeleportAttackDamageSum += DamageAmount;
 	SpawnDamageSum += DamageAmount;
-	IllusionDamageSum += DamageAmount;
+	//IllusionDamageSum += DamageAmount;
 
 	if (TeleportDamageSum >= MonsterDataStruct.CharacterMaxHp * TeleportVal)
 	{
@@ -1289,11 +1290,11 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		SpawnKnight(KnightSpawnMap[SpawnLevel]);
 		SpawnDamageSum = 0;
 	}
-	if (IllusionDamageSum >= MonsterDataStruct.CharacterMaxHp * IllusionVal)
-	{
-		IllusionAttack();
-		IllusionDamageSum = 0;
-	}
+	//if (IllusionDamageSum >= MonsterDataStruct.CharacterMaxHp * IllusionVal)
+	//{
+	//	IllusionAttack();
+	//	IllusionDamageSum = 0;
+	//}
 
 	return DamageAmount;
 }
@@ -1504,7 +1505,7 @@ void ANunMonster::RespawnCharacter()
 
 	TeleportDamageSum = 0.f;
 	SpawnDamageSum = 0.f;
-	IllusionDamageSum = 0.f;
+	//IllusionDamageSum = 0.f;
 	SpawnLevel = 1;
 
 	MeshOpacity = 1.0f;

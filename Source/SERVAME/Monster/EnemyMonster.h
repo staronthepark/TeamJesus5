@@ -107,7 +107,7 @@ public:
 	FMonsterDataStruct MonsterDataStruct;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		ADoorAnimInteraction* OpenDoor;
+	ADoorAnimInteraction* OpenDoor;
 
 	UPROPERTY()
 	UMonsterAnimInstance* AnimInstance;
