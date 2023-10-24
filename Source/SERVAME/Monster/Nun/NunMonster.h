@@ -138,7 +138,7 @@ public:
 	float TeleportDamageSum = 0.f;
 	float TeleportAttackDamageSum = 0.f;
 	float SpawnDamageSum = 0.f;
-	float IllusionDamageSum = 0.f;
+	//float IllusionDamageSum = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FragmentsAttack")
 	float FragmentRange = 500.f;
@@ -153,8 +153,8 @@ public:
 	ANunMonster* Illusion;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
 	float IllusionTime = 10.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
-	float IllusionVal = 0.25f;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Illusion")
+	//float IllusionVal = 0.25f;
 	bool useIllusion = false;
 	bool IsIllusion = false;
 	bool MinusOpacity = false;
