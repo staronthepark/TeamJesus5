@@ -194,7 +194,7 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		Monster = Cast<AEnemyMonster>(GetPawn());
 	}
 
-	if (Monster->MonsterDataStruct.CharacterHp <= 0)
+	if (Monster->MonsterDataStruct.CharacterHp <= 0 || Monster->IsDie)
 		return;
 
 	SetFocus(Stimulus.WasSuccessfullySensed() ? Player : nullptr);

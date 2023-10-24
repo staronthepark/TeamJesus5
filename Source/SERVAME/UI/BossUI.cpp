@@ -4,15 +4,12 @@
 #include "BossUI.h"
 #include <Kismet/GameplayStatics.h>
 #include <SERVAME/Manager/JesusGameInstance.h>
+#include "FadeInOutUI.h"
 
 
 void UBossUI::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-	EndDelegate.BindDynamic(this, &UBossUI::OnAnimationEnd);
-
-	BindToAnimationFinished(FadeInAnimation, EndDelegate);
-	BindToAnimationFinished(GameClearAnimation, GameClearDelegate);
 }
 
 void UBossUI::NativeConstruct()
@@ -54,12 +51,12 @@ void UBossUI::PlayBossDiedAnimtion()
 
 void UBossUI::PlayFadeInAnimation()
 {
-	PlayAnimation(FadeInAnimation);
+	WBP_FadeInOutUI->PlayFadeInOutAnimation(true);
 }
 
 void UBossUI::PlayFadeOutAnimation()
 {
-	PlayAnimation(FadeOutAnimation);
+	WBP_FadeInOutUI->PlayFadeInOutAnimation(false);
 }
 
 void UBossUI::PlayGameClearAnimation()
