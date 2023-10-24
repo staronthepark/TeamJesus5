@@ -92,6 +92,7 @@ void AEliteKnight::RespawnCharacter()
 {
 	Super::RespawnCharacter();
 	MonsterController->BossUI->SetHP(1);
+	MonsterController->BossUI->RemoveFromParent();
 }
 
 float AEliteKnight::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

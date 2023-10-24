@@ -113,8 +113,11 @@ public:
 	FTimerHandle TraceHandle;
 	FTimerHandle SweepTimerHandle;
 
+	UPROPERTY()
 	ABaseCharacter* PlayerCharacter;
-
+	UPROPERTY()
+	class ANunMonster* Monster;
+	
 	TMap<EffectType, EffectType> GetBurstEffectType;
 
 	virtual void SetActive(bool active) override;

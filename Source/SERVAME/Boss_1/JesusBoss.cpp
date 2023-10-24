@@ -388,7 +388,7 @@ AJesusBoss::AJesusBoss()
 		}));
 	MontageEndMap.Add(BossAnimationType::GROGGY, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
-			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			Boss->IsLockOn = true;
 			Boss->IsParriged = false;
 			Boss->IsStun = false;
@@ -411,7 +411,7 @@ AJesusBoss::AJesusBoss()
 		}));
 	MontageEndMap.Add(BossAnimationType::SHIELD_GROGGY, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
-			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			Boss->IsLockOn = true;
 			Boss->IsParriged = false;
 			Boss->IsStun = false;
@@ -437,7 +437,7 @@ AJesusBoss::AJesusBoss()
 		}));
 	MontageEndMap.Add(BossAnimationType::STUN, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
-			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			Boss->IsLockOn = true;
 			Boss->IsParriged = false;
 			Boss->IsStun = false;
@@ -482,7 +482,7 @@ AJesusBoss::AJesusBoss()
 		}));
 	MontageEndMap.Add(BossAnimationType::EXECUTION, TFunction<void(AJesusBoss*)>([](AJesusBoss* Boss)
 		{
-			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			Boss->ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			Boss->IsLockOn = true;
 			Boss->IsParriged = false;
 			Boss->IsStun = false;
@@ -1626,6 +1626,8 @@ void AJesusBoss::DeactivateSMOverlap()
 
 void AJesusBoss::SpawnInit()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Boss1 Respawn"));
+
 	AIController->OnPossess(this);
 
 	//½ºÅÝ

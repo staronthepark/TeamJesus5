@@ -1,5 +1,6 @@
 #include "..\NunDamageSphereTriggerComp.h"
 #include "NunEffectObjInPool.h"
+#include "..\Monster\Nun\NunMonster.h"
 #include <Kismet/KismetMathLibrary.h>
 
 ANunEffectObjInPool::ANunEffectObjInPool()
@@ -35,11 +36,16 @@ void ANunEffectObjInPool::BeginPlay()
 	RangeAttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ANunEffectObjInPool::OnRangeAttackBeginOverlap);
 
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	//boss = Cast<AJesusBoss>(UGameplayStatics::GetActorOfClass(GetWorld(), AJesusBoss::StaticClass()));
+	Monster = Cast<ANunMonster>(UGameplayStatics::GetActorOfClass(GetWorld(), ANunMonster::StaticClass()));
 }
 
 void ANunEffectObjInPool::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (Monster->MonsterDataStruct.CharacterHp <= 0)
+		return;
 
 	if (IsShot)
 		SetActorLocation(GetActorLocation() += MoveDir * Speed * DeltaTime);
@@ -69,6 +75,12 @@ void ANunEffectObjInPool::Tick(float DeltaTime)
 
 void ANunEffectObjInPool::SetActive(bool active)
 {
+	if (Monster == nullptr)
+		return;
+
+	if (Monster->MonsterDataStruct.CharacterHp <= 0)
+		return;
+
 	Super::SetActive(active);
 
 	DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -90,6 +102,9 @@ void ANunEffectObjInPool::ReturnObject()
 
 void ANunEffectObjInPool::ShotProjectile(ABaseCharacter* Player)
 {
+	if (Monster->MonsterDataStruct.CharacterHp <= 0)
+		return;
+	
 	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	GetWorld()->GetTimerManager().SetTimer(ShotTimerHandle, FTimerDelegate::CreateLambda([=]()
@@ -102,6 +117,9 @@ void ANunEffectObjInPool::ShotProjectile(ABaseCharacter* Player)
 
 void ANunEffectObjInPool::ShotProjectile(FVector Target)
 {
+	if (Monster->MonsterDataStruct.CharacterHp <= 0)
+		return;
+	
 	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	GetWorld()->GetTimerManager().SetTimer(ShotTimerHandle, FTimerDelegate::CreateLambda([=]()
@@ -114,6 +132,9 @@ void ANunEffectObjInPool::ShotProjectile(FVector Target)
 
 void ANunEffectObjInPool::ShotProjectile(bool val, FVector Target)
 {
+	if (Monster->MonsterDataStruct.CharacterHp <= 0)
+		return;
+	
 	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	
 	GetWorld()->GetTimerManager().SetTimer(ShotTimerHandle, FTimerDelegate::CreateLambda([=]()
@@ -133,6 +154,9 @@ void ANunEffectObjInPool::ShotProjectile(bool val, FVector Target)
 
 void ANunEffectObjInPool::SweepSingle(float delay, float Radius, float damage, bool Isillusion, AController* Controller)
 {
+	if (Monster->MonsterDataStruct.CharacterHp <= 0)
+		return;
+
 	GetWorld()->GetTimerManager().SetTimer(SweepTimerHandle, FTimerDelegate::CreateLambda([=]()
 		{
 			FHitResult HitResult;
@@ -199,6 +223,9 @@ void ANunEffectObjInPool::SetCurrentEffect(EffectType type)
 
 void ANunEffectObjInPool::ActivateCurrentEffect()
 {
+	if (Monster->MonsterDataStruct.CharacterHp <= 0)
+		return;
+
 	SetActorTickEnabled(true);
 	CurrentEffect->Activate();
 }
@@ -219,6 +246,9 @@ void ANunEffectObjInPool::DeactivateDamageSphere(float time)
 
 void ANunEffectObjInPool::OnProjectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (Monster->MonsterDataStruct.CharacterHp <= 0)
+		return;
+
 	IsCurve = false;
 	SetActorTickEnabled(false);
 	DeactivateCurrentEffect();

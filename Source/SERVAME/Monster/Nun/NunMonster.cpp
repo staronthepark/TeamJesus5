@@ -513,7 +513,7 @@ void ANunMonster::OnNunTargetDetectionEndOverlap(UPrimitiveComponent* Overlapped
 
 void ANunMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
-	if (!MonsterController->FindPlayer || IsCoolTime)
+	if (!MonsterController->FindPlayer || IsCoolTime || MonsterDataStruct.CharacterHp <= 0)
 		return;
 
 	if (NunAnimInstance == nullptr)
@@ -586,9 +586,18 @@ float ANunMonster::Die(float Dm)
 		auto OriginNun = Cast<ANunMonster>(actor);
 		OriginNun->SelfHeal();
 
+		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
+		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+		SetActorTickEnabled(false);
+		GetWorld()->DestroyActor(this);
 		DeactivateHpBar();
+		return 0.f;
 	}
 
+	if (PlayerCharacter->IsLockOn)
+		PlayerCharacter->LockOn();
+
+	NunAnimInstance->StopAllMontages(0.1f);
 	MonsterController->CanPerception = false;
 	CheckDetect = false;
 	IsDie = true;
@@ -611,6 +620,10 @@ float ANunMonster::Die(float Dm)
 
 	//머테리얼에 Opacity 값 넣기 전까지 임시로 Visibility 꺼주기
 	GetMesh()->SetVisibility(false);
+	SetActive(false);
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
+	SetActorTickEnabled(false);
 
 	GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
 		{
