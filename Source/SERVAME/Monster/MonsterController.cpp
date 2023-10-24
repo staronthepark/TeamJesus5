@@ -98,7 +98,7 @@ void AMonsterController::MoveToStartLoc(FVector Location)
 
 	FRotator LookAtRotation = FMath::RInterpTo(Monster->GetActorRotation(), RealToTarget, GetWorld()->DeltaTimeSeconds, 3.f);
 	Monster->SetActorRotation(LookAtRotation);
-
+	Monster->CanRotate = false;
 	FindPlayer = false;
 
 	auto Dist = FVector::Dist(Monster->GetActorLocation(), Location);
@@ -106,7 +106,12 @@ void AMonsterController::MoveToStartLoc(FVector Location)
 	if (type == EPathFollowingRequestResult::AlreadyAtGoal
 		|| Dist <= 100.f)
 	{
-		if (Monster->MyMonsterType == MonsterType::KNIGHT)
+		Monster->CanRotate = true;
+
+		if (Monster->MyMonsterType == MonsterType::KNIGHT ||
+			Monster->MyMonsterType == MonsterType::ELITEKNIGHT ||
+			Monster->MyMonsterType == MonsterType::DEADBODYOFKNIGHT ||
+			Monster->MyMonsterType == MonsterType::PERSISTENTKNIGHT)
 		{
 			auto Knight = Cast<AKinghtMonster>(Monster);
 			Knight->IsPatrol = false;
@@ -237,14 +242,18 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 		}
 		else if (Monster->MyMonsterType == MonsterType::ELITEKNIGHT)
 		{
+			if(Monster->IsBoss)
+				BossUI->RemoveFromParent();
+
 			auto Knight = Cast<AKinghtMonster>(Monster);
 
-			Knight->ChangeActionType(MonsterActionType::NONE);
+			Knight->IsPatrol = true;
+			Knight->CanRotate = false;
+			Knight->KnightAnimInstance->BlendSpeed = Knight->WalkBlend;
+			Knight->WalkToRunBlend = true;
 			Knight->TracePlayer = false;
-			Knight->isReturnBlend = true;
-			Knight->WalkToRunBlend = false;
-			Knight->IsMoveStart = false;
-			Knight->MonsterController->StopMovement();
+			Knight->MonsterMoveEventIndex = 0;
+			Knight->ChangeActionType(MonsterActionType::MOVE);
 		}
 		else
 		{
@@ -255,7 +264,8 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 				if (Knight->IsSpawn)
 					return;
 
-				if (Monster->MyMonsterType == MonsterType::KNIGHT || Monster->MyMonsterType == MonsterType::PERSISTENTKNIGHT)
+				if (Monster->MyMonsterType == MonsterType::KNIGHT ||
+					Monster->MyMonsterType == MonsterType::PERSISTENTKNIGHT)
 				{
 					Knight->IsPatrol = true;
 					Knight->KnightAnimInstance->BlendSpeed = Knight->WalkBlend;

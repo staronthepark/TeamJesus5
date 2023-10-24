@@ -82,10 +82,10 @@ AKinghtMonster::AKinghtMonster()
 
 			if (PatrolActorArr.IsEmpty())
 			{
-				//IsPatrol = false;
 				//isReturnBlend = true;
 				//MonsterMoveEventIndex = 1;
 				//ChangeActionType(MonsterActionType::NONE);
+				IsPatrol = false;
 				KnightAnimInstance->BlendSpeed = WalkBlend;
 				MonsterController->MoveToStartLoc(SpawnLocation);
 				return;
@@ -159,6 +159,12 @@ AKinghtMonster::AKinghtMonster()
 			WalkToRunBlend = false;
 			CanRotate = true;
 			OnHitCancle();
+
+			if (!MonsterController->FindPlayer)
+			{
+				ChangeActionType(MonsterActionType::MOVE);
+				return;
+			}
 
 			if (TracePlayer)
 			{
@@ -272,10 +278,16 @@ AKinghtMonster::AKinghtMonster()
 			}
 			else
 			{
-				if (!IsMoveStart)
-					MinWalkTime = GetRandNum(3, 4);
+				if(TracePlayer)
+				{
+					if (!IsMoveStart)
+						MinWalkTime = GetRandNum(3, 4);
 
-				IsMoveStart = true;
+					IsMoveStart = true;
+				}
+				else
+					IsMoveStart = false;
+
 				Temp = 0.f;
 				CalcedDist = 0.f;
 				InterpolationTime = 0.f;

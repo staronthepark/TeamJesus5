@@ -52,6 +52,21 @@ AJamsig::AJamsig()
 			MonsterController->MoveToStartLoc(SpawnLocation);
 		});
 
+	MontageEndEventMap.Add(MonsterAnimationType::FORWARDMOVE, [=]()
+		{
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+			}
+			else
+			{
+				MonsterMoveEventIndex = 0;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+			}
+		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::IDLE, [&]()
 		{
@@ -69,6 +84,11 @@ AJamsig::AJamsig()
 			{
 				ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			}
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::JAMSIG_SIT_IDLE, [=]()
+		{
+			ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
@@ -133,6 +153,12 @@ void AJamsig::BeginPlay()
 
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &AJamsig::OnJamsigTargetDetectionBeginOverlap);
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &AJamsig::OnJamsigTargetDetectionEndOverlap);
+
+	if (SitJamsig)
+	{
+		//JamsigAnimInstance->Pause
+		ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
+	}
 }
 
 void AJamsig::Tick(float DeltaTime)
