@@ -2484,6 +2484,8 @@ void APlayerCharacter::ResetGame()
 		GameInstance->SavedTriggerActor[i]->Init();
 	}
 
+	GameInstance->MonsterArray.Empty();
+
 	UCombatManager& combatmanager = UCombatManager::GetInstance();
 
 	for (int32 i = 0; i < combatmanager.MonsterInfoArray.Num(); i++)
@@ -2491,6 +2493,19 @@ void APlayerCharacter::ResetGame()
 		combatmanager.MonsterInfoArray[i]->SetActive(false);
 		combatmanager.MonsterInfoArray[i]->IsDie = false;
 		combatmanager.MonsterInfoArray[i]->RespawnCharacter();
+	}
+
+	TArray<AActor*> ActorsToFind;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
+
+	for (AActor* TriggerActor : ActorsToFind)
+	{
+		AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
+		if (TriggerActorCast)
+		{
+			if (TriggerActorCast->MonsterID >= 0)
+				GameInstance->MonsterArray.Add(TriggerActorCast->MonsterID, TriggerActorCast->IsDie);
+		}
 	}
 
 	RespawnCharacter();
