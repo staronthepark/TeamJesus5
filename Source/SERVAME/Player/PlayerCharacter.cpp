@@ -3100,8 +3100,18 @@ void APlayerCharacter::LoadingMonster()
 
 	for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
 	{
-		if(!combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
-		combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+		if (!combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
+		{
+			combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+		}
+		else
+		{
+			AEnemyMonster* monster = Cast<AEnemyMonster>(combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]);
+			if (monster->OpenDoor != nullptr)
+			{
+				monster->OpenDoor->OnOpenDoorOverlapEnd(nullptr, nullptr, nullptr, 0);
+			}
+		}
 	}
 }
 
