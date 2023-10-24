@@ -1356,7 +1356,7 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::PARRING].Add(false, InputEventMap[PlayerAction::NONE][ActionType::PARRING][false]);
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(true, [&]()
 		{
-			if (!CancleByMove)return;
+			if (!CancleByMove || AnimInstance->PlayerAnimationType == AnimationType::SUPERHIT)return;
 			ChangeActionType(ActionType::MOVE);
 			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
 			ComboAttackEnd();
@@ -1364,7 +1364,7 @@ APlayerCharacter::APlayerCharacter()
 		});
 	InputEventMap[PlayerAction::AFTERATTACK][ActionType::MOVE].Add(false, [&]()
 		{
-			if (!CancleByMove)return;
+			if (!CancleByMove || AnimInstance->PlayerAnimationType == AnimationType::SUPERHIT)return;
 			if(CurActionType == ActionType::MOVE)
 			ChangeMontageAnimation(MovementAnimMap[IsLockOn || IsGrab]());
 			CancleByMove = false;
@@ -2846,6 +2846,7 @@ void APlayerCharacter::FadeIn()
 	if (IsPhaseTwo)
 	{
 		FLatentActionInfo LatentInfo;
+		UCombatManager::GetInstance().Boss2->SetActive(false);
 		UGameplayStatics::UnloadStreamLevel(this, "Boss2PhaseMap", LatentInfo, false);
 		ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
 		LightManager->ChangeTargetLightSetting("2-2Map");
