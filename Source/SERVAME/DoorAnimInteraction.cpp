@@ -8,9 +8,9 @@ void ADoorAnimInteraction::Init()
 {
 	if (IsActive)
 	{
-		AnimInstance = Cast<UDoorAnimInstance>(MeshComp->GetAnimInstance());
-		AnimInstance->DoorAnimationType = DoorAnimationType::KEEPOPEN;
-		TriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		//AnimInstance = Cast<UDoorAnimInstance>(MeshComp->GetAnimInstance());
+		//AnimInstance->DoorAnimationType = DoorAnimationType::KEEPOPEN;
+		//TriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	}
 }
@@ -50,6 +50,7 @@ void ADoorAnimInteraction::BeginPlay()
 
 	if (DisableTriggerWhenStart)
 		BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	CloseDoorComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ADoorAnimInteraction::BeginTriggerEvent()

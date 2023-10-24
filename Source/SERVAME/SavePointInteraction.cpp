@@ -71,28 +71,20 @@ void ASavePointInteraction::EnableEvent()
 	Super::EnableEvent();
 
 	GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
-	if (IsActive)
-	{
-		Character->CurrentMapName = Character->SaveMapName = Name;
-		Character->AxisX = 1;
-		Character->AxisY = 1;
-		Character->Imotal = true;
-		Character->ChangeMontageAnimation(AnimationType::SAVESTART);
-		AObjectPool& objectpool = AObjectPool::GetInstance();
-		objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, GetActorLocation() + FVector(0, 0, 150.0f), FRotator::ZeroRotator);
-		objectpool.SpawnObject(objectpool.ObjectArray[23].ObjClass, GetActorLocation() + FVector(0, 0, 200.0f), FRotator::ZeroRotator);
-		IsActive = true;
+	Character->CurrentMapName = Character->SaveMapName = Name;
+	Character->AxisX = 1;
+	Character->AxisY = 1;
+	Character->Imotal = true;
+	Character->ChangeMontageAnimation(AnimationType::SAVESTART);
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+	objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, GetActorLocation() + FVector(0, 0, 150.0f), FRotator::ZeroRotator);
+	objectpool.SpawnObject(objectpool.ObjectArray[23].ObjClass, GetActorLocation() + FVector(0, 0, 200.0f), FRotator::ZeroRotator);
+	IsActive = true;
 
-		//Character->GameInstance->PlayerStatUI->AddToViewport();
+	//Character->GameInstance->PlayerStatUI->AddToViewport();
 
-		for (int32 i = 0; i < ParticleCompArray.Num(); i++)
-		{
-			ParticleCompArray[i]->SetActive(true, false);
-		}
-	}
-	else
+	for (int32 i = 0; i < ParticleCompArray.Num(); i++)
 	{
-		Character->Imotal = true;
-		Character->ChangeMontageAnimation(AnimationType::ACTIVESAVEPOINT);
+		ParticleCompArray[i]->SetActive(true, false);
 	}
 }
