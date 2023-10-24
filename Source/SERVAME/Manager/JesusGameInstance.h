@@ -10,7 +10,6 @@
 #include "..\UI\MainMenuUI.h"
 #include <Engine/PostProcessVolume.h>
 #include "../BaseTriggerActor.h"
-//#include "../SERVAME/Monster/EnemyMonster.h"
 #include "JesusGameInstance.generated.h"
 
 class UPlayerSoulStatUI;
@@ -61,7 +60,6 @@ public:
 		Language language;
 
 		TMap<int32, ABaseTriggerActor*>SavedTriggerActor;
-		//TMap<int32, AEnemyMonster*>SavedEnemyActor;
 
 
 		float GetPostProcessBrightness();

@@ -15,7 +15,7 @@
 #include "../JesusSaveGame.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "..\UI\PlayerHUD.h"
-//#include "../SERVAME/Monster/EnemyMonster.h"
+#include "../Monster/EnemyMonster.h"
 #include "../LevelLightingManager.h"
 #include <SERVAME/UI/PlayerSoulStatUI.h>
 
@@ -1828,17 +1828,17 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
-	//UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
-	//
-	//for (AActor* TriggerActor : ActorsToFind)
-	//{
-	//	ABaseTriggerActor* TriggerActorCast = Cast<ABaseTriggerActor>(TriggerActor);
-	//	if (TriggerActorCast)
-	//	{
-	//		if (TriggerActorCast->Index >= 0)
-	//			GameInstance->SavedTriggerActor.Add(TriggerActorCast->Index, TriggerActorCast);
-	//	}
-	//}
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
+	
+	for (AActor* TriggerActor : ActorsToFind)
+	{
+		ABaseTriggerActor* TriggerActorCast = Cast<ABaseTriggerActor>(TriggerActor);
+		if (TriggerActorCast)
+		{
+			if (TriggerActorCast->Index >= 0)
+				GameInstance->SavedTriggerActor.Add(TriggerActorCast->Index, TriggerActorCast);
+		}
+	}
 
 
 	PlayerDataStruct.SoulCount = 0;
