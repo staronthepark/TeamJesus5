@@ -2351,7 +2351,7 @@ void APlayerCharacter::SetSpeed(float speed)
 	{
 		CameraBoom1->CameraLagSpeed = 6.0f;
 	}
-	if(IsSprint)
+	if(IsSprint && AxisY != 2)
 		CameraBoom1->CameraLagSpeed = 3.0f;
 
 	GetCharacterMovement()->MaxWalkSpeed = speed;

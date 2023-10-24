@@ -24,6 +24,10 @@ public:
 		USceneComponent* SceneComp2;
 	UPROPERTY(Editanywhere)
 		USceneComponent* SceneComp3;
+	UPROPERTY(Editanywhere)
+		USceneComponent* SceneComp4;
+	UPROPERTY(Editanywhere)
+		USceneComponent* SceneComp5;
 
 protected:
 
