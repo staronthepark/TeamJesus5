@@ -3109,7 +3109,7 @@ void APlayerCharacter::LoadingMonster()
 			AEnemyMonster* monster = Cast<AEnemyMonster>(combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]);
 			if (monster->OpenDoor != nullptr)
 			{
-				monster->OpenDoor->OnOpenDoorOverlapEnd(nullptr, nullptr, nullptr, 0);
+				monster->OpenDoor->BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			}
 		}
 	}
