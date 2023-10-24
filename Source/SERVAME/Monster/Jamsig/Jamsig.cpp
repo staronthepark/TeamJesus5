@@ -156,7 +156,7 @@ void AJamsig::BeginPlay()
 
 	if (SitJamsig)
 	{
-		//JamsigAnimInstance->Pause
+		//JamsigAnimInstance->
 		ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
 	}
 }

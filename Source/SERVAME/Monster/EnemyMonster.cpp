@@ -781,7 +781,9 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	}
 
 	if (MonsterDataStruct.CharacterHp <= 0)
+	{
 		Die(DamageAmount);
+	}
 
 	return DamageAmount;
 }
