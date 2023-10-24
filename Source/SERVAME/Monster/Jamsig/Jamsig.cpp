@@ -86,6 +86,11 @@ AJamsig::AJamsig()
 			}
 		});
 
+	MontageEndEventMap.Add(MonsterAnimationType::JAMSIG_SIT_IDLE, [=]()
+		{
+			ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
+		});
+
 	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
 		{
 			JamsigAnimInstance->PauseAnimation(MontageMap[AnimationType]);
@@ -148,6 +153,9 @@ void AJamsig::BeginPlay()
 
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &AJamsig::OnJamsigTargetDetectionBeginOverlap);
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &AJamsig::OnJamsigTargetDetectionEndOverlap);
+
+	if(SitJamsig)
+		ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
 }
 
 void AJamsig::Tick(float DeltaTime)
