@@ -52,6 +52,21 @@ AJamsig::AJamsig()
 			MonsterController->MoveToStartLoc(SpawnLocation);
 		});
 
+	MontageEndEventMap.Add(MonsterAnimationType::FORWARDMOVE, [=]()
+		{
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+			}
+			else
+			{
+				MonsterMoveEventIndex = 0;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+			}
+		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::IDLE, [&]()
 		{

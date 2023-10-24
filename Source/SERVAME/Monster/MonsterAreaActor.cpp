@@ -83,9 +83,7 @@ void AMonsterAreaActor::CheckMonster()
 		{
 			auto MonsterActor = Cast<AEnemyMonster>(HitActor.GetActor());
 
-			if (MonsterActor->MyMonsterType != MonsterType::NUN &&
-				MonsterActor->MyMonsterType != MonsterType::ELITEKNIGHT
-				&& MonsterActor->MyMonsterType != MonsterType::ILLUSION_NUN)
+			if (MonsterActor->MyMonsterType != MonsterType::NUN && MonsterActor->MyMonsterType != MonsterType::ILLUSION_NUN)
 				MonsterArr.AddUnique(Cast<AEnemyMonster>(MonsterActor));
 		}
 	}
