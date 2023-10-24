@@ -7,6 +7,7 @@
 #include "../SERVAME/Player/PlayerCharacter.h"
 #include "../SERVAME/BaseTriggerActor.h"
 #include "../SERVAME/Manager/JesusGameInstance.h"
+#include "../SERVAME/Monster/EnemyMonster.h"
 #include "JesusSaveGame.generated.h"
 
 UCLASS()
@@ -24,7 +25,6 @@ public:
 	static UJesusSaveGame* Instance;
 	static UJesusSaveGame& GetInstance();
 
-	TArray<ABaseTriggerActor> TriggerActor;
 
 	UJesusSaveGame* SaveInstance;
 
@@ -50,6 +50,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
 		TMap<int32, bool>SavedTriggerActor;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
+		TMap<int32, bool>MonsterArray;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
 		FName MapName;

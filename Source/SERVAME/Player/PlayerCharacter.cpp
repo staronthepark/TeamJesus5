@@ -15,6 +15,7 @@
 #include "../JesusSaveGame.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "..\UI\PlayerHUD.h"
+#include "../Monster/EnemyMonster.h"
 #include "../LevelLightingManager.h"
 #include <SERVAME/UI/PlayerSoulStatUI.h>
 
@@ -944,6 +945,22 @@ APlayerCharacter::APlayerCharacter()
 
 			PlayerHUD->PlayExitAnimation(true);
 			SpawnLocation = GetActorLocation();
+
+			TArray<AActor*> ActorsToFind;
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
+
+			GameInstance->MonsterArray.Empty();
+
+			for (AActor* TriggerActor : ActorsToFind)
+			{
+				AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
+				if (TriggerActorCast)
+				{
+					if (TriggerActorCast->MonsterID >= 0)
+						GameInstance->MonsterArray.Add(TriggerActorCast->MonsterID, TriggerActorCast->IsDie);
+				}
+			}
+
 			UJesusSaveGame::GetInstance().Save(this, GameInstance, SaveMapName);
 		});
 	MontageEndEventMap.Add(AnimationType::SAVELOOP, [&]()
@@ -1815,10 +1832,8 @@ void APlayerCharacter::BeginPlay()
 	ShoulderView(IsShoulderView);
 
 	TArray<AActor*> ActorsToFind;
-	if (UWorld* World = GetWorld())
-	{
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseTriggerActor::StaticClass(), ActorsToFind);
-	}
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseTriggerActor::StaticClass(), ActorsToFind);
+	
 	for (AActor* TriggerActor : ActorsToFind)
 	{
 		ABaseTriggerActor* TriggerActorCast = Cast<ABaseTriggerActor>(TriggerActor);
@@ -1828,6 +1843,20 @@ void APlayerCharacter::BeginPlay()
 			GameInstance->SavedTriggerActor.Add(TriggerActorCast->Index, TriggerActorCast);
 		}
 	}
+
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
+	
+	for (AActor* TriggerActor : ActorsToFind)
+	{
+		AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
+		if (TriggerActorCast)
+		{
+			if (TriggerActorCast->MonsterID >= 0)
+				GameInstance->MonsterArray.Add(TriggerActorCast->MonsterID, TriggerActorCast->IsDie);
+		}
+	}
+
+
 	PlayerDataStruct.SoulCount = 0;
 
 	SaveMapName = "Garden";
@@ -1997,7 +2026,7 @@ void APlayerCharacter::RestoreStat()
 	{
 		for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
 		{
-			if (SaveMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsAlive())
+			if (SaveMapName == "A_KimMinYeongMap_Boss1" || !combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
 				combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
 		}
 	}
@@ -2710,6 +2739,7 @@ void APlayerCharacter::OnShieldOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[40].ObjClass, ShieldMeshComp->GetComponentLocation(), FRotator(0, 0, 0));
 	CanShieldDeploy = false;
 
+	UE_LOG(LogTemp, Warning, TEXT("%f"), PlayerDataStruct.ShieldCoolDown);
 	PlayerHUD->SetSkill(PlayerDataStruct.ShieldCoolDown);
 	GetWorldTimerManager().SetTimer(ShieldCoolDownTimer, this, &APlayerCharacter::RecoverShield, PlayerDataStruct.ShieldCoolDown);
 
@@ -2858,7 +2888,7 @@ void APlayerCharacter::FadeIn()
 	{
 		for (int32 i = 0; i < combatmanager.MonsterInfoMap[CurrentMapName.ToString()].Num(); i++)
 		{
-			if (SaveMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsAlive())
+			if (SaveMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
 				combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
 		}
 	}
@@ -2987,6 +3017,8 @@ void APlayerCharacter::LoadFile()
 
 	SetSoul(PlayerDataStruct.SoulCount);
 	CurHealCount = PlayerDataStruct.MaxHealCount;
+
+
 }
 
 void APlayerCharacter::LoadMap()
@@ -3006,7 +3038,6 @@ void APlayerCharacter::LoadMap()
 	{
 		UGameplayStatics::LoadStreamLevel(this, "2-2Map", true, true, LatentInfo);
 	}
-
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadingMonster, 2.0f);
 }
 
@@ -3053,9 +3084,34 @@ void APlayerCharacter::LoadingMonster()
 {
 	UCombatManager& combatmanager = UCombatManager::GetInstance();
 		
+
+	TArray<AActor*> ActorsToFind;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
+
+	for (AActor* TriggerActor : ActorsToFind)
+	{
+		AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
+		if (TriggerActorCast)
+		{
+			TriggerActorCast->IsDie = GameInstance->MonsterArray[TriggerActorCast->MonsterID];
+			TriggerActorCast->SetActive(false);
+		}
+	}
+
 	for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
 	{
-		combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+		if (!combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
+		{
+			combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+		}
+		else
+		{
+			AEnemyMonster* monster = Cast<AEnemyMonster>(combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]);
+			if (monster->OpenDoor != nullptr)
+			{
+				monster->OpenDoor->OnOpenDoorOverlapEnd(nullptr, nullptr, nullptr, 0);
+			}
+		}
 	}
 }
 
