@@ -11,6 +11,7 @@
 
 #include "BossUI.generated.h"
 
+
 /**
  * 
  */
@@ -51,6 +52,9 @@ class SERVAME_API UBossUI : public UBaseUI
 	USlider* Boss_White_P;
 
 	UPROPERTY(meta = (BindWidget))
+	class UFadeInOutUI* WBP_FadeInOutUI;
+
+	UPROPERTY(meta = (BindWidget))
 	UTextBlock* TakeDamageText;
 
 	UPROPERTY(EditAnywhere)
@@ -58,12 +62,6 @@ class SERVAME_API UBossUI : public UBaseUI
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	UWidgetAnimation* BossHPOpenAnimation;
-
-	UPROPERTY(Transient, meta = (BindWidgetAnim))
-	UWidgetAnimation* FadeInAnimation;
-	
-	UPROPERTY(Transient, meta = (BindWidgetAnim))
-	UWidgetAnimation* FadeOutAnimation;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	UWidgetAnimation* GameClearAnimation;
@@ -84,9 +82,6 @@ class SERVAME_API UBossUI : public UBaseUI
 	//	UMediaSource* MediaSource;
 
 public:
-	FWidgetAnimationDynamicEvent EndDelegate;
-	FWidgetAnimationDynamicEvent GameClearDelegate;
-
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	void SetHP(float value);

@@ -59,7 +59,7 @@ void ABossAIController::Tick(float DeltaTime)
 		Boss->GetCharacterMovement()->bUseControllerDesiredRotation = false;
 	}
 
-	if (GetBlackboardComponent()->GetValueAsBool("IsPlayerAlive") && !Boss->IsDead)
+	if (GetBlackboardComponent()->GetValueAsBool("IsPlayerAlive"))
 	{
 		if (DetectedActorArr.Num() >= 1)
 		{
