@@ -2478,11 +2478,11 @@ void APlayerCharacter::LookTarget()
 
 void APlayerCharacter::ResetGame()
 {
-	for (int i = 0; i < GameInstance->SavedTriggerActor.Num(); i++)
-	{
-		GameInstance->SavedTriggerActor[i]->IsActive = false;
-		GameInstance->SavedTriggerActor[i]->Init();
-	}
+	//for (int i = 0; i < GameInstance->SavedTriggerActor.Num(); i++)
+	//{
+	//	GameInstance->SavedTriggerActor[i]->IsActive = false;
+	//	GameInstance->SavedTriggerActor[i]->Init();
+	//}
 
 	GameInstance->MonsterArray.Empty();
 
@@ -2903,7 +2903,7 @@ void APlayerCharacter::FadeIn()
 	{
 		for (int32 i = 0; i < combatmanager.MonsterInfoMap[CurrentMapName.ToString()].Num(); i++)
 		{
-			if (SaveMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
+			if (CurrentMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->IsDie)
 				combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
 		}
 	}

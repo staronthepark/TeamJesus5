@@ -109,6 +109,7 @@ void ADoorAnimInteraction::EnableEvent()
 	Character->ChangeActionType(ActionType::NONE);
 	Character->ChangePlayerAction(PlayerAction::CANATTACK);
 	TriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	CloseDoorComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	if (BossRoomDoorOpenSequence != nullptr)
 	{
