@@ -296,7 +296,7 @@ AKinghtMonster::AKinghtMonster()
 				if(TracePlayer)
 				{
 					if (!IsMoveStart)
-						MinWalkTime = GetRandNum(3, 4);
+						MinWalkTime = GetRandNum(1, 1.5);
 
 					IsMoveStart = true;
 				}
