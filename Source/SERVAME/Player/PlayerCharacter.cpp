@@ -3189,9 +3189,11 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 
 		UCombatManager::GetInstance().ActivateCollider();
 
-		AnimInstance->StopMontage(MontageMap[AnimInstance->PlayerAnimationType]);
 		if (MontageEndEventMap.Contains(AnimInstance->PlayerAnimationType))
+		{
+			AnimInstance->StopMontage(MontageMap[AnimInstance->PlayerAnimationType]);
 			MontageEndEventMap[AnimInstance->PlayerAnimationType]();
+		}
 
 		DeactivateRightWeapon();
 		DeactivateSMOverlap();
