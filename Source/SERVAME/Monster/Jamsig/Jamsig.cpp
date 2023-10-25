@@ -155,10 +155,7 @@ void AJamsig::BeginPlay()
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &AJamsig::OnJamsigTargetDetectionEndOverlap);
 
 	if (SitJamsig)
-	{
-		JamsigAnimInstance->StopMontage(MontageMap[AnimationType]);
 		ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
-	}
 }
 
 void AJamsig::Tick(float DeltaTime)
