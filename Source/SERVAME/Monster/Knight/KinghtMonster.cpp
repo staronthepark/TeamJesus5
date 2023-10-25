@@ -105,7 +105,7 @@ AKinghtMonster::AKinghtMonster()
 
 	MontageEndEventMap.Add(MonsterAnimationType::IDLE, [&]()
 		{
-/*			if (PlayerCharacter && !TracePlayer)
+            /*if (PlayerCharacter && !TracePlayer)
 			{
 				StartAttackTrigger(AttackAnimationType);
 			}
@@ -119,6 +119,18 @@ AKinghtMonster::AKinghtMonster()
 			{
 				ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			}
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::ELITEKNIGHT_STAND_IDLE, [&]()
+		{
+			ChangeMontageAnimation(MonsterAnimationType::ELITEKNIGHT_STAND_IDLE);
+		});
+
+	MontageEndEventMap.Add(MonsterAnimationType::ELITEKNIGHT_START, [&]()
+		{
+			MonsterController->FindPlayer = true;
+			TracePlayer = true;
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::EXECUTION, [&]()
@@ -554,12 +566,15 @@ void AKinghtMonster::RespawnCharacter()
 		ChangeActionType(MonsterActionType::NONE);
 		ChangeMontageAnimation(MonsterAnimationType::STARTDEAD);
 	}
-	else
+	else if (MyMonsterType == MonsterType::ELITEKNIGHT)
 	{
 		TracePlayer = false;
 		CalcedDist = IdleBlend;
 		ChangeActionType(MonsterActionType::NONE);
-		ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		if (!IsBoss)
+			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+		else
+			ChangeMontageAnimation(MonsterAnimationType::ELITEKNIGHT_STAND_IDLE);
 	}
 
 	WeaponOpacity = 1.0f;

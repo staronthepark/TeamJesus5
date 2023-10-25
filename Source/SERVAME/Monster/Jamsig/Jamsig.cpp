@@ -80,10 +80,6 @@ AJamsig::AJamsig()
 				ChangeActionType(MonsterActionType::MOVE);
 				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 			}
-			else
-			{
-				ChangeMontageAnimation(MonsterAnimationType::IDLE);
-			}
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::JAMSIG_SIT_IDLE, [=]()
@@ -155,7 +151,9 @@ void AJamsig::BeginPlay()
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &AJamsig::OnJamsigTargetDetectionEndOverlap);
 
 	if (SitJamsig)
+	{
 		ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
+	}
 }
 
 void AJamsig::Tick(float DeltaTime)
@@ -428,22 +426,20 @@ void AJamsig::IsNotifyActive(bool value)
 void AJamsig::RespawnCharacter()
 {
 	Super::RespawnCharacter();
-
+	 
 	UE_LOG(LogTemp, Warning, TEXT("jamsig respawn"));
-
-	if (SitJamsig)
-	{
-		JamsigAnimInstance->StopMontage(MontageMap[AnimationType]);
-		ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
-	}
 
 	MonsterController->FindPlayer = false;
 	JamsigAnimInstance->ResumeMontage(MontageMap[AnimationType]);
 	GetWorld()->GetTimerManager().ClearTimer(MonsterDeadTimer);
 
 	ChangeActionType(MonsterActionType::NONE);
-	ChangeMontageAnimation(MonsterAnimationType::IDLE);
 
+	if (SitJamsig)
+		ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
+	else
+		ChangeMontageAnimation(MonsterAnimationType::IDLE);
+	
 	WeaponOpacity = 1.0f;
 	MeshOpacity = 1.0f;
 

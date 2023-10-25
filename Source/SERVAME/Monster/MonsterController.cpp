@@ -219,9 +219,13 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 			}
 			else if (Monster->MyMonsterType == MonsterType::ELITEKNIGHT && Monster->IsBoss)
 			{
+				FindPlayer = false;
+				Monster->TracePlayer = false;
+				
 				BossUI->AddToViewport();
 				Monster->PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->LeftButton->OnClicked.AddDynamic(this, &AMonsterController::ChangeLanguage);
 				Monster->PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->RightButton->OnClicked.AddDynamic(this, &AMonsterController::ChangeLanguage);
+				Monster->ChangeMontageAnimation(MonsterAnimationType::ELITEKNIGHT_START);
 				BossUI->PlayBossHPOpenAnimation(true, EBossSettings::paladin);
 			}
 		}

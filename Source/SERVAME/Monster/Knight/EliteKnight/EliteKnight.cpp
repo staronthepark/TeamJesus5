@@ -38,6 +38,9 @@ void AEliteKnight::BeginPlay()
 	Super::BeginPlay();
 	DeactivateHpBar();
 	MyMonsterType = MonsterType::ELITEKNIGHT;
+
+	if(IsBoss)
+		ChangeMontageAnimation(MonsterAnimationType::ELITEKNIGHT_STAND_IDLE);
 }
 
 void AEliteKnight::Tick(float DeltaTime)
