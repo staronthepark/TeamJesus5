@@ -837,7 +837,6 @@ APlayerCharacter::APlayerCharacter()
 
 	MontageEndEventMap.Add(AnimationType::PARRING, [&]()
 		{
-			UGameplayStatics::SetGlobalTimeDilation(this, 1.0f);
 			CheckInputKey();
 			Imotal = false;
 		});
@@ -2320,6 +2319,7 @@ void APlayerCharacter::CheckInputKey()
 	if (IsGrab)
 	{
 		ChangeMontageAnimation(AnimationType::SHIELDLOOP);
+		ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		return;
 	}
 	else
@@ -2629,6 +2629,7 @@ void APlayerCharacter::Parring()
 {
 	if (UseStamina(PlayerUseStaminaMap[ActionType::PARRING]))
 	{
+		ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		AObjectPool& objectpool = AObjectPool::GetInstance();
 		objectpool.SpawnObject(objectpool.ObjectArray[24].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 		ChangeActionType(ActionType::PARRING);
@@ -2904,7 +2905,19 @@ void APlayerCharacter::FadeIn()
 		for (int32 i = 0; i < combatmanager.MonsterInfoMap[CurrentMapName.ToString()].Num(); i++)
 		{
 			if (CurrentMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->IsDie)
+				combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->RespawnCharacter();
+			combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->SetActive(false);
+		}
+	}
+
+	if (combatmanager.MonsterInfoMap.Contains(SaveMapName.ToString()))
+	{
+		for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
+		{
+			if (SaveMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
+			{
 				combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+			}
 		}
 	}
 
@@ -3040,19 +3053,13 @@ void APlayerCharacter::LoadMap()
 {
 	FLatentActionInfo LatentInfo;
 	UGameplayStatics::LoadStreamLevel(this, SaveMapName, true, true, LatentInfo);
+	CurrentMapName = SaveMapName;
 
 	ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
 	LightManager->ChangeTargetLightSetting(SaveMapName.ToString());
 
 	FTimerHandle MyTimer;
-	if (SaveMapName == "2-2Map")
-	{
-		UGameplayStatics::LoadStreamLevel(this, "A_KimMinYeongMap_Boss1", true, true, LatentInfo);
-	}
-	if (SaveMapName == "MainHall")
-	{
-		UGameplayStatics::LoadStreamLevel(this, "2-2Map", true, true, LatentInfo);
-	}
+
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadingMonster, 2.0f);
 }
 
