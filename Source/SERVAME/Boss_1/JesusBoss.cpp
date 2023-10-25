@@ -1330,6 +1330,7 @@ void AJesusBoss::CheckBossDie()
 
 		FLatentActionInfo LatentInfo;
 		UGameplayStatics::LoadStreamLevel(this, "Boss2PhaseMap", true, true, LatentInfo);
+		PlayerCharacter->CurrentMapName = "Boss2PhaseMap";
 		UGameplayStatics::UnloadStreamLevel(this, "A_KimMinYeongMap_Boss1", LatentInfo, false);
 		UGameplayStatics::UnloadStreamLevel(this, "2-2Map", LatentInfo, false);
 		UCombatManager::GetInstance().MonsterInfoMap["Boss2PhaseMap"][0]->RespawnCharacter();
