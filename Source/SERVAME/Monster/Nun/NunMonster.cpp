@@ -598,6 +598,9 @@ float ANunMonster::Die(float Dm)
 	if (PlayerCharacter->IsLockOn)
 		PlayerCharacter->LockOn();
 
+	auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
+	UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+
 	NunAnimInstance->StopAllMontages(0.1f);
 	MonsterController->CanPerception = false;
 	CheckDetect = false;

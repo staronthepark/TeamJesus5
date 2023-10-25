@@ -2669,19 +2669,12 @@ void APlayerCharacter::OnEnemyDetectionBeginOverlap(UPrimitiveComponent* Overlap
 	TargetCompArray.Add(OtherComp);
 
 	ABaseCharacter* character = Cast<ABaseCharacter>(OtherActor);
-
-
-	if(character != nullptr)
-	UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(character);
 }
 
 void APlayerCharacter::OnEnemyDetectionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {	
 	TargetCompArray.Remove(OtherComp);
 	ABaseCharacter* character = Cast<ABaseCharacter>(OtherActor);
-
-	if(character != nullptr)
-	UCombatManager::GetInstance().HitMonsterInfoArray.Remove(character);
 }
 
 void APlayerCharacter::PlayerMovement()

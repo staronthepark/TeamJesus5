@@ -1813,6 +1813,9 @@ void AJesusBoss2::CheckBossDie()
 		AIController->BossUI->PlayGameClearAnimation();
 		AIController->OnUnPossess();
 
+		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
+		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+
 		for (auto iter = BossDataStruct.DamageList.begin(); iter != BossDataStruct.DamageList.end(); iter.operator++())
 		{
 			iter.Value() = 0;

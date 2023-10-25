@@ -1346,6 +1346,9 @@ void AJesusBoss::CheckBossDie()
 		AIController->DetectedActorArr.Empty();
 		AIController->OnUnPossess();
 
+		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
+		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+
 		//for (auto iter = BossDataStruct.DamageList.begin(); iter != BossDataStruct.DamageList.end(); iter.operator++())
 		//{
 		//	iter.Value() = 0;
@@ -1542,7 +1545,8 @@ float AJesusBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 
 	if (!StartEnd.Get<0>() && CurrentActionTemp.HitCancel)
 	{
-		HitMap[PlayerCharacter->PlayerAttackType]();
+		if(HitMap.Contains(PlayerCharacter->PlayerAttackType))
+			HitMap[PlayerCharacter->PlayerAttackType]();
 	}
 
 	return DamageAmount;
@@ -1931,7 +1935,8 @@ void AJesusBoss::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	AObjectPool& objectpool = AObjectPool::GetInstance();
 	if (OtherComp->GetName() == "ShieldCollision")
 	{
-		Player->SetShieldHP(-BossDataStruct.DamageList[Type], GetActorLocation());
+		if (BossDataStruct.DamageList.Contains(Type))
+			Player->SetShieldHP(-BossDataStruct.DamageList[Type], GetActorLocation());
 		CameraShake(PlayerCameraShake);
 		VibrateGamePad(0.4f, 0.4f);
 		objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);

@@ -892,11 +892,14 @@ float AKinghtMonster::Die(float Dm)
 		objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
 	}
 
-	if (IsSpawn)
-	{
-		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
-		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
-	}
+	//if (IsSpawn)
+	//{
+	//	auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
+	//	UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+	//}
+
+	auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
+	UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
 
 	Imotal = true;
 	GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
