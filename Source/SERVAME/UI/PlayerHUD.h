@@ -34,7 +34,8 @@ enum class EInteractions : uint8
 	talk		UMETA(DisplayName = "Talk"),
 	open		UMETA(DisplayName = "Open"),
 	cure		UMETA(DisplayName = "Cure"),
-	rest		UMETA(DisplayName = "Rest")
+	rest		UMETA(DisplayName = "Rest"),
+	research	UMETA(DisplayName = "Research"),
 };
 
 UENUM(BlueprintType)
