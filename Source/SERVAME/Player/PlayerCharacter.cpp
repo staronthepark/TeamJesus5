@@ -2495,6 +2495,8 @@ void APlayerCharacter::ResetGame()
 		combatmanager.MonsterInfoArray[i]->RespawnCharacter();
 	}
 
+	combatmanager.Boss2->SetActive(false);
+
 	TArray<AActor*> ActorsToFind;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
 
