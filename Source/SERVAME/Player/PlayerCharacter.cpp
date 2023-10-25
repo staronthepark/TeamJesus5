@@ -2553,6 +2553,31 @@ float APlayerCharacter::GetPercent(float value, float min, float max)
 void APlayerCharacter::RespawnCharacter()
 {
 	Super::RespawnCharacter();
+
+	UCombatManager& combatmanager = UCombatManager::GetInstance();
+	if (combatmanager.MonsterInfoMap.Contains(CurrentMapName.ToString()))
+	{
+		for (int32 i = 0; i < combatmanager.MonsterInfoMap[CurrentMapName.ToString()].Num(); i++)
+		{
+			combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->SetActive(false);
+			if (CurrentMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->IsDie)
+			{
+				combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->RespawnCharacter();
+			}
+		}
+	}
+
+	if (combatmanager.MonsterInfoMap.Contains(SaveMapName.ToString()))
+	{
+		for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
+		{
+			if (SaveMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
+			{
+				combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+			}
+		}
+	}
+
 	GetWorldTimerManager().SetTimer(SprintStartTimer, this, &APlayerCharacter::FadeOut, 3.0f);
 
 	ASoundManager::GetInstance().StartBGMSound(IsPhaseTwo);
@@ -2576,7 +2601,7 @@ void APlayerCharacter::RespawnCharacter()
 
 	FLatentActionInfo LatentInfo;
 	UGameplayStatics::UnloadStreamLevel(this, "PrayRoom", LatentInfo, false);
-	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
+	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 1.0f);
 
 	SetSpeed(SpeedMap[false][false]);
 }
@@ -2898,28 +2923,6 @@ void APlayerCharacter::FadeIn()
 		LightManager->ChangeTargetLightSetting("2-2Map");
 		IsPhaseTwo = false;
 	}
-	
-	UCombatManager& combatmanager = UCombatManager::GetInstance();
-	if (combatmanager.MonsterInfoMap.Contains(CurrentMapName.ToString()))
-	{
-		for (int32 i = 0; i < combatmanager.MonsterInfoMap[CurrentMapName.ToString()].Num(); i++)
-		{
-			if (CurrentMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->IsDie)
-				combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->RespawnCharacter();
-			combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->SetActive(false);
-		}
-	}
-
-	if (combatmanager.MonsterInfoMap.Contains(SaveMapName.ToString()))
-	{
-		for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
-		{
-			if (SaveMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
-			{
-				combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
-			}
-		}
-	}
 
 	GetWorldTimerManager().SetTimer(SprintStartTimer, this, &APlayerCharacter::RespawnCharacter, 2.0f);
 }
@@ -3053,7 +3056,7 @@ void APlayerCharacter::LoadMap()
 {
 	FLatentActionInfo LatentInfo;
 	UGameplayStatics::LoadStreamLevel(this, SaveMapName, true, true, LatentInfo);
-	CurrentMapName = SaveMapName;
+	//CurrentMapName = SaveMapName;
 
 	ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
 	LightManager->ChangeTargetLightSetting(SaveMapName.ToString());

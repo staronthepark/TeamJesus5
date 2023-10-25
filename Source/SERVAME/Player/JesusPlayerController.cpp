@@ -414,6 +414,7 @@ void AJesusPlayerController::OpenMenu()
 	if (CurrentSequncePlayer)
 	{
 		CurrentSequncePlayer->Stop();
+		character->Imotal = false;
 		character->ChangePlayerAction(PlayerAction::NONE);
 		character->ChangeMontageAnimation(AnimationType::IDLE);
 		character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
@@ -447,6 +448,7 @@ void AJesusPlayerController::CloseMenu()
 		CurrentSequncePlayer->Stop();
 		SetViewTarget(character);
 		character->SetActorHiddenInGame(false);
+		character->Imotal = false;
 		character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
 		character->ChangePlayerAction(PlayerAction::NONE);
 		character->ChangeMontageAnimation(AnimationType::IDLE);
