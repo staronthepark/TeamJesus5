@@ -132,6 +132,9 @@ class SERVAME_API UPlayerStatUI : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 	UImage* ExplainText;
 
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	UWidgetAnimation* StatSucceededAnimation;
+
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* PurchaseButton;
@@ -169,6 +172,8 @@ public:
 
 	// 이게 남은 영혼!!
 	void SetRemainSoul(int value);
+
+	void PlayActivatedAnimation();
 
 	void SetCost(int value);
 

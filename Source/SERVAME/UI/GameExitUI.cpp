@@ -11,14 +11,16 @@ void UGameExitUI::NativeOnInitialized()
 	Super::NativeOnInitialized();
 	YesButton->OnClicked.AddDynamic(this, &UGameExitUI::YesButtonClicked);
 	NoButton->OnClicked.AddDynamic(this, &UGameExitUI::NoButtonClicked);
-	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	ChangeLanguage(GameInstance->language);
 }
 
 void UGameExitUI::Open()
 {
 	this->SetVisibility(ESlateVisibility::Visible);
 	SetKeyboardFocus();
+
+	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	ChangeLanguage(GameInstance->language);
+
 }
 
 void UGameExitUI::Close()

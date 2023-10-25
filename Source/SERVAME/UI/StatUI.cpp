@@ -83,6 +83,7 @@ void UStatUI::Activate()
 {
 	if (TypeAnimation[Type](index)) {
 		Init();
+		ParentUI->PlayActivatedAnimation();
 	}
 }
 
