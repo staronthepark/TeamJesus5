@@ -130,7 +130,10 @@ AKinghtMonster::AKinghtMonster()
 		{
 			MonsterController->FindPlayer = true;
 			TracePlayer = true;
-			ChangeMontageAnimation(MonsterAnimationType::IDLE);
+
+			MonsterMoveEventIndex = 1;
+			KnightAnimInstance->BlendSpeed = WalkBlend;
+			ChangeActionType(MonsterActionType::MOVE);
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::EXECUTION, [&]()
