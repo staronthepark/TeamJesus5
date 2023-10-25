@@ -2562,7 +2562,7 @@ void APlayerCharacter::RespawnCharacter()
 		for (int32 i = 0; i < combatmanager.MonsterInfoMap[CurrentMapName.ToString()].Num(); i++)
 		{
 			combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->SetActive(false);
-			if (CurrentMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->IsDie)
+			if (CurrentMapName == "A_KimMinYeongMap_Boss1" || !combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->IsDie)
 			{
 				combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->RespawnCharacter();
 			}
