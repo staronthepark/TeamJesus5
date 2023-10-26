@@ -391,6 +391,7 @@ float AJamsig::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, A
 			MontageEndEventMap[AnimationType]();
 
 		//TODO : 앞 뒤 방향에 따른 피격
+		DeactivateRightWeapon();
 		ChangeActionType(MonsterActionType::HIT);
 		ChangeMontageAnimation(MonsterAnimationType::HIT);
 	}
