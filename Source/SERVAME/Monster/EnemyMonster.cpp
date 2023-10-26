@@ -8,6 +8,7 @@
 #include "MonsterAttackTriggerComp.h"
 #include "..\Manager\CombatManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "..\SERVAME.h"
 
 AEnemyMonster::AEnemyMonster()
 {
@@ -760,6 +761,8 @@ void AEnemyMonster::Stun()
 float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	LOG(Warning, TEXT("Monster Take Damage"));
 
 	if (Imotal)
 	{

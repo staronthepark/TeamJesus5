@@ -4,4 +4,5 @@
 #include "Modules/ModuleManager.h"
 
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, SERVAME, "SERVAME" );
- 
+
+DEFINE_LOG_CATEGORY(BLOG_LOG);
