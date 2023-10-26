@@ -46,12 +46,14 @@ void ABaseCharacter::BeginPlay()
 
 void ABaseCharacter::ActivateHitCollision()
 {
+	if(HitCollision != nullptr)
 	HitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 void ABaseCharacter::DeactivateHitCollision()
 {
-	HitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
+	if (HitCollision != nullptr)
+		HitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ABaseCharacter::RespawnCharacter()

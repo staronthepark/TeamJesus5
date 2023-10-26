@@ -2935,19 +2935,27 @@ void APlayerCharacter::ComboAttackStart()
 
 	ChangeActionType(ActionType::ROTATE);
 
-	if (PlayerCurAttackIndex >= PlayerMaxAttackIndex[PlayerAttackType])
+	if (PlayerMaxAttackIndex.Contains(PlayerAttackType))
 	{
-		if (PlayerAttackType == ActionType::POWERATTACK &&
-			PlayerCurAttackIndex == 3)
+		if (PlayerCurAttackIndex >= PlayerMaxAttackIndex[PlayerAttackType])
 		{
-			PlayerCurAttackIndex = 1;
+			if (PlayerAttackType == ActionType::POWERATTACK &&
+				PlayerCurAttackIndex == 3)
+			{
+				PlayerCurAttackIndex = 1;
+			}
+			else
+			{
+				PlayerCurAttackIndex = 0;
+			}
 		}
-		else
-		{
-			PlayerCurAttackIndex = 0;
-		}		
 	}
-	ChangeMontageAnimation(IntToEnumMap[PlayerAttackType][PlayerCurAttackIndex++]);
+
+	if (IntToEnumMap.Contains(PlayerAttackType))
+	{
+		if(IntToEnumMap[PlayerAttackType].Contains(PlayerCurAttackIndex))
+		ChangeMontageAnimation(IntToEnumMap[PlayerAttackType][PlayerCurAttackIndex++]);
+	}
 }
 
 void APlayerCharacter::ChangeMontageAnimation(AnimationType type)
