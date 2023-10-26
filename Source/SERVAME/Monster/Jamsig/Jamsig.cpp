@@ -105,11 +105,18 @@ AJamsig::AJamsig()
 	MontageEndEventMap.Add(MonsterAnimationType::HIT, [&]()
 		{
 			SitJamsig = false;
-			TracePlayer = true;
 
-			MonsterMoveEventIndex = 1;
-			ChangeActionType(MonsterActionType::MOVE);
-			ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+			if (TracePlayer)
+			{
+				MonsterMoveEventIndex = 1;
+				ChangeActionType(MonsterActionType::MOVE);
+				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+			}
+			else
+			{
+				ChangeActionType(MonsterActionType::NONE);
+				ChangeMontageAnimation(MonsterAnimationType::IDLE);
+			}
 		});
 
 	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
@@ -321,6 +328,11 @@ float AJamsig::Die(float Dm)
 			CastObj->ActivateCurrentEffect();
 
 			GetMesh()->SetVisibility(false);
+			SetActive(false);
+			SetActorHiddenInGame(true);
+			SetActorEnableCollision(false);
+			SetActorTickEnabled(false);
+
 			//MinusOpacity = true;
 		}), 4.5f, false);
 
