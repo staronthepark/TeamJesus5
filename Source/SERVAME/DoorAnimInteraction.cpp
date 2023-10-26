@@ -72,6 +72,7 @@ void ADoorAnimInteraction::OnCloseDoorOverlapBegin(UPrimitiveComponent* Overlapp
 	AnimInstance->DoorAnimationType = DoorAnimationType::CLOSE;
 	CloseDoorComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	OpenDoorComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	TriggerComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 void ADoorAnimInteraction::EndSequence()
