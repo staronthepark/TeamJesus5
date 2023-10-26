@@ -2131,6 +2131,7 @@ void APlayerCharacter::RayCastOnTargets()
 
 	for (int32 i = 0; i < TargetCompInScreenArray.Num(); i++)
 	{
+		if (!TargetCompInScreenArray[i]->GetOwner()->IsActorTickEnabled())continue;
 		EndLocation = TargetCompInScreenArray[i]->GetComponentLocation();
 		CollisionParams.AddIgnoredActor(TargetCompInScreenArray[i]->GetOwner());
 		if (!GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_GameTraceChannel7, CollisionParams))
