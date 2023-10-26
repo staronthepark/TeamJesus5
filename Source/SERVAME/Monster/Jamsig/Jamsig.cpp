@@ -87,6 +87,16 @@ AJamsig::AJamsig()
 			ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
 		});
 
+	MontageEndEventMap.Add(MonsterAnimationType::JAMSIG_STANDUP, [&]()
+		{
+			MonsterController->FindPlayer = true;
+			CanRotate = true;
+			TracePlayer = true;
+
+			MonsterMoveEventIndex = 1;
+			ChangeActionType(MonsterActionType::MOVE);
+		});
+
 	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
 		{
 			JamsigAnimInstance->PauseAnimation(MontageMap[AnimationType]);
@@ -94,17 +104,12 @@ AJamsig::AJamsig()
 
 	MontageEndEventMap.Add(MonsterAnimationType::HIT, [&]()
 		{
-			if (TracePlayer)
-			{
-				MonsterMoveEventIndex = 1;
-				ChangeActionType(MonsterActionType::MOVE);
-				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
-			}
-			else
-			{
-				ChangeActionType(MonsterActionType::NONE);
-				ChangeMontageAnimation(MonsterAnimationType::IDLE);
-			}
+			SitJamsig = false;
+			TracePlayer = true;
+
+			MonsterMoveEventIndex = 1;
+			ChangeActionType(MonsterActionType::MOVE);
+			ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 		});
 
 	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
@@ -220,9 +225,10 @@ void AJamsig::OnJamsigTargetDetectionEndOverlap(UPrimitiveComponent* OverlappedC
 
 void AJamsig::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 { 	
-	TracePlayer = false;
 	if (StateType == MonsterStateType::CANTACT )
 		return;
+
+	TracePlayer = false;
 	AttackAnimationType = AttackAnimType;
 	if (ActionType != MonsterActionType::ATTACK)
 	{

@@ -2,6 +2,7 @@
 #include "EnemyMonster.h"
 #include "Knight/KinghtMonster.h"
 #include <Kismet/KismetMathLibrary.h>
+#include "..\SERVAME.h"
 
 AMonsterController::AMonsterController()
 {
@@ -227,6 +228,14 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 				Monster->PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->RightButton->OnClicked.AddDynamic(this, &AMonsterController::ChangeLanguage);
 				Monster->ChangeMontageAnimation(MonsterAnimationType::ELITEKNIGHT_START);
 				BossUI->PlayBossHPOpenAnimation(true, EBossSettings::paladin);
+			}
+			else if (Monster->MyMonsterType == MonsterType::JAMSIG && Monster->SitJamsig)
+			{
+				LOG(Warning, TEXT("JAMSIG_STANDUP"));
+				Monster->SitJamsig = false;
+				FindPlayer = false;
+				Monster->TracePlayer = false;
+				Monster->ChangeMontageAnimation(MonsterAnimationType::JAMSIG_STANDUP);
 			}
 		}
 	}

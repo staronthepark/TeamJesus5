@@ -184,6 +184,9 @@ public:
 	bool asd = false;
 	bool asd2 = false;
 
+	UPROPERTY(EditAnywhere, Category = "Jamsig")
+	bool SitJamsig = false;
+
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool IsPatrol = false;
 
