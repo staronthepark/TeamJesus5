@@ -231,7 +231,6 @@ void AMonsterController::OnPerception(AActor* Actor, FAIStimulus Stimulus)
 			}
 			else if (Monster->MyMonsterType == MonsterType::JAMSIG && Monster->SitJamsig)
 			{
-				LOG(Warning, TEXT("JAMSIG_STANDUP"));
 				Monster->SitJamsig = false;
 				FindPlayer = false;
 				Monster->TracePlayer = false;

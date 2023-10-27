@@ -6,6 +6,7 @@
 #include "..\..\Manager\CombatManager.h"
 #include "..\..\ObjectPool\EffectObjectInPool.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "..\..\SERVAME.h"
 
 AJamsig::AJamsig()
 {
@@ -95,6 +96,7 @@ AJamsig::AJamsig()
 
 			MonsterMoveEventIndex = 1;
 			ChangeActionType(MonsterActionType::MOVE);
+			ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 		});
 
 	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
@@ -104,19 +106,13 @@ AJamsig::AJamsig()
 
 	MontageEndEventMap.Add(MonsterAnimationType::HIT, [&]()
 		{
-			SitJamsig = false;
+			MonsterController->FindPlayer = true;
+			CanRotate = true;
+			TracePlayer = true;
 
-			if (TracePlayer)
-			{
-				MonsterMoveEventIndex = 1;
-				ChangeActionType(MonsterActionType::MOVE);
-				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
-			}
-			else
-			{
-				ChangeActionType(MonsterActionType::NONE);
-				ChangeMontageAnimation(MonsterAnimationType::IDLE);
-			}
+			MonsterMoveEventIndex = 1;
+			ChangeActionType(MonsterActionType::MOVE);
+			ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 		});
 
 	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
@@ -403,10 +399,12 @@ float AJamsig::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, A
 	if (MonsterDataStruct.CharacterHp > 0)
 	{
 		MonsterController->StopMovement();
-
 		JamsigAnimInstance->StopMontage(MontageMap[AnimationType]);
-		if (MontageEndEventMap.Contains(AnimationType))
+		if (MontageEndEventMap.Contains(AnimationType) && AnimationType != MonsterAnimationType::JAMSIG_STANDUP)
 			MontageEndEventMap[AnimationType]();
+
+		if(SitJamsig)
+			SitJamsig = false;
 
 		//TODO : 앞 뒤 방향에 따른 피격
 		DeactivateRightWeapon();
