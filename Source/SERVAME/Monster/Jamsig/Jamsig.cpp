@@ -6,6 +6,7 @@
 #include "..\..\Manager\CombatManager.h"
 #include "..\..\ObjectPool\EffectObjectInPool.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "..\..\SERVAME.h"
 
 AJamsig::AJamsig()
 {
@@ -87,6 +88,17 @@ AJamsig::AJamsig()
 			ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
 		});
 
+	MontageEndEventMap.Add(MonsterAnimationType::JAMSIG_STANDUP, [&]()
+		{
+			MonsterController->FindPlayer = true;
+			CanRotate = true;
+			TracePlayer = true;
+
+			MonsterMoveEventIndex = 1;
+			ChangeActionType(MonsterActionType::MOVE);
+			ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
+		});
+
 	MontageEndEventMap.Add(MonsterAnimationType::DEAD, [&]()
 		{
 			JamsigAnimInstance->PauseAnimation(MontageMap[AnimationType]);
@@ -94,17 +106,13 @@ AJamsig::AJamsig()
 
 	MontageEndEventMap.Add(MonsterAnimationType::HIT, [&]()
 		{
-			if (TracePlayer)
-			{
-				MonsterMoveEventIndex = 1;
-				ChangeActionType(MonsterActionType::MOVE);
-				ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
-			}
-			else
-			{
-				ChangeActionType(MonsterActionType::NONE);
-				ChangeMontageAnimation(MonsterAnimationType::IDLE);
-			}
+			MonsterController->FindPlayer = true;
+			CanRotate = true;
+			TracePlayer = true;
+
+			MonsterMoveEventIndex = 1;
+			ChangeActionType(MonsterActionType::MOVE);
+			ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 		});
 
 	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
@@ -220,9 +228,10 @@ void AJamsig::OnJamsigTargetDetectionEndOverlap(UPrimitiveComponent* OverlappedC
 
 void AJamsig::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 { 	
-	TracePlayer = false;
 	if (StateType == MonsterStateType::CANTACT )
 		return;
+
+	TracePlayer = false;
 	AttackAnimationType = AttackAnimType;
 	if (ActionType != MonsterActionType::ATTACK)
 	{
@@ -315,6 +324,11 @@ float AJamsig::Die(float Dm)
 			CastObj->ActivateCurrentEffect();
 
 			GetMesh()->SetVisibility(false);
+			SetActive(false);
+			SetActorHiddenInGame(true);
+			SetActorEnableCollision(false);
+			SetActorTickEnabled(false);
+
 			//MinusOpacity = true;
 		}), 4.5f, false);
 
@@ -385,10 +399,12 @@ float AJamsig::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, A
 	if (MonsterDataStruct.CharacterHp > 0)
 	{
 		MonsterController->StopMovement();
-
 		JamsigAnimInstance->StopMontage(MontageMap[AnimationType]);
-		if (MontageEndEventMap.Contains(AnimationType))
+		if (MontageEndEventMap.Contains(AnimationType) && AnimationType != MonsterAnimationType::JAMSIG_STANDUP)
 			MontageEndEventMap[AnimationType]();
+
+		if(SitJamsig)
+			SitJamsig = false;
 
 		//TODO : 앞 뒤 방향에 따른 피격
 		DeactivateRightWeapon();

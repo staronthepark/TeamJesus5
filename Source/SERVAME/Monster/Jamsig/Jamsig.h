@@ -38,8 +38,6 @@ public:
 	float KnockBackTime = 0.2f;
 	UPROPERTY(EditAnyWhere, Category = "KnockBackDelayTime")
 	float KnockBackDelayTime = 1.f;
-	UPROPERTY(EditAnywhere, Category = "Jamsig")
-	bool SitJamsig = false;
 
 	FTimerHandle KnockBackTimerHandle;
 	FTimerHandle KnockBackDelayTimerHandle;

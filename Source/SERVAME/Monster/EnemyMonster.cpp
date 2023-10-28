@@ -47,8 +47,6 @@ AEnemyMonster::AEnemyMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::STANDBY, MonsterStateType::NONE);
 
 	AnimTypeToStateType.Add(MonsterAnimationType::IDLE, MonsterStateType::NONE);
-	AnimTypeToStateType.Add(MonsterAnimationType::JAMSIG_SIT_IDLE, MonsterStateType::NONE);
-	AnimTypeToStateType.Add(MonsterAnimationType::JAMSIG_STANDUP, MonsterStateType::NONE);
 	AnimTypeToStateType.Add(MonsterAnimationType::ELITEKNIGHT_STAND_IDLE, MonsterStateType::NONE);
 
 	AnimTypeToStateType.Add(MonsterAnimationType::ATTACK1, MonsterStateType::BEFOREATTACK);
@@ -69,7 +67,9 @@ AEnemyMonster::AEnemyMonster()
 	AnimTypeToStateType.Add(MonsterAnimationType::GROGGY_START, MonsterStateType::CANTACT); 
 	AnimTypeToStateType.Add(MonsterAnimationType::GROGGY_DEAD, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::GROGGY_LOOP, MonsterStateType::CANTACT);
+	AnimTypeToStateType.Add(MonsterAnimationType::JAMSIG_SIT_IDLE, MonsterStateType::CANTACT);
 	AnimTypeToStateType.Add(MonsterAnimationType::ELITEKNIGHT_START, MonsterStateType::CANTACT);
+	AnimTypeToStateType.Add(MonsterAnimationType::JAMSIG_STANDUP, MonsterStateType::CANTACT);
 
 	RandomRotateMap.Add(0, [&]()
 		{

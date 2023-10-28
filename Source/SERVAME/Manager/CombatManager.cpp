@@ -28,8 +28,8 @@ void UCombatManager::ActivateCollider()
 {
 	for (int i = 0; i < HitMonsterInfoArray.Num(); i++)
 	{
-		if(HitMonsterInfoArray[i] != nullptr)
-		HitMonsterInfoArray[i]->ActivateHitCollision();
+		if (HitMonsterInfoArray[i] != nullptr)
+			HitMonsterInfoArray[i]->ActivateHitCollision();
 	}
 }
 
