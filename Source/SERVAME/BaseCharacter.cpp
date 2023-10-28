@@ -20,6 +20,8 @@ void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	CanHit = true;
+
 	SpawnLocation = GetActorLocation();
 	SpawnRotation = GetActorRotation();
 
@@ -46,14 +48,12 @@ void ABaseCharacter::BeginPlay()
 
 void ABaseCharacter::ActivateHitCollision()
 {
-	if(HitCollision != nullptr)
-	HitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	CanHit = true;
 }
 
 void ABaseCharacter::DeactivateHitCollision()
 {
-	if (HitCollision != nullptr)
-		HitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	CanHit = false;
 }
 
 void ABaseCharacter::RespawnCharacter()
@@ -75,13 +75,16 @@ void ABaseCharacter::VibrateGamePad(float Intensity, float time)
 
 float ABaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	if (!CanHit)
+		return false;
+
 	int value = FMath::RandRange(16, 17);
 	AObjectPool& objectpool = AObjectPool::GetInstance();
 	objectpool.SpawnObject(objectpool.ObjectArray[value].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 	objectpool.SpawnObject(objectpool.ObjectArray[18].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 	objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 	HitStop();
-	return 0.0f;
+	return DamageAmount;
 }
 
 void ABaseCharacter::OnDustCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

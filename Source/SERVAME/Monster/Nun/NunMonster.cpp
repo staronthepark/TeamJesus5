@@ -1238,7 +1238,11 @@ void ANunMonster::ChangeMontageAnimation(MonsterAnimationType type)
 
 float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
+		return 0.0f;
+
 	ChangeActionType(MonsterActionType::NONE);
+
 	if (Imotal)
 	{
 		return 0;
@@ -1246,7 +1250,6 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	DeactivateHitCollision();
 	MonsterDataStruct.CharacterHp -= DamageAmount;
 
-	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	ChangeMontageAnimation(MonsterAnimationType::HIT);
 

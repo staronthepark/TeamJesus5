@@ -79,6 +79,7 @@ public:
 	bool IsStun = false;
 	bool CanExecution = false;
 	bool IsDie = false;
+	bool CanHit;
 
 	float RotSpeed;
 	float fDeltaTime;
