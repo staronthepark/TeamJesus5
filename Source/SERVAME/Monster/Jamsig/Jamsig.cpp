@@ -387,7 +387,8 @@ void AJamsig::ChangeMontageAnimation(MonsterAnimationType type)
 
 float AJamsig::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
+		return 0.0f;
 	
 	//KnockBackStart();
 
