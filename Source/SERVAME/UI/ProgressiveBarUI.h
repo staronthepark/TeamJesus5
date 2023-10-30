@@ -31,5 +31,6 @@ class SERVAME_API UProgressiveBarUI : public UBaseUI
 public:
 	void SetValue(float value);
 	void DecreaseGradual(AActor* Actor, float value);
-	
+
+	void IncreaseLength(float value);
 };

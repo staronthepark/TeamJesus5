@@ -2,6 +2,7 @@
 
 
 #include "ProgressiveBarUI.h"
+#include "Components/CanvasPanelSlot.h"
 
 
 
@@ -23,4 +24,12 @@ void UProgressiveBarUI::DecreaseGradual(AActor* Actor, float value)
 	Bar->SetPercent(value);
 	White_P->SetValue(value);
 	ProgressDecrease(Actor, Bar_Y, value, 1, DelayTimerHandle, ProgressTimerHandle);
+}
+
+void UProgressiveBarUI::IncreaseLength(float value)
+{
+	float x = Cast<UCanvasPanelSlot>(Bar->Slot)->GetSize().X;
+	Cast<UCanvasPanelSlot>(Bar->Slot)->SetSize(FVector2D(x * value, 14.0f));
+	Cast<UCanvasPanelSlot>(Bar_Y->Slot)->SetSize(FVector2D(x * value, 14.0f));
+	Cast<UCanvasPanelSlot>(White_P->Slot)->SetSize(FVector2D(x * value, 14.0f));
 }

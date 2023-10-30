@@ -11,7 +11,6 @@
 #define Graphics 2
 #define Quit 3
 
-
 void UUserSettingUI::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -20,6 +19,7 @@ void UUserSettingUI::NativeOnInitialized()
 	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Audio); //1
 	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Graphics); //2
 	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Quit); //3
+	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Keyguide); //4
 
 	SubUserSettingArray.Add(WBP_UserSetting_GameUI); // 0
 	SubUserSettingArray.Add(WBP_UserSetting_AudioUI); // 1
@@ -29,6 +29,7 @@ void UUserSettingUI::NativeOnInitialized()
 	SelectSettingArray[Audio]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickAudioSettingButton);
 	SelectSettingArray[Graphics]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickGraphicsSettingButton);
 	SelectSettingArray[Quit]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickQuitSettingButton);
+	SelectSettingArray[4]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickKeyguideSettingButton);
 
 	WBP_UserSetting_GameUI->LightSettingButton->OnClicked.AddDynamic(this, &UUserSettingUI::ClickLightSettingButton);
 
@@ -41,6 +42,7 @@ void UUserSettingUI::NativeConstruct()
 	Super::NativeConstruct();
 	PlayAnimation(OpenAnimation);
 	Open();
+	SelectSettingArray[0]->SetKeyboardFocus();
 }
 
 void UUserSettingUI::NativeDestruct()
@@ -54,6 +56,7 @@ void UUserSettingUI::ClickGameSettingButton()
 {
 	UnselectAllButton();
 	SubUserSettingArray[Game]->SetVisibility(ESlateVisibility::Visible);
+	Cast<UUserSettingGameUI>(SubUserSettingArray[Game])->WBP_Setting_Slider->SetKeyboardFocus();
 	PlayAnimation(OpenGameSettingAnimation);
 	WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Camera->Select();
 }
@@ -62,6 +65,7 @@ void UUserSettingUI::ClickAudioSettingButton()
 {
 	UnselectAllButton();
 	SubUserSettingArray[Audio]->SetVisibility(ESlateVisibility::Visible);
+	Cast<UUserSettingAudioUI>(SubUserSettingArray[Audio])->WBP_Setting_Button->SetKeyboardFocus();
 	PlayAnimation(OpenAudioSettingAnimation);
 	WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Audio->Select();
 }
@@ -70,6 +74,7 @@ void UUserSettingUI::ClickGraphicsSettingButton()
 {
 	UnselectAllButton();
 	SubUserSettingArray[Graphics]->SetVisibility(ESlateVisibility::Visible);
+	Cast<UUserSetting_GraphicsUI>(SubUserSettingArray[Graphics])->WBP_Volumetric_Button->SetKeyboardFocus();
 	PlayAnimation(OpenGraphicsSettingAnimation);
 	WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Graphics->Select();
 }
@@ -77,6 +82,7 @@ void UUserSettingUI::ClickGraphicsSettingButton()
 void UUserSettingUI::ClickQuitSettingButton()
 {
 	UMG_GameExit->SetVisibility(ESlateVisibility::Visible);
+	UMG_GameExit->YesButton->SetKeyboardFocus();
 	//if (!GameExitUI->IsInViewport())
 	//{
 	//	GameExitUI->AddToViewport();
@@ -88,6 +94,14 @@ void UUserSettingUI::ClickLightSettingButton()
 	WBP_UserSetting_LightUI->SetVisibility(ESlateVisibility::Visible);
 }
 
+void UUserSettingUI::ClickKeyguideSettingButton()
+{
+	UnselectAllButton();
+	WBP_UserSetting_KeyGuideUI->SetVisibility(ESlateVisibility::Visible);
+	PlayAnimation(OpenKeyGuideSettingAnimation);
+	WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Keyguide->Select();
+}
+
 
 void UUserSettingUI::UnselectAllButton()
 {
@@ -97,6 +111,7 @@ void UUserSettingUI::UnselectAllButton()
 	for (int i = 0; i < SubUserSettingArray.Num(); i++) {
 		SubUserSettingArray[i]->SetVisibility(ESlateVisibility::Collapsed);
 	}
+	WBP_UserSetting_KeyGuideUI->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UUserSettingUI::ChangeLanguage()

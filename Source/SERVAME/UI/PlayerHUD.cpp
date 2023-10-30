@@ -123,6 +123,11 @@ void UPlayerHUD::DecreaseHPGradual(AActor* Actor, float value)
 	WBP_PlayerHPUI->DecreaseHPGradual(Actor, value);
 }
 
+void UPlayerHUD::IncreaseHpSize(float value)
+{
+	WBP_PlayerHPUI->IncreaseHPSize(value);
+}
+
 void UPlayerHUD::SetStamina(float value)
 {
 	WBP_PlayerHPUI->SetStamina(value);
@@ -133,6 +138,11 @@ void UPlayerHUD::DecreaseStaminaGradual(AActor* Actor, float value)
 	WBP_PlayerHPUI->DecreaseStaminaGradual(Actor, value);
 }
 
+void UPlayerHUD::IncreaseStaminaSize(float value)
+{
+	WBP_PlayerHPUI->IncreaseStaminaSize(value);
+}
+
 void UPlayerHUD::SetSoul(float value)
 {
 	WBP_PlayerHPUI->SetSoul(value);
@@ -141,6 +151,11 @@ void UPlayerHUD::SetSoul(float value)
 void UPlayerHUD::DecreaseSoulGradual(AActor* Actor, float value)
 {
 	WBP_PlayerHPUI->DecreaseSoulGradual(Actor, value);
+}
+
+void UPlayerHUD::IncreaseSoulSize(float value)
+{
+	WBP_PlayerHPUI->IncreaseSoulSize(value);
 }
 
 void UPlayerHUD::SetSkill(float value)

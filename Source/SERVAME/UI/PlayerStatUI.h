@@ -132,6 +132,9 @@ class SERVAME_API UPlayerStatUI : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 	UImage* ExplainText;
 
+	UPROPERTY(meta = (BindWidget))
+	UImage* SucceededImage;
+
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	UWidgetAnimation* StatSucceededAnimation;
 

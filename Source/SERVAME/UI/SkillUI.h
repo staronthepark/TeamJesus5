@@ -21,6 +21,7 @@ class SERVAME_API USkillUI : public UUserWidget
 	UMaterialInstanceDynamic* Material;
 
 	float value;
+	float TempSeconds;
 	FTimerHandle TimerHandle;
 
 public:

@@ -44,15 +44,16 @@ class SERVAME_API UGameExitUI : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	class UImage* PanelBackground;
-	UPROPERTY(meta = (BindWidget))
-	UButton* YesButton;
-	UPROPERTY(meta = (BindWidget))
-	UButton* NoButton;
 
 	UPROPERTY(EditAnywhere)
 	TMap<EExitSettings, FExitTextures> ImageTextures;
 
 public:
+	UPROPERTY(meta = (BindWidget))
+	UButton* YesButton;
+	UPROPERTY(meta = (BindWidget))
+	UButton* NoButton;
+
 	virtual void NativeOnInitialized() override;
 
 	UFUNCTION()

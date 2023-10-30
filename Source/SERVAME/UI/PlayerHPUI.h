@@ -58,12 +58,15 @@ class SERVAME_API UPlayerHPUI : public UBaseUI
 public:
 	void SetHP(float value);
 	void DecreaseHPGradual(AActor* Actor, float value);
+	void IncreaseHPSize(float value);
 
 	void SetStamina(float value);
 	void DecreaseStaminaGradual(AActor* Actor, float value);
+	void IncreaseStaminaSize(float value);
 
 	void SetSoul(float value);
 	void DecreaseSoulGradual(AActor* Actor, float value);
+	void IncreaseSoulSize(float value);
 
 	//void SetSkill(float value);
 };
