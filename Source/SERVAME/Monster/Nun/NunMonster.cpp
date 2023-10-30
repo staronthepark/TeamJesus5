@@ -1058,7 +1058,10 @@ void ANunMonster::FragmentsAttack()
 		if (IsIllusion || Player == nullptr)
 			return;
 
-		Player->TakeDamage(SkillInfoMap[MonsterAnimationType::FRAGMENT].Damage, DamageEvent, GetController(), this);
+		if (Player->TakeDamage(SkillInfoMap[MonsterAnimationType::FRAGMENT].Damage, DamageEvent, GetController(), this))
+		{
+
+		}
 	}
 }
 

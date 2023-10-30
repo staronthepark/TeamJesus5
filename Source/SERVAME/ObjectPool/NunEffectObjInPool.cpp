@@ -191,7 +191,10 @@ void ANunEffectObjInPool::SweepSingle(float delay, float Radius, float damage, b
 				if (Isillusion || Player == nullptr)
 					return;
 
-				Player->TakeDamage(damage, DamageEvent, Controller, this);
+				if (Player->TakeDamage(damage, DamageEvent, Controller, this))
+				{
+
+				}
 			}
 		}), delay, false);
 }

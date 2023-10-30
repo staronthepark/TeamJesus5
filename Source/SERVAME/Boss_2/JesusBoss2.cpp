@@ -1539,7 +1539,6 @@ void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 
 	auto Type = GetTypeFromMetaData(StartMontage);
 
-
 	AObjectPool& objectpool = AObjectPool::GetInstance();
 
 	if (OtherComp->GetName() == "ShieldCollision")
@@ -1558,10 +1557,12 @@ void AJesusBoss2::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 			Damage += BossDataStruct.DamageList[Type];
 		else
 			return;
-		
-		OtherActor->TakeDamage(Damage, DamageEvent, GetController(), this);
-		objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
+
+		if (OtherActor->TakeDamage(Damage, DamageEvent, GetController(), this))
+		{
+			objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
+		}
 	}
 }
 

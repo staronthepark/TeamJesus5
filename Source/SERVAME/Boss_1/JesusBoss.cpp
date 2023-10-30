@@ -1942,33 +1942,35 @@ void AJesusBoss::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		return;
 	}
 
-	if (!Player->Imotal)
+	if (OtherActor->TakeDamage(Damage, DamageEvent, GetController(), this))
 	{
-		if (BossDataStruct.DamageList.Contains(Type))
-			Damage += BossDataStruct.DamageList[Type];
-		else
-			return;
-	
-		//UE_LOG(LogTemp, Warning, TEXT("DAMAGE : %d"), Damage);
-		OtherActor->TakeDamage(Damage, DamageEvent, GetController(), this);
-		objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-		AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
-	
-		if (HitEffectRotatorList.Contains(Type))
-		{		
-			if (Type == BossAnimationType::ATTACK && !CheckAttack2.Exchange(true))
-			{
-				AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[5].ObjClass,
-					OtherComp->GetComponentLocation(), HitEffectRotatorList[GetTypeFromMetaData(StartMontage)]);
-			}
-			else if(Type == BossAnimationType::ATTACK && CheckAttack2.Exchange(false))
-			{
-				AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[5].ObjClass,
-					OtherComp->GetComponentLocation(), FRotator(-180, 90.0f, 0));
-			}
+		if (!Player->Imotal)
+		{
+			if (BossDataStruct.DamageList.Contains(Type))
+				Damage += BossDataStruct.DamageList[Type];
 			else
-				AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[5].ObjClass,
-					OtherComp->GetComponentLocation(), HitEffectRotatorList[GetTypeFromMetaData(StartMontage)]);
+				return;
+
+			//UE_LOG(LogTemp, Warning, TEXT("DAMAGE : %d"), Damage);
+			objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
+
+			if (HitEffectRotatorList.Contains(Type))
+			{
+				if (Type == BossAnimationType::ATTACK && !CheckAttack2.Exchange(true))
+				{
+					AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[5].ObjClass,
+						OtherComp->GetComponentLocation(), HitEffectRotatorList[GetTypeFromMetaData(StartMontage)]);
+				}
+				else if (Type == BossAnimationType::ATTACK && CheckAttack2.Exchange(false))
+				{
+					AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[5].ObjClass,
+						OtherComp->GetComponentLocation(), FRotator(-180, 90.0f, 0));
+				}
+				else
+					AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[5].ObjClass,
+						OtherComp->GetComponentLocation(), HitEffectRotatorList[GetTypeFromMetaData(StartMontage)]);
+			}
 		}
 	}
 }
