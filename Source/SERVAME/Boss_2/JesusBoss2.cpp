@@ -1944,6 +1944,7 @@ void AJesusBoss2::SetBoneRArm(UPrimitiveComponent* OverlappedComponent, AActor* 
 
 void AJesusBoss2::ActivateHitCollision()
 {
+	CanHit = true;
 	HitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	HeadHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	LeftArmHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
