@@ -1660,7 +1660,7 @@ APlayerCharacter::APlayerCharacter()
 	PlayerEventFuncMap[AnimationType::EXECUTIONBOSS].Add(true, [&]()
 		{
 			ComboAttackEnd();
-			ExecutionCharacter->CantHit = true;
+			ExecutionCharacter->CanHit = true;
 			ExecutionCharacter->TakeDamage(PlayerDataStruct.BaseDamage * PlayerDataStruct.PlayerExecutionFirstDamage, CharacterDamageEvent, nullptr, this);
 			VibrateGamePad(0.4f, 0.4f);
 			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
@@ -1669,7 +1669,7 @@ APlayerCharacter::APlayerCharacter()
 		{
 			UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(ExecutionCharacter);
 			CameraShake(PlayerCameraShake);
-			ExecutionCharacter->CantHit = true;
+			ExecutionCharacter->CanHit = true;
 			ExecutionCharacter->TakeDamage(PlayerDataStruct.BaseDamage * PlayerDataStruct.PlayerExecutionSecondDamage, CharacterDamageEvent, nullptr, this);
 			VibrateGamePad(0.4f, 0.4f);
 			AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[31].ObjClass, ExecutionCharacter->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
