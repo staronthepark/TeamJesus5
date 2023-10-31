@@ -537,7 +537,7 @@ void AKinghtMonster::RespawnCharacter()
 		UE_LOG(LogTemp, Warning, TEXT("spawned knight delete"));
 		//소환된 기사 삭제
 		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
-		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
 		SetActorTickEnabled(false);
 		GetWorld()->DestroyActor(this);
 		return;
@@ -931,7 +931,7 @@ float AKinghtMonster::Die(float Dm)
 			CastObj->ActivateCurrentEffect();
 
 			MinusOpacity = true;
-		}), 4.5f, false);
+		}), 4.f, false);
 
 	return Dm;
 }
