@@ -2583,6 +2583,18 @@ void APlayerCharacter::RespawnCharacter()
 		}
 	}
 
+	TArray<AActor*> ActorsToFind;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADoorAnimInteraction::StaticClass(), ActorsToFind);
+
+	for (AActor* TriggerActor : ActorsToFind)
+	{
+		ADoorAnimInteraction* TriggerActorCast = Cast<ADoorAnimInteraction>(TriggerActor);
+		if (TriggerActorCast)
+		{
+			TriggerActorCast->Init();
+		}
+	}
+
 	GetWorldTimerManager().SetTimer(SprintStartTimer, this, &APlayerCharacter::FadeOut, 3.0f);
 
 	ASoundManager::GetInstance().StartBGMSound(IsPhaseTwo);
