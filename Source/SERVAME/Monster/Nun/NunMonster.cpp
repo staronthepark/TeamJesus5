@@ -588,7 +588,7 @@ float ANunMonster::Die(float Dm)
 		OriginNun->SelfHeal();
 
 		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
-		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
 		SetActorTickEnabled(false);
 		GetWorld()->DestroyActor(this);
 		DeactivateHpBar();
@@ -599,7 +599,7 @@ float ANunMonster::Die(float Dm)
 		PlayerCharacter->LockOn();
 
 	auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
-	UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+	UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
 
 	NunAnimInstance->StopAllMontages(0.1f);
 	MonsterController->CanPerception = false;

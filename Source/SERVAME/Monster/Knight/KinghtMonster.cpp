@@ -899,7 +899,7 @@ float AKinghtMonster::Die(float Dm)
 	//}
 
 	auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
-	UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+	UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
 
 	Imotal = true;
 	GetCapsuleComponent()->SetCollisionProfileName("NoCollision");

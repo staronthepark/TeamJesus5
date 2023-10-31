@@ -117,8 +117,6 @@ float APersistentKnight::Die(float Dm)
 					
 				}), RotateTickTime, true);
 
-
-
 			//머리 날리기
 			KnightHeadSkeletalMesh->SetCollisionProfileName("Ragdoll");
 			KnightHeadSkeletalMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
@@ -146,6 +144,9 @@ float APersistentKnight::Die(float Dm)
 		else
 		{
 			Super::Die(Dm);
+
+			GetWorldTimerManager().ClearTimer(HeadTimer);
+			GetWorldTimerManager().ClearTimer(EndTimer);
 
 			return Dm;
 		}
