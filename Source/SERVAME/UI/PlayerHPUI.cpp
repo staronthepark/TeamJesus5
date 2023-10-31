@@ -13,6 +13,11 @@ void UPlayerHPUI::DecreaseHPGradual(AActor* Actor, float value)
 	Player_HP_Bar->DecreaseGradual(Actor, value);
 }
 
+void UPlayerHPUI::IncreaseHPSize(float value)
+{
+	Player_HP_Bar->IncreaseLength(value);
+}
+
 void UPlayerHPUI::SetStamina(float value)
 {
 	Player_Stamina_Bar->SetValue(value);
@@ -23,6 +28,11 @@ void UPlayerHPUI::DecreaseStaminaGradual(AActor* Actor, float value)
 	Player_Stamina_Bar->DecreaseGradual(Actor, value);
 }
 
+void UPlayerHPUI::IncreaseStaminaSize(float value)
+{
+	Player_Stamina_Bar->IncreaseLength(value);
+}
+
 void UPlayerHPUI::SetSoul(float value)
 {
 	Player_Soul_Bar->SetValue(value);
@@ -31,6 +41,11 @@ void UPlayerHPUI::SetSoul(float value)
 void UPlayerHPUI::DecreaseSoulGradual(AActor* Actor, float value)
 {
 	Player_Soul_Bar->DecreaseGradual(Actor, value);
+}
+
+void UPlayerHPUI::IncreaseSoulSize(float value)
+{
+	Player_Soul_Bar->IncreaseLength(value);
 }
 
 //void UPlayerHPUI::SetSkill(float value)

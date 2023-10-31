@@ -21,6 +21,13 @@ public:
 	ADoorAnimInteraction() {
 		CloseDoorComp = CreateDefaultSubobject<UBoxComponent>("CloseDoorComp");
 		OpenDoorComp = CreateDefaultSubobject<UBoxComponent>("OpenDoorComp");
+		SceneComp = CreateDefaultSubobject<USceneComponent>("SceneComp");
+
+		RootComponent = SceneComp;
+
+		MeshComp->SetupAttachment(SceneComp);
+		OpenDoorComp->SetupAttachment(MeshComp);
+		CloseDoorComp->SetupAttachment(MeshComp);
 	}
 
 	UPROPERTY()
@@ -30,10 +37,19 @@ public:
 		bool DisableTriggerWhenStart;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool PlayerPlayDoorOpenAnim;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		DoorAnimationType DoorAnimType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UBoxComponent* CloseDoorComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UBoxComponent* OpenDoorComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		USceneComponent* SceneComp;
 
 	ACineCameraActor* CineCameraActor;
 

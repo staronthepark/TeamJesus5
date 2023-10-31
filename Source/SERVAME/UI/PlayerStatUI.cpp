@@ -139,6 +139,7 @@ void UPlayerStatUI::SetValue(int value, float x, float y)
 void UPlayerStatUI::Open()
 {
 	this->SetVisibility(ESlateVisibility::Visible);
+	SucceededImage->SetVisibility(ESlateVisibility::Collapsed);
 	//AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 	//Controller->SetInputMode(FInputModeUIOnly());
 	//Controller->bShowMouseCursor = true;

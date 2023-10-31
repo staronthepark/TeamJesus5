@@ -449,8 +449,8 @@ void ANunMonster::Tick(float DeltaTime)
 
 	if (MinusOpacity)
 	{
-		OpactiyDeltaTime += 0.01;
-		SkeletalMeshComp->SetScalarParameterValueOnMaterials("Opacity", MeshOpacity -= OpactiyDeltaTime);
+		OpactiyDeltaTime += 0.005;
+		SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity -= OpactiyDeltaTime);
 	}
 
 	//텔레포트 이펙트 확인용
@@ -588,7 +588,7 @@ float ANunMonster::Die(float Dm)
 		OriginNun->SelfHeal();
 
 		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
-		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
 		SetActorTickEnabled(false);
 		GetWorld()->DestroyActor(this);
 		DeactivateHpBar();
@@ -599,7 +599,7 @@ float ANunMonster::Die(float Dm)
 		PlayerCharacter->LockOn();
 
 	auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
-	UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+	UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
 
 	NunAnimInstance->StopAllMontages(0.1f);
 	MonsterController->CanPerception = false;
@@ -623,16 +623,18 @@ float ANunMonster::Die(float Dm)
 	ChangeMontageAnimation(MonsterAnimationType::DEAD);
 
 	//머테리얼에 Opacity 값 넣기 전까지 임시로 Visibility 꺼주기
-	GetMesh()->SetVisibility(false);
-	SetActive(false);
-	SetActorHiddenInGame(true);
-	SetActorEnableCollision(false);
-	SetActorTickEnabled(false);
+	//GetMesh()->SetVisibility(false);
+	//SetActive(false);
+	//SetActorHiddenInGame(true);
+	//SetActorEnableCollision(false);
+	//SetActorTickEnabled(false);
 
-	GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
-		{
-			MinusOpacity = true;
-		}), 1.2f, false);
+	MinusOpacity = true;
+
+	//GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
+	//	{
+	//		MinusOpacity = true;
+	//	}), 1.2f, false);
 
 	return Dm;
 }

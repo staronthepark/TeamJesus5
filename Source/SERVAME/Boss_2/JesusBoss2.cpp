@@ -1816,7 +1816,7 @@ void AJesusBoss2::CheckBossDie()
 		AIController->OnUnPossess();
 
 		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
-		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
 
 		for (auto iter = BossDataStruct.DamageList.begin(); iter != BossDataStruct.DamageList.end(); iter.operator++())
 		{
@@ -1944,6 +1944,7 @@ void AJesusBoss2::SetBoneRArm(UPrimitiveComponent* OverlappedComponent, AActor* 
 
 void AJesusBoss2::ActivateHitCollision()
 {
+	CanHit = true;
 	HitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	HeadHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	LeftArmHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);

@@ -34,5 +34,8 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	USelectTextUI* WBP_Setting_SelectText_Quit;
 
+	UPROPERTY(meta = (BindWidget))
+	USelectTextUI* WBP_Setting_SelectText_Keyguide;
+
 	void ChangeLanguage(Language& language);
 };

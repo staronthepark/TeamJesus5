@@ -6,13 +6,9 @@
 
 void ADoorAnimInteraction::Init()
 {
-	if (IsActive)
-	{
-		//AnimInstance = Cast<UDoorAnimInstance>(MeshComp->GetAnimInstance());
-		//AnimInstance->DoorAnimationType = DoorAnimationType::KEEPOPEN;
-		//TriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	AnimInstance->DoorAnimationType = DoorAnimType;
+	CloseDoorComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-	}
 }
 
 void ADoorAnimInteraction::BeginPlay()
@@ -50,7 +46,8 @@ void ADoorAnimInteraction::BeginPlay()
 
 	if (DisableTriggerWhenStart)
 		BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	CloseDoorComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+
 }
 
 void ADoorAnimInteraction::BeginTriggerEvent()
@@ -95,21 +92,22 @@ void ADoorAnimInteraction::EnableEvent()
 	SetActorTickEnabled(false);
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[26].ObjClass, GetActorLocation(), GetActorForwardVector().Rotation() + FRotator(0, 0, -20));
 	AnimInstance->DoorAnimationType = DoorAnimationType::OPEN;
-	Character->SetActorLocation(TriggerComp->GetComponentLocation());
 
-
-	Character->SetActorRotation(GetActorRotation() - FRotator(0, -90, 0));
-	Character->YawRotation = GetActorRotation() - FRotator(0, -90, 0);
-
-	Character->CameraShake(Character->PlayerDoorCameraShake);
-	Character->WeaponMesh->SetVisibility(false);
-	Character->ChangeActionType(ActionType::INTERACTION);
-	Character->Imotal = true;
-	Character->AxisX = 1;
-	Character->AxisY = 1;
-	Character->ChangeMontageAnimation(AnimationType::DOOROPEN);
-	Character->ChangeActionType(ActionType::NONE);
-	Character->ChangePlayerAction(PlayerAction::CANATTACK);
+	if (PlayerPlayDoorOpenAnim)
+	{
+		Character->SetActorLocation(TriggerComp->GetComponentLocation());
+		Character->SetActorRotation(GetActorRotation() - FRotator(0, -90, 0));
+		Character->YawRotation = GetActorRotation() - FRotator(0, -90, 0);
+		Character->CameraShake(Character->PlayerDoorCameraShake);
+		Character->WeaponMesh->SetVisibility(false);
+		Character->ChangeActionType(ActionType::INTERACTION);
+		Character->Imotal = true;
+		Character->AxisX = 1;
+		Character->AxisY = 1;
+		Character->ChangeMontageAnimation(AnimationType::DOOROPEN);
+		Character->ChangeActionType(ActionType::NONE);
+		Character->ChangePlayerAction(PlayerAction::CANATTACK);
+	}
 	TriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	CloseDoorComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 

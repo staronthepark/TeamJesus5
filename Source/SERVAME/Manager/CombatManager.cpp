@@ -26,19 +26,25 @@ UCombatManager& UCombatManager::GetInstance()
 
 void UCombatManager::ActivateCollider()
 {
-	for (int i = 0; i < HitMonsterInfoArray.Num(); i++)
+	if (!HitMonsterInfoArray.IsEmpty())
 	{
-		if (HitMonsterInfoArray[i] != nullptr)
-			HitMonsterInfoArray[i]->ActivateHitCollision();
+		for (int i = 0; i < HitMonsterInfoArray.Num(); i++)
+		{
+			if (HitMonsterInfoArray[i] != nullptr)
+				HitMonsterInfoArray[i]->ActivateHitCollision();
+		}
 	}
 }
 
 void UCombatManager::DeactivateCollider()
 {
-	for (int i = 0; i < HitMonsterInfoArray.Num(); i++)
+	if (!HitMonsterInfoArray.IsEmpty())
 	{
-		if (HitMonsterInfoArray[i] != nullptr)
-			HitMonsterInfoArray[i]->DeactivateHitCollision();
+		for (int i = 0; i < HitMonsterInfoArray.Num(); i++)
+		{
+			if (HitMonsterInfoArray[i] != nullptr)
+				HitMonsterInfoArray[i]->DeactivateHitCollision();
+		}
 	}
 }
 

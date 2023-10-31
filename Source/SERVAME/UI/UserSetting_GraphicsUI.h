@@ -60,6 +60,13 @@ class SERVAME_API UUserSetting_GraphicsUI : public USubUserSettingUI
 	UPROPERTY(meta = (BindWidget))
 		UImage* ReflectImage;
 
+
+	UPROPERTY(EditAnywhere)
+	TMap<EGraphicsSettings, FGraphicsTextures> ImageTextures;
+
+	UGameUserSettings* Setting;
+
+public:
 	UPROPERTY(meta = (BindWidget))
 	UButtonUI* WBP_Volumetric_Button;	
 	
@@ -75,12 +82,6 @@ class SERVAME_API UUserSetting_GraphicsUI : public USubUserSettingUI
 	UPROPERTY(meta = (BindWidget))
 	UButtonUI* WBP_Reflect_Button;
 
-	UPROPERTY(EditAnywhere)
-	TMap<EGraphicsSettings, FGraphicsTextures> ImageTextures;
-
-	UGameUserSettings* Setting;
-
-public:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 

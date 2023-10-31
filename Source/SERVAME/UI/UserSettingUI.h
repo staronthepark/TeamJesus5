@@ -9,6 +9,7 @@
 #include "UserSetting_GraphicsUI.h"
 #include "SubUserSettingUI.h"
 #include "UserSettingAudioUI.h"
+#include "UserSettingKeyGuideUI.h"
 #include "GameExitUI.h"
 
 #include "UserSettingUI.generated.h"
@@ -30,6 +31,9 @@ class SERVAME_API UUserSettingUI : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 		UUserSetting_GraphicsUI* WBP_UserSetting_GraphicsUI;
 
+	UPROPERTY(meta = (BindWidget))
+		UUserSettingKeyGuideUI* WBP_UserSetting_KeyGuideUI;
+
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* OpenAnimation;
 
@@ -41,6 +45,9 @@ class SERVAME_API UUserSettingUI : public UUserWidget
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* OpenGraphicsSettingAnimation;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		UWidgetAnimation* OpenKeyGuideSettingAnimation;
 
 	TArray<USelectTextUI*> SelectSettingArray;
 	TArray<USubUserSettingUI*> SubUserSettingArray;
@@ -78,6 +85,9 @@ public:
 
 	UFUNCTION()
 	void ClickLightSettingButton();
+
+	UFUNCTION()
+	void ClickKeyguideSettingButton();
 
 	void UnselectAllButton();
 
