@@ -63,7 +63,7 @@ void APlayerSkillObject::SetActive(bool active)
 
 			if (Player != nullptr)
 			{
-				Player->TakeDamage(Damage, DamageEvent, nullptr, this);
+				if(Player->TakeDamage(Damage, DamageEvent, nullptr, this))
 				UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(Player);
 			}
 		}

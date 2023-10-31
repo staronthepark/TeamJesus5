@@ -81,12 +81,14 @@ void AFloorTrapActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 
 	if (Player != nullptr)
 	{
-		AObjectPool& objectpool = AObjectPool::GetInstance();
-		objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, Player->GetActorLocation(), FRotator::ZeroRotator);
-		objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
-		objectpool.SpawnObject(objectpool.ObjectArray[5].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator::ZeroRotator);
-		Player->TakeDamage(Damage, DamageEvent, nullptr, this);
-		BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		if (Player->TakeDamage(Damage, DamageEvent, nullptr, this))
+		{
+			AObjectPool& objectpool = AObjectPool::GetInstance();
+			objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, Player->GetActorLocation(), FRotator::ZeroRotator);
+			objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
+			objectpool.SpawnObject(objectpool.ObjectArray[5].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator::ZeroRotator);
+			BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		}
 	}
 }
 
