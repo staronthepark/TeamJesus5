@@ -6,6 +6,7 @@
 
 void ADoorAnimInteraction::Init()
 {
+	AnimInstance = Cast<UDoorAnimInstance>(MeshComp->GetAnimInstance());
 	AnimInstance->DoorAnimationType = DoorAnimType;
 	CloseDoorComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
