@@ -601,6 +601,8 @@ float ANunMonster::Die(float Dm)
 	auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
 	UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
 
+	OpenDoor2->EnableEvent();
+
 	NunAnimInstance->StopAllMontages(0.1f);
 	MonsterController->CanPerception = false;
 	CheckDetect = false;

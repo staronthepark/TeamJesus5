@@ -180,6 +180,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Percent")
 	float MultiHeal_Group_Percent_2 = 0.5f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		ADoorAnimInteraction* OpenDoor2;
+
 	void SelfHealTimer();
 
 	//수녀 a타입 스킬

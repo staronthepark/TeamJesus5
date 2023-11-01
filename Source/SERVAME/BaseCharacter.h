@@ -108,6 +108,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UNiagaraComponent* SwordTrailComp;
 
+
 	UPROPERTY()
 	UJesusGameInstance* GameInstance;
 	USphereComponent* LockOnComp;
