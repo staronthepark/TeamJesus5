@@ -601,10 +601,18 @@ void AEnemyMonster::MonsterLog(int id, int i)
 	if (MonsterID == id)
 		UE_LOG(LogTemp, Warning, TEXT("%d"), i);
 }
-
+
+
 void AEnemyMonster::PlayMonsterSoundInPool(EMonsterAudioType AudioType)
 {
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+
+	auto Obj = objectpool.SpawnObject(objectpool.ObjectArray[MONSTERSOUNDOP].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	auto MonsterSound = Cast<AMonsterSoundObjectInpool>(Obj);
+
+	MonsterSound->PlayMonsterSound(AudioType);
 }
+
 void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	PlayerCharacter = Cast<APlayerCharacter>(OtherActor);

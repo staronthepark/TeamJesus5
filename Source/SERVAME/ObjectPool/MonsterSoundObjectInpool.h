@@ -13,8 +13,8 @@ UENUM(BlueprintType)
 enum class EMonsterAudioType : uint8
 {
 	NONE,
-	Knight_Attack,
-	Knight_Die,
+	KNIGHT_ATTACK,
+	KNIGHT_DIE,
 };
 
 

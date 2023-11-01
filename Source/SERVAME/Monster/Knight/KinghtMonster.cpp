@@ -892,6 +892,8 @@ float AKinghtMonster::Die(float Dm)
 		objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
 	}
 	
+	PlayMonsterSoundInPool(EMonsterAudioType::KNIGHT_DIE);
+
 	//if (IsSpawn)
 	//{
 	//	auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
