@@ -18,6 +18,7 @@
 #include "Components/PoseableMeshComponent.h"
 #include <vector>
 #include "..\Manager\SoundManager.h"
+#include "CineCameraActor.h"
 #include "NavigationSystem.h"
 #include "..\UDamageSphereTriggerComp.h"
 #include "JesusBoss.generated.h"
@@ -227,6 +228,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* BossWeaponMesh;
 
+
+	ALevelSequenceActor* LevelSequenceActor;
+	UPROPERTY(EditAnywhere)
+		ULevelSequence* BossRoomDoorOpenSequence;
+
+
+	UPROPERTY()
+		ULevelSequencePlayer* BossRoomDoorOpenSequncePlayer;
+
+	ACineCameraActor* CineCameraActor;
+
 	UPROPERTY(EditAnyWhere, Category = "BossMontageMap")
 	TMap<BossAnimationType, UAnimMontage*> BossMontageMap;
 
@@ -247,6 +259,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UNiagaraComponent* ParringTrailComp;
+
+
+	UFUNCTION()
+		void EndSequence();
 
 	//UPROPERTY()
 	//TSubclassOf<UBossUI> BossUIClass;

@@ -1101,6 +1101,12 @@ AJesusBoss::~AJesusBoss()
 	FollowUpPercentageVec.shrink_to_fit();
 }
 
+void AJesusBoss::EndSequence()
+{
+	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
+	GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(PlayerCharacter, 100.0f);
+}
+
 void AJesusBoss::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -1182,6 +1188,17 @@ void AJesusBoss::BeginPlay()
 	//}
 	////GameInstance->PlayerHUDWidget->PB_BossHP->SetPercent((float)BossDataStruct.CharacterHp / (float)BossDataStruct.CharacterMaxHp);
 	//BossUI->SetHP(1);//
+
+	FMovieSceneSequencePlaybackSettings PlaybackSettings;
+	if (BossRoomDoorOpenSequence != nullptr)
+	{
+		BossRoomDoorOpenSequncePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), BossRoomDoorOpenSequence
+			, PlaybackSettings, LevelSequenceActor);
+
+		BossRoomDoorOpenSequncePlayer->OnFinished.AddDynamic(this, &AJesusBoss::EndSequence);
+	}
+
+	CineCameraActor = Cast<ACineCameraActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ACineCameraActor::StaticClass()));
 
 	FOutputDeviceNull ar;
 	this->CallFunctionByNameWithArguments(TEXT("PlayEndingCredit"), ar, NULL, true);
@@ -1327,6 +1344,11 @@ void AJesusBoss::CheckBossDie()
 	if (BossDataStruct.CharacterHp <= 0 && IsDead == false)
 	{
 		ASoundManager::GetInstance().PlaySoundWithCymbalSound(2);
+
+
+		BossRoomDoorOpenSequncePlayer->Play();
+		GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
+		GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(CineCameraActor, 6.0f);
 
 		FLatentActionInfo LatentInfo;
 		UGameplayStatics::LoadStreamLevel(this, "Boss2PhaseMap", true, true, LatentInfo);
