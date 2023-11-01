@@ -69,6 +69,7 @@ void UPlayerStatComponent::BeginPlay()
 			Owner->PlayerDataStruct.MaxStamina += Owner->PlayerDataStruct.MaxStamina * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
 			Owner->PlayerDataStruct.PlayerStamina = Owner->PlayerDataStruct.MaxStamina;
 			Owner->PlayerDataStruct.StaminaIndex++;
+			Owner->PlayerHUD->IncreaseStaminaSize(1.0f + StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value);
 			Owner->PlayerHUD->SetStamina(1.0f);
 			return true;
 		}
@@ -81,6 +82,7 @@ void UPlayerStatComponent::BeginPlay()
 			Owner->PlayerDataStruct.MaxStamina += Owner->PlayerDataStruct.MaxStamina * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
 			Owner->PlayerDataStruct.PlayerStamina = Owner->PlayerDataStruct.MaxStamina;
 			Owner->PlayerDataStruct.StaminaIndex++;
+			Owner->PlayerHUD->IncreaseStaminaSize(1.0f + StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value);
 			Owner->PlayerHUD->SetStamina(1.0f);
 			return true;
 		}
@@ -93,6 +95,7 @@ void UPlayerStatComponent::BeginPlay()
 			Owner->PlayerDataStruct.MaxStamina += Owner->PlayerDataStruct.MaxStamina * StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value;
 			Owner->PlayerDataStruct.PlayerStamina = Owner->PlayerDataStruct.MaxStamina;
 			Owner->PlayerDataStruct.StaminaIndex++;
+			Owner->PlayerHUD->IncreaseStaminaSize(1.0f + StaminaStatList[Owner->PlayerDataStruct.StaminaIndex].Value);
 			Owner->PlayerHUD->SetStamina(1.0f);
 			return true;
 		}
@@ -128,6 +131,7 @@ void UPlayerStatComponent::BeginPlay()
 			Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
 			Owner->PlayerDataStruct.HPIndex++;
 			Owner->PlayerHUD->SetHP(1.0f);
+			Owner->PlayerHUD->IncreaseHpSize(1.0f + HpStatList[Owner->PlayerDataStruct.HPIndex].Value);
 			return true;
 		}
 		return false;
@@ -138,6 +142,7 @@ void UPlayerStatComponent::BeginPlay()
 		{
 			Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
 			Owner->PlayerDataStruct.HPIndex++;
+			Owner->PlayerHUD->IncreaseHpSize(1.0f + HpStatList[Owner->PlayerDataStruct.HPIndex].Value);
 			Owner->PlayerHUD->SetHP(1.0f);
 			return true;
 		}
@@ -149,6 +154,7 @@ void UPlayerStatComponent::BeginPlay()
 		{
 			Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
 			Owner->PlayerDataStruct.HPIndex++;
+			Owner->PlayerHUD->IncreaseHpSize(1.0f + HpStatList[Owner->PlayerDataStruct.HPIndex].Value);
 			Owner->PlayerHUD->SetHP(1.0f);
 			return true;
 		}

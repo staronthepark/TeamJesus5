@@ -3061,7 +3061,7 @@ void APlayerCharacter::LoadFile()
 
 	SetSoul(PlayerDataStruct.SoulCount);
 	CurHealCount = PlayerDataStruct.MaxHealCount;
-
+	PlayerHUD->InitStat(PlayerDataStruct.StrengthIndex, PlayerDataStruct.StaminaIndex, PlayerDataStruct.HPIndex, PlayerDataStruct.ShieldIndex);
 
 }
 
