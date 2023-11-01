@@ -22,7 +22,7 @@ void AMonsterSoundObjectInpool::ReturnObject()
 
 void AMonsterSoundObjectInpool::PlayMonsterSound(EMonsterAudioType Type)
 {
-	AudioType = Type;
+	MonsterAudioType = Type;
 	if (SoundMap.Contains(Type))
 	{
 		AudioComp->SetSound(SoundMap[Type]);

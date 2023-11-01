@@ -8,7 +8,6 @@
 #include "MonsterAttackTriggerComp.h"
 #include "..\Manager\CombatManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "..\SERVAME.h"
 
 AEnemyMonster::AEnemyMonster()
 {

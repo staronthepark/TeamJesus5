@@ -27,10 +27,7 @@ public:
 	AMonsterSoundObjectInpool();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float LifeTime;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EMonsterAudioType AudioType;
+	EMonsterAudioType MonsterAudioType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TMap<EMonsterAudioType, USoundBase*> SoundMap;

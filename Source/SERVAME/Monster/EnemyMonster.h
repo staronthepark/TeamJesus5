@@ -11,6 +11,8 @@
 #include "../UI/MonsterHPUI.h"
 #include "Components/WidgetComponent.h"
 #include "../DoorAnimInteraction.h"
+#include "..\SERVAME.h"
+#include "..\ObjectPool\MonsterSoundObjectInpool.h"
 #include "EnemyMonster.generated.h"
 
 UENUM(BlueprintType)
@@ -219,6 +221,7 @@ public:
 	void MonsterLog(int id, FString str);
 	void MonsterLog(int id, float f);
 	void MonsterLog(int id, int i);
+	void PlayMonsterSoundInPool(EMonsterAudioType AudioType);
 
 	UFUNCTION()
 	void OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

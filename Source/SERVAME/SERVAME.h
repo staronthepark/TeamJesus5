@@ -26,3 +26,5 @@ DECLARE_LOG_CATEGORY_EXTERN(BLOG_LOG, Log, All);
 
 //6. 게임 플레이 스크린에다가 LOG를 직접 찍는 매크로
 #define	LOG_SCREEN(Format, ...) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(Format, ##__VA_ARGS__))
+
+#define MONSTERSOUNDOP 46
