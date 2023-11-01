@@ -44,6 +44,9 @@ void ANunEffectObjInPool::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (Monster == nullptr)
+		return;
+
 	if (Monster->MonsterDataStruct.CharacterHp <= 0)
 		return;
 
