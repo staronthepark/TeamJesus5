@@ -904,7 +904,7 @@ APlayerCharacter::APlayerCharacter()
 		{
 			AxisX = 1;
 			AxisY = 1;
-			CheckInputKey();
+			ChangeMontageAnimation(AnimationType::ENDOFHEAL);
 			GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(this, 1.0f);
 			WeaponMesh->SetVisibility(true);
 			Imotal = false;
