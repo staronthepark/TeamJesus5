@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "SERVAME/SERVAME.h"
 #include "MonsterSoundObjectInpool.h"
 
 AMonsterSoundObjectInpool::AMonsterSoundObjectInpool()
@@ -27,5 +27,6 @@ void AMonsterSoundObjectInpool::PlayMonsterSound(EMonsterAudioType Type)
 	{
 		AudioComp->SetSound(SoundMap[Type]);
 		PlaySound();
+		LOG_S(Warning);
 	}
 }
