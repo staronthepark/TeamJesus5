@@ -601,6 +601,8 @@ float ANunMonster::Die(float Dm)
 	auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
 	UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
 
+	PlayMonsterSoundInPool(EMonsterAudioType::NUN_DIE);
+
 	OpenDoor2->EnableEvent();
 
 	NunAnimInstance->StopAllMontages(0.1f);
@@ -744,6 +746,8 @@ void ANunMonster::MultiHeal()
 			if (Knight->MonsterDataStruct.CharacterHp > Knight->MonsterDataStruct.CharacterMaxHp)
 				Knight->MonsterDataStruct.CharacterHp = Knight->MonsterDataStruct.CharacterMaxHp;
 
+			PlayMonsterSoundInPool(EMonsterAudioType::NUN_HEAL);
+			
 			float CurrentPercent = Knight->MonsterDataStruct.CharacterHp / Knight->MonsterDataStruct.CharacterMaxHp;
 			Knight->MonsterHPWidget->SetHP(CurrentPercent);
 
@@ -806,6 +810,7 @@ void ANunMonster::SelfHealTimer()
 			HealEffect->ActivateCurrentEffect();
 			HealDustEffect->ActivateCurrentEffect();
 
+			PlayMonsterSoundInPool(EMonsterAudioType::NUN_HEAL);
 		}), SelfHealCoolTime, true);
 }
 
@@ -843,6 +848,8 @@ void ANunMonster::SelfHeal()
 
 	HealEffect->ActivateCurrentEffect();
 	HealDustEffect->ActivateCurrentEffect();
+
+	PlayMonsterSoundInPool(EMonsterAudioType::NUN_HEAL);
 }
 
 void ANunMonster::DotFloor()
@@ -876,6 +883,7 @@ void ANunMonster::DotFloor()
 			NunEffect->SetCurrentEffect(EffectType::WORSHIPEFFECT);
 			NunEffect->ActivateCurrentEffect();
 			NunEffect->DeactivateDamageSphere(DotTime);
+			PlayMonsterSoundInPool(EMonsterAudioType::NUN_WORSHIP);
 		}
 	}
 }
@@ -896,6 +904,7 @@ void ANunMonster::JudementAttack()
 			FNavLocation RandomLocation;
 			if (NavSystem->GetRandomPointInNavigableRadius(GetActorLocation(), JudementRange, RandomLocation))
 			{
+				PlayMonsterSoundInPool(EMonsterAudioType::NUN_JUDEMENT_CHARGE);
 				FVector Temp = RandomLocation.Location;
 				auto Loc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z - 87.f);
 				auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
@@ -1062,6 +1071,8 @@ void ANunMonster::FragmentsAttack()
 		if (IsIllusion || Player == nullptr)
 			return;
 
+		PlayMonsterSoundInPool(EMonsterAudioType::NUN_FRAGMENT_BURST)
+
 		if (Player->TakeDamage(SkillInfoMap[MonsterAnimationType::FRAGMENT].Damage, DamageEvent, GetController(), this))
 		{
 
@@ -1176,6 +1187,8 @@ void ANunMonster::SingleHeal()
 			index = i;
 		}
 	}
+
+	PlayMonsterSoundInPool(EMonsterAudioType::NUN_HEAL);
 
 	auto TargetKnight = KnightArr[index];
 

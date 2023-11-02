@@ -195,6 +195,7 @@ public:
 	AActor* otherActor;
 
 	FTimerHandle MonsterDeadTimer;
+	FTimerHandle MonsterSoundTimer;
 
 protected:
 	TMap<int, TFunction<void()>> MonsterMoveMap;
