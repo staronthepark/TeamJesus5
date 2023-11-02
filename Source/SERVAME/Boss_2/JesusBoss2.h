@@ -14,6 +14,7 @@
 #include "..\UI\MonsterWidget.h"
 #include <vector>
 #include <mutex>
+#include "..\ObjectPool\MonsterSoundObjectInpool.h"
 #include "JesusBoss2.generated.h"
 
 UENUM()
@@ -491,6 +492,7 @@ public:
 	void ActivateRFOverlap();
 	void DeactivateLFOverlap();
 	void DeactivateRFOverlap();
+	void PlayMonsterSoundInPool(EMonsterAudioType AudioType);
 
 	/*======================
 	*		UFUNCTION

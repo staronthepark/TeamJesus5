@@ -12,6 +12,7 @@
 #include "..\ObjectPool\StoneObjectInPool.h"
 #include "DrawDebugHelpers.h"
 #include "..\Manager\JesusThreadManager.h"
+#include "..\SERVAME.h"
 
 AJesusBoss2::AJesusBoss2()
 {
@@ -1925,6 +1926,16 @@ void AJesusBoss2::DeactivateRFOverlap()
 {
 	RightFingerOverlapCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetWorldTimerManager().ClearTimer(SMOverlapTimerHandler);
+}
+
+void AJesusBoss2::PlayMonsterSoundInPool(EMonsterAudioType AudioType)
+{
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+
+	auto Obj = objectpool.SpawnObject(objectpool.ObjectArray[MONSTERSOUNDOP].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	auto MonsterSound = Cast<AMonsterSoundObjectInpool>(Obj);
+
+	MonsterSound->PlayMonsterSound(AudioType);
 }
 
 void AJesusBoss2::SetBoneHead(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

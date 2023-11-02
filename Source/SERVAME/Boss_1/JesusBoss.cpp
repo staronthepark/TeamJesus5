@@ -12,6 +12,7 @@
 #include <Misc/OutputDeviceNull.h>
 #include <random>
 #include "NavigationPath.h"
+#include "..\SERVAME.h"
 
 AJesusBoss::AJesusBoss()
 {
@@ -1612,6 +1613,16 @@ void AJesusBoss::InitHitCount()
 {
 	HitCount = 0;
 	GetWorldTimerManager().ClearTimer(HitTimerHandle);
+}
+
+void AJesusBoss::PlayMonsterSoundInPool(EMonsterAudioType AudioType)
+{
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+
+	auto Obj = objectpool.SpawnObject(objectpool.ObjectArray[MONSTERSOUNDOP].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	auto MonsterSound = Cast<AMonsterSoundObjectInpool>(Obj);
+
+	MonsterSound->PlayMonsterSound(AudioType);
 }
 
 void AJesusBoss::RespawnCharacter()

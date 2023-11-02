@@ -21,6 +21,7 @@
 #include "CineCameraActor.h"
 #include "NavigationSystem.h"
 #include "..\UDamageSphereTriggerComp.h"
+#include "..\ObjectPool\MonsterSoundObjectInpool.h"
 #include "JesusBoss.generated.h"
 
 /**
@@ -423,6 +424,7 @@ public:
 	void ReSetBoneRot();
 	void SetSplineCurve();
 	void InitHitCount(); 
+	void PlayMonsterSoundInPool(EMonsterAudioType AudioType);
 
 	/*=====================
 			Notify
