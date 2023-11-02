@@ -6,6 +6,7 @@
 #include "BaseObjectInPool.h"
 #include "Components/BoxComponent.h"
 #include "..\BaseCharacter.h"
+#include "..\Boss_2\JesusBoss2.h"
 #include "Engine/DamageEvents.h"
 #include "NiagaraComponent.h"
 #include "FallObjectInPool.generated.h"
@@ -50,6 +51,8 @@ public:
 
 	UPROPERTY()
 	UJesusGameInstance* GameInstance;
+
+	AJesusBoss2* Boss2;
 
 	FTimerHandle LifeTimer;
 

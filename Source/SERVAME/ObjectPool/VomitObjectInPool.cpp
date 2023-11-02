@@ -44,6 +44,8 @@ void AVomitObjectInPool::BeginPlay()
 	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AVomitObjectInPool::OnCollisionBeginOverlap);
 	SphereCollision->SetEnableGravity(false);
 	GroundHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AVomitObjectInPool::OnGroundOverlap);
+
+	Boss2 = Cast<AJesusBoss2>(UGameplayStatics::GetActorOfClass(GetWorld(), AJesusBoss2::StaticClass()));
 }
 
 void AVomitObjectInPool::Tick(float DeltaTime)
@@ -91,6 +93,7 @@ void AVomitObjectInPool::ShootProjectile(FVector target)
 		}
 
 		SphereCollision->AddImpulse(outVelocity);
+		Boss2->PlayMonsterSoundInPool(EMonsterAudioType::BOSS2_VOMIT);
 	}
 }
 
@@ -103,6 +106,7 @@ void AVomitObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* Overlapped
 		ProjectileEffect->Deactivate();
 		BurstEffect->Activate();
 		SphereCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		Boss2->PlayMonsterSoundInPool(EMonsterAudioType::BOSS2_VOMIT_FALLIN);
 	}
 }
 
@@ -112,6 +116,7 @@ void AVomitObjectInPool::OnGroundOverlap(UPrimitiveComponent* OverlappedComponen
 
 	BurstEffect->Activate();
 	ProjectileEffect->Deactivate();
+	Boss2->PlayMonsterSoundInPool(EMonsterAudioType::BOSS2_VOMIT_FALLIN);
 
 	IsHitGround = true;
 	SetActorTickEnabled(false);

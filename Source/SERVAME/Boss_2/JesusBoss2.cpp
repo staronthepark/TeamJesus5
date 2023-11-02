@@ -1577,6 +1577,7 @@ float AJesusBoss2::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	BossDataStruct.CharacterHp -= DamageAmount;
 	UE_LOG(LogTemp, Warning, TEXT("%f"), BossDataStruct.CharacterHp);
 
+	PlayMonsterSoundInPool(EMonsterAudioType::BOSS2_HIT);
 	IsStartBoneRot = true;
 	GetWorldTimerManager().SetTimer(BoneRotateTimerHandle, this, &AJesusBoss2::ReSetBoneRot, Time, false);
 		
@@ -1620,6 +1621,7 @@ void AJesusBoss2::Stun()
 {
 	AttackLockOn = false;
 	AIController->StopMovement();
+	PlayMonsterSoundInPool(EMonsterAudioType::BOSS2_GROGGY);
 	PlayAnimMontage(Boss2MontageMap[Boss2AnimationType::GROGGY]);
 }
 
@@ -1804,6 +1806,7 @@ void AJesusBoss2::CheckBossDie()
 {
 	if (BossDataStruct.CharacterHp <= 0 && IsDead == false)
 	{
+		PlayMonsterSoundInPool(EMonsterAudioType::BOSS2_DIE);
 		IsLockOn = false;
 		CanMove = false;
 		IsDead = true;
@@ -1991,6 +1994,7 @@ void AJesusBoss2::OnCrossFall()
 				ABaseObjectInPool* TempObj;
 				CrossQueue.Dequeue(TempObj);
 				TempObj->SetActorTickEnabled(true);
+				PlayMonsterSoundInPool(EMonsterAudioType::BOSS2_CROSSFALL);
 			}
 		}), DelayBetweenCross, true, SpawnTime);
 
@@ -2016,6 +2020,7 @@ void AJesusBoss2::OnCrossFall()
 				CrossQueue.Enqueue(PoolObj);
 				auto CastObj = Cast<AActor>(PoolObj);
 				CastObj->SetActorScale3D(FVector(5.f, 5.f, 5.f));
+				PlayMonsterSoundInPool(EMonsterAudioType::BOSS2_CREATECROSS);
 				CurrentCrossCount++;
 			}
 
@@ -2174,6 +2179,7 @@ void AJesusBoss2::ThrowStone()
 		StonePoolObj->MoveDir.Normalize();
 		StonePoolObj->SceneComp->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 		StonePoolObj->SetActorTickEnabled(true);
+		StonePoolObj->ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	}
 }
 
