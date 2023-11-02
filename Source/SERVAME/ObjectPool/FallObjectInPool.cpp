@@ -33,6 +33,8 @@ void AFallObjectInPool::BeginPlay()
 	HitCollision->OnComponentBeginOverlap.AddDynamic(this, &AFallObjectInPool::OnCollisionBeginOverlap);
 	GroundHitCollision->OnComponentBeginOverlap.AddDynamic(this, &AFallObjectInPool::OnGroundOverlap);
 	GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	Boss2 = Cast<AJesusBoss2>(UGameplayStatics::GetActorOfClass(GetWorld(), AJesusBoss2::StaticClass()));
 }
 
 void AFallObjectInPool::Tick(float DeltaTime)
@@ -74,6 +76,7 @@ void AFallObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* OverlappedC
 	if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
 	{
 		HitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		Boss2->PlayMonsterSoundInPool(EMonsterAudioType::BOSS2_CROSS_EXPLOSION);
 	}
 }
 
@@ -90,4 +93,6 @@ void AFallObjectInPool::OnGroundOverlap(UPrimitiveComponent* OverlappedComponent
 
 	HitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GroundHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	Boss2->PlayMonsterSoundInPool(EMonsterAudioType::BOSS2_CROSS_EXPLOSION);
 }

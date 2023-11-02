@@ -119,6 +119,7 @@ public:
 	class ANunMonster* Monster;
 	
 	TMap<EffectType, EffectType> GetBurstEffectType;
+	TMap<EffectType, EMonsterAudioType> GetBurstSoundType;
 
 	virtual void SetActive(bool active) override;
 	virtual void Tick(float DeltaTime) override;

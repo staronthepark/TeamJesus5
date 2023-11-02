@@ -5,18 +5,9 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "BossBaseNotifyState.h"
+#include "..\ObjectPool\MonsterSoundObjectInpool.h"
 #include "PlaySoundNotifyState.generated.h"
 
-
-UENUM()
-enum SoundType
-{
-	BOSSSWING = 24,
-	BOSSPOWERSWING,
-	BOSSSOUND27 =27,
-	BOSSCRACK,
-	BOSSSOUND30 = 30,
-};
 
 UCLASS()
 class SERVAME_API UPlaySoundNotifyState : public UBossBaseNotifyState
@@ -29,5 +20,5 @@ public:
 	UPlaySoundNotifyState();
 
 	UPROPERTY(EditAnywhere)
-	TEnumAsByte<SoundType> Type;
+	TEnumAsByte<EMonsterAudioType> Type;
 };

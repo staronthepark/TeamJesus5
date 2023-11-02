@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "BaseObjectInPool.h"
 #include "Components/BoxComponent.h"
-#include "..\BaseCharacter.h"
+#include "..\Boss_2\JesusBoss2.h"
 #include "NiagaraComponent.h"
 #include "StoneObjectInPool.generated.h"
 
@@ -29,6 +29,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stone")
 	float Damage;
 
+	AJesusBoss2* Boss2;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Stone")
 	USceneComponent* SceneComp;
 

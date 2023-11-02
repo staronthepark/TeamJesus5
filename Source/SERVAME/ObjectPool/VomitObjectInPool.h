@@ -12,6 +12,7 @@
 #include "NiagaraComponent.h"
 #include "..\BaseCharacter.h"
 #include "Kismet/GameplayStatics.h"
+#include "..\Boss_2\JesusBoss2.h"
 #include "VomitObjectInPool.generated.h"
 
 /**
@@ -44,6 +45,8 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Vomit")
 	bool debugLine = false;
+
+	AJesusBoss2* Boss2;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Vomit")
 	TObjectPtr<USceneComponent> RootComp;

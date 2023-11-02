@@ -31,6 +31,8 @@ void AStoneObjectInPool::BeginPlay()
 
 	ProjectileCollision->OnComponentBeginOverlap.AddDynamic(this, &AStoneObjectInPool::OnCollisionBeginOverlap);
 	GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	Boss2 = Cast<AJesusBoss2>(UGameplayStatics::GetActorOfClass(GetWorld(), AJesusBoss2::StaticClass()));
 }
 
 void AStoneObjectInPool::Tick(float DeltaTime)
@@ -43,6 +45,7 @@ void AStoneObjectInPool::SetActive(bool active)
 	Super::SetActive(active);
 	StoneMesh->SetActive(true);
 	SetActorTickEnabled(false);
+	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	auto Player = Cast<APlayerCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), APlayerCharacter::StaticClass()));
 
@@ -64,6 +67,7 @@ void AStoneObjectInPool::OnCollisionBeginOverlap(UPrimitiveComponent* Overlapped
 {
 	BurstEffect->Activate();
 	StoneMesh->SetActive(false);
+	Boss2->PlayMonsterSoundInPool(EMonsterAudioType::BOSS2_ROCKHIT);
 
 	if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
 	{

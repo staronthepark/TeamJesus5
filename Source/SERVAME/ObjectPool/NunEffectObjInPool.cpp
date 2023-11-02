@@ -26,6 +26,9 @@ ANunEffectObjInPool::ANunEffectObjInPool()
 	GetBurstEffectType.Add(EffectType::DARKEFFECT, EffectType::DARKEFFECTHIT);
 	GetBurstEffectType.Add(EffectType::PRAYEFFECT, EffectType::PRAYHITEFFECT);
 	GetBurstEffectType.Add(EffectType::CRYSTALEFFECT, EffectType::CRYSTALEFFECT_BUSRT);
+
+	GetBurstSoundType.Add(EffectType::DARKEFFECTHIT, EMonsterAudioType::NUN_DARKNESS_BURST);
+	GetBurstSoundType.Add(EffectType::PRAYHITEFFECT, EMonsterAudioType::NUN_DARKNESS_BURST);
 }
 
 void ANunEffectObjInPool::BeginPlay()
@@ -267,6 +270,11 @@ void ANunEffectObjInPool::OnProjectileBeginOverlap(UPrimitiveComponent* Overlapp
 		Type = GetBurstEffectType[Type];
 		CurrentEffect->SetAsset(GetTypeEffect[Type]);
 		CurrentEffect->Activate();
+		
+		if (GetBurstSoundType.Contains(Type))
+		{
+			Monster->PlayMonsterSoundInPool(GetBurstSoundType[Type]);
+		}
 	}
 
 	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
