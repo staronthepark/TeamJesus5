@@ -29,7 +29,6 @@ ANunEffectObjInPool::ANunEffectObjInPool()
 
 	GetBurstSoundType.Add(EffectType::DARKEFFECTHIT, EMonsterAudioType::NUN_DARKNESS_BURST);
 	GetBurstSoundType.Add(EffectType::PRAYHITEFFECT, EMonsterAudioType::NUN_DARKNESS_BURST);
-	GetBurstSoundType.Add(EffectType::CRYSTALEFFECT_BUSRT, EMonsterAudioType::NUN_CRYSTAL_BURST);
 }
 
 void ANunEffectObjInPool::BeginPlay()

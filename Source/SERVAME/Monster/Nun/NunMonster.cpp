@@ -916,7 +916,13 @@ void ANunMonster::JudementAttack()
 				JudementObj->Damage = 20;
 				JudementObj->SweepSingle(1.f, JudementProjectileRange, SkillInfoMap[MonsterAnimationType::JUDEMENT].Damage,
 					IsIllusion, GetController());
-				
+				PlayMonsterSoundInPool(EMonsterAudioType::NUN_JUDEMENT_CHARGE);
+
+				GetWorld()->GetTimerManager().SetTimer(MonsterSoundTimer, FTimerDelegate::CreateLambda([=]()
+					{
+						PlayMonsterSoundInPool(EMonsterAudioType::NUN_JUDEMENT_BURST);
+					}), 1.f, false);
+
 				JudementCurrentCount++;
 			}
 
@@ -965,12 +971,19 @@ void ANunMonster::CrystalAttack()
 
 			if (IsIllusion)
 				CrystalEffect->Damage = 0.f;
+
+			PlayMonsterSoundInPool(EMonsterAudioType::NUN_CRYSTAL_CHARGE);
 			CrystalEffect->SetCurrentEffect(EffectType::CRYSTALEFFECT);
 			CrystalEffect->ActivateCurrentEffect();
 			CrystalEffect->ShotProjectile(Temp);
 			CrystalEffect->SetActorTickEnabled(true);
 		}
 	}
+
+	GetWorld()->GetTimerManager().SetTimer(MonsterSoundTimer, FTimerDelegate::CreateLambda([=]()
+		{
+			PlayMonsterSoundInPool(EMonsterAudioType::NUN_CRYSTAL_BURST);
+		}), 1.f, false);
 }
 
 void ANunMonster::FogAttack()
@@ -991,6 +1004,7 @@ void ANunMonster::FogAttack()
 		FogEffect->DamageSphereTriggerComp->Damage = 50.f;
 	FogEffect->DamageSphereTriggerComp->DamageTime = 1.f;
 	FogEffect->DeactivateDamageSphere(1.f);
+	PlayMonsterSoundInPool(EMonsterAudioType::NUN_FOG);
 }
 
 void ANunMonster::PrayAttack()
@@ -1010,6 +1024,7 @@ void ANunMonster::PrayAttack()
 			PrayObj->ActivateCurrentEffect();
 			PrayObj->SetActorTickEnabled(true);
 			PrayObj->ShotProjectile(true, PlayerCharacter->GetActorLocation());
+			PlayMonsterSoundInPool(EMonsterAudioType::NUN_DARKNESS_CHARGE);
 			PrayObj->Delay = PrayDelay;
 			PrayObj->Speed = 1000.f;
 			if (IsIllusion)
@@ -1033,7 +1048,7 @@ void ANunMonster::FragmentsAttack()
 	auto Loc = GetActorLocation();
 
 	auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[41].ObjClass,
-		FVector(Loc.X,Loc.Y,Loc.Z-160.f), FRotator::ZeroRotator);
+		FVector(Loc.X,Loc.Y,Loc.Z-140.f), FRotator::ZeroRotator);
 
 	auto FragmentObj = Cast<ANunEffectObjInPool>(PoolObj);
 	FragmentObj->SetCurrentEffect(EffectType::FRAGMENTEFFECT_BURST);
@@ -1041,6 +1056,8 @@ void ANunMonster::FragmentsAttack()
 
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
+
+	PlayMonsterSoundInPool(EMonsterAudioType::NUN_FRAGMENT_BURST);
 
 	bool bResult = GetWorld()->SweepSingleByChannel(
 		OUT HitResult,
@@ -1070,8 +1087,6 @@ void ANunMonster::FragmentsAttack()
 
 		if (IsIllusion || Player == nullptr)
 			return;
-
-		PlayMonsterSoundInPool(EMonsterAudioType::NUN_FRAGMENT_BURST)
 
 		if (Player->TakeDamage(SkillInfoMap[MonsterAnimationType::FRAGMENT].Damage, DamageEvent, GetController(), this))
 		{
@@ -1146,6 +1161,7 @@ void ANunMonster::DarkAttack()
 	DarkObj->ActivateCurrentEffect();
 	DarkObj->ShotProjectile(PlayerCharacter);
 	DarkObj->SetActorTickEnabled(true);
+	PlayMonsterSoundInPool(EMonsterAudioType::NUN_DARKNESS_CHARGE);
 }
 
 void ANunMonster::SingleHeal()
@@ -1277,6 +1293,9 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	{
 		MonsterController->BossUI->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
 		MonsterController->BossUI->SetDamageText(DamageAmount);
+
+		auto NumToEnum = static_cast<EMonsterAudioType>(GetRandNum(14, 16));
+		PlayMonsterSoundInPool(NumToEnum);
 	}
 	else
 	{
