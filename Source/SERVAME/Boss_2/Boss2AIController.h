@@ -52,7 +52,6 @@ public:
 
 	bool IsArrived = false;
 
-
 	bool IsPerception = false;
 
 protected:

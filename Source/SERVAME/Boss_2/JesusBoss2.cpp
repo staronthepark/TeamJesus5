@@ -1938,7 +1938,8 @@ void AJesusBoss2::PlayMonsterSoundInPool(EMonsterAudioType AudioType)
 	auto Obj = objectpool.SpawnObject(objectpool.ObjectArray[MONSTERSOUNDOP].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 	auto MonsterSound = Cast<AMonsterSoundObjectInpool>(Obj);
 
-	MonsterSound->PlayMonsterSound(AudioType);
+	if (MonsterSound != nullptr)
+		MonsterSound->PlayMonsterSound(AudioType);
 }
 
 void AJesusBoss2::SetBoneHead(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -2115,7 +2116,7 @@ void AJesusBoss2::OnEnd()
 	if (!IsEnd.Exchange(true))
 		MontageEndMap[Type](this);
 
-	if (!IsDead && CircleWalkEnd)
+	if (!IsDead && CircleWalkEnd && AIController->IsPerception)
 		ActionEndMap[CurrentActionTemp.AttackType](Dist, fDeltaTime, StartMontage);
 
 	IsEnd.Exchange(false);
