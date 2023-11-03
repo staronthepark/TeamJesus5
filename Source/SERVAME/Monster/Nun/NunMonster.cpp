@@ -1413,19 +1413,19 @@ void ANunMonster::TelePort()
 			SetYaw();
 			GetWorld()->GetTimerManager().ClearTimer(TeleportTimer);
 
-			if (IsCoolTimeTeleport)
-			{
-				if (Count < 1)
-				{
-					++Count;
-					TelePort();
-				}
-				else
-				{
-					IsCoolTimeTeleport = false;
-					Count = 0;
-				}
-			}
+			//if (IsCoolTimeTeleport)
+			//{
+			//	if (Count < 1)
+			//	{
+			//		++Count;
+			//		TelePort();
+			//	}
+			//	else
+			//	{
+			//		IsCoolTimeTeleport = false;
+			//		Count = 0;
+			//	}
+			//}
 		}), TeleportDelayVal, false);
 }
 

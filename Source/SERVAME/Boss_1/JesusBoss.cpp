@@ -1979,14 +1979,15 @@ void AJesusBoss::AttackHit(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		return;
 	}
 
-	if (OtherActor->TakeDamage(Damage, DamageEvent, GetController(), this))
+	if (!Player->Imotal)
 	{
-		if (!Player->Imotal)
+		if (BossDataStruct.DamageList.Contains(Type))
+			Damage += BossDataStruct.DamageList[Type];
+		else
+			return;
+
+		if (OtherActor->TakeDamage(Damage, DamageEvent, GetController(), this))
 		{
-			if (BossDataStruct.DamageList.Contains(Type))
-				Damage += BossDataStruct.DamageList[Type];
-			else
-				return;
 
 			//UE_LOG(LogTemp, Warning, TEXT("DAMAGE : %d"), Damage);
 			objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
