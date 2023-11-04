@@ -7,6 +7,23 @@
 #include "Components/AudioComponent.h"
 #include "SoundManager.generated.h"
 
+
+
+UENUM(BlueprintType)
+enum class BGMType : uint8
+{
+	MAINHALL,
+	NUNINTRO,
+	NUNLOOP,
+	TITLEINTRO,
+	TITLEVERSE1,
+	TITLEVERSE2,
+	TITLEEND,
+	CYMBAL,
+	DRUM,
+};
+
+
 UCLASS(Blueprintable)
 class SERVAME_API ASoundManager : public AActor
 {
@@ -22,7 +39,7 @@ public:
 		TArray<UAudioComponent*> VoiceAudioCompArray;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<UAudioComponent*> BGMAudioCompArray;
+		TMap<BGMType, UAudioComponent*> BGMAudioCompMap;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UAudioComponent* CymbalAudio;
@@ -36,18 +53,12 @@ public:
 	float SFXVolume;
 	float VoiceVolume;
 
-	float MaxTempoTime;
-
-	FTimerHandle TempoTimer;
 	FTimerHandle DrumTimer;
 
-
-	int BGMMaxIndex;
-	int CurrentIndex;
+	BGMType CurrentBGMPlayType;
 
 public:
 
-	bool PlayNextBGM;
 	bool IsMute;
 
 	void Init();
@@ -65,8 +76,6 @@ public:
 	float GetSFXVolume();
 	float GetVoiceVolume();
 
-	void StartBGMSound(bool IsPhaseTwo);
-	void PlayNextBGMSound();
 	void PlayDrumSound();
-	void PlaySoundWithCymbalSound(int32 Index);
+	void PlaySoundWithCymbalSound(BGMType Type, bool PlayCymbal);
 };

@@ -1869,6 +1869,8 @@ void APlayerCharacter::BeginPlay()
 	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 0.5f);
 
 	ASoundManager::GetInstance().Init();
+	ASoundManager::GetInstance().PlaySoundWithCymbalSound(BGMType::TITLEINTRO, false);
+
 	CanShieldDeploy = true;
 	CanUseSkill = true;
 
@@ -2597,7 +2599,7 @@ void APlayerCharacter::RespawnCharacter()
 
 	GetWorldTimerManager().SetTimer(SprintStartTimer, this, &APlayerCharacter::FadeOut, 3.0f);
 
-	ASoundManager::GetInstance().StartBGMSound(IsPhaseTwo);
+	ASoundManager::GetInstance().PlaySoundWithCymbalSound(BGMType::TITLEINTRO, false);
 
 	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 
@@ -3187,7 +3189,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		ComboAttackEnd();
 		SwordTrailComp->Deactivate();
 		if (PlayerDataStruct.CharacterHp <= 0)
-			ASoundManager::GetInstance().PlaySoundWithCymbalSound(3);
+			ASoundManager::GetInstance().PlaySoundWithCymbalSound(BGMType::TITLEEND, true);
 
 
 		AnimInstance->BodyBlendAlpha = 1.0f;
@@ -3254,7 +3256,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	if (PlayerDataStruct.CharacterHp <= 0)
 	{
 		GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
-		ASoundManager::GetInstance().PlaySoundWithCymbalSound(3);
+		ASoundManager::GetInstance().PlaySoundWithCymbalSound(BGMType::TITLEEND, true);
 		PlayerDead(false);
 	}
 	return DamageAmount;

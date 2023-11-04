@@ -67,6 +67,7 @@ void ADoorAnimInteraction::EndTriggerEvent()
 void ADoorAnimInteraction::OnCloseDoorOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	Character->PlayerHUD->PlayInteractionAnimation(false);
+	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[47].ObjClass, GetActorLocation(), GetActorForwardVector().Rotation() + FRotator(0, 0, -20));
 	AnimInstance->DoorAnimationType = DoorAnimationType::CLOSE;
 	CloseDoorComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	OpenDoorComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);

@@ -75,7 +75,7 @@ void ABossAIController::Tick(float DeltaTime)
 					Boss->PlayerCharacter->UserSettingUI->WBP_UserSetting_GameUI->WBP_Language_Button->RightButton->OnClicked.AddDynamic(this, &ABossAIController::ChangeLanguage);
 					BossUI->PlayBossHPOpenAnimation(true, EBossSettings::phase1);
 				}
-				ASoundManager::GetInstance().PlaySoundWithCymbalSound(1);
+				ASoundManager::GetInstance().PlaySoundWithCymbalSound(BGMType::TITLEVERSE1, true);
 			}
 			
 			return;

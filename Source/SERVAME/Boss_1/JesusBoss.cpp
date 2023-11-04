@@ -1346,7 +1346,7 @@ void AJesusBoss::CheckBossDie()
 {	
 	if (BossDataStruct.CharacterHp <= 0 && IsDead == false)
 	{
-		ASoundManager::GetInstance().PlaySoundWithCymbalSound(2);
+		ASoundManager::GetInstance().PlaySoundWithCymbalSound(BGMType::TITLEVERSE2, true);
 
 		AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 
