@@ -2,6 +2,7 @@
 
 #include "./Player/JesusPlayerController.h"
 #include "PlaySequenceTriggerActor.h"
+#include "./Manager/SoundManager.h"
 
 APlaySequenceTriggerActor::APlaySequenceTriggerActor()
 {
@@ -59,7 +60,9 @@ void APlaySequenceTriggerActor::EnableEvent()
 	AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 
 	controller->CurrentSequncePlayer = SequncePlayer;
-	controller->EnableInput(GetWorld()->GetFirstPlayerController());
+	controller->DisableInput(GetWorld()->GetFirstPlayerController());
+
+	ASoundManager::GetInstance().PauseBGM();
 
 	if (TriggerOnlyOnce)
 		TriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -69,6 +72,7 @@ void APlaySequenceTriggerActor::EndSequence()
 {
 	//Boss->BossAnimInstance->IsSequenceEnd = true;
 	//Boss->BossAnimInstance->ResumeMontage(Boss->GetCurrentMontage());
+	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 	GetWorld()->GetFirstPlayerController()->SetViewTarget(Character);
 	Character->ChangePlayerAction(PlayerAction::NONE);
 	Character->ChangeMontageAnimation(AnimationType::IDLE);
