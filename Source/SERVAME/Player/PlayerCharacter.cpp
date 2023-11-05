@@ -906,6 +906,7 @@ APlayerCharacter::APlayerCharacter()
 			AxisY = 1;
 			ChangeMontageAnimation(AnimationType::ENDOFHEAL);
 			GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(this, 1.0f);
+			GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 			WeaponMesh->SetVisibility(true);
 			Imotal = false;
 		});

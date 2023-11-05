@@ -604,6 +604,7 @@ float ANunMonster::Die(float Dm)
 	PlayMonsterSoundInPool(EMonsterAudioType::NUN_DIE);
 
 	OpenDoor2->EnableEvent();
+	OpenDoor2->DoorAnimType = DoorAnimationType::KEEPOPEN;
 
 	NunAnimInstance->StopAllMontages(0.1f);
 	MonsterController->CanPerception = false;
