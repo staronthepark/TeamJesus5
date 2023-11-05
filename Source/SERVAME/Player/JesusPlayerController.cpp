@@ -411,19 +411,19 @@ void AJesusPlayerController::UnPressSkill()
 
 void AJesusPlayerController::OpenMenu()
 {
-	if (CurrentSequncePlayer)
-	{
-		CurrentSequncePlayer->Stop();
-		character->Imotal = false;
-		character->ChangePlayerAction(PlayerAction::NONE);
-		character->ChangeMontageAnimation(AnimationType::IDLE);
-		character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
-		character->SetActorHiddenInGame(false);
-		character->WeaponMesh->SetVisibility(true);
-		SetViewTarget(character);
-		CurrentSequncePlayer = nullptr;
-		return;
-	}
+	//if (CurrentSequncePlayer)
+	//{
+	//	CurrentSequncePlayer->Stop();
+	//	character->Imotal = false;
+	//	character->ChangePlayerAction(PlayerAction::NONE);
+	//	character->ChangeMontageAnimation(AnimationType::IDLE);
+	//	character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
+	//	character->SetActorHiddenInGame(false);
+	//	character->WeaponMesh->SetVisibility(true);
+	//	SetViewTarget(character);
+	//	CurrentSequncePlayer = nullptr;
+	//	return;
+	//}
 	if (!GameInstance->MainMenuWidget->IsInViewport())
 	{
 		if (character->PlayerHUD->IsRender())
@@ -443,19 +443,19 @@ void AJesusPlayerController::OpenMenu()
 
 void AJesusPlayerController::CloseMenu()
 {
-	if (CurrentSequncePlayer)
-	{
-		CurrentSequncePlayer->Stop();
-		SetViewTarget(character);
-		character->SetActorHiddenInGame(false);
-		character->Imotal = false;
-		character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
-		character->ChangePlayerAction(PlayerAction::NONE);
-		character->ChangeMontageAnimation(AnimationType::IDLE);
-		character->WeaponMesh->SetVisibility(true);
-		CurrentSequncePlayer = nullptr;
-		return;
-	}
+	//f (CurrentSequncePlayer)
+	//
+	//	CurrentSequncePlayer->Stop();
+	//	SetViewTarget(character);
+	//	character->SetActorHiddenInGame(false);
+	//	character->Imotal = false;
+	//	character->PlayerHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
+	//	character->ChangePlayerAction(PlayerAction::NONE);
+	//	character->ChangeMontageAnimation(AnimationType::IDLE);
+	//	character->WeaponMesh->SetVisibility(true);
+	//	CurrentSequncePlayer = nullptr;
+	//	return;
+	//
 
 	if (!GameInstance->MainMenuWidget->IsInViewport())
 	{

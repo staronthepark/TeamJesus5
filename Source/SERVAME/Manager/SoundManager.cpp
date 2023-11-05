@@ -145,7 +145,7 @@ void ASoundManager::PlaySoundWithCymbalSound(BGMType Type, bool PlayCymbal)
 
 	float Time = 10.8f;
 
-	if (Type != BGMType::TITLEINTRO) Time = 0.0f;
+	if (Type != BGMType::TITLEINTRO && Type != BGMType::TITLEEND) Time = 0.0f;
 	BGMAudioCompMap[CurrentBGMPlayType]->Play(Time);
 
 	if (PlayCymbal)
@@ -154,4 +154,15 @@ void ASoundManager::PlaySoundWithCymbalSound(BGMType Type, bool PlayCymbal)
 		CymbalAudio->Play(0.5f);
 		CymbalAudio->SetPaused(false);
 	}
+}
+
+void ASoundManager::PauseBGM()
+{
+	for (auto var : BGMAudioCompMap)
+	{
+		var.Value->SetPaused(true);
+	}
+
+
+	DrumAudio->Play(0.0f);
 }
