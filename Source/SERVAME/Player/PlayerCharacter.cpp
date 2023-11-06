@@ -906,6 +906,7 @@ APlayerCharacter::APlayerCharacter()
 			AxisY = 1;
 			ChangeMontageAnimation(AnimationType::ENDOFHEAL);
 			GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(this, 1.0f);
+			GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 			WeaponMesh->SetVisibility(true);
 			Imotal = false;
 		});
@@ -1895,7 +1896,9 @@ void APlayerCharacter::PlayStartAnimation()
 void APlayerCharacter::NewGameButton()
 {
 	UJesusSaveGame::GetInstance().Delete();
-	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::ResetGame, 1.5f);
+	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::ResetGame2, 1.5f);
+
+
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -3153,6 +3156,103 @@ void APlayerCharacter::LoadingMonster()
 			}
 		}
 	}
+}
+
+void APlayerCharacter::ResetGame2()
+{
+	GameInstance->MonsterArray.Empty();
+
+	UCombatManager& combatmanager = UCombatManager::GetInstance();
+
+	for (int32 i = 0; i < combatmanager.MonsterInfoArray.Num(); i++)
+	{
+		combatmanager.MonsterInfoArray[i]->SetActive(false);
+		combatmanager.MonsterInfoArray[i]->IsDie = false;
+		combatmanager.MonsterInfoArray[i]->RespawnCharacter();
+	}
+
+	combatmanager.Boss2->SetActive(false);
+
+	TArray<AActor*> ActorsToFind;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
+
+	for (AActor* TriggerActor : ActorsToFind)
+	{
+		AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
+		if (TriggerActorCast)
+		{
+			if (TriggerActorCast->MonsterID >= 0)
+				GameInstance->MonsterArray.Add(TriggerActorCast->MonsterID, TriggerActorCast->IsDie);
+		}
+	}
+
+	Super::RespawnCharacter();
+
+	if (combatmanager.MonsterInfoMap.Contains(CurrentMapName.ToString()))
+	{
+		for (int32 i = 0; i < combatmanager.MonsterInfoMap[CurrentMapName.ToString()].Num(); i++)
+		{
+			combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->SetActive(false);
+			if (CurrentMapName == "A_KimMinYeongMap_Boss1" || !combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->IsDie)
+			{
+				combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->RespawnCharacter();
+			}
+		}
+	}
+
+	if (combatmanager.MonsterInfoMap.Contains(SaveMapName.ToString()))
+	{
+		for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
+		{
+			if (SaveMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
+			{
+				combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+			}
+		}
+	}
+
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADoorAnimInteraction::StaticClass(), ActorsToFind);
+
+	for (AActor* TriggerActor : ActorsToFind)
+	{
+		ADoorAnimInteraction* TriggerActorCast = Cast<ADoorAnimInteraction>(TriggerActor);
+		if (TriggerActorCast)
+		{
+			TriggerActorCast->Init();
+		}
+	}
+
+	GetWorldTimerManager().SetTimer(SprintStartTimer, this, &APlayerCharacter::FadeOut, 3.0f);
+
+	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
+
+	AnimInstance->BodyBlendAlpha = 1.0f;
+
+	Imotal = false;
+	TargetCompArray.Empty();
+
+	CameraBoom1->SetWorldRotation(FRotator::ZeroRotator);
+	YawRotation = SpawnRotation;
+	ChangeActionType(ActionType::NONE);
+	ChangeMontageAnimation(AnimationType::IDLE);
+
+	AxisX = 1;
+	AxisY = 1;
+
+	RestoreStat();
+
+	FLatentActionInfo LatentInfo;
+	UGameplayStatics::UnloadStreamLevel(this, "PrayRoom", LatentInfo, false);
+	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 1.0f);
+
+	SetSpeed(SpeedMap[false][false]);
+
+	PlayStartAnimation();
+	SaveMapName = "Garden";
+	PlayerDataStruct = PlayerOriginDataStruct;
+	SpawnLocation = OriginLocation;
+	SetActorLocation(OriginLocation);
+	SetActorRotation(OriginRotation);
 }
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

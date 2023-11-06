@@ -1106,6 +1106,14 @@ void AJesusBoss::EndSequence()
 {
 	GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 	GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(PlayerCharacter, 100.0f);
+	PlayerCharacter->PlayerHUD->SetVisibility(ESlateVisibility::Visible);
+
+	ASoundManager::GetInstance().PlaySoundWithCymbalSound(BGMType::TITLEVERSE2, true);
+
+	FLatentActionInfo LatentInfo;
+	UGameplayStatics::UnloadStreamLevel(this, "A_KimMinYeongMap_Boss1", LatentInfo, false);
+	UGameplayStatics::UnloadStreamLevel(this, "2-2Map", LatentInfo, false);
+	UCombatManager::GetInstance().MonsterInfoMap["Boss2PhaseMap"][0]->RespawnCharacter();
 }
 
 void AJesusBoss::PostInitializeComponents()
@@ -1346,26 +1354,16 @@ void AJesusBoss::CheckBossDie()
 {	
 	if (BossDataStruct.CharacterHp <= 0 && IsDead == false)
 	{
-		ASoundManager::GetInstance().PlaySoundWithCymbalSound(BGMType::TITLEVERSE2, true);
+		ASoundManager::GetInstance().PauseBGM();
 
-		AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
-
-		controller->CurrentSequncePlayer = BossRoomDoorOpenSequncePlayer;
-		BossRoomDoorOpenSequncePlayer->Play();
-		GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
-		GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(CineCameraActor, 6.0f);
 
 		FLatentActionInfo LatentInfo;
 		UGameplayStatics::LoadStreamLevel(this, "Boss2PhaseMap", true, true, LatentInfo);
 		PlayerCharacter->CurrentMapName = "Boss2PhaseMap";
-		UGameplayStatics::UnloadStreamLevel(this, "A_KimMinYeongMap_Boss1", LatentInfo, false);
-		UGameplayStatics::UnloadStreamLevel(this, "2-2Map", LatentInfo, false);
-		UCombatManager::GetInstance().MonsterInfoMap["Boss2PhaseMap"][0]->RespawnCharacter();
 
 		DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		PlayerCharacter->AxisX = 1;
 		PlayerCharacter->AxisY = 1;
-		GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 		ChangeMontageAnimation(BossAnimationType::DIE);
 		IsDead = true;
 		AIController->BossUI->PlayBossDiedAnimtion();
@@ -1381,12 +1379,21 @@ void AJesusBoss::CheckBossDie()
 		//¸Ê ·Îµù µÆÀ» ¶§ BossUIÀÇ PlayFadeOutAnimation È£Ãâ
 		GetWorldTimerManager().SetTimer(ChangePlayerLocTimerHandle, FTimerDelegate::CreateLambda([=]()
 			{
+				AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
+
+				controller->CurrentSequncePlayer = BossRoomDoorOpenSequncePlayer;
+				BossRoomDoorOpenSequncePlayer->Play();
+				PlayerCharacter->PlayerHUD->SetVisibility(ESlateVisibility::Collapsed);
+				GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
+				GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(CineCameraActor, 6.0f);
 				PlayerCharacter->MoveSpawnLocation(FVector(-6912.570360, -60620.187377, 40.0f));
 				//PlayerCharacter->SetActorLocation();
 			}), 2.f, false);
 
 		GetWorldTimerManager().SetTimer(FadeInTimerHandle, FTimerDelegate::CreateLambda([=]()
 			{
+
+
 				UE_LOG(LogTemp, Warning, TEXT("FADEOUTANIMATION"));
 				AIController->BossUI->PlayFadeOutAnimation();
 				//AIController->BossUI->SetVisibility(ESlateVisibility::Hidden);
