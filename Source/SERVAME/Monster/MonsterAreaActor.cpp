@@ -40,7 +40,10 @@ void AMonsterAreaActor::EndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 	for (auto Monster : MonsterArr)
 	{
-		if (Monster->MonsterDataStruct.CharacterHp <= 0 || !IsValid(Monster))
+		if (!IsValid(Monster))
+			continue;
+
+		if (Monster->MonsterDataStruct.CharacterHp <= 0)
 			continue;
 
 		if (Monster->MyMonsterType == MonsterType::JAMSIG)
