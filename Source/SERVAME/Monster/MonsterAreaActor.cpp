@@ -35,9 +35,12 @@ void AMonsterAreaActor::EndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 {
 	UE_LOG(LogTemp, Warning, TEXT("EndOverlap : %s"), *OtherActor->GetName());
 
+	if (MonsterArr.IsEmpty())
+		return;
+
 	for (auto Monster : MonsterArr)
 	{
-		if (Monster->MonsterDataStruct.CharacterHp <= 0)
+		if (Monster->MonsterDataStruct.CharacterHp <= 0 || !IsValid(Monster))
 			continue;
 
 		if (Monster->MyMonsterType == MonsterType::JAMSIG)
