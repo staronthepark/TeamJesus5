@@ -192,5 +192,8 @@ public:
 	void PlayDied(bool IsOpen);
 	void ChangeSkill(const bool isPressedRight);
 	void ChangeHealCount(int value);
+
+	// ¸®¼Â
+	void Reset();
 };
 

@@ -28,4 +28,6 @@ public:
 	virtual void NativeOnInitialized() override;
 
 	void SetSkill(float seconds);
+
+	void ResetTimer();
 };
