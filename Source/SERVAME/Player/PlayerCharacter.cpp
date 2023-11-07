@@ -322,7 +322,7 @@ APlayerCharacter::APlayerCharacter()
 	NotifyBeginEndEventMap.Add(AnimationType::ATTACK1, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[AnimationType::ATTACK1].Add(true, [&]()
 		{
-			UCombatManager::GetInstance().ActivateCollider();
+			ActivateCollision();
 			ActivateSMOverlap();
 			ActivateRightWeapon();
 			SwordTrailComp->Activate();
@@ -520,7 +520,7 @@ APlayerCharacter::APlayerCharacter()
 		});
 	NotifyBeginEndEventMap[AnimationType::SKILL1].Add(true, [&]()
 		{
-			UCombatManager::GetInstance().ActivateCollider();
+			ActivateCollision();
 			AObjectPool& objectpool = AObjectPool::GetInstance();
 			CameraShake(PlayerCameraShake);
 			VibrateGamePad(0.4f, 0.4f);
@@ -545,7 +545,7 @@ APlayerCharacter::APlayerCharacter()
 		});
 	NotifyBeginEndEventMap[AnimationType::SKILL2].Add(true, [&]()
 		{
-			UCombatManager::GetInstance().ActivateCollider();
+			ActivateCollision();
 			SkillCollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 			CameraShake(PlayerCameraShake);
@@ -1857,6 +1857,18 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseCharacter::StaticClass(), ActorsToFind);
+
+	for (AActor* TriggerActor : ActorsToFind)
+	{		
+		APlayerCharacter* character = Cast<APlayerCharacter>(TriggerActor);
+		if(character == nullptr)
+		HitMonsterInfoArray.AddUnique(Cast<ABaseCharacter>(TriggerActor));
+	}
+
+
+
+
 
 	PlayerDataStruct.SoulCount = 0;
 
@@ -1995,7 +2007,9 @@ void APlayerCharacter::Dodge()
 		SwordTrailComp->Deactivate();
 		CanNextAttack = false;
 		LockOnCameraSettingMap[false]();
-		UCombatManager::GetInstance().ActivateCollider();
+
+		ActivateCollision();
+
 		SetPlayerForwardRotAndDir();
 		SetPlayerRightRotAndDir();
 
@@ -2034,6 +2048,18 @@ void APlayerCharacter::RestoreStat()
 			if (combatmanager.MonsterInfoMap[SaveMapName.ToString()][i] == nullptr)continue;
 			if (SaveMapName == "A_KimMinYeongMap_Boss1" || !combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
 				combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+		}
+	}
+}
+
+void APlayerCharacter::ActivateCollision()
+{
+	if (!HitMonsterInfoArray.IsEmpty())
+	{
+		for (int i = 0; i < HitMonsterInfoArray.Num(); i++)
+		{
+			if (HitMonsterInfoArray[i] != nullptr)
+				HitMonsterInfoArray[i]->ActivateHitCollision();
 		}
 	}
 }
@@ -3312,7 +3338,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		ShoulderView(IsShoulderView);
 		IsGrab = false;
 
-		UCombatManager::GetInstance().ActivateCollider();
+		ActivateCollision();
 
 		if (MontageEndEventMap.Contains(AnimInstance->PlayerAnimationType))
 		{

@@ -587,8 +587,8 @@ float ANunMonster::Die(float Dm)
 		auto OriginNun = Cast<ANunMonster>(actor);
 		OriginNun->SelfHeal();
 
-		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
-		//UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
+		auto index = PlayerCharacter->HitMonsterInfoArray.Find(this);
+		PlayerCharacter->HitMonsterInfoArray.RemoveAtSwap(index);
 		SetActorTickEnabled(false);
 		GetWorld()->DestroyActor(this);
 		DeactivateHpBar();
@@ -598,7 +598,7 @@ float ANunMonster::Die(float Dm)
 	if (PlayerCharacter->IsLockOn)
 		PlayerCharacter->LockOn();
 
-	auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
+	auto index = PlayerCharacter->HitMonsterInfoArray.Find(this);
 	//UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
 
 	PlayMonsterSoundInPool(EMonsterAudioType::NUN_DIE);
@@ -1534,8 +1534,8 @@ void ANunMonster::RespawnCharacter()
 {
 	if (MyMonsterType == MonsterType::ILLUSION_NUN)
 	{
-		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
-		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+		auto index = PlayerCharacter->HitMonsterInfoArray.Find(this);
+		PlayerCharacter->HitMonsterInfoArray.RemoveAt(index);
 		SetActorTickEnabled(false);
 		GetWorld()->DestroyActor(this);
 		return;

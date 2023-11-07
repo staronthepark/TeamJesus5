@@ -445,6 +445,8 @@ public:
 
 	void RestoreStat();
 
+	void ActivateCollision();
+
 	void MoveSpawnLocation(FVector Location);
 
 	virtual bool IsAlive() override;
