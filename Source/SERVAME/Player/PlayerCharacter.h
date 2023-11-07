@@ -167,6 +167,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
 		UBoxComponent* SkillCollisionComp;
 
+
 	FVector CamExecutionDirection;
 
 	int32 CurRotateIndex;
@@ -211,6 +212,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FName CurrentMapName;
 
+
+	UPROPERTY(EditAnywhere)
+		TArray<ABaseCharacter*> HitMonsterInfoArray;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraSpringArm")
 		USpringArmComponent* CameraBoom1;
 

@@ -1903,7 +1903,7 @@ void APlayerCharacter::NewGameButton()
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	UCombatManager::GetInstance().MonsterInfoArray.Empty();
-	UCombatManager::GetInstance().HitMonsterInfoArray.Empty();
+	HitMonsterInfoArray.Empty();
 	UCombatManager::GetInstance().MonsterInfoMap.Empty();
 }
 

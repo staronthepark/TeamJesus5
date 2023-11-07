@@ -26,14 +26,6 @@ UCombatManager& UCombatManager::GetInstance()
 
 void UCombatManager::ActivateCollider()
 {
-	if (!HitMonsterInfoArray.IsEmpty())
-	{
-		for (int i = 0; i < HitMonsterInfoArray.Num(); i++)
-		{
-			if (HitMonsterInfoArray[i] != nullptr)
-				HitMonsterInfoArray[i]->ActivateHitCollision();
-		}
-	}
 }
 
 void UCombatManager::DeactivateCollider()
@@ -51,7 +43,6 @@ void UCombatManager::DeactivateCollider()
 void UCombatManager::AddMonsterInfo(ABaseCharacter* character)
 {
 	MonsterInfoArray.AddUnique(character);
-	HitMonsterInfoArray.AddUnique(character);
 	if (!MonsterInfoMap.Contains(character->MapName))
 	{
 		MonsterInfoMap.Add(character->MapName, TArray<ABaseCharacter*>());
