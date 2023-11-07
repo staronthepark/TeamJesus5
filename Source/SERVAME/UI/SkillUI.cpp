@@ -29,4 +29,10 @@ void USkillUI::SetSkill(float seconds)
 		}, 1, true);
 }
 
+void USkillUI::ResetTimer()
+{
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	TimerManager.ClearTimer(TimerHandle);
+}
+
 
