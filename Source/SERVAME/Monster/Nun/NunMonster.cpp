@@ -670,11 +670,14 @@ void ANunMonster::SpawnKnight(int knightnum)
 				FVector Temp = RandomLocation.Location;
 				SpawnLoc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
 			}
+
 			//SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
 
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 			auto Knight = GetWorld()->SpawnActor<AKinghtMonster>(KnightClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+
+			//
 
 			Knight->SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", 0.f);
 			Knight->KnightHeadMesh->SetScalarParameterValueOnMaterials("Dither", 0.f);
@@ -1340,7 +1343,7 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		if (SpawnLevel > MaxSpawnLevel)
 			return 0.f;
 
-		SpawnKnight(KnightSpawnMap[SpawnLevel]);
+		SpawnKnight(KnightSpawnMap[SpawnLevel++]);
 		SpawnDamageSum = 0;
 	}
 	//if (IllusionDamageSum >= MonsterDataStruct.CharacterMaxHp * IllusionVal)
