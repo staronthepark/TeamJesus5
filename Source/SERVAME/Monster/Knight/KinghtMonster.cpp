@@ -405,6 +405,13 @@ void AKinghtMonster::BeginPlay()
 		ChangeActionType(MonsterActionType::MOVE);
 	}
 
+
+	if (IsSpawn)
+	{
+		APlayerCharacter* player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+		player->HitMonsterInfoArray.AddUnique(this);
+	}
+
 	SetActive(true);
 
 	PlayerCharacter = nullptr;
@@ -537,10 +544,9 @@ void AKinghtMonster::RespawnCharacter()
 		UE_LOG(LogTemp, Warning, TEXT("spawned knight delete"));
 		//소환된 기사 삭제
 		auto index = PlayerCharacter->HitMonsterInfoArray.Find(this);
-		//UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
-		SetActive(false);
-		//SetActorTickEnabled(false);
-		//GetWorld()->DestroyActor(this);
+		PlayerCharacter->HitMonsterInfoArray.RemoveAtSwap(index);
+		SetActive(false);		
+		GetWorld()->DestroyActor(this);
 		return;
 	}
 
