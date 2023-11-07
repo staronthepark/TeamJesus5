@@ -392,7 +392,18 @@ void AKinghtMonster::BeginPlay()
 	if (MyMonsterType != MonsterType::PERSISTENTKNIGHT && MyMonsterType != MonsterType::DEADBODYOFKNIGHT)
 		Reviving = false;
 
-	MonsterController->CanPerception = true;
+	if (IsSpawnKnight)
+	{
+		SetActive(false);
+		SetActorHiddenInGame(true);
+		SetActorEnableCollision(false);
+		SetActorTickEnabled(false);
+		MonsterController->CanPerception = false;
+	}
+	else
+	{
+		MonsterController->CanPerception = true;
+	}
 
 	DeactivateHpBar();
 
