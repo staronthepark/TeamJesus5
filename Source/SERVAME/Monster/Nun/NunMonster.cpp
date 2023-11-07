@@ -661,8 +661,15 @@ void ANunMonster::SpawnKnight(int knightnum)
 	{
 		if (NavSystem->GetRandomPointInNavigableRadius(GetActorLocation(), KnightSpawnRadius, RandomLocation))
 		{
-			FVector Temp = RandomLocation.Location;
-			SpawnLoc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
+			if (FVector::Distance(RandomLocation, SpawnLocation) > 500.f)
+			{
+				SpawnLoc = FVector(-22780.715263, 385.618253, -2225.966660);
+			}
+			else
+			{
+				FVector Temp = RandomLocation.Location;
+				SpawnLoc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
+			}
 			//SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
 
 			FActorSpawnParameters SpawnParams;
