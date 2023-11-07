@@ -26,7 +26,9 @@ enum class EGuides : uint8
 	//shield			UMETA(DisplayName = "Shield"),
 	shieldattack			UMETA(DisplayName = "Shieldattack"),
 	soul			UMETA(DisplayName = "Soul"),
+
 	
+	// Tutorial
 	LockOn		UMETA(DisplayName = "Tutorial_LockOn"),
 	Parring		UMETA(DisplayName = "Tutorial_Parring"),
 	Heal		UMETA(DisplayName = "Tutorial_Heal"),
@@ -34,11 +36,22 @@ enum class EGuides : uint8
 	Shield		UMETA(DisplayName = "Tutorial_Shield"),
 	StrongAttack	UMETA(DisplayName = "Tutorial_StrongAttack"),
 
+	// Maps
 	Haros	UMETA(DisplayName = "Map_Haros"),
 	LostWay UMETA(DisplayName = "Map_LostWay"),
 	HouseOfAbandoned	UMETA(DisplayName = "Map_HouseOfAbandoned"),
 	MainHall	UMETA(DisplayName = "Map_MainHall"),
-	Repent	UMETA(DisplayName = "Map_Repent")
+	Repent	UMETA(DisplayName = "Map_Repent"),
+
+	// Subtitles
+	BossRoomWay UMETA(DisplayName = "ST_BossRoomWay"),
+	EliteKnight	UMETA(DisplayName = "ST_EliteKnight"),
+	Garden		UMETA(DisplayName = "ST_Garden"),
+	JotbabMonster	UMETA(DisplayName = "ST_Jotbab"),
+	Nun			UMETA(DisplayName = "ST_Nun"),
+	Door		UMETA(DisplayName = "ST_Door"),
+	PrayRoom	UMETA(DisplayName = "ST_PrayRoom"),
+	Tomb		UMETA(DisplayName = "ST_Tomb"),
 };
 
 USTRUCT(BlueprintType)

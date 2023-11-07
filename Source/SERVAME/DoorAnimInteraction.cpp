@@ -97,6 +97,7 @@ void ADoorAnimInteraction::EnableEvent()
 
 	if (PlayerPlayDoorOpenAnim)
 	{
+		GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 		Character->SetActorLocation(TriggerComp->GetComponentLocation());
 		Character->SetActorRotation(GetActorRotation() - FRotator(0, -90, 0));
 		Character->YawRotation = GetActorRotation() - FRotator(0, -90, 0);

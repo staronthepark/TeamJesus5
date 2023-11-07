@@ -548,6 +548,8 @@ public:
 
 	void LoadingMonster();
 
+	void ResetGame2();
+
 	float GetPercent(float value, float min, float max);
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)override;

@@ -2,6 +2,7 @@
 #include "Components/CanvasPanelSlot.h"
 #include "SkillUI.h"
 #include "PlayerSoulStatUI.h"
+#include "SubtitleUI.h"
 #include <SERVAME/Player/JesusPlayerController.h>
 // Fill out your copyright notice in the Description page of Project Settings.
 
@@ -95,6 +96,39 @@ void UPlayerHUD::NativeOnInitialized()
 	GuideAnimationFunction.Add(EGuides::StrongAttack, [&](bool value)
 		{
 			PlayTutorialAnimation(EGuides::StrongAttack, isGamePad);
+		});
+	// Subtitle
+	GuideAnimationFunction.Add(EGuides::BossRoomWay, [&](bool value)
+		{
+			PlaySubtitleAnimation(EGuides::BossRoomWay);
+		});
+	GuideAnimationFunction.Add(EGuides::EliteKnight, [&](bool value)
+		{
+			PlaySubtitleAnimation(EGuides::EliteKnight);
+		});
+	GuideAnimationFunction.Add(EGuides::Garden, [&](bool value)
+		{
+			PlaySubtitleAnimation(EGuides::Garden);
+		});
+	GuideAnimationFunction.Add(EGuides::JotbabMonster, [&](bool value)
+		{
+			PlaySubtitleAnimation(EGuides::JotbabMonster);
+		});
+	GuideAnimationFunction.Add(EGuides::Nun, [&](bool value)
+		{
+			PlaySubtitleAnimation(EGuides::Nun);
+		});
+	GuideAnimationFunction.Add(EGuides::Door, [&](bool value)
+		{
+			PlaySubtitleAnimation(EGuides::Door);
+		});
+	GuideAnimationFunction.Add(EGuides::PrayRoom, [&](bool value)
+		{
+			PlaySubtitleAnimation(EGuides::PrayRoom);
+		});
+	GuideAnimationFunction.Add(EGuides::Tomb, [&](bool value)
+		{
+			PlaySubtitleAnimation(EGuides::Tomb);
 		});
 	isGamePad = Keyboard;
 }
@@ -313,6 +347,11 @@ void UPlayerHUD::PlayTutorialAnimation(EGuides type, int isPad)
 {
 	WBP_Tutorial->ChangeTexture(type, isPad);
 	PlayAnimation(TutorialAnimation);
+}
+
+void UPlayerHUD::PlaySubtitleAnimation(EGuides type)
+{
+	WBP_Subtitle->PlaySubtitle(type);
 }
 
 void UPlayerHUD::FadeInAnimation(bool isFadeIn)

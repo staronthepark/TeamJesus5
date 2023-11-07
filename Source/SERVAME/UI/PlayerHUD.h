@@ -101,6 +101,9 @@ class SERVAME_API UPlayerHUD : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 		class UPlayerSoulStatUI* WBP_PlayerStat_UI;
 
+	UPROPERTY(meta = (BindWidget))
+		class USubtitleUI* WBP_Subtitle;
+
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* HUDOpenAnimation;
@@ -179,6 +182,7 @@ public:
 	void PlayExitAnimation(bool IsOpen);
 	void PlayMapUIAnimation(EGuides MapName);
 	void PlayTutorialAnimation(EGuides type, int isPad);
+	void PlaySubtitleAnimation(EGuides type);
 
 	void FadeInAnimation(bool isFadeIn);
 	void ClearShield();

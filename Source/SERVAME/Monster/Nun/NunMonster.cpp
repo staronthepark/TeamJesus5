@@ -604,6 +604,7 @@ float ANunMonster::Die(float Dm)
 	PlayMonsterSoundInPool(EMonsterAudioType::NUN_DIE);
 
 	OpenDoor2->EnableEvent();
+	OpenDoor2->DoorAnimType = DoorAnimationType::KEEPOPEN;
 
 	NunAnimInstance->StopAllMontages(0.1f);
 	MonsterController->CanPerception = false;
@@ -663,28 +664,28 @@ void ANunMonster::SpawnKnight(int knightnum)
 			FVector Temp = RandomLocation.Location;
 			SpawnLoc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
 			//SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
+
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+			auto Knight = GetWorld()->SpawnActor<AKinghtMonster>(KnightClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+
+			Knight->SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", 0.f);
+			Knight->KnightHeadMesh->SetScalarParameterValueOnMaterials("Dither", 0.f);
+			Knight->SetActorLocation(SpawnLoc);
+			Knight->SetActorRotation(SpawnRot);
+			Knight->Imotal = true;
+			Knight->MonsterDataStruct.CharacterMaxHp = SpawnedKnightMaxHp;
+			Knight->MonsterDataStruct.CharacterHp = SpawnedKnightMaxHp;
+			Knight->IsSpawn = true;
+			Knight->PlayerCharacter = PlayerCharacter;
+			Knight->Super::PlayerCharacter = PlayerCharacter;
+			Knight->SpawnBegin();
+			Knight->ChangeMontageAnimation(MonsterAnimationType::SPAWNING);
+			Knight->MonsterController->FindPlayer = true;
+			Knight->ChangeActionType(MonsterActionType::MOVE);
+			Knight->MonsterMoveEventIndex = 1;
+			KnightArr.Push(Knight);
 		}
-
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;;
-		auto Knight = GetWorld()->SpawnActor<AKinghtMonster>(KnightClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
-
-		Knight->SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", 0.f);
-		Knight->KnightHeadMesh->SetScalarParameterValueOnMaterials("Dither", 0.f);
-		Knight->SetActorLocation(SpawnLoc);
-		Knight->SetActorRotation(SpawnRot);
-		Knight->Imotal = true;
-		Knight->MonsterDataStruct.CharacterMaxHp = SpawnedKnightMaxHp;
-		Knight->MonsterDataStruct.CharacterHp = SpawnedKnightMaxHp;
-		Knight->IsSpawn = true;
-		Knight->PlayerCharacter = PlayerCharacter;
-		Knight->Super::PlayerCharacter = PlayerCharacter;
-		Knight->SpawnBegin();
-		Knight->ChangeMontageAnimation(MonsterAnimationType::SPAWNING);
-		Knight->MonsterController->FindPlayer = true;
-		Knight->ChangeActionType(MonsterActionType::MOVE);
-		Knight->MonsterMoveEventIndex = 1;
-		KnightArr.Push(Knight);
 	}
 }
 
@@ -902,7 +903,7 @@ void ANunMonster::JudementAttack()
 				return;
 
 			FNavLocation RandomLocation;
-			if (NavSystem->GetRandomPointInNavigableRadius(GetActorLocation(), JudementRange, RandomLocation))
+			if (NavSystem->GetRandomPointInNavigableRadius(PlayerCharacter->GetActorLocation(), JudementRange, RandomLocation))
 			{
 				PlayMonsterSoundInPool(EMonsterAudioType::NUN_JUDEMENT_CHARGE);
 				FVector Temp = RandomLocation.Location;

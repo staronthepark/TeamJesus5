@@ -78,4 +78,5 @@ public:
 
 	void PlayDrumSound();
 	void PlaySoundWithCymbalSound(BGMType Type, bool PlayCymbal);
+	void PauseBGM();
 };
