@@ -685,6 +685,9 @@ void ANunMonster::SpawnKnight(int knightnum)
 			Knight->MonsterDataStruct.CharacterMaxHp = SpawnedKnightMaxHp;
 			Knight->MonsterDataStruct.CharacterHp = SpawnedKnightMaxHp;
 			Knight->IsSpawn = true;
+			APlayerCharacter* player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+			player->HitMonsterInfoArray.AddUnique(Knight);
+
 			Knight->PlayerCharacter = PlayerCharacter;
 			Knight->Super::PlayerCharacter = PlayerCharacter;
 			Knight->SpawnBegin();

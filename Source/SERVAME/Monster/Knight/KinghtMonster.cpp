@@ -419,8 +419,6 @@ void AKinghtMonster::BeginPlay()
 
 	if (IsSpawn)
 	{
-		APlayerCharacter* player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
-		player->HitMonsterInfoArray.AddUnique(this);
 	}
 
 	SetActive(true);
