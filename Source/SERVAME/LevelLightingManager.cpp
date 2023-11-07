@@ -35,6 +35,7 @@ void ALevelLightingManager::Tick(float DeltaTime)
 
 	DirectionalLightComp->SetIntensity(FMath::Lerp(DirectionalLightComp->Intensity, TargetDirectionalLight.Intensity, FadeSpeed * DeltaTime));
 	DirectionalLightComp->SetLightColor(FMath::Lerp(DirectionalLightComp->GetLightColor(), TargetDirectionalLight.LightColor, FadeSpeed * DeltaTime));
+	DirectionalLightComp->SetWorldRotation(FMath::Lerp(DirectionalLightComp->GetRelativeRotation(), TargetDirectionalLight.Roatate, FadeSpeed * DeltaTime));
 	
 	ExponentialHeightFogComp->SetFogDensity(FMath::Lerp(ExponentialHeightFogComp->FogDensity, TargetHeightFog.FogDensity, FadeSpeed * DeltaTime));
 	ExponentialHeightFogComp->SetFogHeightFalloff(FMath::Lerp(ExponentialHeightFogComp->FogHeightFalloff, TargetHeightFog.FogHeightFallOff, FadeSpeed * DeltaTime));
