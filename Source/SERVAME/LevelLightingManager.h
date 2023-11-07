@@ -19,6 +19,8 @@ struct FMyDirectionalLight
 		float Intensity;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FLinearColor LightColor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FRotator Roatate;
 };
 
 USTRUCT(BlueprintType)
