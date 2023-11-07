@@ -677,8 +677,6 @@ void ANunMonster::SpawnKnight(int knightnum)
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 			auto Knight = GetWorld()->SpawnActor<AKinghtMonster>(KnightClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 
-			//
-
 			Knight->SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", 0.f);
 			Knight->KnightHeadMesh->SetScalarParameterValueOnMaterials("Dither", 0.f);
 			Knight->SetActorLocation(SpawnLoc);

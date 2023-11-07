@@ -60,8 +60,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
 	TSubclassOf<AKinghtMonster> KnightClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
-	TArray<AKinghtMonster*> SpawnKnightArr;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
 	TMap<int,int> KnightSpawnMap;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knight")
 	TArray<AKinghtMonster*> KnightArr;
