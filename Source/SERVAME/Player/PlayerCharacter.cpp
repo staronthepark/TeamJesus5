@@ -1668,7 +1668,6 @@ APlayerCharacter::APlayerCharacter()
 		});
 	PlayerEventFuncMap[AnimationType::EXECUTIONBOSS].Add(false, [&]()
 		{
-			UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(ExecutionCharacter);
 			CameraShake(PlayerCameraShake);
 			ExecutionCharacter->CanHit = true;
 			ExecutionCharacter->TakeDamage(PlayerDataStruct.BaseDamage * PlayerDataStruct.PlayerExecutionSecondDamage, CharacterDamageEvent, nullptr, this);
@@ -2032,6 +2031,7 @@ void APlayerCharacter::RestoreStat()
 	{
 		for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
 		{
+			if (combatmanager.MonsterInfoMap[SaveMapName.ToString()][i] == nullptr)continue;
 			if (SaveMapName == "A_KimMinYeongMap_Boss1" || !combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
 				combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
 		}
@@ -2569,6 +2569,7 @@ void APlayerCharacter::RespawnCharacter()
 	{
 		for (int32 i = 0; i < combatmanager.MonsterInfoMap[CurrentMapName.ToString()].Num(); i++)
 		{
+			if (combatmanager.MonsterInfoMap[SaveMapName.ToString()][i] == nullptr)continue;
 			combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->SetActive(false);
 			if (CurrentMapName == "A_KimMinYeongMap_Boss1" || !combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->IsDie)
 			{
@@ -2581,6 +2582,7 @@ void APlayerCharacter::RespawnCharacter()
 	{
 		for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
 		{
+			if (combatmanager.MonsterInfoMap[SaveMapName.ToString()][i] == nullptr)continue;
 			if (SaveMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
 			{
 				combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
@@ -2715,7 +2717,6 @@ void APlayerCharacter::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedCompo
 		if (OtherActor->TakeDamage(PlayerDataStruct.BaseDamage * PlayerDataStruct.DamageList[AnimInstance->PlayerAnimationType].Damage, CharacterDamageEvent, nullptr, this))
 		{
 			AObjectPool& objectpool = AObjectPool::GetInstance();
-			UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(character);
 
 			HitStop();
 			CameraShake(PlayerCameraShake);
@@ -3143,6 +3144,7 @@ void APlayerCharacter::LoadingMonster()
 
 	for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
 	{
+		if (combatmanager.MonsterInfoMap[SaveMapName.ToString()][i] == nullptr)continue;
 		if (!combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
 		{
 			combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
@@ -3192,6 +3194,7 @@ void APlayerCharacter::ResetGame2()
 	{
 		for (int32 i = 0; i < combatmanager.MonsterInfoMap[CurrentMapName.ToString()].Num(); i++)
 		{
+			if (combatmanager.MonsterInfoMap[SaveMapName.ToString()][i] == nullptr)continue;
 			combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->SetActive(false);
 			if (CurrentMapName == "A_KimMinYeongMap_Boss1" || !combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->IsDie)
 			{
@@ -3204,6 +3207,7 @@ void APlayerCharacter::ResetGame2()
 	{
 		for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
 		{
+			if (combatmanager.MonsterInfoMap[SaveMapName.ToString()][i] == nullptr)continue;
 			if (SaveMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
 			{
 				combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();

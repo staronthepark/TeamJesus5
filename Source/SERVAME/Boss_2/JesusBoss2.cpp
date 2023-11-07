@@ -1572,6 +1572,8 @@ float AJesusBoss2::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
 		return 0.0f;
 	
+	DeactivateHitCollision();
+
 	OffHitCollision();
 
 	BossDataStruct.CharacterHp -= DamageAmount;
@@ -1718,10 +1720,6 @@ void AJesusBoss2::ReSetBoneRot()
 
 void AJesusBoss2::OffHitCollision()
 {
-	HitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	HeadHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	LeftArmHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	RightArmHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void AJesusBoss2::SlerpJump()
@@ -1820,7 +1818,7 @@ void AJesusBoss2::CheckBossDie()
 		AIController->OnUnPossess();
 
 		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
-		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
+		//UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
 
 		for (auto iter = BossDataStruct.DamageList.begin(); iter != BossDataStruct.DamageList.end(); iter.operator++())
 		{
@@ -1959,11 +1957,7 @@ void AJesusBoss2::SetBoneRArm(UPrimitiveComponent* OverlappedComponent, AActor* 
 
 void AJesusBoss2::ActivateHitCollision()
 {
-	CanHit = true;
-	HitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	HeadHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	LeftArmHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	RightArmHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	Super::ActivateHitCollision();
 }
 
 void AJesusBoss2::GetEndedMontage(UAnimMontage* Montage, bool bInterrupted)

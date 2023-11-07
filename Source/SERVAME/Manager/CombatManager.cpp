@@ -51,6 +51,7 @@ void UCombatManager::DeactivateCollider()
 void UCombatManager::AddMonsterInfo(ABaseCharacter* character)
 {
 	MonsterInfoArray.AddUnique(character);
+	HitMonsterInfoArray.AddUnique(character);
 	if (!MonsterInfoMap.Contains(character->MapName))
 	{
 		MonsterInfoMap.Add(character->MapName, TArray<ABaseCharacter*>());
