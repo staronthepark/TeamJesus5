@@ -24,8 +24,6 @@ public:
 		static UCombatManager& GetInstance();
 
 		UPROPERTY(EditAnywhere)
-			TArray<ABaseCharacter*> HitMonsterInfoArray;
-		UPROPERTY(EditAnywhere)
 			TArray<ABaseCharacter*> MonsterInfoArray;
 
 		TMap<FString, TArray<ABaseCharacter*> > MonsterInfoMap;
