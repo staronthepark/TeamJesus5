@@ -487,11 +487,6 @@ void AEnemyMonster::BeginPlay()
 
 	MonsterController = Cast<AMonsterController>(GetController());
 
-	UCombatManager::GetInstance().MonsterInfoArray.AddUnique(this);
-
-	//test
-	UCombatManager::GetInstance().HitMonsterInfoArray.AddUnique(this);
-
 	TArray<UActorComponent*>ActorCompArray;
 	ActorCompArray = GetComponentsByTag(USphereComponent::StaticClass(), FName("LockOnTarget"));
 	LockOnComp = Cast<USphereComponent>(ActorCompArray[0]);

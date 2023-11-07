@@ -3,6 +3,7 @@
 
 #include "CombatManager.h"
 #include "..\BaseCharacter.h"
+#include "../Player/PlayerCharacter.h"
 
 UCombatManager* UCombatManager::Instance = nullptr;
 UCombatManager::UCombatManager()
@@ -12,7 +13,6 @@ UCombatManager::UCombatManager()
 
 UCombatManager::~UCombatManager()
 {
-	HitMonsterInfoArray.Empty();
 }
 
 UCombatManager& UCombatManager::GetInstance()
@@ -26,31 +26,17 @@ UCombatManager& UCombatManager::GetInstance()
 
 void UCombatManager::ActivateCollider()
 {
-	if (!HitMonsterInfoArray.IsEmpty())
-	{
-		for (int i = 0; i < HitMonsterInfoArray.Num(); i++)
-		{
-			if (HitMonsterInfoArray[i] != nullptr)
-				HitMonsterInfoArray[i]->ActivateHitCollision();
-		}
-	}
 }
 
 void UCombatManager::DeactivateCollider()
 {
-	if (!HitMonsterInfoArray.IsEmpty())
-	{
-		for (int i = 0; i < HitMonsterInfoArray.Num(); i++)
-		{
-			if (HitMonsterInfoArray[i] != nullptr)
-				HitMonsterInfoArray[i]->DeactivateHitCollision();
-		}
-	}
 }
 
 void UCombatManager::AddMonsterInfo(ABaseCharacter* character)
 {
 	MonsterInfoArray.AddUnique(character);
+
+
 	if (!MonsterInfoMap.Contains(character->MapName))
 	{
 		MonsterInfoMap.Add(character->MapName, TArray<ABaseCharacter*>());

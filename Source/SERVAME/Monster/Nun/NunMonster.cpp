@@ -587,8 +587,8 @@ float ANunMonster::Die(float Dm)
 		auto OriginNun = Cast<ANunMonster>(actor);
 		OriginNun->SelfHeal();
 
-		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
-		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
+		auto index = PlayerCharacter->HitMonsterInfoArray.Find(this);
+		PlayerCharacter->HitMonsterInfoArray.RemoveAtSwap(index);
 		SetActorTickEnabled(false);
 		GetWorld()->DestroyActor(this);
 		DeactivateHpBar();
@@ -598,8 +598,8 @@ float ANunMonster::Die(float Dm)
 	if (PlayerCharacter->IsLockOn)
 		PlayerCharacter->LockOn();
 
-	auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
-	UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
+	auto index = PlayerCharacter->HitMonsterInfoArray.Find(this);
+	//UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
 
 	PlayMonsterSoundInPool(EMonsterAudioType::NUN_DIE);
 
@@ -661,8 +661,15 @@ void ANunMonster::SpawnKnight(int knightnum)
 	{
 		if (NavSystem->GetRandomPointInNavigableRadius(GetActorLocation(), KnightSpawnRadius, RandomLocation))
 		{
-			FVector Temp = RandomLocation.Location;
-			SpawnLoc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
+			if (FVector::Distance(RandomLocation, SpawnLocation) > 500.f)
+			{
+				SpawnLoc = FVector(-22780.715263, 385.618253, -2225.966660);
+			}
+			else
+			{
+				FVector Temp = RandomLocation.Location;
+				SpawnLoc = FVector(Temp.X, Temp.Y, PlayerCharacter->GetActorLocation().Z);
+			}
 			//SpawnRot = UKismetMathLibrary::FindLookAtRotation(Knight->GetActorLocation(), PlayerCharacter->GetActorLocation());
 
 			FActorSpawnParameters SpawnParams;
@@ -677,6 +684,9 @@ void ANunMonster::SpawnKnight(int knightnum)
 			Knight->MonsterDataStruct.CharacterMaxHp = SpawnedKnightMaxHp;
 			Knight->MonsterDataStruct.CharacterHp = SpawnedKnightMaxHp;
 			Knight->IsSpawn = true;
+			APlayerCharacter* player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+			player->HitMonsterInfoArray.AddUnique(Knight);
+
 			Knight->PlayerCharacter = PlayerCharacter;
 			Knight->Super::PlayerCharacter = PlayerCharacter;
 			Knight->SpawnBegin();
@@ -1527,8 +1537,8 @@ void ANunMonster::RespawnCharacter()
 {
 	if (MyMonsterType == MonsterType::ILLUSION_NUN)
 	{
-		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
-		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
+		auto index = PlayerCharacter->HitMonsterInfoArray.Find(this);
+		PlayerCharacter->HitMonsterInfoArray.RemoveAt(index);
 		SetActorTickEnabled(false);
 		GetWorld()->DestroyActor(this);
 		return;

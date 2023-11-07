@@ -405,6 +405,11 @@ void AKinghtMonster::BeginPlay()
 		ChangeActionType(MonsterActionType::MOVE);
 	}
 
+
+	if (IsSpawn)
+	{
+	}
+
 	SetActive(true);
 
 	PlayerCharacter = nullptr;
@@ -536,9 +541,9 @@ void AKinghtMonster::RespawnCharacter()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("spawned knight delete"));
 		//소환된 기사 삭제
-		auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
-		UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
-		SetActorTickEnabled(false);
+		auto index = PlayerCharacter->HitMonsterInfoArray.Find(this);
+		PlayerCharacter->HitMonsterInfoArray.RemoveAtSwap(index);
+		SetActive(false);		
 		GetWorld()->DestroyActor(this);
 		return;
 	}
@@ -900,8 +905,8 @@ float AKinghtMonster::Die(float Dm)
 	//	UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAt(index);
 	//}
 
-	auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
-	UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
+	auto index = PlayerCharacter->HitMonsterInfoArray.Find(this);
+	//UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
 
 	Imotal = true;
 	GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
