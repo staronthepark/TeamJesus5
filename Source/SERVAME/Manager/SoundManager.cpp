@@ -11,6 +11,10 @@ ASoundManager::ASoundManager()
 	BGMAudioCompMap.Add(BGMType::TITLEVERSE2, CreateDefaultSubobject<UAudioComponent>("Verse2_Phase1"));
 	BGMAudioCompMap.Add(BGMType::TITLEEND, CreateDefaultSubobject<UAudioComponent>("Outro_Phase1"));
 
+	BGMAudioCompMap.Add(BGMType::NUNINTRO, CreateDefaultSubobject<UAudioComponent>("Nun_Intro"));
+	BGMAudioCompMap.Add(BGMType::NUNLOOP, CreateDefaultSubobject<UAudioComponent>("Nun_Loop"));
+
+
 	CymbalAudio = CreateDefaultSubobject<UAudioComponent>("Cymbal");
 	DrumAudio = CreateDefaultSubobject<UAudioComponent>("Drum");
 

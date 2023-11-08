@@ -2518,6 +2518,10 @@ void APlayerCharacter::ResetGame()
 	//	GameInstance->SavedTriggerActor[i]->Init();
 	//}
 
+	PlayerHUD->InitStat(0, 0, 0, 0);
+	PlayerHUD->IncreaseStaminaSize(1.0f);
+	PlayerHUD->IncreaseHpSize(1.0f);
+
 	GameInstance->MonsterArray.Empty();
 
 	UCombatManager& combatmanager = UCombatManager::GetInstance();
