@@ -10,6 +10,12 @@ void ADoorAnimInteraction::Init()
 	AnimInstance->DoorAnimationType = DoorAnimType;
 	CloseDoorComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
+	if (IsActive)
+	{
+		DisableTriggerWhenStart = false;
+		BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	}
+
 }
 
 void ADoorAnimInteraction::BeginPlay()

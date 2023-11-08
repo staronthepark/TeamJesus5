@@ -861,8 +861,11 @@ void AEnemyMonster::Tick(float DeltaTime)
 		ChangeActionType(MonsterActionType::DEAD);
 		StateType = MonsterStateType::CANTACT;
 
-		if(OpenDoor != nullptr)
-		OpenDoor->BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		if (OpenDoor != nullptr)
+		{
+			OpenDoor->BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			OpenDoor->DisableTriggerWhenStart = false;
+		}
 
 	}
 

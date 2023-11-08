@@ -2518,9 +2518,6 @@ void APlayerCharacter::ResetGame()
 	//	GameInstance->SavedTriggerActor[i]->Init();
 	//}
 
-	PlayerHUD->InitStat(0, 0, 0, 0);
-	PlayerHUD->IncreaseStaminaSize(1.0f);
-	PlayerHUD->IncreaseHpSize(1.0f);
 
 	GameInstance->MonsterArray.Empty();
 
@@ -2754,14 +2751,14 @@ void APlayerCharacter::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedCompo
 
 			if (HitEffectRotatorList.Contains(AnimInstance->PlayerAnimationType))
 			{
-				objectpool.SpawnObject(objectpool.ObjectArray[0].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-				objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-				objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-				objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-				objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-				objectpool.SpawnObject(objectpool.ObjectArray[42].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator::ZeroRotator);
+				objectpool.SpawnObject(objectpool.ObjectArray[0].ObjClass, OtherComp->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+				objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OtherComp->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+				objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OtherComp->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+				objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OtherComp->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+				objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OtherComp->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+				objectpool.SpawnObject(objectpool.ObjectArray[42].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 
-				objectpool.SpawnObject(objectpool.ObjectArray[5].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+				objectpool.SpawnObject(objectpool.ObjectArray[5].ObjClass, OtherComp->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
 				objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 			}
 
@@ -3095,7 +3092,10 @@ void APlayerCharacter::LoadFile()
 {
 	UJesusSaveGame::GetInstance().Load(this, GameInstance);
 
-	SetSoul(PlayerDataStruct.SoulCount);
+	float Count = PlayerDataStruct.SoulCount;
+
+	SetSoul(0);
+	SetSoul(Count);
 	CurHealCount = PlayerDataStruct.MaxHealCount;
 	PlayerHUD->InitStat(PlayerDataStruct.StrengthIndex, PlayerDataStruct.StaminaIndex, PlayerDataStruct.HPIndex, PlayerDataStruct.ShieldIndex);
 
@@ -3193,6 +3193,11 @@ void APlayerCharacter::LoadingMonster()
 void APlayerCharacter::ResetGame2()
 {
 	GameInstance->MonsterArray.Empty();
+
+
+	PlayerHUD->InitStat(0, 0, 0, 0);
+	PlayerHUD->IncreaseStaminaSize(1.0f);
+	PlayerHUD->IncreaseHpSize(1.0f);
 
 	UCombatManager& combatmanager = UCombatManager::GetInstance();
 
