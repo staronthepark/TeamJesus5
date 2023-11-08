@@ -744,7 +744,7 @@ APlayerCharacter::APlayerCharacter()
 				AnimInstance->HeadBoneRotate.Yaw = FMath::Lerp(AnimInstance->HeadBoneRotate.Yaw, AnimInstance->HeadBoneRotateValue * 70 - 35.0f, fDeltaTime * 2.0f);
 			}
 
-			PlayerDataStruct.PlayerStamina = FMath::Clamp(PlayerDataStruct.PlayerStamina -= PlayerDataStruct.PlayerRunStamina * fDeltaTime, 0.0f, 100.0f);
+			PlayerDataStruct.PlayerStamina = FMath::Clamp(PlayerDataStruct.PlayerStamina -= PlayerDataStruct.PlayerRunStamina * fDeltaTime, 0.0f, PlayerDataStruct.MaxStamina);
 			PlayerHUD->DecreaseStaminaGradual(this, PlayerDataStruct.PlayerStamina / PlayerDataStruct.MaxStamina);
 			if (PlayerDataStruct.PlayerStamina <= 0)
 			{
