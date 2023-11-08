@@ -443,6 +443,7 @@ void AJamsig::IsNotifyActive(bool value)
 
 void AJamsig::RespawnCharacter()
 {
+	if (IsDie)return;
 	Super::RespawnCharacter();
 	 
 	UE_LOG(LogTemp, Warning, TEXT("jamsig respawn"));
