@@ -472,10 +472,10 @@ void AJesusPlayerController::Boss2()
 	character->MoveSpawnLocation(FVector(-6743.140712, -61314.496862, -13.412763));
 
 	FLatentActionInfo LatentInfo;
-	UGameplayStatics::LoadStreamLevel(this, "Boss2PhaseMap", true, true, LatentInfo);
+	UGameplayStatics::LoadStreamLevel(this, "Boss2Phase", true, true, LatentInfo);
 
 	ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
-	LightManager->ChangeTargetLightSetting("Boss2PhaseMap");
+	LightManager->ChangeTargetLightSetting("Boss2Phase");
 }
 
 void AJesusPlayerController::SetupInputComponent()

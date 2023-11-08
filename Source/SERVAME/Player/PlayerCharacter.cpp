@@ -2950,7 +2950,7 @@ void APlayerCharacter::FadeIn()
 	{
 		FLatentActionInfo LatentInfo;
 		UCombatManager::GetInstance().Boss2->SetActive(false);
-		UGameplayStatics::UnloadStreamLevel(this, "Boss2PhaseMap", LatentInfo, false);
+		UGameplayStatics::UnloadStreamLevel(this, "Boss2Phase", LatentInfo, false);
 		ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
 		LightManager->ChangeTargetLightSetting("2-2Map");
 		IsPhaseTwo = false;

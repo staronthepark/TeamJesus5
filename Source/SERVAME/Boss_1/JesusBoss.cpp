@@ -9,6 +9,7 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "..\Manager\CombatManager.h"
+#include "../LevelLightingManager.h"
 #include <Misc/OutputDeviceNull.h>
 #include <random>
 #include "NavigationPath.h"
@@ -1113,7 +1114,7 @@ void AJesusBoss::EndSequence()
 	FLatentActionInfo LatentInfo;
 	UGameplayStatics::UnloadStreamLevel(this, "A_KimMinYeongMap_Boss1", LatentInfo, false);
 	UGameplayStatics::UnloadStreamLevel(this, "2-2Map", LatentInfo, false);
-	UCombatManager::GetInstance().MonsterInfoMap["Boss2PhaseMap"][0]->RespawnCharacter();
+	UCombatManager::GetInstance().MonsterInfoMap["Boss2Phase"][0]->RespawnCharacter();
 }
 
 void AJesusBoss::PostInitializeComponents()
@@ -1358,8 +1359,11 @@ void AJesusBoss::CheckBossDie()
 
 
 		FLatentActionInfo LatentInfo;
-		UGameplayStatics::LoadStreamLevel(this, "Boss2PhaseMap", true, true, LatentInfo);
-		PlayerCharacter->CurrentMapName = "Boss2PhaseMap";
+		UGameplayStatics::LoadStreamLevel(this, "Boss2Phase", true, true, LatentInfo);
+		PlayerCharacter->CurrentMapName = "Boss2Phase";
+
+		ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
+		LightManager->ChangeTargetLightSetting("Boss2Phase");
 
 		DamageSphereTriggerComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		PlayerCharacter->AxisX = 1;
