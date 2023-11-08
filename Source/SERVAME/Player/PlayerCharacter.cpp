@@ -2518,9 +2518,6 @@ void APlayerCharacter::ResetGame()
 	//	GameInstance->SavedTriggerActor[i]->Init();
 	//}
 
-	PlayerHUD->InitStat(0, 0, 0, 0);
-	PlayerHUD->IncreaseStaminaSize(1.0f);
-	PlayerHUD->IncreaseHpSize(1.0f);
 
 	GameInstance->MonsterArray.Empty();
 
@@ -3095,7 +3092,10 @@ void APlayerCharacter::LoadFile()
 {
 	UJesusSaveGame::GetInstance().Load(this, GameInstance);
 
-	SetSoul(PlayerDataStruct.SoulCount);
+	float Count = PlayerDataStruct.SoulCount;
+
+	SetSoul(0);
+	SetSoul(Count);
 	CurHealCount = PlayerDataStruct.MaxHealCount;
 	PlayerHUD->InitStat(PlayerDataStruct.StrengthIndex, PlayerDataStruct.StaminaIndex, PlayerDataStruct.HPIndex, PlayerDataStruct.ShieldIndex);
 
@@ -3193,6 +3193,11 @@ void APlayerCharacter::LoadingMonster()
 void APlayerCharacter::ResetGame2()
 {
 	GameInstance->MonsterArray.Empty();
+
+
+	PlayerHUD->InitStat(0, 0, 0, 0);
+	PlayerHUD->IncreaseStaminaSize(1.0f);
+	PlayerHUD->IncreaseHpSize(1.0f);
 
 	UCombatManager& combatmanager = UCombatManager::GetInstance();
 
