@@ -548,6 +548,7 @@ void AKinghtMonster::IdleToWalkBlendFunc(float delta)
 
 void AKinghtMonster::RespawnCharacter()
 {
+	if (IsDie)return;
 	if (IsSpawn)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("spawned knight delete"));

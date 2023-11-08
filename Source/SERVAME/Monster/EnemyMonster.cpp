@@ -895,6 +895,7 @@ void AEnemyMonster::IsNotifyActive(bool value)
 
 void AEnemyMonster::RespawnCharacter()
 {
+	if (IsDie)return;
 	Super::RespawnCharacter();
 
 	WeaponOpacity = 0.171653f;

@@ -93,6 +93,7 @@ float AEliteKnight::Die(float Dm)
 
 void AEliteKnight::RespawnCharacter()
 {
+	if (IsDie)return;
 	Super::RespawnCharacter();
 	MonsterController->BossUI->SetHP(1);
 	MonsterController->BossUI->RemoveFromParent();
