@@ -23,7 +23,6 @@ void AInteractionActor::BeginPlay()
 	TickFuncMap.Add(false, TMap<bool, TFunction<void(AInteractionActor * actor)>>());
 	TickFuncMap[false].Add(true, [](AInteractionActor* actor) {});
 	TickFuncMap[false].Add(false, [](AInteractionActor* actor) {});
-	Init();
 }
 
 void AInteractionActor::Tick(float DeltaTime)

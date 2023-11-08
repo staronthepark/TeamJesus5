@@ -42,13 +42,7 @@ void ABaseCharacter::BeginPlay()
 		DustColliderArray[i]->OnComponentBeginOverlap.AddDynamic(this, &ABaseCharacter::OnDustCollisionBeginOverlap);
 	}
 
-	//ActorCompArray = GetComponentsByTag(UCapsuleComponent::StaticClass(), FName("Hit"));
-	//
-	//for (int32 i = 0; i < ActorCompArray.Num(); i++)
-	//{
-	//	HitColliderArray.Add(Cast<UCapsuleComponent>(ActorCompArray[i]));
-	//}
-
+	ActorCompArray = GetComponentsByTag(UCapsuleComponent::StaticClass(), FName("Hit"));
 	HitCollision = Cast<UCapsuleComponent>(ActorCompArray[0]);
 }
 

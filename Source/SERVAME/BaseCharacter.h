@@ -93,8 +93,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UCapsuleComponent* HitCollision;
 
-	//TArray<UCapsuleComponent*> HitCollisionArray;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBoxComponent* ParryingCollision1;	
 
