@@ -2751,14 +2751,14 @@ void APlayerCharacter::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedCompo
 
 			if (HitEffectRotatorList.Contains(AnimInstance->PlayerAnimationType))
 			{
-				objectpool.SpawnObject(objectpool.ObjectArray[0].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-				objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-				objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-				objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-				objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
-				objectpool.SpawnObject(objectpool.ObjectArray[42].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator::ZeroRotator);
+				objectpool.SpawnObject(objectpool.ObjectArray[0].ObjClass, OtherComp->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+				objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OtherComp->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+				objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OtherComp->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+				objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OtherComp->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+				objectpool.SpawnObject(objectpool.ObjectArray[1].ObjClass, OtherComp->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+				objectpool.SpawnObject(objectpool.ObjectArray[42].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 
-				objectpool.SpawnObject(objectpool.ObjectArray[5].ObjClass, OverlappedComponent->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
+				objectpool.SpawnObject(objectpool.ObjectArray[5].ObjClass, OtherComp->GetComponentLocation(), YawRotation - HitEffectRotatorList[AnimInstance->PlayerAnimationType]);
 				objectpool.SpawnObject(objectpool.ObjectArray[31].ObjClass, OtherActor->GetActorLocation() + FVector(0, 0, 20.0f), FRotator::ZeroRotator);
 			}
 
