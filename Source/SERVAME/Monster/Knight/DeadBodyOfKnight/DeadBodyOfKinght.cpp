@@ -124,6 +124,7 @@ void ADeadBodyOfKinght::Tick(float DeltaTime)
 
 void ADeadBodyOfKinght::RespawnCharacter()
 {
+	if (IsDie)return;
 	Super::RespawnCharacter();
 
 	MonsterController->StopMovement();

@@ -2036,18 +2036,12 @@ void APlayerCharacter::RestoreStat()
 	PlayerHUD->ChangeHealCount(CurHealCount);
 	UCombatManager& combatmanager = UCombatManager::GetInstance();
 
-	//for (int32 i = 0; i < combatmanager.MonsterInfoArray.Num(); i++)
-	//{
-	//	combatmanager.MonsterInfoArray[i]->SetActive(false);
-	//}
-
 	if (combatmanager.MonsterInfoMap.Contains(SaveMapName.ToString()))
 	{
 		for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
 		{
 			if (combatmanager.MonsterInfoMap[SaveMapName.ToString()][i] == nullptr)continue;
-			if (SaveMapName == "A_KimMinYeongMap_Boss1" || !combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
-				combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+			combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
 		}
 	}
 }
@@ -2596,12 +2590,8 @@ void APlayerCharacter::RespawnCharacter()
 	{
 		for (int32 i = 0; i < combatmanager.MonsterInfoMap[CurrentMapName.ToString()].Num(); i++)
 		{
-			if (combatmanager.MonsterInfoMap[SaveMapName.ToString()][i] == nullptr)continue;
-			combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->SetActive(false);
-			if (CurrentMapName == "A_KimMinYeongMap_Boss1" || !combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->IsDie)
-			{
-				combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->RespawnCharacter();
-			}
+			if (combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i] == nullptr)continue;
+			combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->RespawnCharacter();
 		}
 	}
 
@@ -2610,10 +2600,7 @@ void APlayerCharacter::RespawnCharacter()
 		for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
 		{
 			if (combatmanager.MonsterInfoMap[SaveMapName.ToString()][i] == nullptr)continue;
-			if (SaveMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
-			{
-				combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
-			}
+			combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
 		}
 	}
 
@@ -2963,7 +2950,7 @@ void APlayerCharacter::FadeIn()
 	{
 		FLatentActionInfo LatentInfo;
 		UCombatManager::GetInstance().Boss2->SetActive(false);
-		UGameplayStatics::UnloadStreamLevel(this, "Boss2PhaseMap", LatentInfo, false);
+		UGameplayStatics::UnloadStreamLevel(this, "Boss2Phase", LatentInfo, false);
 		ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
 		LightManager->ChangeTargetLightSetting("2-2Map");
 		IsPhaseTwo = false;
@@ -3091,8 +3078,23 @@ void APlayerCharacter::SetSoul(int32 value)
 void APlayerCharacter::LoadFile()
 {
 	UJesusSaveGame::GetInstance().Load(this, GameInstance);
+	CurrentMapName = SaveMapName;
 
 	float Count = PlayerDataStruct.SoulCount;
+
+
+	TArray<AActor*> ActorsToFind;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
+
+	for (AActor* TriggerActor : ActorsToFind)
+	{
+		AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
+		if (TriggerActorCast)
+		{
+			TriggerActorCast->IsDie = GameInstance->MonsterArray[TriggerActorCast->MonsterID];
+			TriggerActorCast->SetActive(false);
+		}
+	}
 
 	SetSoul(0);
 	SetSoul(Count);
@@ -3105,7 +3107,6 @@ void APlayerCharacter::LoadMap()
 {
 	FLatentActionInfo LatentInfo;
 	UGameplayStatics::LoadStreamLevel(this, SaveMapName, true, true, LatentInfo);
-	//CurrentMapName = SaveMapName;
 
 	ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
 	LightManager->ChangeTargetLightSetting(SaveMapName.ToString());
@@ -3156,21 +3157,8 @@ void APlayerCharacter::PlayerDead(bool IsFly)
 
 void APlayerCharacter::LoadingMonster()
 {
-	UCombatManager& combatmanager = UCombatManager::GetInstance();
-		
+	UCombatManager& combatmanager = UCombatManager::GetInstance();		
 
-	TArray<AActor*> ActorsToFind;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
-
-	for (AActor* TriggerActor : ActorsToFind)
-	{
-		AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
-		if (TriggerActorCast)
-		{
-			TriggerActorCast->IsDie = GameInstance->MonsterArray[TriggerActorCast->MonsterID];
-			TriggerActorCast->SetActive(false);
-		}
-	}
 
 	for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
 	{
@@ -3231,10 +3219,7 @@ void APlayerCharacter::ResetGame2()
 		{
 			if (combatmanager.MonsterInfoMap[SaveMapName.ToString()][i] == nullptr)continue;
 			combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->SetActive(false);
-			if (CurrentMapName == "A_KimMinYeongMap_Boss1" || !combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->IsDie)
-			{
-				combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->RespawnCharacter();
-			}
+			combatmanager.MonsterInfoMap[CurrentMapName.ToString()][i]->RespawnCharacter();
 		}
 	}
 
@@ -3243,10 +3228,7 @@ void APlayerCharacter::ResetGame2()
 		for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
 		{
 			if (combatmanager.MonsterInfoMap[SaveMapName.ToString()][i] == nullptr)continue;
-			if (SaveMapName == "A_KimMinYeongMap_Boss1" || combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
-			{
-				combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
-			}
+			combatmanager.MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
 		}
 	}
 
