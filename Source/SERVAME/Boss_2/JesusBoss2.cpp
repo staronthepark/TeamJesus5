@@ -1828,6 +1828,7 @@ void AJesusBoss2::CheckBossDie()
 		GetWorldTimerManager().SetTimer(LoadingTimerHandle, FTimerDelegate::CreateLambda([=]()
 			{		
 				AIController->BossUI->RemoveFromViewport();
+				PlayerCharacter->PlayerHUD->Reset();
 				UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/00_Maps/01_Art/00_Modeller/InGameMap/MainMap")));
 			}), 5.f, false);
 	}
