@@ -50,6 +50,9 @@ public:
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool IsKnockBack = false;
 
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	bool IsSpawnKnight = false;
+
 	TArray<FVector> CirclePoints;
 	UPROPERTY(EditAnyWhere, Category = "Circle Walk")
 	int NumSegments = 16;
