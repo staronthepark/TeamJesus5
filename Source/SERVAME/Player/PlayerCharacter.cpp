@@ -2036,11 +2036,6 @@ void APlayerCharacter::RestoreStat()
 	PlayerHUD->ChangeHealCount(CurHealCount);
 	UCombatManager& combatmanager = UCombatManager::GetInstance();
 
-	//for (int32 i = 0; i < combatmanager.MonsterInfoArray.Num(); i++)
-	//{
-	//	combatmanager.MonsterInfoArray[i]->SetActive(false);
-	//}
-
 	if (combatmanager.MonsterInfoMap.Contains(SaveMapName.ToString()))
 	{
 		for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
@@ -3087,6 +3082,20 @@ void APlayerCharacter::LoadFile()
 
 	float Count = PlayerDataStruct.SoulCount;
 
+
+	TArray<AActor*> ActorsToFind;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
+
+	for (AActor* TriggerActor : ActorsToFind)
+	{
+		AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
+		if (TriggerActorCast)
+		{
+			TriggerActorCast->IsDie = GameInstance->MonsterArray[TriggerActorCast->MonsterID];
+			TriggerActorCast->SetActive(false);
+		}
+	}
+
 	SetSoul(0);
 	SetSoul(Count);
 	CurHealCount = PlayerDataStruct.MaxHealCount;
@@ -3148,21 +3157,8 @@ void APlayerCharacter::PlayerDead(bool IsFly)
 
 void APlayerCharacter::LoadingMonster()
 {
-	UCombatManager& combatmanager = UCombatManager::GetInstance();
-		
+	UCombatManager& combatmanager = UCombatManager::GetInstance();		
 
-	TArray<AActor*> ActorsToFind;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
-
-	for (AActor* TriggerActor : ActorsToFind)
-	{
-		AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
-		if (TriggerActorCast)
-		{
-			TriggerActorCast->IsDie = GameInstance->MonsterArray[TriggerActorCast->MonsterID];
-			TriggerActorCast->SetActive(false);
-		}
-	}
 
 	for (int32 i = 0; i < combatmanager.MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
 	{
