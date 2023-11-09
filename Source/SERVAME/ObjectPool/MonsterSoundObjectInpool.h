@@ -62,6 +62,19 @@ enum class EMonsterAudioType : uint8
 	BOSS2_HIT,
 	BOSS2_GROGGY,
 	BOSS2_DIE,
+
+	NUN_KNIGHTSPAWN,
+	NUN_SCREAM,
+
+	JAMSIG_IDLE,
+	JAMSIG_IDLE_SIT,
+	JAMSIG_WALK,
+	JAMSIG_WALK2,
+	JAMSIG_ATTACK,
+	JAMSIG_DASHATTACK,
+	JAMSIG_HIT,
+	JAMSIG_HIT2,
+	JAMSIG_DIE,
 };
 
 
@@ -78,6 +91,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TMap<EMonsterAudioType, USoundBase*> SoundMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Volume = 1.f;
 
 	virtual void SetActive(bool active) override;
 	virtual void BeginPlay()override;

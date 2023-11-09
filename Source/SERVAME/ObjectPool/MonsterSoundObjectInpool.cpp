@@ -27,6 +27,7 @@ void AMonsterSoundObjectInpool::PlayMonsterSound(EMonsterAudioType Type)
 	if (SoundMap.Contains(Type))
 	{
 		AudioComp->SetSound(SoundMap[Type]);
+		AudioComp->SetVolumeMultiplier(Volume);
 		PlaySound();
 		LOG_S(Warning);
 	}

@@ -15,6 +15,7 @@
 #include "EngineUtils.h"
 #include "..\..\ObjectPool\NunEffectObjInPool.h"
 #include "..\..\NunDamageSphereTriggerComp.h"
+#include "..\..\ObjectPool\EffectObjectInPool.h"
 
 int ANunMonster::CurrentNum = 0;
 
@@ -625,6 +626,13 @@ float ANunMonster::Die(float Dm)
 	ParryingCollision1->Deactivate();
 	DeactivateRightWeapon();
 	ChangeMontageAnimation(MonsterAnimationType::DEAD);
+
+	auto Pos = GetActorLocation();
+	auto PoolObj = AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[44].ObjClass,
+		FVector(Pos.X, Pos.Y, Pos.Z - 50.f), FRotator::ZeroRotator);
+	auto CastObj = Cast<AEffectObjectInPool>(PoolObj);
+	CastObj->SetEffectType(SelectEffectType::KNIGHT_DEAD);
+	CastObj->ActivateCurrentEffect();
 
 	//머테리얼에 Opacity 값 넣기 전까지 임시로 Visibility 꺼주기
 	//GetMesh()->SetVisibility(false);
