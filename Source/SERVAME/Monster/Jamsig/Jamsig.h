@@ -39,6 +39,9 @@ public:
 	UPROPERTY(EditAnyWhere, Category = "KnockBackDelayTime")
 	float KnockBackDelayTime = 1.f;
 
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Foot")
+	TObjectPtr<UBoxComponent> FootCollision;
+
 	FTimerHandle KnockBackTimerHandle;
 	FTimerHandle KnockBackDelayTimerHandle;
 

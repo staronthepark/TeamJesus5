@@ -32,6 +32,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* KnightHeadMesh;
 
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Foot")
+	TObjectPtr<UBoxComponent> FootCollision;
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UKnightAttackTriggerComp* AttackTrigger;
 
