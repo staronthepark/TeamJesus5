@@ -440,6 +440,9 @@ void AKinghtMonster::BeginPlay()
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &AKinghtMonster::OnKnightTargetDetectionBeginOverlap);
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &AKinghtMonster::OnKnightTargetDetectionEndOverlap);
 
+	Left_FootCollision->OnComponentBeginOverlap.AddDynamic(this, &AKinghtMonster::KnightFootStep);
+	Right_FootCollision->OnComponentBeginOverlap.AddDynamic(this, &AKinghtMonster::KnightFootStep);
+
 	if (KnightAnimInstance != nullptr)
 	{
 		KnightAnimInstance->InterpStart.AddUObject(this, &AKinghtMonster::InterpStart);
@@ -558,6 +561,8 @@ void AKinghtMonster::IdleToWalkBlendFunc(float delta)
 
 void AKinghtMonster::KnightFootStep(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	//UE_LOG(LogTemp, Warning, TEXT("JamsigFootStep"));
+
 }
 
 void AKinghtMonster::RespawnCharacter()

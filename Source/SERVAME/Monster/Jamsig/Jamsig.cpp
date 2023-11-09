@@ -225,7 +225,7 @@ void AJamsig::KnockBackEnd()
 
 void AJamsig::JamsigFootStep(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("afdfdfdf"));
+	UE_LOG(LogTemp, Warning, TEXT("JamsigFootStep"));
 	auto NumToEnum = static_cast<EMonsterAudioType>(GetRandNum(51, 52));
 	PlayMonsterSoundInPool(NumToEnum);
 }
