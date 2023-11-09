@@ -63,6 +63,15 @@ enum class MonsterType : uint8
 	JAMSIG,
 };
 
+UENUM(BlueprintType)
+enum class NotifyMonsterType : uint8
+{
+	NUN = 0,
+	JAMSIG,
+	KNIGHT,
+};
+
+
 USTRUCT(BlueprintType)
 struct FSkillInfo
 {
@@ -209,7 +218,7 @@ protected:
 	TMap<MonsterAttackType, TFunction<void()>>TargetDetectEventMap;
 
 public:
-	int GetRandNum(int Min, int Max);
+	const int GetRandNum(int Min, int Max);
 
 	virtual void ChangeMontageAnimation(MonsterAnimationType type);
 	void ChangeActionType(MonsterActionType type);

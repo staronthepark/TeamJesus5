@@ -25,7 +25,7 @@ public:
 	std::tuple<ANunMonster*, AJamsig*, AKinghtMonster*>GetMonster(USkeletalMeshComponent* MeshComp);
 
 	UPROPERTY(EditAnywhere)
-	TEnumAsByte<MonsterType> MonsterEnumType;
+	TEnumAsByte<NotifyMonsterType> MonsterEnumType;
 };
 
 template <size_t I>

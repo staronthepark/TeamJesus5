@@ -8,6 +8,7 @@
 #include "MonsterAttackTriggerComp.h"
 #include "..\Manager\CombatManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Math/UnrealMathUtility.h"
 
 AEnemyMonster::AEnemyMonster()
 {
@@ -598,6 +599,7 @@ void AEnemyMonster::MonsterLog(int id, int i)
 
 void AEnemyMonster::PlayMonsterSoundInPool(EMonsterAudioType AudioType)
 {
+	LOG_S(Warning);
 	AObjectPool& objectpool = AObjectPool::GetInstance();
 
 	auto Obj = objectpool.SpawnObject(objectpool.ObjectArray[MONSTERSOUNDOP].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
@@ -608,12 +610,15 @@ void AEnemyMonster::PlayMonsterSoundInPool(EMonsterAudioType AudioType)
 
 void AEnemyMonster::PlayMonsterRandomSoundInPool(int start, int end)
 {
+	LOG_S(Warning);
 	AObjectPool& objectpool = AObjectPool::GetInstance();
 
 	auto Obj = objectpool.SpawnObject(objectpool.ObjectArray[MONSTERSOUNDOP].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 	auto MonsterSound = Cast<AMonsterSoundObjectInpool>(Obj);
 
-	MonsterSound->PlayMonsterSound(static_cast<EMonsterAudioType>(GetRandNum(start, end)));
+	const int Num = FMath::RandRange(start, end);
+	auto NumToEnum = static_cast<EMonsterAudioType>(Num);
+	MonsterSound->PlayMonsterSound(NumToEnum);
 }
 
 void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -703,11 +708,9 @@ void AEnemyMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, 
 	objectpool.SpawnObject(objectpool.ObjectArray[3].ObjClass, OverlappedComponent->GetComponentLocation(), FRotator(90, 180, 0));
 }
 
-int AEnemyMonster::GetRandNum(int Min, int Max)
+const int AEnemyMonster::GetRandNum(int Min, int Max)
 {
-	std::srand(time(NULL));
-	auto Val = rand() % Max + Min;
-	return Val;
+	return FMath::RandRange(Min, Max);
 }
 
 void AEnemyMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)

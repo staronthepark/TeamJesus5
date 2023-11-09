@@ -16,7 +16,7 @@ class SERVAME_API UPlayMonsterSoundNotifyState : public UMonsterBaseNoifyState
 	GENERATED_BODY()
 	
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration);
-
+	
 public:
 	UPlayMonsterSoundNotifyState();
 
@@ -26,7 +26,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	bool IsRandom;
 	UPROPERTY(EditAnywhere)
-	int Range_Start;
+	int Range_Start = 0;
 	UPROPERTY(EditAnywhere)
-	int Range_End;
+	int Range_End = 0;
 };

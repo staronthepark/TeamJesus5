@@ -15,6 +15,8 @@ void UPlayMonsterSoundNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp,
 
 	if (BaseCharacter)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("NotifyBegin"));
+
 		if (IsRandom)
 		{
 			visit_monster_at(GetMonster(MeshComp), MonsterEnumType.GetIntValue(), [=](auto& val)
@@ -26,7 +28,7 @@ void UPlayMonsterSoundNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp,
 		else
 		{
 			visit_monster_at(GetMonster(MeshComp), MonsterEnumType.GetIntValue(), [=](auto& val)
-				{
+				{					
 					if (val->IsGameStart)
 						val->PlayMonsterSoundInPool(Type);
 				});
