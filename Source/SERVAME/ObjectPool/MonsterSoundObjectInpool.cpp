@@ -23,7 +23,7 @@ void AMonsterSoundObjectInpool::ReturnObject()
 void AMonsterSoundObjectInpool::PlayMonsterSound(EMonsterAudioType Type)
 {
 	MonsterAudioType = Type;
-	  
+	 
 	if (SoundMap.Contains(Type))
 	{
 		Super::SetActive(true);
