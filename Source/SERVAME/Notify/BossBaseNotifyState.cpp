@@ -5,5 +5,8 @@
 
 std::tuple<AJesusBoss*, AJesusBoss2*> UBossBaseNotifyState::GetBoss(USkeletalMeshComponent* MeshComp)
 {
-	return std::tuple<AJesusBoss*, AJesusBoss2*>(Cast<AJesusBoss>(MeshComp->GetOwner()), Cast<AJesusBoss2>(MeshComp->GetOwner()));
+	return std::tuple<AJesusBoss*, AJesusBoss2*>(
+		Cast<AJesusBoss>(MeshComp->GetOwner()),
+		Cast<AJesusBoss2>(MeshComp->GetOwner()));
 }
+

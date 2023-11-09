@@ -182,6 +182,7 @@ public:
 	bool IsOverlap = false;
 	bool IsAttacking = false;
 	bool CanRotate = true;
+	bool IsGameStart = false;
 
 	bool asd = false;
 	bool asd2 = false;
@@ -223,6 +224,7 @@ public:
 	void MonsterLog(int id, float f);
 	void MonsterLog(int id, int i);
 	void PlayMonsterSoundInPool(EMonsterAudioType AudioType);
+	void PlayMonsterRandomSoundInPool(int start, int end);
 
 	UFUNCTION()
 	void OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

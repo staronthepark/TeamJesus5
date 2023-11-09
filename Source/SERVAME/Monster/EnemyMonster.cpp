@@ -474,6 +474,7 @@ void AEnemyMonster::BeginPlay()
 {
 	Super::BeginPlay();
 
+	IsGameStart = true;
 	GetCharacterMovement()->MaxWalkSpeed = MonsterDataStruct.CharacterOriginSpeed;
 	YawRotation = GetActorRotation();
 
@@ -603,6 +604,16 @@ void AEnemyMonster::PlayMonsterSoundInPool(EMonsterAudioType AudioType)
 	auto MonsterSound = Cast<AMonsterSoundObjectInpool>(Obj);
 	
 	MonsterSound->PlayMonsterSound(AudioType);
+}
+
+void AEnemyMonster::PlayMonsterRandomSoundInPool(int start, int end)
+{
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+
+	auto Obj = objectpool.SpawnObject(objectpool.ObjectArray[MONSTERSOUNDOP].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	auto MonsterSound = Cast<AMonsterSoundObjectInpool>(Obj);
+
+	MonsterSound->PlayMonsterSound(static_cast<EMonsterAudioType>(GetRandNum(start, end)));
 }
 
 void AEnemyMonster::OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
