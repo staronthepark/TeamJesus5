@@ -13,6 +13,7 @@
 #include "DrawDebugHelpers.h"
 #include "..\Manager\JesusThreadManager.h"
 #include "..\SERVAME.h"
+#include "Math/UnrealMathUtility.h"
 
 AJesusBoss2::AJesusBoss2()
 {
@@ -1939,6 +1940,19 @@ void AJesusBoss2::PlayMonsterSoundInPool(EMonsterAudioType AudioType)
 
 	if (MonsterSound != nullptr)
 		MonsterSound->PlayMonsterSound(AudioType);
+}
+
+void AJesusBoss2::PlayMonsterRandomSoundInPool(int start, int end)
+{
+	LOG_S(Warning);
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+
+	auto Obj = objectpool.SpawnObject(objectpool.ObjectArray[MONSTERSOUNDOP].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	auto MonsterSound = Cast<AMonsterSoundObjectInpool>(Obj);
+
+	const int Num = FMath::RandRange(start, end);
+	auto NumToEnum = static_cast<EMonsterAudioType>(Num);
+	MonsterSound->PlayMonsterSound(NumToEnum);
 }
 
 void AJesusBoss2::SetBoneHead(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

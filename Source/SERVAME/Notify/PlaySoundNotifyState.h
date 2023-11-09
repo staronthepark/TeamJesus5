@@ -21,4 +21,10 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<EMonsterAudioType> Type;
+	UPROPERTY(EditAnywhere)
+	bool IsRandom = false;
+	UPROPERTY(EditAnywhere)
+	int Range_Start = 0;
+	UPROPERTY(EditAnywhere)
+	int Range_End = 0;
 };

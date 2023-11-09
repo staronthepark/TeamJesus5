@@ -493,6 +493,7 @@ public:
 	void DeactivateLFOverlap();
 	void DeactivateRFOverlap();
 	void PlayMonsterSoundInPool(EMonsterAudioType AudioType);
+	void PlayMonsterRandomSoundInPool(int start, int end);
 
 	/*======================
 	*		UFUNCTION

@@ -425,6 +425,7 @@ public:
 	void SetSplineCurve();
 	void InitHitCount(); 
 	void PlayMonsterSoundInPool(EMonsterAudioType AudioType);
+	void PlayMonsterRandomSoundInPool(int start, int end);
 
 	/*=====================
 			Notify

@@ -13,12 +13,22 @@ void UPlaySoundNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimS
 
 	if (BaseCharacter)
 	{
-		visit_at(GetBoss(MeshComp), BossEnumType.GetIntValue(), [=](auto& val)
-			{
-				if (val->IsGameStart)
-					val->PlayMonsterSoundInPool(Type);
-			});
-
+		if (IsRandom)
+		{
+			visit_at(GetBoss(MeshComp), BossEnumType.GetIntValue(), [=](auto& val)
+				{
+					if (val->IsGameStart && !val->IsDead)
+						val->PlayMonsterRandomSoundInPool(Range_Start, Range_End);
+				});
+		}
+		else
+		{
+			visit_at(GetBoss(MeshComp), BossEnumType.GetIntValue(), [=](auto& val)
+				{
+					if (val->IsGameStart && !val->IsDead)
+						val->PlayMonsterSoundInPool(Type);
+				});
+		}
 	}
 }
 
