@@ -380,3 +380,8 @@ void UPlayerHUD::ChangeHealCount(int value)
 {
 	WBP_SkillIconUI->ChangeHealCount(value);
 }
+
+void UPlayerHUD::Reset()
+{
+	SkillUI->ResetTimer();
+}

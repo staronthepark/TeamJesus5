@@ -295,8 +295,8 @@ float AJamsig::Die(float Dm)
 		}
 	}
 
-	auto index = UCombatManager::GetInstance().HitMonsterInfoArray.Find(this);
-	UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
+	auto index = PlayerCharacter->HitMonsterInfoArray.Find(this);
+	//UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
 
 	Imotal = true;
 	//GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
