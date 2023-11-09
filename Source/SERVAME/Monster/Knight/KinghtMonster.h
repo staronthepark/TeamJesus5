@@ -33,8 +33,9 @@ public:
 	UStaticMeshComponent* KnightHeadMesh;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Foot")
-	TObjectPtr<UBoxComponent> FootCollision;
-
+	TObjectPtr<UBoxComponent> Left_FootCollision;
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Foot")
+	TObjectPtr<UBoxComponent> Right_FootCollision;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UKnightAttackTriggerComp* AttackTrigger;
@@ -124,6 +125,9 @@ public:
 	void SearchPlayer();
 	void ReturnBlendFunc(float delta);
 	void IdleToWalkBlendFunc(float delta);
+
+	UFUNCTION()
+	void KnightFootStep(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 	void OnKnightTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

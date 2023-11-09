@@ -336,9 +336,6 @@ AEnemyMonster::AEnemyMonster()
 			ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			ActivateSMOverlap();
 			ActivateRightWeapon();
-			AObjectPool& objectpool = AObjectPool::GetInstance();
-			objectpool.SpawnObject(objectpool.ObjectArray[24].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-
 		});
 	NotifyBeginEndEventMap[MonsterAnimationType::ATTACK1].Add(false, [&]()
 		{
@@ -604,7 +601,7 @@ void AEnemyMonster::PlayMonsterSoundInPool(EMonsterAudioType AudioType)
 
 	auto Obj = objectpool.SpawnObject(objectpool.ObjectArray[MONSTERSOUNDOP].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 	auto MonsterSound = Cast<AMonsterSoundObjectInpool>(Obj);
-
+	
 	MonsterSound->PlayMonsterSound(AudioType);
 }
 
@@ -642,7 +639,7 @@ void AEnemyMonster::OnWeaponOverlapBegin(UPrimitiveComponent* OverlappedComponen
 			VibrateGamePad(0.4f, 0.4f);
 			objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 			//objectpool.SpawnObject(objectpool.ObjectArray[9].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
-			objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+			//objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
 			return;
 		}
 		if (SkillInfoMap.Contains(AttackAnimationType))
