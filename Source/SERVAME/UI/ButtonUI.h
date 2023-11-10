@@ -47,6 +47,8 @@ public:
 		UButton* LeftButton;
 	UPROPERTY(meta = (BindWidget))
 		UButton* RightButton;
+
+	TArray<UButton*> Buttons;
 	virtual void NativeOnInitialized() override;
 
 	UFUNCTION()

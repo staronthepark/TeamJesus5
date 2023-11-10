@@ -9,7 +9,8 @@
 #define Game 0
 #define Audio 1
 #define Graphics 2
-#define Quit 3
+#define Key 3
+#define Quit 4
 
 void UUserSettingUI::NativeOnInitialized()
 {
@@ -18,8 +19,8 @@ void UUserSettingUI::NativeOnInitialized()
 	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Camera); //0
 	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Audio); //1
 	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Graphics); //2
-	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Quit); //3
-	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Keyguide); //4
+	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Keyguide); //3
+	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Quit); //4
 
 	SubUserSettingArray.Add(WBP_UserSetting_GameUI); // 0
 	SubUserSettingArray.Add(WBP_UserSetting_AudioUI); // 1
@@ -28,8 +29,8 @@ void UUserSettingUI::NativeOnInitialized()
 	SelectSettingArray[Game]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickGameSettingButton);
 	SelectSettingArray[Audio]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickAudioSettingButton);
 	SelectSettingArray[Graphics]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickGraphicsSettingButton);
+	SelectSettingArray[Key]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickKeyguideSettingButton);
 	SelectSettingArray[Quit]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickQuitSettingButton);
-	SelectSettingArray[4]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickKeyguideSettingButton);
 
 	WBP_UserSetting_GameUI->LightSettingButton->OnClicked.AddDynamic(this, &UUserSettingUI::ClickLightSettingButton);
 
@@ -42,7 +43,7 @@ void UUserSettingUI::NativeConstruct()
 	Super::NativeConstruct();
 	PlayAnimation(OpenAnimation);
 	Open();
-	SelectSettingArray[0]->SetKeyboardFocus();
+	index = 0;
 }
 
 void UUserSettingUI::NativeDestruct()
@@ -56,7 +57,7 @@ void UUserSettingUI::ClickGameSettingButton()
 {
 	UnselectAllButton();
 	SubUserSettingArray[Game]->SetVisibility(ESlateVisibility::Visible);
-	Cast<UUserSettingGameUI>(SubUserSettingArray[Game])->WBP_Setting_Slider->SetKeyboardFocus();
+	Cast<UUserSettingGameUI>(SubUserSettingArray[Game])->SetKeyboardFocus();
 	PlayAnimation(OpenGameSettingAnimation);
 	WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Camera->Select();
 }
@@ -65,7 +66,7 @@ void UUserSettingUI::ClickAudioSettingButton()
 {
 	UnselectAllButton();
 	SubUserSettingArray[Audio]->SetVisibility(ESlateVisibility::Visible);
-	Cast<UUserSettingAudioUI>(SubUserSettingArray[Audio])->WBP_Setting_Button->SetKeyboardFocus();
+	Cast<UUserSettingAudioUI>(SubUserSettingArray[Audio])->SetKeyboardFocus();
 	PlayAnimation(OpenAudioSettingAnimation);
 	WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Audio->Select();
 }
@@ -74,7 +75,7 @@ void UUserSettingUI::ClickGraphicsSettingButton()
 {
 	UnselectAllButton();
 	SubUserSettingArray[Graphics]->SetVisibility(ESlateVisibility::Visible);
-	Cast<UUserSetting_GraphicsUI>(SubUserSettingArray[Graphics])->WBP_Volumetric_Button->SetKeyboardFocus();
+	Cast<UUserSetting_GraphicsUI>(SubUserSettingArray[Graphics])->SetKeyboardFocus();
 	PlayAnimation(OpenGraphicsSettingAnimation);
 	WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Graphics->Select();
 }
@@ -160,11 +161,38 @@ void UUserSettingUI::Close()
 FReply UUserSettingUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
 	FReply Reply = FReply::Unhandled();
-	if (InKeyEvent.GetKey() == EKeys::Escape)
+	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Platform_Delete)
 	{
 		Close();
 		Reply = FReply::Handled();
 	}
+
+	if (InKeyEvent.GetKey() == EKeys::Down)
+	{
+		SelectSettingArray[index]->Unselect();
+		
+		index = FMath::Clamp(index + 1, 0, SelectSettingArray.Num() -1);
+		
+		SelectSettingArray[index]->OnHovered();
+
+		Reply = FReply::Handled();
+	}
+
+	if (InKeyEvent.GetKey() == EKeys::Up)
+	{
+		SelectSettingArray[index]->Unselect();
+		index = FMath::Clamp(index - 1, 0, SelectSettingArray.Num() -1);
+		SelectSettingArray[index]->OnHovered();
+		Reply = FReply::Handled();
+	}
+	
+	if (InKeyEvent.GetKey() == EKeys::Enter)
+	{
+		SelectSettingArray[index]->Select();
+		SelectSettingArray[index]->Button->OnClicked.Broadcast();
+		Reply = FReply::Handled();
+	}
+
 	return Reply;
 }
 

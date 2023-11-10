@@ -20,6 +20,9 @@ void UUserSettingGameUI::NativeOnInitialized()
 	WBP_Language_Button->LeftButton->OnClicked.AddDynamic(this, &UUserSettingGameUI::SetLanguage);
 
 	//LightSettingButton->OnClicked.AddDynamic(this, &UUserSettingGameUI::ClickLightSettingButton);
+
+	SelectArray.Add(WBP_Setting_Slider);
+	SelectArray.Add(WBP_Language_Button);
 }
 
 void UUserSettingGameUI::NativeConstruct()
@@ -35,6 +38,9 @@ void UUserSettingGameUI::NativeConstruct()
 	SetLanguage();
 
 	WBP_Setting_Slider->SetValue((GameInstance->PlayerOptionSetting.DPI - 20) / 40);
+
+	index = 0;
+	LeftRightIndex = 0;
 }
 
 void UUserSettingGameUI::NativeDestruct()
@@ -101,5 +107,63 @@ void UUserSettingGameUI::SetLanguage()
 		LightSettingButton->WidgetStyle.Pressed.SetResourceObject(ImageTextures.Find(EGameSettings::brightnesspressed)->KorTexture);
 		//WBP_Camera_Button->ChangeLanguage();
 	}
+}
+
+FReply UUserSettingGameUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	FReply Reply = FReply::Unhandled();
+
+	if (InKeyEvent.GetKey() == EKeys::Down)
+	{
+		index = FMath::Clamp(index + 1, 0, SelectArray.Num() - 1);
+		Reply = FReply::Handled();
+	}
+
+	if (InKeyEvent.GetKey() == EKeys::Up)
+	{
+		index = FMath::Clamp(index - 1, 0, SelectArray.Num() - 1);
+		Reply = FReply::Handled();
+	}
+
+	if (InKeyEvent.GetKey() == EKeys::Right)
+	{
+		if (index == 1)
+			LeftRightIndex = FMath::Clamp(LeftRightIndex + 1, 0, 1);
+		else
+		{
+			Cast<USliderUI>(SelectArray[index])->SetValue(Cast<USliderUI>(SelectArray[index])->Slider_1->GetValue() + 0.05f);
+		}
+		Reply = FReply::Handled();
+	}
+
+	if (InKeyEvent.GetKey() == EKeys::Left)
+	{
+		if(index ==  1)
+			LeftRightIndex = FMath::Clamp(LeftRightIndex - 1, 0, 1);
+		else
+		{
+			Cast<USliderUI>(SelectArray[index])->SetValue(Cast<USliderUI>(SelectArray[index])->Slider_1->GetValue() - 0.05f);
+		}
+		Reply = FReply::Handled();
+	}
+
+	if (InKeyEvent.GetKey() == EKeys::Enter)
+	{
+		if (index == 1)
+		{
+			if (LeftRightIndex == 0)
+				Cast<UButtonUI>(SelectArray[index])->LeftButton->OnClicked.Broadcast();
+			else
+				Cast<UButtonUI>(SelectArray[index])->RightButton->OnClicked.Broadcast();
+		}
+		Reply = FReply::Handled();
+	}
+
+	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Platform_Delete)
+	{
+		GetParent()->SetKeyboardFocus();
+		Reply = FReply::Handled();
+	}
+	return Reply;
 }
 

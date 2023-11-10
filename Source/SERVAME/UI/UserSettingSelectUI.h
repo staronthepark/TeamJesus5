@@ -38,4 +38,5 @@ public:
 	USelectTextUI* WBP_Setting_SelectText_Keyguide;
 
 	void ChangeLanguage(Language& language);
+
 };

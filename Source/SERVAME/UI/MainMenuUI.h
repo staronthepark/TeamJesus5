@@ -42,6 +42,11 @@ class SERVAME_API UMainMenuUI: public UUserWidget
 
 
 	UPROPERTY(meta = (BindWidget))
+		UButton* CreditButton;
+	UPROPERTY(meta = (BindWidget))
+		UImage* CreditBackgroundImage;
+
+	UPROPERTY(meta = (BindWidget))
 		UButton* QuitButton;
 	UPROPERTY(meta = (BindWidget))
 		UImage* QuitBackgroundImage;
@@ -99,6 +104,9 @@ public:
 		void HoverOptionButton();
 
 	UFUNCTION()
+		void HoverCreditButton();
+	
+	UFUNCTION()
 		void HoverQuitButton();
 
 	UFUNCTION()
@@ -110,6 +118,9 @@ public:
 		void UnhoverOptionButton();
 	//UFUNCTION()
 	//	void UnhoverSettingButton();
+
+	UFUNCTION()
+		void UnhoverCreditButton();
 	UFUNCTION()
 		void UnhoverQuitButton();
 
@@ -124,6 +135,9 @@ public:
 
 	UFUNCTION()
 	void ClickOptionButton();
+
+	UFUNCTION()
+	void ClickCreditButton();
 
 	UFUNCTION()
 	void ClickQuitButton();

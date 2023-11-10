@@ -175,14 +175,14 @@ void UPlayerStatUI::SetExplainText(UTexture2D* texture)
 	ExplainText->SetBrushFromTexture(texture, true);
 }
 
-//FReply UPlayerStatUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
-//{
-//	FReply Reply = FReply::Unhandled();
-//	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Q)
-//	{
-//		Close();
-//		Reply = FReply::Handled();
-//	}
-//	return Reply;
-//}
+FReply UPlayerStatUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	FReply Reply = FReply::Unhandled();
+	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Q || InKeyEvent.GetKey() == EKeys::Platform_Delete)
+	{
+		Close();
+		Reply = FReply::Handled();
+	}
+	return Reply;
+}
 

@@ -15,6 +15,7 @@ class SERVAME_API USubUserSettingUI : public UUserWidget
 	GENERATED_BODY()
 
 public:
-
+	
+	int NavigationIndex;
 	virtual void NativeOnInitialized() override;
 };

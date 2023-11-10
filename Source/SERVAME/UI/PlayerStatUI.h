@@ -193,5 +193,5 @@ public:
 	void SetExplainText(UTexture2D* texture);
 
 
-	//virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent);
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent);
 };

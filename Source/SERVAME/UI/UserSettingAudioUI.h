@@ -72,6 +72,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		TMap<EAudioSettings, FAudioTextures> ImageTextures;
 
+	TArray<UUserWidget*> SelectArray;
+	int index;
+	int LeftRightIndex;
 
 public:
 	virtual void NativeOnInitialized() override;
@@ -89,4 +92,5 @@ public:
 	UFUNCTION()
 	void ChangeLanguage(Language& language);
 
+	FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 };

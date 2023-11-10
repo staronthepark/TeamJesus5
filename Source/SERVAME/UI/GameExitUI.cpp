@@ -26,6 +26,7 @@ void UGameExitUI::Open()
 void UGameExitUI::Close()
 {
 	this->SetVisibility(ESlateVisibility::Collapsed);
+	this->GetParent()->SetKeyboardFocus();
 }
 
 void UGameExitUI::YesButtonClicked()
@@ -35,6 +36,8 @@ void UGameExitUI::YesButtonClicked()
 
 void UGameExitUI::NoButtonClicked()
 {
+	this->SetVisibility(ESlateVisibility::Collapsed);
+	this->GetParent()->SetKeyboardFocus();
 	Close();
 }
 

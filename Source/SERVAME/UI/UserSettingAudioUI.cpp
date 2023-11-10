@@ -20,6 +20,10 @@ void UUserSettingAudioUI::NativeOnInitialized()
 	WBP_Setting_Slider_BGM->Slider_1->OnValueChanged.AddDynamic(this, &UUserSettingAudioUI::SetBGMVolume);
 	WBP_Setting_Slider_SE->Slider_1->OnValueChanged.AddDynamic(this, &UUserSettingAudioUI::SetSFXVolume);
 	/*WBP_Setting_Slider_Voice->Slider_1->OnValueChanged.AddDynamic(this, &UUserSettingAudioUI::SetVoiceVolume);*/
+	
+	SelectArray.Add(WBP_Setting_Button);
+	SelectArray.Add(WBP_Setting_Slider_BGM);
+	SelectArray.Add(WBP_Setting_Slider_SE);
 }
 
 void UUserSettingAudioUI::NativeConstruct()
@@ -35,6 +39,8 @@ void UUserSettingAudioUI::NativeConstruct()
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
 	ChangeLanguage(GameInstance->language);
+	index = 0;
+	LeftRightIndex = 0;
 }
 
 void UUserSettingAudioUI::SetMuteSound()
@@ -95,4 +101,65 @@ void UUserSettingAudioUI::ChangeLanguage(Language& language)
 		SEAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::se)->KorTexture, true);
 		//VoiceAudioImage->SetBrushFromTexture(ImageTextures.Find(EAudioSettings::voice)->KorTexture, true);
 	}
+}
+
+FReply UUserSettingAudioUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	FReply Reply = FReply::Unhandled();
+	if (InKeyEvent.GetKey() == EKeys::Down)
+	{
+		index = FMath::Clamp(index + 1, 0, SelectArray.Num());
+		Reply = FReply::Handled();
+	}
+
+	if (InKeyEvent.GetKey() == EKeys::Up)
+	{
+		index = FMath::Clamp(index - 1, 0, SelectArray.Num());
+		Reply = FReply::Handled();
+	}
+
+	if (InKeyEvent.GetKey() == EKeys::Right)
+	{
+		if (index == 0)
+		{
+			LeftRightIndex = FMath::Clamp(index + 1, 0, 1);
+		}
+		else
+		{
+			Cast<USliderUI>(SelectArray[index])->SetValue(Cast<USliderUI>(SelectArray[index])->Slider_1->GetValue() + 0.05);
+		}
+		Reply = FReply::Handled();
+	}
+	
+	if (InKeyEvent.GetKey() == EKeys::Left)
+	{
+		if (index == 0)
+		{
+			LeftRightIndex = FMath::Clamp(index - 1, 0, 1);
+		}
+		else 
+		{
+			Cast<USliderUI>(SelectArray[index])->SetValue(Cast<USliderUI>(SelectArray[index])->Slider_1->GetValue() - 0.05);;		}
+		Reply = FReply::Handled();
+	}
+
+	if (InKeyEvent.GetKey() == EKeys::Enter)
+	{
+		if (index == 0)
+		{
+			if (LeftRightIndex == 0)
+				Cast<UButtonUI>(SelectArray[index])->LeftButton->OnClicked.Broadcast();
+			else
+				Cast<UButtonUI>(SelectArray[index])->RightButton->OnClicked.Broadcast();
+		}
+		Reply = FReply::Handled();
+	}
+
+	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Platform_Delete)
+	{
+		GetParent()->SetKeyboardFocus();
+		Reply = FReply::Handled();
+	}
+
+	return Reply;
 }
