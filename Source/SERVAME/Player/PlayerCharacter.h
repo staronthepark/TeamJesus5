@@ -199,7 +199,7 @@ private:
 	TMap<AnimationType, FRotator> HitEffectRotatorList;
 
 	TMap<bool, TFunction<AnimationType ( )>> DodgeAnimationMap;
-	TMap<bool, TFunction<AnimationType( )>> MovementAnimMap;
+	TMap<bool, TFunction<void( )>> MovementAnimMap;
 
 public:
 	bool DebugMode;
@@ -297,6 +297,7 @@ public:
 	FVector ExecuteLocation;
 
 	int32 CurHealCount;
+
 
 	float ChangeTargetTime;	
 

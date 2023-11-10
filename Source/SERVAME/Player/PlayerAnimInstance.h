@@ -108,4 +108,15 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MyInstance, meta = (AllowPrivateAccess = "true"))
 		float HeadBoneRotateValue;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float LockOnAlpha;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float AnimBlendSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float AnimAxisY;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float AnimAxisX;
 };
