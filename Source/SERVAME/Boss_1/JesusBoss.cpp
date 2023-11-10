@@ -14,6 +14,7 @@
 #include <random>
 #include "NavigationPath.h"
 #include "..\SERVAME.h"
+#include "Math/UnrealMathUtility.h"
 
 AJesusBoss::AJesusBoss()
 {
@@ -1635,6 +1636,20 @@ void AJesusBoss::PlayMonsterSoundInPool(EMonsterAudioType AudioType)
 
 	MonsterSound->PlayMonsterSound(AudioType);
 }
+
+void AJesusBoss::PlayMonsterRandomSoundInPool(int start, int end)
+{
+	LOG_S(Warning);
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+
+	auto Obj = objectpool.SpawnObject(objectpool.ObjectArray[MONSTERSOUNDOP].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	auto MonsterSound = Cast<AMonsterSoundObjectInpool>(Obj);
+
+	const int Num = FMath::RandRange(start, end);
+	auto NumToEnum = static_cast<EMonsterAudioType>(Num);
+	MonsterSound->PlayMonsterSound(NumToEnum);
+}
+
 
 void AJesusBoss::RespawnCharacter()
 {

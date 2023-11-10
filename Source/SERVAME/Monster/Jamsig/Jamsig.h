@@ -39,6 +39,11 @@ public:
 	UPROPERTY(EditAnyWhere, Category = "KnockBackDelayTime")
 	float KnockBackDelayTime = 1.f;
 
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Foot")
+	TObjectPtr<UBoxComponent> Left_FootCollision;
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Foot")
+	TObjectPtr<UBoxComponent> Right_FootCollision;
+
 	FTimerHandle KnockBackTimerHandle;
 	FTimerHandle KnockBackDelayTimerHandle;
 
@@ -50,6 +55,9 @@ public:
 	//Notify
 	void KnockBackStart();
 	void KnockBackEnd();
+
+	UFUNCTION()
+	void JamsigFootStep(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 	void OnJamsigTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

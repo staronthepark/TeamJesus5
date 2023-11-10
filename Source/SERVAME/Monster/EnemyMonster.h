@@ -63,6 +63,15 @@ enum class MonsterType : uint8
 	JAMSIG,
 };
 
+UENUM(BlueprintType)
+enum class NotifyMonsterType : uint8
+{
+	NUN = 0,
+	JAMSIG,
+	KNIGHT,
+};
+
+
 USTRUCT(BlueprintType)
 struct FSkillInfo
 {
@@ -182,6 +191,7 @@ public:
 	bool IsOverlap = false;
 	bool IsAttacking = false;
 	bool CanRotate = true;
+	bool IsGameStart = false;
 
 	bool asd = false;
 	bool asd2 = false;
@@ -208,7 +218,7 @@ protected:
 	TMap<MonsterAttackType, TFunction<void()>>TargetDetectEventMap;
 
 public:
-	int GetRandNum(int Min, int Max);
+	const int GetRandNum(int Min, int Max);
 
 	virtual void ChangeMontageAnimation(MonsterAnimationType type);
 	void ChangeActionType(MonsterActionType type);
@@ -223,6 +233,7 @@ public:
 	void MonsterLog(int id, float f);
 	void MonsterLog(int id, int i);
 	void PlayMonsterSoundInPool(EMonsterAudioType AudioType);
+	void PlayMonsterRandomSoundInPool(int start, int end);
 
 	UFUNCTION()
 	void OnTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
