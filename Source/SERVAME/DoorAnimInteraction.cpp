@@ -46,7 +46,7 @@ void ADoorAnimInteraction::BeginPlay()
 
 
 	CloseDoorComp->OnComponentBeginOverlap.AddDynamic(this, &ADoorAnimInteraction::OnCloseDoorOverlapBegin);
-	OpenDoorComp->OnComponentEndOverlap.AddDynamic(this, &ADoorAnimInteraction::OnOpenDoorOverlapEnd);
+	//OpenDoorComp->OnComponentEndOverlap.AddDynamic(this, &ADoorAnimInteraction::OnOpenDoorOverlapEnd);
 	Init();
 
 	BoxComp = Cast<UBoxTriggerComp>(GetComponentByClass(UBoxTriggerComp::StaticClass()));
@@ -76,7 +76,6 @@ void ADoorAnimInteraction::OnCloseDoorOverlapBegin(UPrimitiveComponent* Overlapp
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[47].ObjClass, GetActorLocation(), GetActorForwardVector().Rotation() + FRotator(0, 0, -20));
 	AnimInstance->DoorAnimationType = DoorAnimationType::CLOSE;
 	CloseDoorComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	OpenDoorComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	TriggerComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 

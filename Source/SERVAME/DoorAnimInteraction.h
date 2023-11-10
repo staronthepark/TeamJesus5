@@ -20,13 +20,13 @@ class SERVAME_API ADoorAnimInteraction : public AAnimationInteraction
 public:
 	ADoorAnimInteraction() {
 		CloseDoorComp = CreateDefaultSubobject<UBoxComponent>("CloseDoorComp");
-		OpenDoorComp = CreateDefaultSubobject<UBoxComponent>("OpenDoorComp");
+//		OpenDoorComp = CreateDefaultSubobject<UBoxComponent>("OpenDoorComp");
 		SceneComp = CreateDefaultSubobject<USceneComponent>("SceneComp");
 
 		RootComponent = SceneComp;
 
 		MeshComp->SetupAttachment(SceneComp);
-		OpenDoorComp->SetupAttachment(MeshComp);
+	//	OpenDoorComp->SetupAttachment(MeshComp);
 		CloseDoorComp->SetupAttachment(MeshComp);
 	}
 

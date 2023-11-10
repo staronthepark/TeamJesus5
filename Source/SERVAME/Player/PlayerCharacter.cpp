@@ -703,6 +703,10 @@ APlayerCharacter::APlayerCharacter()
 			LockOnCameraSettingMap[IsGrab]();
 			SetPlayerForwardRotAndDir();
 			SetPlayerRightRotAndDir();
+
+			if (IsLockOn && !IsGrab)
+				YawRotation += FRotator(0, ForwardRotation[AxisY][AxisX], 0);
+
 			PlayerMovement();
 
 			if (!IsGrab)return;
@@ -752,12 +756,11 @@ APlayerCharacter::APlayerCharacter()
 				SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
 			}
 
-			LockOnCameraSettingMap[false]();
 			SetPlayerForwardRotAndDir();
 			SetPlayerRightRotAndDir();
 
 			if(IsLockOn)
-			YawRotation.Yaw += ForwardRotation[AxisY][AxisX];
+				YawRotation += FRotator(0, ForwardRotation[AxisY][AxisX], 0);
 
 			PlayerMovement();
 		});
@@ -1201,8 +1204,8 @@ APlayerCharacter::APlayerCharacter()
 		{
 			if (CurHealCount > 0)
 			{
-				SetSpeed(PlayerDataStruct.PlayerWalkSpeed);
 				UseItem();
+				GetCharacterMovement()->MaxWalkSpeed = PlayerDataStruct.PlayerWalkSpeed;
 			}			
 		});
 	InputEventMap[PlayerAction::NONE][ActionType::HEAL].Add(false, [&]()
@@ -1221,27 +1224,44 @@ APlayerCharacter::APlayerCharacter()
 
 	InputEventMap[PlayerAction::NONE][ActionType::SHIELD].Add(true, [&]()
 		{
-			if (PlayerDataStruct.SoulCount <= 0 || !CanShieldDeploy)return;
-			AxisY != 1 || AxisX != 1 ? ChangeActionType(ActionType::MOVE) : ChangeActionType(ActionType::NONE);
+			if (!CanShieldDeploy)return;
+			//if (PlayerDataStruct.SoulCount <= 0 || !CanShieldDeploy)return;
+			ChangeMontageAnimation(AnimationType::SHIELDSTART);
+
+			if (AxisY != 1 || AxisX != 1)
+			{
+				AnimInstance->BodyBlendAlpha = 0.0f;
+				ChangeActionType(ActionType::MOVE);
+			}
+			else
+			{
+				ChangeActionType(ActionType::NONE);
+			}
 
 			IsCollisionCamera = false;
 			ComboAttackEnd();
-			SetSpeed(PlayerDataStruct.PlayerWalkSpeed);
-			ChangeMontageAnimation(AnimationType::SHIELDSTART);
+			GetCharacterMovement()->MaxWalkSpeed = PlayerDataStruct.PlayerWalkSpeed;
+
 			IsGrab = true;
 			ShieldOn();
 			ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			CameraBoom1->CameraLagSpeed = 30.0f;
-			SetSpeed(PlayerDataStruct.PlayerWalkSpeed);
 			SetCameraTarget(GrabSocketOffset, GrabCameraLength);
 		});
 	InputEventMap[PlayerAction::NONE][ActionType::SHIELD].Add(false, [&]()
 		{
 			if (!IsGrab)return;
 			IsGrab = false;
-			AxisY == 1 && AxisX == 1 ? ChangeMontageAnimation(AnimationType::SHIELDEND)
-				: MovementAnimMap[IsLockOn || IsGrab]();
-			SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
+			if (AxisY == 1 && AxisX == 1)
+			{
+				ChangeMontageAnimation(AnimationType::SHIELDEND);
+			}
+			else
+			{
+				SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
+				PlayerCurAction = PlayerAction::RUN;
+			}
+			
 			AnimInstance->BodyBlendAlpha = 1.0f;
 			ShieldOff();
 			ShoulderView(IsShoulderView);
@@ -1443,7 +1463,7 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANWALK][ActionType::MOVE].Add(true, [&]()
 		{
 			ChangeActionType(ActionType::MOVE);
-			SetSpeed(PlayerDataStruct.PlayerWalkSpeed);
+			GetCharacterMovement()->MaxWalkSpeed = PlayerDataStruct.PlayerWalkSpeed;
 			AnimInstance->BodyBlendAlpha = 0.0f;
 		});
 	InputEventMap[PlayerAction::CANWALK][ActionType::MOVE].Add(false, [&]()
@@ -1582,6 +1602,7 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::SPRINT][ActionType::DODGE].Add(false, [&]()
 		{
 			IsSprint = false;
+			LockOnCameraSettingMap[false]();
 			if (CurActionType == ActionType::MOVE && 
 				AnimInstance->PlayerAnimationType != AnimationType::ENDOFSPRINT &&
 				AnimInstance->PlayerAnimationType != AnimationType::HEAL &&
@@ -1620,16 +1641,16 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::SPRINT][ActionType::MOVE].Add(true, [&]()
 		{
 			ChangeActionType(ActionType::MOVE);
-			AnimInstance->BodyBlendAlpha = 0.0f;
-			SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
+			//AnimInstance->BodyBlendAlpha = 0.0f;
+			SetSpeed(SpeedMap[IsLockOn || IsGrab][true]);
 
 		});
 	InputEventMap[PlayerAction::SPRINT][ActionType::MOVE].Add(false, [&]()
 		{
 			if (AxisX == 1 && AxisY == 1)
 			{
-				ChangeMontageAnimation(AnimationType::ENDOFSPRINT);
 				SetSpeed(0);
+				ChangeMontageAnimation(AnimationType::ENDOFSPRINT);
 				ChangeActionType(ActionType::NONE);
 			}
 		});
@@ -2012,7 +2033,7 @@ void APlayerCharacter::Dodge()
 		ComboAttackEnd();
 		SwordTrailComp->Deactivate();
 		CanNextAttack = false;
-		LockOnCameraSettingMap[false]();
+		//LockOnCameraSettingMap[false]();
 
 		ActivateCollision();
 
@@ -2122,7 +2143,7 @@ void APlayerCharacter::LockOn()
 		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false, TargetComp);
 		TargetComp = nullptr;
 		if (AnimInstance->PlayerAnimationType != AnimationType::HEAL && !IsGrab)
-			SetSpeed(AxisX == 1 && AxisY == 1 ? 0 : SpeedMap[IsLockOn || IsGrab][IsSprint]);
+		GetCharacterMovement()->MaxWalkSpeed = AxisX == 1 && AxisY == 1 ? 0 : SpeedMap[IsLockOn || IsGrab][IsSprint];
 
 		CurRotateIndex = 0;
 	}
@@ -2280,6 +2301,7 @@ void APlayerCharacter::SetInputType(bool IsPad)
 void APlayerCharacter::Sprint()
 {
 	PlayerCurAction = PlayerAction::SPRINT;
+	LockOnCameraSettingMap[false]();
 	SetSpeed(SpeedMap[IsLockOn || IsGrab][true]);
 }
 
@@ -2351,6 +2373,7 @@ bool APlayerCharacter::UseStamina(float value)
 
 void APlayerCharacter::CheckInputKey()
 {
+	AnimInstance->PlayerAnimationType = AnimationType::NONE;
 	AnimInstance->StopAllMontages(0.2f);
 	ComboAttackEnd();
 	if (IsGrab)
@@ -2509,9 +2532,12 @@ void APlayerCharacter::LookTarget()
 
 
 	if (AnimInstance->PlayerAnimationType != AnimationType::BATTLEDODGE
-		&& AnimInstance->PlayerAnimationType != AnimationType::SPRINT 
+		&& !IsSprint
 		&& AnimInstance->PlayerAnimationType != AnimationType::DEADLOOP
-		&& AnimInstance->PlayerAnimationType != AnimationType::DEADLOOP2)
+		&& AnimInstance->PlayerAnimationType != AnimationType::DEADLOOP2
+		&& AnimInstance->PlayerAnimationType != AnimationType::HEAL
+		&& AnimInstance->PlayerAnimationType != AnimationType::SAVELOOP
+		&& AnimInstance->PlayerAnimationType != AnimationType::SAVEEND)
 		YawRotation.Yaw = GetController()->GetControlRotation().Yaw;
 }
 
@@ -3009,6 +3035,7 @@ void APlayerCharacter::ComboAttackStart()
 
 void APlayerCharacter::ChangeMontageAnimation(AnimationType type)
 {
+	if(type != AnimInstance->PlayerAnimationType && AnimInstance->PlayerAnimationType != AnimationType::SHIELDSTART)
 	SetSpeed(0);
 	AnimInstance->StopMontage(MontageMap[AnimInstance->PlayerAnimationType]);
 	MontageMap[type]->BlendIn = MontageBlendInTime;		
