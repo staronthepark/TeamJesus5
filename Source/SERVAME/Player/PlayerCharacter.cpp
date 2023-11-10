@@ -1224,8 +1224,8 @@ APlayerCharacter::APlayerCharacter()
 
 	InputEventMap[PlayerAction::NONE][ActionType::SHIELD].Add(true, [&]()
 		{
-			if (!CanShieldDeploy)return;
-			//if (PlayerDataStruct.SoulCount <= 0 || !CanShieldDeploy)return;
+			//if (!CanShieldDeploy)return;
+			if (PlayerDataStruct.SoulCount <= 0 || !CanShieldDeploy)return;
 			ChangeMontageAnimation(AnimationType::SHIELDSTART);
 
 			if (AxisY != 1 || AxisX != 1)
