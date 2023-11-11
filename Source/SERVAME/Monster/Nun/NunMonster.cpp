@@ -1305,6 +1305,13 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	DeactivateHitCollision();
 	MonsterDataStruct.CharacterHp -= DamageAmount;
 
+	if (MonsterDataStruct.CharacterHp <= 0 && !IsDie)
+	{
+		IsDie = true;
+		Die(DamageAmount);
+		return 0;
+	}
+
 	ChangeMontageAnimation(MonsterAnimationType::HIT);
 
 	if (MyMonsterType == MonsterType::NUN)
