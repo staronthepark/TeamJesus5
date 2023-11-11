@@ -775,7 +775,7 @@ APlayerCharacter::APlayerCharacter()
 			CheckInputKey();
 			PlayerCurAction = PlayerAction::NONE;
 			ChangeActionType(ActionType::NONE);
-			AnimInstance->PlayerAnimationType = AnimationType::NONE;
+			//AnimInstance->PlayerAnimationType = AnimationType::NONE;
 		});
 	MontageEndEventMap.Add(AnimationType::BATTLEDODGE, [&]()
 		{	
