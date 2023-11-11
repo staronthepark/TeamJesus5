@@ -150,6 +150,8 @@ void AJamsig::BeginPlay()
 {
 	Super::BeginPlay();
 
+	CanHit = true;
+
 	MonsterController->CanPerception = true;
 
 	DeactivateHpBar();
