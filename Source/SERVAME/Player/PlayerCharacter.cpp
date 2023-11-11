@@ -2592,6 +2592,10 @@ void APlayerCharacter::ResetGame()
 	SetActorRotation(OriginRotation);
 
 	SetSpeed(0);
+
+	PlayerHUD->InitStat(0, 0, 0, 0);
+	PlayerHUD->IncreaseStaminaSize(1.0f);
+	PlayerHUD->IncreaseHpSize(1.0f);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -3235,11 +3239,6 @@ void APlayerCharacter::ResetGame2()
 {
 	GameInstance->MonsterArray.Empty();
 
-
-	PlayerHUD->InitStat(0, 0, 0, 0);
-	PlayerHUD->IncreaseStaminaSize(1.0f);
-	PlayerHUD->IncreaseHpSize(1.0f);
-
 	UCombatManager& combatmanager = UCombatManager::GetInstance();
 
 	for (int32 i = 0; i < combatmanager.MonsterInfoArray.Num(); i++)
@@ -3318,13 +3317,17 @@ void APlayerCharacter::ResetGame2()
 	UGameplayStatics::UnloadStreamLevel(this, "PrayRoom", LatentInfo, false);
 	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 1.0f);
 
-
 	PlayStartAnimation();
 	SaveMapName = "Garden";
 	PlayerDataStruct = PlayerOriginDataStruct;
 	SpawnLocation = OriginLocation;
 	SetActorLocation(OriginLocation);
 	SetActorRotation(OriginRotation);
+
+	PlayerHUD->InitStat(0, 0, 0, 0);
+	PlayerHUD->IncreaseStaminaSize(1.0f);
+	PlayerHUD->IncreaseHpSize(1.0f);
+	SetSoul(0);
 }
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
