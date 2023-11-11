@@ -915,8 +915,10 @@ APlayerCharacter::APlayerCharacter()
 	MontageEndEventMap.Add(AnimationType::BACKSTEP, MontageEndEventMap[AnimationType::BATTLEDODGE]);
 	MontageEndEventMap.Add(AnimationType::ENDOFRUN, [&]()
 		{
+			PlayerCurAction = PlayerAction::NONE;
 			ChangeActionType(ActionType::NONE);
 			SetSpeed(0);
+			AnimInstance->PlayerAnimationType = AnimationType::NONE;
 		});
 	MontageEndEventMap.Add(AnimationType::ENDOFSPRINT, [&]()
 		{
@@ -1180,6 +1182,7 @@ APlayerCharacter::APlayerCharacter()
 		{
 			ChangeActionType(ActionType::MOVE);
 			SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
+			AnimInstance->PlayerAnimationType = AnimationType::NONE;
 		});
 	InputEventMap[PlayerAction::NONE][ActionType::MOVE].Add(false, [&]()
 		{
@@ -1187,6 +1190,7 @@ APlayerCharacter::APlayerCharacter()
 			if (AxisX == 1 && AxisY == 1)
 			{
 				SetSpeed(0);
+				ChangeMontageAnimation(AnimationType::ENDOFRUN);
 				ChangeActionType(ActionType::NONE);
 			}
 		});
@@ -1340,12 +1344,14 @@ APlayerCharacter::APlayerCharacter()
 		{
 			ChangeActionType(ActionType::MOVE);
 			SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
+			AnimInstance->PlayerAnimationType = AnimationType::NONE;
 		});
 	InputEventMap[PlayerAction::RUN][ActionType::MOVE].Add(false, [&]()
 		{
 			if (AxisX == 1 && AxisY == 1)
 			{
 				SetSpeed(0);
+				ChangeMontageAnimation(AnimationType::ENDOFRUN);
 				ChangeActionType(ActionType::NONE);
 			}
 		});

@@ -20,6 +20,8 @@ public:
 
 		FTimerHandle Timer;
 
+		float ButtonOriginPosZ;
+
 		UPROPERTY(EditAnyWhere)
 			bool IsTimer;
 		UPROPERTY(EditAnywhere)

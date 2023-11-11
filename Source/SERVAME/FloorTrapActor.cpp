@@ -24,7 +24,7 @@ void AFloorTrapActor::Tick(float DeltaTime)
 		{
 			if (MeshComp->GetRelativeLocation().Z < 0)
 			{
-				MeshComp->SetRelativeLocation(FVector(0, 0, MeshComp->GetRelativeLocation().Z + Speed * DeltaTime));
+				MeshComp->SetRelativeLocation(FVector(0, 0, MeshComp->GetRelativeLocation().Z + Speed * 0.75f * DeltaTime));
 			}
 			else
 			{
@@ -43,16 +43,16 @@ void AFloorTrapActor::Tick(float DeltaTime)
 	FVector Location = ButtonMeshComp->GetRelativeLocation();
 	if (OnTheButton)
 	{
-		if (ButtonMeshComp->GetRelativeLocation().Z > -129.705314)
+		if (ButtonMeshComp->GetRelativeLocation().Z > ButtonOriginPosZ - 5.0f)
 		{
-			ButtonMeshComp->SetRelativeLocation(FVector(Location.X, Location.Y, Location.Z - Speed  * DeltaTime));
+			ButtonMeshComp->SetRelativeLocation(FVector(Location.X, Location.Y, Location.Z - Speed * 0.1f * DeltaTime));
 		}
 	}
 	else
 	{
-		if (ButtonMeshComp->GetRelativeLocation().Z < 0.0f)
+		if (ButtonMeshComp->GetRelativeLocation().Z < ButtonOriginPosZ)
 		{
-			ButtonMeshComp->SetRelativeLocation(FVector(Location.X, Location.Y, Location.Z + Speed * DeltaTime));
+			ButtonMeshComp->SetRelativeLocation(FVector(Location.X, Location.Y, Location.Z + Speed * 0.1f * DeltaTime));
 		}
 	}
 }
@@ -71,6 +71,8 @@ void AFloorTrapActor::BeginPlay()
 	{
 		GetWorldTimerManager().SetTimer(Timer, this, &AFloorTrapActor::EnableTrap, Time);
 	}
+
+	ButtonOriginPosZ = ButtonMeshComp->GetRelativeLocation().Z;
 }
 
 void AFloorTrapActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
