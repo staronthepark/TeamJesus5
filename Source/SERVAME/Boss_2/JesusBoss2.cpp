@@ -1327,6 +1327,16 @@ void AJesusBoss2::Tick(float DeltaTime)
 		AIController->MoveWhenArrived(CirclePoints[CircleIndexCount]);
 		RotateToPlayerInterp();
 	}
+
+	if (IsGameStart)
+	{
+		auto Dist = FVector::Dist(PlayerCharacter->GetActorLocation(), GetActorLocation());
+		UE_LOG(LogTemp, Warning, TEXT("Boss2 Dist : %f"), Dist);
+		if (Dist <= 180)
+			Boss2BodyCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		else
+			Boss2BodyCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
 }
 
 /*=====================
