@@ -21,18 +21,15 @@ void AMonsterSoundObjectInpool::ReturnObject()
 }
 
 void AMonsterSoundObjectInpool::PlayMonsterSound(EMonsterAudioType Type)
-{
-	MonsterAudioType = Type;
-	 
+{ 
 	if (SoundMap.Contains(Type))
 	{
+		MonsterAudioType = Type;
+
 		Super::SetActive(true);
 		AudioComp->SetSound(SoundMap[Type]);
 		AudioComp->SetVolumeMultiplier(Volume);
 		PlaySound();
-
-		if (LifeTime > 0)
-			GetWorldTimerManager().SetTimer(LifeTimeHandler, this, &AMonsterSoundObjectInpool::ReturnObject, LifeTime);
 
 		LOG_S(Warning);
 	}
