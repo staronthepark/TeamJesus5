@@ -45,7 +45,7 @@ public:
 		bool OnTheButton;
 		
 private:
-
+	 
 	UPROPERTY(EditAnywhere, Meta = (AllowPrivateAccess = true))
 		UStaticMeshComponent* MeshComp;
 

@@ -773,9 +773,13 @@ APlayerCharacter::APlayerCharacter()
 	MontageEndEventMap.Add(AnimationType::SHIELDKNOCKBACK, [&]()
 		{
 			CheckInputKey();
+			PlayerCurAction = PlayerAction::NONE;
+			ChangeActionType(ActionType::NONE);
+			AnimInstance->PlayerAnimationType = AnimationType::NONE;
 		});
 	MontageEndEventMap.Add(AnimationType::BATTLEDODGE, [&]()
 		{	
+
 			MontageBlendInTime = 0.1f;
 			CheckInputKey();
 			Imotal = false;
@@ -2133,17 +2137,19 @@ void APlayerCharacter::LockOn()
 
 		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(true, TargetComp);
 
-		if (AnimInstance->PlayerAnimationType != AnimationType::HEAL && !IsGrab)
+		if (AnimInstance->PlayerAnimationType == AnimationType::NONE && !IsGrab)
 		{
 			SetSpeed(AxisX == 1 && AxisY == 1 ? 0 : SpeedMap[IsLockOn || IsGrab][IsSprint]);
 		}
 
-
-		ShoulderView(!IsPhaseTwo);
+		
+		if (!IsGrab)
+			ShoulderView(!IsPhaseTwo);
 		CurRotateIndex = 1;
 	}
 	else
 	{
+		if(!IsGrab)
 		ShoulderView(true);
 		if(TargetComp != nullptr)
 		Cast<ABaseCharacter>(TargetComp->GetOwner())->ActivateLockOnImage(false, TargetComp);
