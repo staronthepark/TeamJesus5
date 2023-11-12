@@ -453,8 +453,9 @@ void ANunMonster::Tick(float DeltaTime)
 
 	if (MinusOpacity)
 	{
-		OpactiyDeltaTime += 0.005;
-		SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity -= OpactiyDeltaTime);
+		OpactiyDeltaTime += 0.0001;
+		SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dissolve_Line", MeshOpacity -= OpactiyDeltaTime);
+		//SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity -= OpactiyDeltaTime);
 	}
 }
 
@@ -1563,7 +1564,7 @@ void ANunMonster::RespawnCharacter()
 	//IllusionDamageSum = 0.f;
 	SpawnLevel = 1;
 
-	MeshOpacity = 1.0f;
+	MeshOpacity = 1.1f;
 
 	MinusOpacity = false;
 
@@ -1571,7 +1572,8 @@ void ANunMonster::RespawnCharacter()
 	GetMesh()->SetVisibility(true);
 
 	GetCapsuleComponent()->SetCollisionProfileName("AIPhysics");
-	SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity);
+	//SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity);
+	SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dissolve_Line", MeshOpacity);
 
 	ActivateHitCollision();
 	MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;
