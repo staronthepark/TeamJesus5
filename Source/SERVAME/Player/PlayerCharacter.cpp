@@ -2632,8 +2632,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 	AnimInstance->AnimAxisY = FMath::Lerp(AnimInstance->AnimAxisY, AxisY, 10.0f * DeltaTime);
 	AnimInstance->AnimAxisX = FMath::Lerp(AnimInstance->AnimAxisX, AxisX, 10.0f * DeltaTime);
 	AnimInstance->LockOnAlpha = FMath::Lerp(AnimInstance->LockOnAlpha, IsLockOn && !IsSprint ? 1.0f : 0.0f, 10.0f * DeltaTime);
-
-	UE_LOG(LogTemp, Warning, TEXT("%f"), AnimInstance->AnimBlendSpeed);
 }
 
 float APlayerCharacter::GetPercent(float value, float min, float max)

@@ -599,7 +599,6 @@ void AEnemyMonster::MonsterLog(int id, int i)
 
 void AEnemyMonster::PlayMonsterSoundInPool(EMonsterAudioType AudioType)
 {
-	LOG_S(Warning);
 	AObjectPool& objectpool = AObjectPool::GetInstance();
 
 	auto Obj = objectpool.SpawnObject(objectpool.ObjectArray[MONSTERSOUNDOP].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
@@ -610,7 +609,6 @@ void AEnemyMonster::PlayMonsterSoundInPool(EMonsterAudioType AudioType)
 
 void AEnemyMonster::PlayMonsterRandomSoundInPool(int start, int end)
 {
-	LOG_S(Warning);
 	AObjectPool& objectpool = AObjectPool::GetInstance();
 
 	auto Obj = objectpool.SpawnObject(objectpool.ObjectArray[MONSTERSOUNDOP].ObjClass, GetActorLocation(), FRotator::ZeroRotator);

@@ -123,6 +123,8 @@ public:
 	float CrystalRange = 400.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CrystalAttack")
 	int CrystalCount = 10;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CrystalAttack")
+	float CrystalDelay = 1.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PrayAttack")
 	float PrayObjSpawnDelay = 0.2f;

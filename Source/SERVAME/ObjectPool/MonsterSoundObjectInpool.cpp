@@ -30,7 +30,5 @@ void AMonsterSoundObjectInpool::PlayMonsterSound(EMonsterAudioType Type)
 		AudioComp->SetSound(SoundMap[Type]);
 		AudioComp->SetVolumeMultiplier(Volume);
 		PlaySound();
-
-		LOG_S(Warning);
 	}
 }

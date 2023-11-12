@@ -16,6 +16,7 @@
 #include "..\..\ObjectPool\NunEffectObjInPool.h"
 #include "..\..\NunDamageSphereTriggerComp.h"
 #include "..\..\ObjectPool\EffectObjectInPool.h"
+#include "NunTeleportActor.h"
 
 int ANunMonster::CurrentNum = 0;
 
@@ -986,6 +987,7 @@ void ANunMonster::CrystalAttack()
 			PlayMonsterSoundInPool(EMonsterAudioType::NUN_CRYSTAL_CHARGE);
 			CrystalEffect->SetCurrentEffect(EffectType::CRYSTALEFFECT);
 			CrystalEffect->ActivateCurrentEffect();
+			CrystalEffect->Delay = CrystalDelay;
 			CrystalEffect->ShotProjectile(Temp);
 			CrystalEffect->SetActorTickEnabled(true);
 		}
@@ -1401,24 +1403,12 @@ void ANunMonster::TelePort()
 			auto Num = GetRandNum(0, TeleportArr.Num() - 1);
 			for (int i = 0; i < 100; i++)
 			{
-				if (CurrentNum != Num)
+				if (CurrentNum != Num && !Cast<ANunTeleportActor>(TeleportArr[Num])->IsOverlaped)
 					break;
 
 				Num = GetRandNum(0, TeleportArr.Num() - 1);
 			}
 			CurrentNum = Num;
-
-			//for (int i = 0; i < KnightArr.Num(); i++)
-			//{
-			//	auto KnightPos = KnightArr[i]->GetActorLocation();
-
-			//	auto Dist = FVector::Dist(TeleportArr[CurrentNum]->GetActorLocation(), KnightPos);
-
-			//	if (Dist <= 100)
-			//	{
-
-			//	}
-			//}
 
 			SetActorLocation(TeleportArr[CurrentNum]->GetActorLocation());
 			
@@ -1547,6 +1537,9 @@ void ANunMonster::RespawnCharacter()
 
 	Super::RespawnCharacter();
 	UE_LOG(LogTemp, Warning, TEXT("nun respawn"));
+
+	for (auto Obj : TeleportArr)
+		Cast<ANunTeleportActor>(Obj)->IsOverlaped = false;
 
 	GetWorld()->GetTimerManager().ClearTimer(TeleportHandle);
 	
