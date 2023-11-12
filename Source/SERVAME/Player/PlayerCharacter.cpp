@@ -1783,6 +1783,9 @@ void APlayerCharacter::BeginPlay()
 	asd = GetComponentsByTag(UBoxComponent::StaticClass(), FName("Shield"));
 	ShieldOverlapComp = Cast<UBoxComponent>(asd[0]);
 
+	RectLightComp = Cast<URectLightComponent>(GetComponentByClass(URectLightComponent::StaticClass()));
+
+
 	if (IsValid(PlayerUIClass))
 	{
 		PlayerHUD = Cast<UPlayerHUD>(CreateWidget(GetWorld(), PlayerUIClass));		
@@ -2626,6 +2629,10 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	CameraDistanceToPlayer = FVector::Distance(FollowCamera->GetComponentLocation(), GetActorLocation());
 	CameraDistanceToPlayer = FMath::Clamp(CameraDistanceToPlayer, 40, 300);
+
+	RectLightComp->Intensity = FMath::Clamp(GetPercent(CameraDistanceToPlayer, 40, 300) * 800.0f, 50, 800);
+	UE_LOG(LogTemp, Warning, TEXT("%f"), RectLightComp->Intensity);
+
 	PlayerSKMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 100));
 	WeaponMesh->SetScalarParameterValueOnMaterials("Dither", GetPercent(CameraDistanceToPlayer, 40, 100));
 

@@ -13,6 +13,7 @@ ASoundManager::ASoundManager()
 
 	BGMAudioCompMap.Add(BGMType::NUNINTRO, CreateDefaultSubobject<UAudioComponent>("Nun_Intro"));
 	BGMAudioCompMap.Add(BGMType::NUNLOOP, CreateDefaultSubobject<UAudioComponent>("Nun_Loop"));
+	BGMAudioCompMap.Add(BGMType::MAINHALL, CreateDefaultSubobject<UAudioComponent>("MainHall"));
 
 
 	CymbalAudio = CreateDefaultSubobject<UAudioComponent>("Cymbal");

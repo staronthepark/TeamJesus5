@@ -2,6 +2,7 @@
 
 
 #include "DoorAnimInteraction.h"
+#include "./Manager/SoundManager.h"
 
 
 void ADoorAnimInteraction::Load(bool value)
@@ -84,6 +85,11 @@ void ADoorAnimInteraction::OnCloseDoorOverlapBegin(UPrimitiveComponent* Overlapp
 	AnimInstance->DoorAnimationType = DoorAnimationType::CLOSE;
 	CloseDoorComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	TriggerComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+	if (ChangeBGM)
+	{
+		ASoundManager::GetInstance().PlaySoundWithCymbalSound(BGMType::MAINHALL, true);
+	}
 }
 
 void ADoorAnimInteraction::EndSequence()

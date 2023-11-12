@@ -61,6 +61,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		ULevelSequence* BossRoomDoorOpenSequence;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool ChangeBGM;
+
 
 	UPROPERTY()
 		ULevelSequencePlayer* BossRoomDoorOpenSequncePlayer;

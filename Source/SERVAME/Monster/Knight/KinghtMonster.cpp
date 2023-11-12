@@ -966,7 +966,8 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	if (Spawning)
 		return DamageAmount;
 
-
+	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[48].ObjClass,
+		GetActorLocation(), FRotator::ZeroRotator);
 	IsInterpStart = false;
 	DeactivateHitCollision();
 

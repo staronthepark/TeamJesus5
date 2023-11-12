@@ -14,6 +14,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "ActorSequenceComponent.h"
 #include "ActorSequencePlayer.h"
+#include "Components/RectLightComponent.h"
 #include "PlayerCharacter.generated.h"
 
 UENUM(BlueprintType)
@@ -233,6 +234,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		USceneComponent* HeadBoneLocation;
+
+
+	URectLightComponent* RectLightComp;
 
 
 	UPROPERTY()
