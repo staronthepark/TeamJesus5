@@ -4,6 +4,7 @@
 #include "PlayerStatUI.h"
 #include "Components/Image.h"
 #include "StatUI.h"
+#include "PlayerSoulStatUI.h"
 #include <SERVAME/Player/JesusPlayerController.h>
 
 
@@ -34,6 +35,14 @@ void UPlayerStatUI::NativeOnInitialized()
 	ShieldButtons.Add(ShieldButton2);
 	ShieldButtons.Add(ShieldButton3);
 	ShieldButtons.Add(ShieldButton4);
+
+	ButtonArray.Add(StrButtons);
+	ButtonArray.Add(StaminaButtons);
+	ButtonArray.Add(HpButtons);
+	ButtonArray.Add(ShieldButtons);
+
+	UpDownIndex = 0;
+	LeftRightIndex = 0;
 
 	for (int i = 0; i < StrButtons.Num(); i++)
 	{
@@ -147,6 +156,7 @@ void UPlayerStatUI::Open()
 
 void UPlayerStatUI::Close()
 {
+	GetParent()->GetChildAt(0)->SetKeyboardFocus();
 	this->SetVisibility(ESlateVisibility::Collapsed);
 	//AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 	//Controller->SetInputMode(FInputModeGameOnly());
@@ -175,14 +185,58 @@ void UPlayerStatUI::SetExplainText(UTexture2D* texture)
 	ExplainText->SetBrushFromTexture(texture, true);
 }
 
-//FReply UPlayerStatUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
-//{
-//	FReply Reply = FReply::Unhandled();
-//	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Q)
-//	{
-//		Close();
-//		Reply = FReply::Handled();
-//	}
-//	return Reply;
-//}
+FReply UPlayerStatUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	FReply Reply = FReply::Unhandled();
+
+	if (InKeyEvent.GetKey() == EKeys::Up)
+	{
+		ButtonArray[UpDownIndex][LeftRightIndex]->Button->OnUnhovered.Broadcast();
+		UpDownIndex = FMath::Clamp(UpDownIndex - 1, 0, ButtonArray.Num() - 1);
+		ButtonArray[UpDownIndex][LeftRightIndex]->Button->OnHovered.Broadcast();
+		ButtonArray[UpDownIndex][LeftRightIndex]->Button->OnClicked.Broadcast();
+		Reply = FReply::Handled();
+	}
+
+	if (InKeyEvent.GetKey() == EKeys::Down)
+	{
+		ButtonArray[UpDownIndex][LeftRightIndex]->Button->OnUnhovered.Broadcast();
+		UpDownIndex = FMath::Clamp(UpDownIndex + 1, 0, ButtonArray.Num() - 1);
+		ButtonArray[UpDownIndex][LeftRightIndex]->Button->OnHovered.Broadcast();
+		ButtonArray[UpDownIndex][LeftRightIndex]->Button->OnClicked.Broadcast();
+		Reply = FReply::Handled();
+	}
+	
+	if (InKeyEvent.GetKey() == EKeys::Right)
+	{
+		ButtonArray[UpDownIndex][LeftRightIndex]->Button->OnUnhovered.Broadcast();
+		LeftRightIndex = FMath::Clamp(LeftRightIndex + 1, 0, ButtonArray[UpDownIndex].Num() - 1);
+		ButtonArray[UpDownIndex][LeftRightIndex]->Button->OnHovered.Broadcast();
+		ButtonArray[UpDownIndex][LeftRightIndex]->Button->OnClicked.Broadcast();
+		Reply = FReply::Handled();
+	}
+	
+	if (InKeyEvent.GetKey() == EKeys::Left)
+	{
+		ButtonArray[UpDownIndex][LeftRightIndex]->Button->OnUnhovered.Broadcast();
+		LeftRightIndex = FMath::Clamp(LeftRightIndex - 1, 0, ButtonArray[UpDownIndex].Num() - 1);
+		ButtonArray[UpDownIndex][LeftRightIndex]->Button->OnHovered.Broadcast();
+		ButtonArray[UpDownIndex][LeftRightIndex]->Button->OnClicked.Broadcast();
+		Reply = FReply::Handled();
+	}
+	
+	if (InKeyEvent.GetKey() == EKeys::Enter)
+	{
+		OnPurchaseButtonClicked();
+		Reply = FReply::Handled();
+	}
+
+
+	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Q || InKeyEvent.GetKey() == EKeys::Platform_Delete)
+	{
+		Close();
+		Reply = FReply::Handled();
+	}
+	return Reply;
+}
 

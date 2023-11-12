@@ -59,6 +59,9 @@ class SERVAME_API UPlayerRestUI : public UUserWidget
 
 	Language currentLanguage;
 
+	TArray<UButton*> Buttons;
+	int index;
+
 public:
 	UPROPERTY(meta = (BindWidget))
 	UButton* PrayButton;
@@ -87,4 +90,6 @@ public:
 
 	UFUNCTION()
 	void Open();
+
+	FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 };

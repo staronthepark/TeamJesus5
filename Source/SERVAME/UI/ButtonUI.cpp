@@ -10,6 +10,9 @@ void UButtonUI::NativeOnInitialized()
 	LeftButton->OnClicked.AddDynamic(this, &UButtonUI::LeftButtonClicked);
 	RightButton->OnClicked.AddDynamic(this, &UButtonUI::RightButtonClicked);
 	index = 0;
+
+	Buttons.Add(LeftButton);
+	Buttons.Add(RightButton);
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
 	ChangeLanguage(GameInstance->language);

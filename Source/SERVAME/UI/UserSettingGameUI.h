@@ -72,6 +72,10 @@ class SERVAME_API UUserSettingGameUI : public USubUserSettingUI
 	//TSubclassOf<UUserSettingLightUI> UserSettingLightUIClass;
 	//UUserSettingLightUI* UserSettingLightUI;
 
+	TArray<UUserWidget*> SelectArray;
+	int index;
+	int LeftRightIndex;
+
 public:
 
 	UPROPERTY(meta = (BindWidget))
@@ -100,4 +104,6 @@ public:
 
 	UFUNCTION()
 		void SetLanguage();
+
+	FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent);
 };

@@ -33,6 +33,9 @@ class SERVAME_API UMainMenuUI: public UUserWidget
 		UImage* OptionBackgroundImage;
 
 	UPROPERTY(meta = (BindWidget))
+		UImage* CreditBackgroundImage;
+
+	UPROPERTY(meta = (BindWidget))
 		UButton* OptionButton;
 
 	//UPROPERTY(meta = (BindWidget))
@@ -40,6 +43,9 @@ class SERVAME_API UMainMenuUI: public UUserWidget
 	//UPROPERTY(meta = (BindWidget))
 	//	UImage* SettingBackgroundImage;
 
+
+	UPROPERTY(meta = (BindWidget))
+		UButton* CreditButton;
 
 	UPROPERTY(meta = (BindWidget))
 		UButton* QuitButton;
@@ -57,6 +63,9 @@ class SERVAME_API UMainMenuUI: public UUserWidget
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* FadeOutForNewGame;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		UWidgetAnimation* CreditAnimation;
 
 	FWidgetAnimationDynamicEvent EndFadeInDelegate;
 	FWidgetAnimationDynamicEvent EndFadeOutDelegate;
@@ -99,6 +108,9 @@ public:
 		void HoverOptionButton();
 
 	UFUNCTION()
+		void HoverCreditButton();
+	
+	UFUNCTION()
 		void HoverQuitButton();
 
 	UFUNCTION()
@@ -110,6 +122,9 @@ public:
 		void UnhoverOptionButton();
 	//UFUNCTION()
 	//	void UnhoverSettingButton();
+
+	UFUNCTION()
+		void UnhoverCreditButton();
 	UFUNCTION()
 		void UnhoverQuitButton();
 
@@ -124,6 +139,9 @@ public:
 
 	UFUNCTION()
 	void ClickOptionButton();
+
+	UFUNCTION()
+	void ClickCreditButton();
 
 	UFUNCTION()
 	void ClickQuitButton();

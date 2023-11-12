@@ -62,13 +62,15 @@ class SERVAME_API UUserSettingUI : public UUserWidget
 	//TSubclassOf<UGameExitUI> GameExitUIClass;
 	//UGameExitUI* GameExitUI;
 
+	int index;
+
 public:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
 	UPROPERTY(meta = (BindWidget))
-		UUserSettingGameUI* WBP_UserSetting_GameUI;
+	UUserSettingGameUI* WBP_UserSetting_GameUI;
 
 
 	UFUNCTION()

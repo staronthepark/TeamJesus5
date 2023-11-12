@@ -45,6 +45,11 @@ class SERVAME_API UPlayerStatUI : public UUserWidget
 {
 	GENERATED_BODY()
 
+	TArray<TArray<UStatUI*>> ButtonArray;
+
+	int UpDownIndex;
+	int LeftRightIndex;
+
 	TArray<UStatUI*> StrButtons;
 
 	UPROPERTY(meta = (BindWidget))
@@ -193,5 +198,5 @@ public:
 	void SetExplainText(UTexture2D* texture);
 
 
-	//virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent);
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent);
 };

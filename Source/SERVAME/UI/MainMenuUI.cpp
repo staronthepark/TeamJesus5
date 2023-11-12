@@ -17,18 +17,22 @@ void UMainMenuUI::NativeOnInitialized()
 	//SettingButton->OnHovered.AddDynamic(this, &UMainMenuUI::HoverSettingButton);
 	ContinueButton->OnHovered.AddDynamic(this, &UMainMenuUI::HoverContinueButton);
 	OptionButton->OnHovered.AddDynamic(this, &UMainMenuUI::HoverOptionButton);
+	CreditButton->OnHovered.AddDynamic(this, &UMainMenuUI::HoverCreditButton);
 	QuitButton->OnHovered.AddDynamic(this, &UMainMenuUI::HoverQuitButton);
 
 	StartButton->OnUnhovered.AddDynamic(this, &UMainMenuUI::UnhoverStartButton);
 	ContinueButton->OnUnhovered.AddDynamic(this, &UMainMenuUI::UnhoverContinueButton);
 	OptionButton->OnUnhovered.AddDynamic(this, &UMainMenuUI::UnhoverOptionButton);
+	CreditButton->OnUnhovered.AddDynamic(this, &UMainMenuUI::UnhoverCreditButton);
 	//SettingButton->OnUnhovered.AddDynamic(this, &UMainMenuUI::UnhoverSettingButton);
 	QuitButton->OnUnhovered.AddDynamic(this, &UMainMenuUI::UnhoverQuitButton);
+
 
 	StartButton->OnClicked.AddDynamic(this, &UMainMenuUI::ClickStartButton);
 	//SettingButton->OnClicked.AddDynamic(this, &UMainMenuUI::ClickSettingButton);
 	ContinueButton->OnClicked.AddDynamic(this, &UMainMenuUI::ClickContinueButton);
 	OptionButton->OnClicked.AddDynamic(this, &UMainMenuUI::ClickOptionButton);
+	CreditButton->OnClicked.AddDynamic(this, &UMainMenuUI::ClickCreditButton);
 	QuitButton->OnClicked.AddDynamic(this, &UMainMenuUI::ClickQuitButton);
 
 	EndFadeInDelegate.BindDynamic(this, &UMainMenuUI::PlayFadeOutAnimation);
@@ -45,7 +49,7 @@ void UMainMenuUI::NativeConstruct()
 	APlayerController* Controller = GetWorld()->GetFirstPlayerController();
 	Controller->SetInputMode(FInputModeUIOnly());
 	Controller->bShowMouseCursor = true;
-	StartButton->SetFocus();
+	StartButton->SetKeyboardFocus();
 
 }
 
@@ -60,6 +64,11 @@ void UMainMenuUI::HoverContinueButton()
 }
 
 void UMainMenuUI::HoverOptionButton()
+{
+	OptionBackgroundImage->SetRenderOpacity(1.0f);
+}
+
+void UMainMenuUI::HoverCreditButton()
 {
 	OptionBackgroundImage->SetRenderOpacity(1.0f);
 }
@@ -95,6 +104,11 @@ void UMainMenuUI::UnhoverOptionButton()
 //	SettingBackgroundImage->SetRenderOpacity(0.f);
 //}
 
+void UMainMenuUI::UnhoverCreditButton()
+{
+	CreditBackgroundImage->SetRenderOpacity(0.0f);
+}
+
 void UMainMenuUI::UnhoverQuitButton()
 {
 	QuitBackgroundImage->SetRenderOpacity(0.f);
@@ -124,6 +138,11 @@ void UMainMenuUI::ClickOptionButton()
 	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 	Controller->character->UserSettingUI->AddToViewport();
 	
+}
+
+void UMainMenuUI::ClickCreditButton()
+{
+	PlayAnimation(CreditAnimation);
 }
 
 //void UMainMenuUI::ClickSettingButton()

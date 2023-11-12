@@ -60,7 +60,10 @@ class SERVAME_API UUserSetting_GraphicsUI : public USubUserSettingUI
 	UPROPERTY(meta = (BindWidget))
 		UImage* ReflectImage;
 
-
+	TArray<UButtonUI*> ButtonArray;
+	int index;
+	int LeftRightIndex;
+	
 	UPROPERTY(EditAnywhere)
 	TMap<EGraphicsSettings, FGraphicsTextures> ImageTextures;
 
@@ -103,5 +106,5 @@ public:
 	UFUNCTION()
 		void ChangeLanguage(Language& language);
 
-
+	FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 };

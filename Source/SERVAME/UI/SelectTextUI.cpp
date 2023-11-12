@@ -18,7 +18,6 @@ void USelectTextUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 	Unselect();
-
 }
 
 void USelectTextUI::Select()

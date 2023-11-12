@@ -114,6 +114,12 @@ public:
 	void Init();
 
 	UFUNCTION()
+	void OnButtonHovered();
+
+	UFUNCTION()
+	void OnButtonUnhovered();
+
+	UFUNCTION()
 	void OnButtonClicked();
 
 	UFUNCTION()
