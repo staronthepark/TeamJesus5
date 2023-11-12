@@ -957,15 +957,17 @@ float AKinghtMonster::Die(float Dm)
 
 float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	if (Reviving)
+		return 0.f;
+
 	if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
 		return 0.0f;
 
 	if (Imotal)
-		return DamageAmount;
+		return 0.f;
 
 	if (Spawning)
-		return DamageAmount;
-
+		return 0.f;
 
 	IsInterpStart = false;
 	DeactivateHitCollision();
