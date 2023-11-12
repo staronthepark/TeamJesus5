@@ -773,8 +773,8 @@ APlayerCharacter::APlayerCharacter()
 	MontageEndEventMap.Add(AnimationType::SHIELDKNOCKBACK, [&]()
 		{
 			CheckInputKey();
-			PlayerCurAction = PlayerAction::NONE;
-			ChangeActionType(ActionType::NONE);
+			//PlayerCurAction = PlayerAction::NONE;
+			//ChangeActionType(ActionType::NONE);
 			//AnimInstance->PlayerAnimationType = AnimationType::NONE;
 		});
 	MontageEndEventMap.Add(AnimationType::BATTLEDODGE, [&]()
@@ -793,6 +793,7 @@ APlayerCharacter::APlayerCharacter()
 
 	MontageEndEventMap.Add(AnimationType::HEAL, [&]()
 		{
+			IsHeal = false;
 			if (AnimInstance->BodyBlendAlpha == 1.0f)
 			{
 				SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
@@ -1210,8 +1211,9 @@ APlayerCharacter::APlayerCharacter()
 
 	InputEventMap[PlayerAction::NONE][ActionType::HEAL].Add(true, [&]()
 		{
-			if (CurHealCount > 0)
+			if (CurHealCount > 0 && !IsHeal)
 			{
+				IsHeal = true;
 				UseItem();
 				GetCharacterMovement()->MaxWalkSpeed = PlayerDataStruct.PlayerWalkSpeed;
 			}			
@@ -2389,7 +2391,6 @@ bool APlayerCharacter::UseStamina(float value)
 void APlayerCharacter::CheckInputKey()
 {
 	AnimInstance->PlayerAnimationType = AnimationType::NONE;
-	AnimInstance->StopAllMontages(0.2f);
 	ComboAttackEnd();
 	if (IsGrab)
 	{

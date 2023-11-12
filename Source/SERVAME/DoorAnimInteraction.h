@@ -35,6 +35,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool DisableTriggerWhenStart;
+	bool DisableTriggerWhenStart2;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool PlayerPlayDoorOpenAnim;
