@@ -18,6 +18,7 @@
 #include "..\..\ObjectPool\EffectObjectInPool.h"
 #include "NunTeleportActor.h"
 #include <random>
+#include "..\..\Manager\SoundManager.h"
 
 int ANunMonster::CurrentNum = 0;
 
@@ -452,8 +453,9 @@ void ANunMonster::Tick(float DeltaTime)
 
 	if (MinusOpacity)
 	{
-		OpactiyDeltaTime += 0.005;
-		SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity -= OpactiyDeltaTime);
+		OpactiyDeltaTime += 0.0001;
+		SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dissolve_Line", MeshOpacity -= OpactiyDeltaTime);
+		//SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity -= OpactiyDeltaTime);
 	}
 }
 
@@ -483,6 +485,7 @@ void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* Overlapp
 		}
 		else
 		{
+			ASoundManager::GetInstance().PlaySoundWithCymbalSound(BGMType::NUNLOOP, true);
 			SpawnKnight(2);
 			SelfHealTimer();
 			//TelePortAttack();
@@ -1561,7 +1564,7 @@ void ANunMonster::RespawnCharacter()
 	//IllusionDamageSum = 0.f;
 	SpawnLevel = 1;
 
-	MeshOpacity = 1.0f;
+	MeshOpacity = 1.1f;
 
 	MinusOpacity = false;
 
@@ -1569,7 +1572,8 @@ void ANunMonster::RespawnCharacter()
 	GetMesh()->SetVisibility(true);
 
 	GetCapsuleComponent()->SetCollisionProfileName("AIPhysics");
-	SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity);
+	//SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity);
+	SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dissolve_Line", MeshOpacity);
 
 	ActivateHitCollision();
 	MonsterDataStruct.CharacterHp = MonsterDataStruct.CharacterMaxHp;

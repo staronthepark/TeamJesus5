@@ -108,9 +108,9 @@ void ADeadBodyOfKinght::BeginPlay()
 
 	StateType = MonsterStateType::CANTACT;
 	Imotal = true;
+	DeactivateHitCollision();
 	TracePlayer = false;
 	StateType = MonsterStateType::NONE;
-	HitCollision->Deactivate();
 	AttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
@@ -124,9 +124,12 @@ void ADeadBodyOfKinght::Tick(float DeltaTime)
 
 void ADeadBodyOfKinght::RespawnCharacter()
 {
-	if (IsDie)return;
+	if (IsDie)
+		return;
+
 	Super::RespawnCharacter();
 
+	DeactivateHitCollision();
 	MonsterController->StopMovement();
 	Trigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	StateType = MonsterStateType::CANTACT;
@@ -134,7 +137,6 @@ void ADeadBodyOfKinght::RespawnCharacter()
 	TracePlayer = false;
 	Reviving = true;
 	StateType = MonsterStateType::NONE;
-	HitCollision->Deactivate();
 	AttackTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
