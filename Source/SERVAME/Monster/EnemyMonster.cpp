@@ -801,7 +801,7 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 		MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
 	}
 
-	if (MonsterDataStruct.CharacterHp <= 0)
+	if (MonsterDataStruct.CharacterHp <= 0 && !IsDie)
 	{
 		IsDie = true;
 		Die(DamageAmount);
