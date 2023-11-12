@@ -453,14 +453,6 @@ void ANunMonster::Tick(float DeltaTime)
 		OpactiyDeltaTime += 0.005;
 		SkeletalMeshComp->SetScalarParameterValueOnMaterials("Dither", MeshOpacity -= OpactiyDeltaTime);
 	}
-
-	//텔레포트 이펙트 확인용
-	//사용할 때 텔레포트 함수의 플레이어 락온 부분 주석치고 사용할 것.
-	//if (test)
-	//{
-	//	TelePort();
-	//	test = false;
-	//}
 }
 
 void ANunMonster::SetYaw()
@@ -1406,22 +1398,30 @@ void ANunMonster::TelePort()
 
 	GetWorld()->GetTimerManager().SetTimer(TeleportTimer, FTimerDelegate::CreateLambda([=]()
 		{
-			srand(time(NULL));
-			auto Num = rand() % TeleportArr.Num();
-			while (1)
+			auto Num = GetRandNum(0, TeleportArr.Num() - 1);
+			for (int i = 0; i < 100; i++)
 			{
-				if (CurrentNum != Num && IllusionPosNum != Num)
+				if (CurrentNum != Num)
 					break;
 
-				srand(time(NULL));
-				Num = rand() % TeleportArr.Num();
+				Num = GetRandNum(0, TeleportArr.Num() - 1);
 			}
 			CurrentNum = Num;
 
-			//UE_LOG(LogTemp, Warning, TEXT("origin CurrentNum = %d"), CurrentNum);
+			//for (int i = 0; i < KnightArr.Num(); i++)
+			//{
+			//	auto KnightPos = KnightArr[i]->GetActorLocation();
 
-			SetActorLocation(TeleportArr[Num]->GetActorLocation());
+			//	auto Dist = FVector::Dist(TeleportArr[CurrentNum]->GetActorLocation(), KnightPos);
 
+			//	if (Dist <= 100)
+			//	{
+
+			//	}
+			//}
+
+			SetActorLocation(TeleportArr[CurrentNum]->GetActorLocation());
+			
 			SetActive(true);
 			GetMesh()->SetVisibility(true);
 			ActivateHitCollision();
@@ -1436,21 +1436,9 @@ void ANunMonster::TelePort()
 			ChangeMontageAnimation(MonsterAnimationType::IDLE);
 			FogAttack();
 			SetYaw();
+			SetActorRotation(FRotator(0, YawRotation.Yaw, 0));
 			GetWorld()->GetTimerManager().ClearTimer(TeleportTimer);
 
-			//if (IsCoolTimeTeleport)
-			//{
-			//	if (Count < 1)
-			//	{
-			//		++Count;
-			//		TelePort();
-			//	}
-			//	else
-			//	{
-			//		IsCoolTimeTeleport = false;
-			//		Count = 0;
-			//	}
-			//}
 		}), TeleportDelayVal, false);
 }
 
@@ -1494,18 +1482,15 @@ void ANunMonster::TelePortTempFunc()
 	GetMesh()->SetVisibility(false);
 	DeactivateHitCollision();
 
-	srand(time(NULL));
-	auto Num = rand() % TeleportArr.Num();
-	while (1)
+	auto Num = GetRandNum(0, TeleportArr.Num() - 1);
+	for (int i = 0; i < 100; i++)
 	{
 		if (CurrentNum != Num)
 			break;
 
-		srand(time(NULL));
-		Num = rand() % TeleportArr.Num();
+		Num = GetRandNum(0, TeleportArr.Num() - 1);
 	}
 	CurrentNum = Num;
-
 	SetActorLocation(TeleportArr[Num]->GetActorLocation());
 
 	SetActive(true);
@@ -1521,7 +1506,8 @@ void ANunMonster::TelePortTempFunc()
 	ChangeActionType(MonsterActionType::NONE);
 	ChangeMontageAnimation(MonsterAnimationType::IDLE);
 	FogAttack();
-	SetYaw();
+	SetYaw();		
+	SetActorRotation(FRotator(0, YawRotation.Yaw, 0));
 }
 
 void ANunMonster::CheckMontageEndNotify()
