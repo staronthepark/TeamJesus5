@@ -84,6 +84,7 @@ float ABaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	objectpool.SpawnObject(objectpool.ObjectArray[18].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 	objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 	HitStop();
+
 	return DamageAmount;
 }
 

@@ -94,23 +94,30 @@ float AEliteKnight::Die(float Dm)
 void AEliteKnight::RespawnCharacter()
 {
 	if (IsDie)return;
-	Super::RespawnCharacter();
+		Super::RespawnCharacter();
 	MonsterController->BossUI->SetHP(1);
 	MonsterController->BossUI->RemoveFromParent();
 }
 
 float AEliteKnight::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
+		return 0.0f;
 	if (IsBoss)
 	{
 		MonsterDataStruct.CharacterHp -= DamageAmount;
 
 		MonsterController->BossUI->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
 		MonsterController->BossUI->SetDamageText(DamageAmount);
+	
+		if (MonsterDataStruct.CharacterHp <= 0 && !IsDie)
+		{
+			IsDie = true;
+			Die(DamageAmount);
+			return 0;
+		}
 	}
 
-	if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
-		return 0.0f;
 
 	return DamageAmount;
 }

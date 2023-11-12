@@ -36,6 +36,7 @@ public:
 
 	ABaseTriggerActor();
 
+	virtual void Load(bool value);
 	virtual void Init();
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime) override;

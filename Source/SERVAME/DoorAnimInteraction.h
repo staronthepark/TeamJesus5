@@ -20,13 +20,13 @@ class SERVAME_API ADoorAnimInteraction : public AAnimationInteraction
 public:
 	ADoorAnimInteraction() {
 		CloseDoorComp = CreateDefaultSubobject<UBoxComponent>("CloseDoorComp");
-		OpenDoorComp = CreateDefaultSubobject<UBoxComponent>("OpenDoorComp");
+//		OpenDoorComp = CreateDefaultSubobject<UBoxComponent>("OpenDoorComp");
 		SceneComp = CreateDefaultSubobject<USceneComponent>("SceneComp");
 
 		RootComponent = SceneComp;
 
 		MeshComp->SetupAttachment(SceneComp);
-		OpenDoorComp->SetupAttachment(MeshComp);
+	//	OpenDoorComp->SetupAttachment(MeshComp);
 		CloseDoorComp->SetupAttachment(MeshComp);
 	}
 
@@ -35,6 +35,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool DisableTriggerWhenStart;
+	bool DisableTriggerWhenStart2;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool PlayerPlayDoorOpenAnim;
@@ -74,6 +75,7 @@ public:
 		void OnOpenDoorOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 
+	virtual void Load(bool value) override;
 	virtual void Init()override;
 	virtual void BeginPlay()override;
 	virtual void BeginTriggerEvent()override;

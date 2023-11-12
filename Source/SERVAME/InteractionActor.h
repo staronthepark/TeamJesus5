@@ -28,6 +28,4 @@ public:
 	virtual void BeginTriggerEvent();
 	virtual void EndTriggerEvent();
 	virtual void EnableEvent();
-	void Init();
-
 };

@@ -4,18 +4,25 @@
 #include "DoorAnimInteraction.h"
 
 
+void ADoorAnimInteraction::Load(bool value)
+{
+	if (value)
+	{
+		DisableTriggerWhenStart = false;
+		BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	}
+}
+
 void ADoorAnimInteraction::Init()
 {
 	AnimInstance = Cast<UDoorAnimInstance>(MeshComp->GetAnimInstance());
 	AnimInstance->DoorAnimationType = DoorAnimType;
 	CloseDoorComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-	if (IsActive)
-	{
-		DisableTriggerWhenStart = false;
-		BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	}
-
+	if (DisableTriggerWhenStart)
+	BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	DisableTriggerWhenStart = DisableTriggerWhenStart2;
+	Load(IsActive);
 }
 
 void ADoorAnimInteraction::BeginPlay()
@@ -46,10 +53,10 @@ void ADoorAnimInteraction::BeginPlay()
 
 
 	CloseDoorComp->OnComponentBeginOverlap.AddDynamic(this, &ADoorAnimInteraction::OnCloseDoorOverlapBegin);
-	OpenDoorComp->OnComponentEndOverlap.AddDynamic(this, &ADoorAnimInteraction::OnOpenDoorOverlapEnd);
-	Init();
-
+	//OpenDoorComp->OnComponentEndOverlap.AddDynamic(this, &ADoorAnimInteraction::OnOpenDoorOverlapEnd);
 	BoxComp = Cast<UBoxTriggerComp>(GetComponentByClass(UBoxTriggerComp::StaticClass()));
+	DisableTriggerWhenStart2 = DisableTriggerWhenStart;
+	Init();
 
 	if (DisableTriggerWhenStart)
 		BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -76,7 +83,6 @@ void ADoorAnimInteraction::OnCloseDoorOverlapBegin(UPrimitiveComponent* Overlapp
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[47].ObjClass, GetActorLocation(), GetActorForwardVector().Rotation() + FRotator(0, 0, -20));
 	AnimInstance->DoorAnimationType = DoorAnimationType::CLOSE;
 	CloseDoorComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	OpenDoorComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	TriggerComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 

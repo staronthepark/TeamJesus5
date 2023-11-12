@@ -6,6 +6,10 @@ ABaseTriggerActor::ABaseTriggerActor()
 	IsActive = false;
 }
 
+void ABaseTriggerActor::Load(bool value)
+{
+}
+
 void ABaseTriggerActor::Init()
 {
 }

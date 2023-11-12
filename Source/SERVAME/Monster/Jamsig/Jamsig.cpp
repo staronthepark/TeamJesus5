@@ -13,16 +13,6 @@ AJamsig::AJamsig()
 	AttackTrigger = CreateDefaultSubobject<UJamsigAttackTriggerComp>(TEXT("AttackTriggerCollision"));
 	AttackTrigger->SetupAttachment(GetMesh());
 
-	Left_FootCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("L_Foot"));
-	Left_FootCollision->SetupAttachment(GetMesh(), "Bip001-L-Foot");
-	Left_FootCollision->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_No;
-	Left_FootCollision->SetCollisionProfileName("FootCollision");
-
-	Right_FootCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("R_Foot"));
-	Right_FootCollision->SetupAttachment(GetMesh(), "Bip001-R-Foot");
-	Right_FootCollision->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_No;
-	Right_FootCollision->SetCollisionProfileName("FootCollision");
-
 	NotifyBeginEndEventMap.Add(MonsterAnimationType::IDLE, TMap<bool, TFunction<void()>>());
 	NotifyBeginEndEventMap[MonsterAnimationType::IDLE].Add(true, [&]()
 		{
@@ -150,6 +140,8 @@ void AJamsig::BeginPlay()
 {
 	Super::BeginPlay();
 
+	CanHit = true;
+
 	MonsterController->CanPerception = true;
 
 	DeactivateHpBar();
@@ -165,15 +157,12 @@ void AJamsig::BeginPlay()
 		//JamsigAnimInstance->KnockBackEnd.AddUObject(this, &AJamsig::KnockBackEmd);
 	}
 
-	Left_FootCollision->OnComponentBeginOverlap.AddDynamic(this, &AJamsig::JamsigFootStep);
-	Right_FootCollision->OnComponentBeginOverlap.AddDynamic(this, &AJamsig::JamsigFootStep);
-
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &AJamsig::OnJamsigTargetDetectionBeginOverlap);
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &AJamsig::OnJamsigTargetDetectionEndOverlap);
 
 	if (SitJamsig)
 	{
-		ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
+		ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);		
 	}
 }
 
@@ -221,13 +210,6 @@ void AJamsig::KnockBackStart()
 void AJamsig::KnockBackEnd()
 {
 	IsKnockBack = false;
-}
-
-void AJamsig::JamsigFootStep(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	UE_LOG(LogTemp, Warning, TEXT("JamsigFootStep"));
-	auto NumToEnum = static_cast<EMonsterAudioType>(GetRandNum(51, 52));
-	PlayMonsterSoundInPool(NumToEnum);
 }
 
 void AJamsig::OnJamsigTargetDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -475,10 +457,17 @@ void AJamsig::RespawnCharacter()
 	ChangeActionType(MonsterActionType::NONE);
 
 	if (SitJamsig)
-		ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
+	{
+		GetWorld()->GetTimerManager().SetTimer(SitidleTimerHandle, FTimerDelegate::CreateLambda([=]()
+			{
+				ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
+			}), FMath::RandRange(0.5f, 1.0f), false);
+	}
 	else
+	{
 		ChangeMontageAnimation(MonsterAnimationType::IDLE);
-	
+	}
+
 	WeaponOpacity = 1.0f;
 	MeshOpacity = 1.0f;
 
