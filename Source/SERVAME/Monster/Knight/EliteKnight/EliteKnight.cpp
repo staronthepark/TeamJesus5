@@ -101,6 +101,8 @@ void AEliteKnight::RespawnCharacter()
 
 float AEliteKnight::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
+		return 0.0f;
 	if (IsBoss)
 	{
 		MonsterDataStruct.CharacterHp -= DamageAmount;
@@ -116,8 +118,6 @@ float AEliteKnight::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 		}
 	}
 
-	if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
-		return 0.0f;
 
 	return DamageAmount;
 }

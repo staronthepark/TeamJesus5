@@ -4,18 +4,22 @@
 #include "DoorAnimInteraction.h"
 
 
+void ADoorAnimInteraction::Load(bool value)
+{
+	if (value)
+	{
+		DisableTriggerWhenStart = false;
+		BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	}
+}
+
 void ADoorAnimInteraction::Init()
 {
 	AnimInstance = Cast<UDoorAnimInstance>(MeshComp->GetAnimInstance());
 	AnimInstance->DoorAnimationType = DoorAnimType;
 	CloseDoorComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-	if (IsActive)
-	{
-		DisableTriggerWhenStart = false;
-		BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	}
-
+	Load(IsActive);
 }
 
 void ADoorAnimInteraction::BeginPlay()

@@ -1933,6 +1933,7 @@ void APlayerCharacter::PlayStartAnimation()
 {
 	GameStartSequncePlayer->Play();
 
+	PlayerHUD->InitStat(PlayerDataStruct.StrengthIndex, PlayerDataStruct.StaminaIndex, PlayerDataStruct.HPIndex, PlayerDataStruct.ShieldIndex);
 	MontageBlendInTime = 0.0f;
 	ChangeMontageAnimation(AnimationType::GAMESTART);
 	AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
@@ -1946,9 +1947,11 @@ void APlayerCharacter::PlayStartAnimation()
 void APlayerCharacter::NewGameButton()
 {
 	UJesusSaveGame::GetInstance().Delete();
+
+	PlayerHUD->IncreaseStaminaSize(1.0f);
+	PlayerHUD->IncreaseHpSize(1.0f);
+
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::ResetGame2, 1.5f);
-
-
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -2598,10 +2601,6 @@ void APlayerCharacter::ResetGame()
 	SetActorRotation(OriginRotation);
 
 	SetSpeed(0);
-
-	PlayerHUD->InitStat(0, 0, 0, 0);
-	PlayerHUD->IncreaseStaminaSize(1.0f);
-	PlayerHUD->IncreaseHpSize(1.0f);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -2691,12 +2690,14 @@ void APlayerCharacter::RespawnCharacter()
 
 	CameraBoom1->SetWorldRotation(FRotator::ZeroRotator);
 	YawRotation = SpawnRotation;
+	RestoreStat();
 	ChangeActionType(ActionType::NONE);
+	PlayerCurAction = PlayerAction::NONE;
+	AnimInstance->PlayerAnimationType = AnimationType::NONE;
 
 	AxisX = 1;
 	AxisY = 1;
 
-	RestoreStat();
 
 	FLatentActionInfo LatentInfo;
 	UGameplayStatics::UnloadStreamLevel(this, "PrayRoom", LatentInfo, false);
@@ -3145,7 +3146,6 @@ void APlayerCharacter::LoadFile()
 
 	float Count = PlayerDataStruct.SoulCount;
 
-
 	TArray<AActor*> ActorsToFind;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
 
@@ -3162,7 +3162,6 @@ void APlayerCharacter::LoadFile()
 	SetSoul(0);
 	SetSoul(Count);
 	CurHealCount = PlayerDataStruct.MaxHealCount;
-	PlayerHUD->InitStat(PlayerDataStruct.StrengthIndex, PlayerDataStruct.StaminaIndex, PlayerDataStruct.HPIndex, PlayerDataStruct.ShieldIndex);
 
 }
 
@@ -3245,6 +3244,12 @@ void APlayerCharacter::ResetGame2()
 {
 	GameInstance->MonsterArray.Empty();
 
+	for (int i = 0; i < GameInstance->SavedTriggerActor.Num(); i++)
+	{
+		GameInstance->SavedTriggerActor[i]->IsActive = false;
+		GameInstance->SavedTriggerActor[i]->Init();
+	}
+
 	UCombatManager& combatmanager = UCombatManager::GetInstance();
 
 	for (int32 i = 0; i < combatmanager.MonsterInfoArray.Num(); i++)
@@ -3323,17 +3328,14 @@ void APlayerCharacter::ResetGame2()
 	UGameplayStatics::UnloadStreamLevel(this, "PrayRoom", LatentInfo, false);
 	GetWorldTimerManager().SetTimer(SprintEndTimer, this, &APlayerCharacter::LoadMap, 1.0f);
 
+	PlayerDataStruct = PlayerOriginDataStruct;
 	PlayStartAnimation();
 	SaveMapName = "Garden";
-	PlayerDataStruct = PlayerOriginDataStruct;
 	SpawnLocation = OriginLocation;
 	SetActorLocation(OriginLocation);
 	SetActorRotation(OriginRotation);
 
-	PlayerHUD->InitStat(0, 0, 0, 0);
-	PlayerHUD->IncreaseStaminaSize(1.0f);
-	PlayerHUD->IncreaseHpSize(1.0f);
-	SetSoul(0);
+	SetSoul(-PlayerDataStruct.SoulCount);
 }
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

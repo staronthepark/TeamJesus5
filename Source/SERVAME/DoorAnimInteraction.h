@@ -74,6 +74,7 @@ public:
 		void OnOpenDoorOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 
+	virtual void Load(bool value) override;
 	virtual void Init()override;
 	virtual void BeginPlay()override;
 	virtual void BeginTriggerEvent()override;
