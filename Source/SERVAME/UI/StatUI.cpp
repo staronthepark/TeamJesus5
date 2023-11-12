@@ -10,6 +10,8 @@ void UStatUI::NativeOnInitialized()
 	PlayerStatComp = Cast<UPlayerStatComponent>(GetWorld()->GetFirstPlayerController()->GetPawn()->GetComponentByClass(UPlayerStatComponent::StaticClass()));
 	
 	Button->OnClicked.AddDynamic(this, &UStatUI::OnButtonClicked);
+	Button->OnHovered.AddDynamic(this, &UStatUI::OnButtonHovered);
+	Button->OnUnhovered.AddDynamic(this, &UStatUI::OnButtonUnhovered);
 
 	TypeAnimation.Add(EStateType::str, [&](int32 index) {
 		return PlayerStatComp->StrengthStatList[index].Func();
@@ -54,6 +56,17 @@ void UStatUI::Init()
 		return;
 	NextStat->index = index + 1;
 	NextStat->ChangeState(EStatState::can);
+}
+
+void UStatUI::OnButtonHovered()
+{
+	Button->WidgetStyle.Normal.SetResourceObject(ButtonStates.Find(EButtonState::hovered)->Texture);
+
+}
+
+void UStatUI::OnButtonUnhovered()
+{
+	Button->WidgetStyle.Normal.SetResourceObject(ButtonStates.Find(EButtonState::normal)->Texture);
 }
 
 void UStatUI::OnButtonClicked()

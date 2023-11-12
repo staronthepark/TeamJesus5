@@ -142,6 +142,7 @@ void UMainMenuUI::ClickOptionButton()
 
 void UMainMenuUI::ClickCreditButton()
 {
+	PlayAnimation(CreditAnimation);
 }
 
 //void UMainMenuUI::ClickSettingButton()

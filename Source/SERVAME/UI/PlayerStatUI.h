@@ -45,6 +45,11 @@ class SERVAME_API UPlayerStatUI : public UUserWidget
 {
 	GENERATED_BODY()
 
+	TArray<TArray<UStatUI*>> ButtonArray;
+
+	int UpDownIndex;
+	int LeftRightIndex;
+
 	TArray<UStatUI*> StrButtons;
 
 	UPROPERTY(meta = (BindWidget))

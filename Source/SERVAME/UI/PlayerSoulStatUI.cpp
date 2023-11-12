@@ -9,6 +9,7 @@ void UPlayerSoulStatUI::NativeOnInitialized()
 	Super::NativeOnInitialized();
 	WBP_PlayerRest_UI->PrayButton->OnClicked.AddDynamic(this, &UPlayerSoulStatUI::ClickPray);
 	WBP_PlayerRest_UI->SoulButton->OnClicked.AddDynamic(this, &UPlayerSoulStatUI::OpenStat);
+
 }
 
 void UPlayerSoulStatUI::NativeConstruct()
@@ -25,6 +26,7 @@ void UPlayerSoulStatUI::OpenStat()
 {
 	//WBP_Player_Stat_UI->SetVisibility(ESlateVisibility::Visible);
 	WBP_Player_Stat_UI->Open();
+	WBP_Player_Stat_UI->SetKeyboardFocus();
 }
 
 void UPlayerSoulStatUI::InitStat(int str, int stamina, int hp, int shield)
@@ -38,7 +40,7 @@ void UPlayerSoulStatUI::Open()
 	AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 	Controller->SetShowMouseCursor(true);
 	Controller->SetInputMode(FInputModeUIOnly());
-	this->SetKeyboardFocus();
+	WBP_PlayerRest_UI->SetKeyboardFocus();
 }
 
 void UPlayerSoulStatUI::Close()
@@ -54,16 +56,4 @@ void UPlayerSoulStatUI::SetRemainSoul(int value)
 {
 	WBP_Player_Stat_UI->SetRemainSoul(value);
 }
-
-FReply UPlayerSoulStatUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
-{
-	FReply Reply = FReply::Unhandled();
-	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Q)
-	{
-		Close();
-		Reply = FReply::Handled();
-	}
-	return Reply;
-}
-
 

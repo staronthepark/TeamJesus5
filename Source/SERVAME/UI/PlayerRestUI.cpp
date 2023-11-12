@@ -13,9 +13,11 @@ void UPlayerRestUI::NativeOnInitialized()
 	PrayButton->OnClicked.AddDynamic(this, &UPlayerRestUI::OnPrayButtonClicked);
 	SoulButton->OnClicked.AddDynamic(this, &UPlayerRestUI::OnSoulButtonClicked);
 
+	Buttons.Add(PrayButton);
+	Buttons.Add(SoulButton);
+
 	OnPrayButtonUnhovered();
 	OnSoulButtonUnhovered();
-
 }
 
 void UPlayerRestUI::NativeConstruct()
@@ -123,4 +125,37 @@ void UPlayerRestUI::Open()
 	this->SetVisibility(ESlateVisibility::Visible);
 }
 
+FReply UPlayerRestUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	FReply Reply = FReply::Unhandled();
+	if (InKeyEvent.GetKey() == EKeys::Down)
+	{
+		Buttons[index]->OnUnhovered.Broadcast();
+		index = FMath::Clamp(index + 1, 0, Buttons.Num() - 1);
+		UE_LOG(LogTemp, Warning, TEXT("Index = %d"), index);
+		Buttons[index]->OnHovered.Broadcast();
+		Reply = FReply::Handled();
+	}
 
+	if (InKeyEvent.GetKey() == EKeys::Up)
+	{
+		Buttons[index]->OnUnhovered.Broadcast();
+		index = FMath::Clamp(index - 1, 0, Buttons.Num() - 1);
+		UE_LOG(LogTemp, Warning, TEXT("Index = %d"), index);
+		Buttons[index]->OnHovered.Broadcast();
+		Reply = FReply::Handled();
+	}
+
+	if (InKeyEvent.GetKey() == EKeys::Enter)
+	{
+		Buttons[index]->OnClicked.Broadcast();
+		Reply = FReply::Handled();
+	}
+
+	if (InKeyEvent.GetKey() == EKeys::Escape)
+	{
+		Reply = FReply::Handled();
+	}
+
+	return Reply;
+}

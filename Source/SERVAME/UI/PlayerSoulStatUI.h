@@ -15,14 +15,15 @@ UCLASS()
 class SERVAME_API UPlayerSoulStatUI : public UUserWidget
 {
 	GENERATED_BODY()
-
-	UPROPERTY(meta = (BindWidget))
-		UPlayerRestUI* WBP_PlayerRest_UI;
-
-	UPROPERTY(meta = (BindWidget))
-		UPlayerStatUI* WBP_Player_Stat_UI;
 	
 public:
+
+	UPROPERTY(meta = (BindWidget))
+	UPlayerRestUI* WBP_PlayerRest_UI;
+
+	UPROPERTY(meta = (BindWidget))
+	UPlayerStatUI* WBP_Player_Stat_UI;
+
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 
@@ -40,5 +41,5 @@ public:
 
 	void SetRemainSoul(int value);
 
-	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent);
+
 };

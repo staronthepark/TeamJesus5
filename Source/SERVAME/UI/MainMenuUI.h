@@ -33,6 +33,9 @@ class SERVAME_API UMainMenuUI: public UUserWidget
 		UImage* OptionBackgroundImage;
 
 	UPROPERTY(meta = (BindWidget))
+		UImage* CreditBackgroundImage;
+
+	UPROPERTY(meta = (BindWidget))
 		UButton* OptionButton;
 
 	//UPROPERTY(meta = (BindWidget))
@@ -43,8 +46,6 @@ class SERVAME_API UMainMenuUI: public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 		UButton* CreditButton;
-	UPROPERTY(meta = (BindWidget))
-		UImage* CreditBackgroundImage;
 
 	UPROPERTY(meta = (BindWidget))
 		UButton* QuitButton;
@@ -62,6 +63,9 @@ class SERVAME_API UMainMenuUI: public UUserWidget
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* FadeOutForNewGame;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		UWidgetAnimation* CreditAnimation;
 
 	FWidgetAnimationDynamicEvent EndFadeInDelegate;
 	FWidgetAnimationDynamicEvent EndFadeOutDelegate;

@@ -22,7 +22,7 @@ void UUserSettingGameUI::NativeOnInitialized()
 	//LightSettingButton->OnClicked.AddDynamic(this, &UUserSettingGameUI::ClickLightSettingButton);
 
 	SelectArray.Add(WBP_Setting_Slider);
-	SelectArray.Add(WBP_Language_Button);
+	//SelectArray.Add(WBP_Language_Button);
 }
 
 void UUserSettingGameUI::NativeConstruct()
