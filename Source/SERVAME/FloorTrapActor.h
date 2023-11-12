@@ -20,6 +20,8 @@ public:
 
 		FTimerHandle Timer;
 
+		float ButtonOriginPosZ;
+
 		UPROPERTY(EditAnyWhere)
 			bool IsTimer;
 		UPROPERTY(EditAnywhere)
@@ -43,7 +45,7 @@ public:
 		bool OnTheButton;
 		
 private:
-
+	 
 	UPROPERTY(EditAnywhere, Meta = (AllowPrivateAccess = true))
 		UStaticMeshComponent* MeshComp;
 

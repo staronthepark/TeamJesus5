@@ -49,7 +49,3 @@ void AInteractionActor::EnableEvent()
 	Super::EnableEvent();
 	//Character->PlayerHUD->PlayInteractionAnimation(false);
 }
-
-void AInteractionActor::Init()
-{
-}
