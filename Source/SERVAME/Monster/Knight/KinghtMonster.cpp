@@ -12,16 +12,6 @@ AKinghtMonster::AKinghtMonster()
 	AttackTrigger = CreateDefaultSubobject<UKnightAttackTriggerComp>(TEXT("AttackTriggerCollision"));
 	AttackTrigger->SetupAttachment(GetMesh());
 
-	Left_FootCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("L_Foot"));
-	Left_FootCollision->SetupAttachment(GetMesh(), "Bip001-L-Foot");
-	Left_FootCollision->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_No;
-	Left_FootCollision->SetCollisionProfileName("FootCollision");
-
-	Right_FootCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("R_Foot"));
-	Right_FootCollision->SetupAttachment(GetMesh(), "Bip001-R-Foot");
-	Right_FootCollision->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_No;
-	Right_FootCollision->SetCollisionProfileName("FootCollision");
-
 	ParryingCollision1->SetupAttachment(GetMesh(), FName("B_WEAPON"));
 	SwordTrailComp->SetupAttachment(GetMesh(), FName("B_WEAPON"));
 	WeaponCollision->SetupAttachment(GetMesh(), FName("B_WEAPON"));
@@ -440,9 +430,6 @@ void AKinghtMonster::BeginPlay()
 	TargetDetectionCollison->OnComponentBeginOverlap.AddDynamic(this, &AKinghtMonster::OnKnightTargetDetectionBeginOverlap);
 	TargetDetectionCollison->OnComponentEndOverlap.AddDynamic(this, &AKinghtMonster::OnKnightTargetDetectionEndOverlap);
 
-	Left_FootCollision->OnComponentBeginOverlap.AddDynamic(this, &AKinghtMonster::KnightFootStep);
-	Right_FootCollision->OnComponentBeginOverlap.AddDynamic(this, &AKinghtMonster::KnightFootStep);
-
 	if (KnightAnimInstance != nullptr)
 	{
 		KnightAnimInstance->InterpStart.AddUObject(this, &AKinghtMonster::InterpStart);
@@ -557,12 +544,6 @@ void AKinghtMonster::IdleToWalkBlendFunc(float delta)
 	{
 		IdleToWalkInterpTime = 0.f;
 	}
-}
-
-void AKinghtMonster::KnightFootStep(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	//UE_LOG(LogTemp, Warning, TEXT("JamsigFootStep"));
-
 }
 
 void AKinghtMonster::RespawnCharacter()
