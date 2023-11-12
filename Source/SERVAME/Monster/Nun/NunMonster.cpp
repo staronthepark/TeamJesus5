@@ -18,6 +18,7 @@
 #include "..\..\ObjectPool\EffectObjectInPool.h"
 #include "NunTeleportActor.h"
 #include <random>
+#include "..\..\Manager\SoundManager.h"
 
 int ANunMonster::CurrentNum = 0;
 
@@ -483,6 +484,7 @@ void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* Overlapp
 		}
 		else
 		{
+			ASoundManager::GetInstance().PlaySoundWithCymbalSound(BGMType::NUNLOOP, true);
 			SpawnKnight(2);
 			SelfHealTimer();
 			//TelePortAttack();
