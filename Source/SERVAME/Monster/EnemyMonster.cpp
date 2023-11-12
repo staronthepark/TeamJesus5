@@ -778,8 +778,6 @@ float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
 		return 0.0f;
 
-	LOG(Warning, TEXT("Monster Take Damage"));
-
 	if (Imotal)
 	{
 		return 0;

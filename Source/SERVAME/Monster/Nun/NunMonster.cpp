@@ -17,6 +17,7 @@
 #include "..\..\NunDamageSphereTriggerComp.h"
 #include "..\..\ObjectPool\EffectObjectInPool.h"
 #include "NunTeleportActor.h"
+#include <random>
 
 int ANunMonster::CurrentNum = 0;
 
@@ -659,11 +660,14 @@ void ANunMonster::SpawnKnight(int knightnum)
 
 	for (int i = 0; i < knightnum; i++)
 	{
-		if (NavSystem->GetRandomPointInNavigableRadius(GetActorLocation(), KnightSpawnRadius, RandomLocation))
+		if (NavSystem->GetRandomPointInNavigableRadius(SpawnLocation, KnightSpawnRadius, RandomLocation))
 		{
+			std::default_random_engine RandomEngine;
+			std::uniform_real_distribution<float> RandomPosY(187.618253, 591.618253);
+
 			if (FVector::Distance(RandomLocation, SpawnLocation) > 500.f)
 			{
-				SpawnLoc = FVector(-22780.715263, 385.618253, -2225.966660);
+				SpawnLoc = FVector(-22780.715263, RandomPosY(RandomEngine), -2225.966660);
 			}
 			else
 			{
@@ -1293,9 +1297,8 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	ChangeActionType(MonsterActionType::NONE);
 
 	if (Imotal)
-	{
 		return 0;
-	}
+
 	DeactivateHitCollision();
 	MonsterDataStruct.CharacterHp -= DamageAmount;
 
