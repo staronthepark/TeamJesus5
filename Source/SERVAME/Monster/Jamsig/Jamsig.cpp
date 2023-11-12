@@ -162,7 +162,7 @@ void AJamsig::BeginPlay()
 
 	if (SitJamsig)
 	{
-		ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
+		ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);		
 	}
 }
 
@@ -457,10 +457,17 @@ void AJamsig::RespawnCharacter()
 	ChangeActionType(MonsterActionType::NONE);
 
 	if (SitJamsig)
-		ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
+	{
+		GetWorld()->GetTimerManager().SetTimer(SitidleTimerHandle, FTimerDelegate::CreateLambda([=]()
+			{
+				ChangeMontageAnimation(MonsterAnimationType::JAMSIG_SIT_IDLE);
+			}), FMath::RandRange(0.5f, 1.0f), false);
+	}
 	else
+	{
 		ChangeMontageAnimation(MonsterAnimationType::IDLE);
-	
+	}
+
 	WeaponOpacity = 1.0f;
 	MeshOpacity = 1.0f;
 

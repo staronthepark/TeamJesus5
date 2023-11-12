@@ -41,6 +41,7 @@ public:
 
 	FTimerHandle KnockBackTimerHandle;
 	FTimerHandle KnockBackDelayTimerHandle;
+	FTimerHandle SitidleTimerHandle;
 
 	MonsterAnimationType HitType;
 
