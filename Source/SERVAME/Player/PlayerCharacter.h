@@ -478,6 +478,7 @@ public:
 	bool CanActivate(int32 SoulCount);
 
 	void SetSpeed(float speed);
+	void SetSpeed2(float speed);
 
 	void ShieldOff();
 	void ShieldOn();

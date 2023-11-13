@@ -772,6 +772,24 @@ APlayerCharacter::APlayerCharacter()
 	PlayerActionTickMap[PlayerAction::SPRINT].Add(ActionType::DEAD, [&]() {});
 	MontageEndEventMap.Add(AnimationType::SHIELDKNOCKBACK, [&]()
 		{
+
+			if (IsGrab)
+			{
+				ChangeMontageAnimation(AnimationType::SHIELDLOOP);
+				ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+				return;
+			}
+			else
+			{
+
+				IsGrab = false;
+				AxisY == 1 && AxisX == 1 ? ChangeMontageAnimation(AnimationType::SHIELDEND)
+					: MovementAnimMap[IsLockOn || IsGrab]();
+				SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
+				AnimInstance->BodyBlendAlpha = 1.0f;
+				ShieldOff();
+				ShoulderView(IsShoulderView);
+			}
 			CheckInputKey();
 			//PlayerCurAction = PlayerAction::NONE;
 			//ChangeActionType(ActionType::NONE);
@@ -2398,23 +2416,6 @@ bool APlayerCharacter::UseStamina(float value)
 void APlayerCharacter::CheckInputKey()
 {
 	ComboAttackEnd();
-	if (IsGrab)
-	{
-		ChangeMontageAnimation(AnimationType::SHIELDLOOP);
-		ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-		return;
-	}
-	else
-	{
-
-		IsGrab = false;
-		AxisY == 1 && AxisX == 1 ? ChangeMontageAnimation(AnimationType::SHIELDEND)
-			: MovementAnimMap[IsLockOn || IsGrab]();
-		SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
-		AnimInstance->BodyBlendAlpha = 1.0f;
-		ShieldOff();
-		ShoulderView(IsShoulderView);
-	}
 	if (AxisX != 1  || AxisY != 1)
 	{
 		if(AxisY == 2 && !IsGrab)
@@ -2433,7 +2434,7 @@ void APlayerCharacter::CheckInputKey()
 	}
 	else if(AnimInstance->PlayerAnimationType != AnimationType::ENDOFHEAL)
 	{
-		SetSpeed(0);
+		SetSpeed2(0);
 		PlayerCurAction = PlayerAction::NONE;
 		ChangeActionType(ActionType::NONE);
 	}	
@@ -2451,7 +2452,7 @@ bool APlayerCharacter::CanActivate(int32 SoulCount)
 
 void APlayerCharacter::SetSpeed(float speed)
 {
-	//AnimInstance->StopAllMontages(0.2f);
+	AnimInstance->StopAllMontages(0.2f);
 	if (speed == PlayerDataStruct.PlayerWalkSpeed && !IsGrab)
 	{
 		RotSpeed = 1.0f;
@@ -2465,6 +2466,26 @@ void APlayerCharacter::SetSpeed(float speed)
 		CameraBoom1->CameraLagSpeed = 6.0f;
 	}
 	if(IsSprint && AxisY != 2)
+		CameraBoom1->CameraLagSpeed = 3.0f;
+
+	GetCharacterMovement()->MaxWalkSpeed = speed;
+}
+
+void APlayerCharacter::SetSpeed2(float speed)
+{
+	if (speed == PlayerDataStruct.PlayerWalkSpeed && !IsGrab)
+	{
+		RotSpeed = 1.0f;
+	}
+	else
+	{
+		RotSpeed = 5.0f;
+	}
+	if (!IsGrab)
+	{
+		CameraBoom1->CameraLagSpeed = 6.0f;
+	}
+	if (IsSprint && AxisY != 2)
 		CameraBoom1->CameraLagSpeed = 3.0f;
 
 	GetCharacterMovement()->MaxWalkSpeed = speed;
@@ -3063,9 +3084,10 @@ void APlayerCharacter::ComboAttackStart()
 
 void APlayerCharacter::ChangeMontageAnimation(AnimationType type)
 {
-	if(type != AnimInstance->PlayerAnimationType && AnimInstance->PlayerAnimationType != AnimationType::SHIELDSTART)
-	SetSpeed(0);
+	//if(type != AnimInstance->PlayerAnimationType && AnimInstance->PlayerAnimationType != AnimationType::SHIELDSTART)
+	//SetSpeed(0);
 	IsHeal = false;
+	CancleByMove = false;
 	AnimInstance->StopMontage(MontageMap[AnimInstance->PlayerAnimationType]);
 	MontageMap[type]->BlendIn = MontageBlendInTime;		
 	AnimInstance->PlayMontage(MontageMap[type]);
@@ -3197,7 +3219,7 @@ void APlayerCharacter::AfterAttackNotify2(bool value)
 	{
 		ChangeActionType(ActionType::ATTACK);
 	}
-	else
+	else if(CancleByMove)
 	{
 		CancleByMove = false;
 		CheckInputKey();
