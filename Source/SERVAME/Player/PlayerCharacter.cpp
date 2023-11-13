@@ -977,6 +977,7 @@ APlayerCharacter::APlayerCharacter()
 	MontageEndEventMap.Add(AnimationType::SAVEEND, [&]()
 		{
 			GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
+			UJesusSaveGame::GetInstance().Save(this, GameInstance, SaveMapName);
 			PlayerHUD->PlayInteractionAnimation(false);
 			SpawnLocation = GetActorLocation();
 			SpawnRotation = GetActorRotation();
@@ -1213,8 +1214,8 @@ APlayerCharacter::APlayerCharacter()
 		{
 			if (CurHealCount > 0 && !IsHeal)
 			{
-				IsHeal = true;
 				UseItem();
+				IsHeal = true;
 				GetCharacterMovement()->MaxWalkSpeed = PlayerDataStruct.PlayerWalkSpeed;
 			}			
 		});
@@ -1939,6 +1940,9 @@ void APlayerCharacter::PlayStartAnimation()
 	GameStartSequncePlayer->Play();
 
 	PlayerHUD->InitStat(PlayerDataStruct.StrengthIndex, PlayerDataStruct.StaminaIndex, PlayerDataStruct.HPIndex, PlayerDataStruct.ShieldIndex);
+
+	PlayerHUD->IncreaseStaminaSize(1.0f + (PlayerDataStruct.PlayerStamina - 100) * 0.01f);
+	PlayerHUD->IncreaseHpSize(1.0f + (PlayerDataStruct.CharacterHp - 200) * 0.02f);
 	MontageBlendInTime = 0.0f;
 	ChangeMontageAnimation(AnimationType::GAMESTART);
 	AJesusPlayerController* controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
@@ -2382,7 +2386,7 @@ bool APlayerCharacter::UseStamina(float value)
 {
 	if (PlayerDataStruct.PlayerStamina > 0)
 	{
-		PlayerDataStruct.PlayerStamina = FMath::Clamp(PlayerDataStruct.PlayerStamina -= value, 0.0f, 100.0f);
+		PlayerDataStruct.PlayerStamina = FMath::Clamp(PlayerDataStruct.PlayerStamina -= value, 0.0f, PlayerDataStruct.MaxStamina);
 		PlayerHUD->DecreaseStaminaGradual(this, PlayerDataStruct.PlayerStamina / PlayerDataStruct.MaxStamina);
 		GameInstance->DebugLogWidget->T_PlayerStamina->SetText(FText::AsNumber(PlayerDataStruct.PlayerStamina));
 
@@ -2393,7 +2397,6 @@ bool APlayerCharacter::UseStamina(float value)
 
 void APlayerCharacter::CheckInputKey()
 {
-	AnimInstance->PlayerAnimationType = AnimationType::NONE;
 	ComboAttackEnd();
 	if (IsGrab)
 	{
@@ -2448,7 +2451,7 @@ bool APlayerCharacter::CanActivate(int32 SoulCount)
 
 void APlayerCharacter::SetSpeed(float speed)
 {
-	AnimInstance->StopAllMontages(0.2f);
+	//AnimInstance->StopAllMontages(0.2f);
 	if (speed == PlayerDataStruct.PlayerWalkSpeed && !IsGrab)
 	{
 		RotSpeed = 1.0f;
@@ -2651,6 +2654,17 @@ float APlayerCharacter::GetPercent(float value, float min, float max)
 void APlayerCharacter::RespawnCharacter()
 {
 	Super::RespawnCharacter();
+
+
+	if (IsPhaseTwo)
+	{
+		FLatentActionInfo LatentInfo;
+		UCombatManager::GetInstance().Boss2->SetActive(false);
+		UGameplayStatics::UnloadStreamLevel(this, "Boss2Phase", LatentInfo, false);
+		ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
+		LightManager->ChangeTargetLightSetting("2-2Map");
+		IsPhaseTwo = false;
+	}
 
 	UCombatManager& combatmanager = UCombatManager::GetInstance();
 	if (combatmanager.MonsterInfoMap.Contains(CurrentMapName.ToString()))
@@ -3014,15 +3028,6 @@ void APlayerCharacter::SkillAttack()
 void APlayerCharacter::FadeIn()
 {
 	PlayerHUD->FadeInAnimation(true);
-	if (IsPhaseTwo)
-	{
-		FLatentActionInfo LatentInfo;
-		UCombatManager::GetInstance().Boss2->SetActive(false);
-		UGameplayStatics::UnloadStreamLevel(this, "Boss2Phase", LatentInfo, false);
-		ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
-		LightManager->ChangeTargetLightSetting("2-2Map");
-		IsPhaseTwo = false;
-	}
 
 	GetWorldTimerManager().SetTimer(SprintStartTimer, this, &APlayerCharacter::RespawnCharacter, 2.0f);
 }
@@ -3060,6 +3065,7 @@ void APlayerCharacter::ChangeMontageAnimation(AnimationType type)
 {
 	if(type != AnimInstance->PlayerAnimationType && AnimInstance->PlayerAnimationType != AnimationType::SHIELDSTART)
 	SetSpeed(0);
+	IsHeal = false;
 	AnimInstance->StopMontage(MontageMap[AnimInstance->PlayerAnimationType]);
 	MontageMap[type]->BlendIn = MontageBlendInTime;		
 	AnimInstance->PlayMontage(MontageMap[type]);
