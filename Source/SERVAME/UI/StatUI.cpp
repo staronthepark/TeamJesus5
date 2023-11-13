@@ -61,12 +61,12 @@ void UStatUI::Init()
 void UStatUI::OnButtonHovered()
 {
 	Button->WidgetStyle.Normal.SetResourceObject(ButtonStates.Find(EButtonState::hovered)->Texture);
-
 }
 
 void UStatUI::OnButtonUnhovered()
 {
-	Button->WidgetStyle.Normal.SetResourceObject(ButtonStates.Find(EButtonState::normal)->Texture);
+	if(state != EStatState::activated)
+		Button->WidgetStyle.Normal.SetResourceObject(ButtonStates.Find(EButtonState::normal)->Texture);
 }
 
 void UStatUI::OnButtonClicked()
@@ -78,13 +78,8 @@ void UStatUI::OnButtonClicked()
 	ParentUI->SetExplainIcon(ExplainIcon);
 	ParentUI->SetExplainText(ExplainText);
 
-	if (state == EStatState::closed || state == EStatState::activated)
-		return;
+	ParentUI->SelectedButton = this;
 
-	if(state == EStatState::can)
-	{
-		ParentUI->SelectedButton = this;
-	}
 }
 
 void UStatUI::OnButtonUnclicked()

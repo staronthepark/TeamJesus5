@@ -84,6 +84,9 @@ class SERVAME_API UMainMenuUI: public UUserWidget
 	//TSubclassOf<UUserSettingUI> UserSettingUIClass;
 	//UUserSettingUI* UserSettingUI;
 
+	TArray<UButton*> Buttons;
+	int index;
+
 public:
 	/*ULevelSequencePlayer* LevelSequencePlayer;*/
 
@@ -154,4 +157,6 @@ public:
 
 	UFUNCTION()
 		void OnEndFadeOut();
+
+	FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 };
