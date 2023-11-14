@@ -696,7 +696,6 @@ void AEnemyMonster::OnParryingOverlap(UPrimitiveComponent* OverlappedComponent, 
 	//UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
 	//if (MyMonsterType == MonsterType::TUTORIAL && PlayerCharacter->IsAlive())
 	//	PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::grogy, true);
-
 	ParryingStun();
 
 	VibrateGamePad(1.0f, 0.4);
