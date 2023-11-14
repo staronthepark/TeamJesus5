@@ -75,7 +75,7 @@ void ABaseCharacter::VibrateGamePad(float Intensity, float time)
 
 float ABaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if (!CanHit)
+	if (!CanHit || IsDie)
 		return false;
 
 	int value = FMath::RandRange(16, 17);

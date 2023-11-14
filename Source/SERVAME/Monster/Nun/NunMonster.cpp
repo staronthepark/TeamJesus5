@@ -1309,7 +1309,6 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	{
 		IsDie = true;
 		Die(DamageAmount);
-		return 0;
 	}
 
 	ChangeMontageAnimation(MonsterAnimationType::HIT);
@@ -1346,10 +1345,11 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	{
 		if (IsIllusion)
 			return 0.f;
+
 		TelePortAttack();
 		TeleportAttackDamageSum = 0;
 		UE_LOG(LogTemp, Warning, TEXT("TeleportAttack"));
-		return 0.f;
+		return DamageAmount;
 	}
 
 	if (SpawnDamageSum >= MonsterDataStruct.CharacterMaxHp * KnightSpawnVal)

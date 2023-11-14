@@ -103,6 +103,7 @@ float AEliteKnight::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 {
 	if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
 		return 0.0f;
+
 	if (IsBoss)
 	{
 		MonsterDataStruct.CharacterHp -= DamageAmount;
@@ -114,10 +115,8 @@ float AEliteKnight::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 		{
 			IsDie = true;
 			Die(DamageAmount);
-			return 0;
 		}
 	}
-
 
 	return DamageAmount;
 }
