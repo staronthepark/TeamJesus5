@@ -1263,12 +1263,12 @@ void ANunMonster::SingleHeal()
 
 void ANunMonster::Stun()
 {
-	NunAnimInstance->StopMontage(MontageMap[AnimationType]);
-	MonsterController->StopMovement();
-	DeactivateSMOverlap();
-	ParryingCollision1->Deactivate();
-	DeactivateRightWeapon();
-	ChangeMontageAnimation(MonsterAnimationType::DEAD);
+	//NunAnimInstance->StopMontage(MontageMap[AnimationType]);
+	//MonsterController->StopMovement();
+	//DeactivateSMOverlap();
+	//ParryingCollision1->Deactivate();
+	//DeactivateRightWeapon();
+	//ChangeMontageAnimation(MonsterAnimationType::DEAD);
 }
 
 void ANunMonster::MonsterHitStop()
