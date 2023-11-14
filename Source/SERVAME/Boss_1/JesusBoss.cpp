@@ -1115,7 +1115,7 @@ void AJesusBoss::EndSequence()
 	FLatentActionInfo LatentInfo;
 	UGameplayStatics::UnloadStreamLevel(this, "A_KimMinYeongMap_Boss1", LatentInfo, false);
 	UGameplayStatics::UnloadStreamLevel(this, "2-2Map", LatentInfo, false);
-	UCombatManager::GetInstance().MonsterInfoMap["Boss2Phase"][0]->RespawnCharacter();
+	PlayerCharacter->MonsterInfoMap["Boss2Phase"][0]->RespawnCharacter();
 }
 
 void AJesusBoss::PostInitializeComponents()

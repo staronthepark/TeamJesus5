@@ -23,10 +23,7 @@ public:
 
 		static UCombatManager& GetInstance();
 
-		UPROPERTY(EditAnywhere)
-			TArray<ABaseCharacter*> MonsterInfoArray;
 
-			TMap<FString, TArray<ABaseCharacter*> > MonsterInfoMap;
 
 		UPROPERTY(EditAnywhere)
 			ABaseCharacter* Boss2;

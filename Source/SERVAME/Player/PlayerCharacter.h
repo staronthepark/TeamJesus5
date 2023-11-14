@@ -219,6 +219,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraSpringArm")
 		USpringArmComponent* CameraBoom1;
 
+	TMap<FString, TArray<ABaseCharacter*> > MonsterInfoMap;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = true))
 		UStaticMeshComponent* ShieldMeshComp;
@@ -235,6 +236,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		USceneComponent* HeadBoneLocation;
 
+
+	UPROPERTY(EditAnywhere)
+		TArray<ABaseCharacter*> MonsterInfoArray;
 
 	URectLightComponent* RectLightComp;
 

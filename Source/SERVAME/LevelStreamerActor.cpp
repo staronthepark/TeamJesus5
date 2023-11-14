@@ -32,11 +32,11 @@ void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent
 		APlayerCharacter* character = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 		character->CurrentMapName = LevelToLoad;
 
-		for (int32 i = 0; i < CombatManager.MonsterInfoMap[LevelToLoad.ToString()].Num(); i++)
+		for (int32 i = 0; i < character->MonsterInfoMap[LevelToLoad.ToString()].Num(); i++)
 		{
-			if (!CombatManager.MonsterInfoMap[LevelToLoad.ToString()][i]->IsDie)
+			if (!character->MonsterInfoMap[LevelToLoad.ToString()][i]->IsDie)
 			{
-				CombatManager.MonsterInfoMap[LevelToLoad.ToString()][i]->RespawnCharacter();
+				character->MonsterInfoMap[LevelToLoad.ToString()][i]->RespawnCharacter();
 			}
 		}
 	}
@@ -65,11 +65,11 @@ void ALevelStreamerActor::OverlapEndsLoad(UPrimitiveComponent* OverlappedCompone
 		character->CurrentMapName = LevelToLoad;
 
 
-		for (int32 i = 0; i < CombatManager.MonsterInfoMap[LevelToLoad.ToString()].Num(); i++)
+		for (int32 i = 0; i < character->MonsterInfoMap[LevelToLoad.ToString()].Num(); i++)
 		{
-			if (!CombatManager.MonsterInfoMap[LevelToLoad.ToString()][i]->IsDie)
+			if (!character->MonsterInfoMap[LevelToLoad.ToString()][i]->IsDie)
 			{
-				CombatManager.MonsterInfoMap[LevelToLoad.ToString()][i]->RespawnCharacter();
+				character->MonsterInfoMap[LevelToLoad.ToString()][i]->RespawnCharacter();
 			}
 		}
 	}
