@@ -45,6 +45,7 @@ APersistentKnight::APersistentKnight()
 		{
 			if (MonsterController->FindPlayer)
 			{
+				IsDie = false;
 				Imotal = false;
 				Reviving = false;
 				StateType = MonsterStateType::NONE;
@@ -59,6 +60,7 @@ APersistentKnight::APersistentKnight()
 			}
 			else
 			{
+				IsDie = false;
 				Imotal = false;
 				Reviving = false;
 				StateType = MonsterStateType::NONE;

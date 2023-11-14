@@ -822,6 +822,12 @@ float AEnemyMonster::Die(float Dm)
 
 			objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
 		}
+		/*
+		int value = FMath::RandRange(16, 17);*/
+		objectpool.SpawnObject(objectpool.ObjectArray[16].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[18].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+		objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+		HitStop();
 
 		DeactivateHitCollision();
 		Imotal = true;
@@ -917,6 +923,8 @@ void AEnemyMonster::RespawnCharacter()
 	Imotal = false;
 	IsStun = false;
 	CanRotate = true;
+	CanHit = true;
+
 	//PlayerCharacter = nullptr;
 	YawRotation = GetActorRotation();
 

@@ -44,7 +44,7 @@ public:
 	float KnockBackDelayTime = 1.f;
 
 	bool IsInterpStart;
-	bool Reviving = true;
+	bool Reviving = false;
 	bool Spawning = false;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))

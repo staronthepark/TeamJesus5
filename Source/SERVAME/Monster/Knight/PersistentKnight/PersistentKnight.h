@@ -37,7 +37,7 @@ public:
 	FTimerHandle EndTimer;
 
 	bool IsFirstDie = true;
-	bool Reviving = false;
+	//bool Reviving = false;
 
 	void FirstDie();
 

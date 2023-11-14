@@ -2002,6 +2002,8 @@ void AJesusBoss2::OnCrossFall()
 	if (NavSystem == nullptr)
 		return;
 
+	PlayMonsterSoundInPool(EMonsterAudioType::BOSS2_CREATECROSS);
+
 	GetWorld()->GetTimerManager().SetTimer(CrossSpawnTimerHandle, FTimerDelegate::CreateLambda([=]()
 		{			
 			if (CrossQueue.IsEmpty())
@@ -2040,7 +2042,7 @@ void AJesusBoss2::OnCrossFall()
 				CrossQueue.Enqueue(PoolObj);
 				auto CastObj = Cast<AActor>(PoolObj);
 				CastObj->SetActorScale3D(FVector(5.f, 5.f, 5.f));
-				PlayMonsterSoundInPool(EMonsterAudioType::BOSS2_CREATECROSS);
+				//PlayMonsterSoundInPool(EMonsterAudioType::BOSS2_CREATECROSS);
 				CurrentCrossCount++;
 			}
 
