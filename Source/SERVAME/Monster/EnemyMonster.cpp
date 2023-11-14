@@ -775,8 +775,11 @@ void AEnemyMonster::Stun()
 
 float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
-		return 0.0f;
+	//if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
+	//	return 0.0f;
+
+	if (!CanHit || IsDie)
+		return false;
 
 	if (Imotal)
 	{
@@ -822,7 +825,7 @@ float AEnemyMonster::Die(float Dm)
 
 			objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
 		}
-
+		
 		DeactivateHitCollision();
 		Imotal = true;
 		ChangeActionType(MonsterActionType::DEAD);
@@ -917,6 +920,8 @@ void AEnemyMonster::RespawnCharacter()
 	Imotal = false;
 	IsStun = false;
 	CanRotate = true;
+	CanHit = true;
+
 	//PlayerCharacter = nullptr;
 	YawRotation = GetActorRotation();
 

@@ -593,6 +593,19 @@ float ANunMonster::Die(float Dm)
 		return 0.f;
 	}
 
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+	for (int32 i = 0; i < MonsterDataStruct.DropSoulCount; i++)
+	{
+		float x = FMath::RandRange(-300.0f, 300.0f);
+		float y = FMath::RandRange(-300.0f, 300.0f);
+		float z = FMath::RandRange(-300.0f, 300.0f);
+
+		FVector location = GetActorLocation() + FVector(x * 0.1f, y * 0.1f, z * 0.1f);
+		FRotator rotation = GetActorRotation() + FRotator(x, y, z);
+
+		objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
+	}
+
 	if (PlayerCharacter->IsLockOn)
 		PlayerCharacter->LockOn();
 
@@ -1294,13 +1307,23 @@ void ANunMonster::ChangeMontageAnimation(MonsterAnimationType type)
 
 float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
-		return 0.0f;
+	//if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
+	//	return 0.0f;
+
+	if (!CanHit || IsDie)
+		return false;
 
 	ChangeActionType(MonsterActionType::NONE);
 
 	if (Imotal)
 		return 0;
+
+	int value = FMath::RandRange(16, 17);
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+	objectpool.SpawnObject(objectpool.ObjectArray[value].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	objectpool.SpawnObject(objectpool.ObjectArray[18].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	HitStop();
 
 	DeactivateHitCollision();
 	MonsterDataStruct.CharacterHp -= DamageAmount;
