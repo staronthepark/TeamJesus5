@@ -775,8 +775,11 @@ void AEnemyMonster::Stun()
 
 float AEnemyMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
-		return 0.0f;
+	//if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
+	//	return 0.0f;
+
+	if (!CanHit || IsDie)
+		return false;
 
 	if (Imotal)
 	{
@@ -822,13 +825,7 @@ float AEnemyMonster::Die(float Dm)
 
 			objectpool.SpawnObject(objectpool.ObjectArray[36].ObjClass, location, rotation);
 		}
-		/*
-		int value = FMath::RandRange(16, 17);*/
-		objectpool.SpawnObject(objectpool.ObjectArray[16].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-		objectpool.SpawnObject(objectpool.ObjectArray[18].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-		objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-		HitStop();
-
+		
 		DeactivateHitCollision();
 		Imotal = true;
 		ChangeActionType(MonsterActionType::DEAD);
