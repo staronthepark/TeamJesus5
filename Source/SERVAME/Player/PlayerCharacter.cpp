@@ -2415,6 +2415,7 @@ bool APlayerCharacter::UseStamina(float value)
 
 void APlayerCharacter::CheckInputKey()
 {
+	CancleByMove = false;	 
 	ComboAttackEnd();
 	if (AxisX != 1  || AxisY != 1)
 	{
@@ -3088,7 +3089,7 @@ void APlayerCharacter::ChangeMontageAnimation(AnimationType type)
 	//SetSpeed(0);
 	IsHeal = false;
 	CancleByMove = false;
-	AnimInstance->StopMontage(MontageMap[AnimInstance->PlayerAnimationType]);
+	//AnimInstance->StopAllMontages(0.2f);
 	MontageMap[type]->BlendIn = MontageBlendInTime;		
 	AnimInstance->PlayMontage(MontageMap[type]);
 	MontageBlendInTime = 0.2f;
@@ -3214,7 +3215,7 @@ void APlayerCharacter::LoadMap()
 
 void APlayerCharacter::AfterAttackNotify2(bool value)
 {
-	CancleByMove = !value;
+	CancleByMove = value;
 	if (AxisX == 1 && AxisY == 1)
 	{
 		ChangeActionType(ActionType::ATTACK);
