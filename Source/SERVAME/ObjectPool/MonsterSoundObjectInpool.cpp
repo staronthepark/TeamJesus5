@@ -13,6 +13,7 @@ void AMonsterSoundObjectInpool::BeginPlay()
 
 void AMonsterSoundObjectInpool::SetActive(bool active)
 {
+	Super::SetActive(active);
 }
 
 void AMonsterSoundObjectInpool::ReturnObject()
@@ -26,7 +27,7 @@ void AMonsterSoundObjectInpool::PlayMonsterSound(EMonsterAudioType Type)
 	{
 		MonsterAudioType = Type;
 
-		Super::SetActive(true);
+		SetActive(true);
 		AudioComp->SetSound(SoundMap[Type]);
 		AudioComp->SetVolumeMultiplier(Volume);
 		PlaySound();
