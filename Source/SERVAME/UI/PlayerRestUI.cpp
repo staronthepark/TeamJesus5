@@ -13,8 +13,8 @@ void UPlayerRestUI::NativeOnInitialized()
 	PrayButton->OnClicked.AddDynamic(this, &UPlayerRestUI::OnPrayButtonClicked);
 	SoulButton->OnClicked.AddDynamic(this, &UPlayerRestUI::OnSoulButtonClicked);
 
-	Buttons.Add(PrayButton);
 	Buttons.Add(SoulButton);
+	Buttons.Add(PrayButton);
 
 	OnPrayButtonUnhovered();
 	OnSoulButtonUnhovered();
