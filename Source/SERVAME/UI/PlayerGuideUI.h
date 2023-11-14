@@ -30,6 +30,7 @@ enum class EGuides : uint8
 	
 	// Tutorial
 	LockOn		UMETA(DisplayName = "Tutorial_LockOn"),
+	Skill		UMETA(DisplayName = "Tutorial_Skill"),
 	Parring		UMETA(DisplayName = "Tutorial_Parring"),
 	Heal		UMETA(DisplayName = "Tutorial_Heal"),
 	ShieldBash	UMETA(DisplayName = "Tutorial_ShieldBash"),

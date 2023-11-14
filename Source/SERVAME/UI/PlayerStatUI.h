@@ -148,6 +148,9 @@ class SERVAME_API UPlayerStatUI : public UUserWidget
 	UButton* PurchaseButton;
 
 	UPROPERTY(meta = (BindWidget))
+	UImage* PurchaseHoverButton;
+
+	UPROPERTY(meta = (BindWidget))
 	UButton* ResetButton;
 
 
@@ -174,6 +177,12 @@ public:
 	//void OnShieldButtonClicked();
 	UFUNCTION()
 	void Init(int str, int stamina, int hp, int shield);
+
+	UFUNCTION()
+	void OnPurchaseButtonHovered();
+
+	UFUNCTION()
+	void OnPurchaseButtonUnhovered();
 
 	UFUNCTION()
 	void OnPurchaseButtonClicked();

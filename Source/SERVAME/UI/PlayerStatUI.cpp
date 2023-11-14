@@ -69,6 +69,9 @@ void UPlayerStatUI::NativeOnInitialized()
 	}
 
 	PurchaseButton->OnClicked.AddDynamic(this, &UPlayerStatUI::OnPurchaseButtonClicked);
+	PurchaseButton->OnHovered.AddDynamic(this, &UPlayerStatUI::OnPurchaseButtonHovered);
+	PurchaseButton->OnUnhovered.AddDynamic(this, &UPlayerStatUI::OnPurchaseButtonUnhovered);
+
 }
 
 void UPlayerStatUI::NativeConstruct()
@@ -116,6 +119,16 @@ void UPlayerStatUI::Init(int str, int stamina, int hp, int shield)
 		ShieldButtons[i]->Init();
 }
 
+void UPlayerStatUI::OnPurchaseButtonHovered()
+{
+	PurchaseHoverButton->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UPlayerStatUI::OnPurchaseButtonUnhovered()
+{
+	PurchaseHoverButton->SetVisibility(ESlateVisibility::Collapsed);
+}
+
 void UPlayerStatUI::OnPurchaseButtonClicked()
 {
 	if (SelectedButton == nullptr || SelectedButton->GetState() != EStatState::can)
@@ -157,6 +170,7 @@ void UPlayerStatUI::Open()
 void UPlayerStatUI::Close()
 {
 	GetParent()->GetChildAt(0)->SetKeyboardFocus();
+	SucceededImage->SetVisibility(ESlateVisibility::Collapsed);
 	this->SetVisibility(ESlateVisibility::Collapsed);
 	//AJesusPlayerController* Controller = Cast<AJesusPlayerController>(GetWorld()->GetFirstPlayerController());
 	//Controller->SetInputMode(FInputModeGameOnly());
@@ -227,7 +241,7 @@ FReply UPlayerStatUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEve
 	
 	if (InKeyEvent.GetKey() == EKeys::Enter)
 	{
-		OnPurchaseButtonClicked();
+		PurchaseButton->OnClicked.Broadcast();
 		Reply = FReply::Handled();
 	}
 
