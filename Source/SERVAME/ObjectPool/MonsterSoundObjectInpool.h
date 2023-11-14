@@ -93,6 +93,9 @@ enum class EMonsterAudioType : uint8
 
 	BOSS2_WALK,
 	BOSS2_RUN,
+
+	KNIGHT_STINGATTACK,
+	KNIGHT_SPRINT_ATTACK
 };
 
 

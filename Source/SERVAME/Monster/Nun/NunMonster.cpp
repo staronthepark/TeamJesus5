@@ -680,10 +680,12 @@ void ANunMonster::SpawnKnight(int knightnum)
 		{
 			std::default_random_engine RandomEngine;
 			std::uniform_real_distribution<float> RandomPosY(187.618253, 591.618253);
+			std::uniform_real_distribution<float> RandomPosX(22307.654933, 22816.145524);
 
 			if (FVector::Distance(RandomLocation, SpawnLocation) > 500.f)
 			{
-				SpawnLoc = FVector(-22780.715263, RandomPosY(RandomEngine), -2225.966660);
+				SpawnLoc = FVector(FMath::RandRange(187.618253f, 591.618253f), 
+					-FMath::RandRange(22307.654933, 22816.145524), -2225.966660);
 			}
 			else
 			{
@@ -930,7 +932,7 @@ void ANunMonster::JudementAttack()
 
 	GetWorld()->GetTimerManager().SetTimer(JudementTimer, FTimerDelegate::CreateLambda([=]()
 		{
-			if (!MonsterController->FindPlayer)
+			if (!MonsterController->FindPlayer || IsDie)
 				return;
 
 			FNavLocation RandomLocation;
