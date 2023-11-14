@@ -50,15 +50,6 @@ void ALevelStreamerActor::OverlapEnds(UPrimitiveComponent* OverlappedComponent, 
 		FLatentActionInfo LatentInfo;
 		UGameplayStatics::UnloadStreamLevel(this, LevelToLoad, LatentInfo, false);
 		UCombatManager& CombatManager = UCombatManager::GetInstance();
-
-
-		for (int32 i = 0; i < CombatManager.MonsterInfoMap[LevelToLoad.ToString()].Num(); i++)
-		{
-			if (!CombatManager.MonsterInfoMap[LevelToLoad.ToString()][i]->IsDie)
-			{
-				CombatManager.MonsterInfoMap[LevelToLoad.ToString()][i]->RespawnCharacter();
-			}
-		}
 	}
 }
 
