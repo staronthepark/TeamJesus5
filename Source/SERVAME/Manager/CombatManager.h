@@ -26,9 +26,10 @@ public:
 		UPROPERTY(EditAnywhere)
 			TArray<ABaseCharacter*> MonsterInfoArray;
 
-		TMap<FString, TArray<ABaseCharacter*> > MonsterInfoMap;
+			TMap<FString, TArray<ABaseCharacter*> > MonsterInfoMap;
 
-		ABaseCharacter* Boss2;
+		UPROPERTY(EditAnywhere)
+			ABaseCharacter* Boss2;
 
 		void ActivateCollider();
 		void DeactivateCollider();
