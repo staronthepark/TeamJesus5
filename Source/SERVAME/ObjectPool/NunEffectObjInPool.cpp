@@ -51,7 +51,10 @@ void ANunEffectObjInPool::Tick(float DeltaTime)
 		return;
 
 	if (Monster->MonsterDataStruct.CharacterHp <= 0)
+	{
+		DeactivateCurrentEffect();
 		return;
+	}
 
 	if (IsShot)
 		SetActorLocation(GetActorLocation() += MoveDir * Speed * DeltaTime);
