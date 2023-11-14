@@ -15,9 +15,10 @@ void UPlaySoundNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimS
 	{
 		if (IsRandom)
 		{
+			//몬스터 Hidden 되면 소리 안나는지 테스트 해보기
 			visit_at(GetBoss(MeshComp), BossEnumType.GetIntValue(), [=](auto& val)
 				{
-					if (val->IsGameStart && !val->IsDead)
+						if (val->IsGameStart && !val->IsDead && !val->IsHidden())
 						val->PlayMonsterRandomSoundInPool(Range_Start, Range_End);
 				});
 		}
@@ -25,7 +26,7 @@ void UPlaySoundNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimS
 		{
 			visit_at(GetBoss(MeshComp), BossEnumType.GetIntValue(), [=](auto& val)
 				{
-					if (val->IsGameStart && !val->IsDead)
+					if (val->IsGameStart && !val->IsDead && !val->IsHidden())
 						val->PlayMonsterSoundInPool(Type);
 				});
 		}
