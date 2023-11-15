@@ -1549,15 +1549,7 @@ APlayerCharacter::APlayerCharacter()
 	InputEventMap[PlayerAction::CANTACT][ActionType::SHIELD].Add(true, [&]() {});
 	InputEventMap[PlayerAction::CANTACT][ActionType::SHIELD].Add(false, [&]()
 		{
-
-			if (!IsGrab)return;
 			IsGrab = false;
-			AxisY == 1 && AxisX == 1 ? ChangeMontageAnimation(AnimationType::SHIELDEND)
-				: MovementAnimMap[IsLockOn || IsGrab]();
-			SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
-			AnimInstance->BodyBlendAlpha = 1.0f;
-			ShieldOff();
-			ShoulderView(IsShoulderView);
 		});
 
 	InputEventMap.Add(PlayerAction::CANATTACK, TMap<ActionType, TMap<bool, TFunction<void()>>>());

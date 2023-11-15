@@ -129,6 +129,7 @@ void UPlayerStatComponent::BeginPlay()
 		if (Owner->CanActivate(HpStatList[Owner->PlayerDataStruct.HPIndex].SoulCost))
 		{
 			Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
+			Owner->PlayerDataStruct.CharacterHp = Owner->PlayerDataStruct.CharacterMaxHp;
 			Owner->PlayerDataStruct.HPIndex++;
 			Owner->PlayerHUD->SetHP(1.0f);
 			Owner->PlayerHUD->IncreaseHpSize(1.0f + HpStatList[Owner->PlayerDataStruct.HPIndex].Value);
@@ -141,6 +142,7 @@ void UPlayerStatComponent::BeginPlay()
 		if (Owner->CanActivate(HpStatList[Owner->PlayerDataStruct.HPIndex].SoulCost))
 		{
 			Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
+			Owner->PlayerDataStruct.CharacterHp = Owner->PlayerDataStruct.CharacterMaxHp;
 			Owner->PlayerDataStruct.HPIndex++;
 			Owner->PlayerHUD->IncreaseHpSize(1.0f + HpStatList[Owner->PlayerDataStruct.HPIndex].Value);
 			Owner->PlayerHUD->SetHP(1.0f);
@@ -153,6 +155,7 @@ void UPlayerStatComponent::BeginPlay()
 		if (Owner->CanActivate(HpStatList[Owner->PlayerDataStruct.HPIndex].SoulCost))
 		{
 			Owner->PlayerDataStruct.CharacterMaxHp += Owner->PlayerDataStruct.CharacterMaxHp * HpStatList[Owner->PlayerDataStruct.HPIndex].Value;
+			Owner->PlayerDataStruct.CharacterHp = Owner->PlayerDataStruct.CharacterMaxHp;
 			Owner->PlayerDataStruct.HPIndex++;
 			Owner->PlayerHUD->IncreaseHpSize(1.0f + HpStatList[Owner->PlayerDataStruct.HPIndex].Value);
 			Owner->PlayerHUD->SetHP(1.0f);
