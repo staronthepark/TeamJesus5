@@ -436,6 +436,8 @@ public:
 
 	void Parring();
 
+	void LoadMonster(FString name);
+
 	void Attack();
 
 	void BasicAttack();

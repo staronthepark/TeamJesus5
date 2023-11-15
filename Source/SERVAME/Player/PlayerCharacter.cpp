@@ -2111,12 +2111,13 @@ void APlayerCharacter::RestoreStat()
 	CurHealCount = PlayerDataStruct.MaxHealCount;
 	PlayerHUD->ChangeHealCount(CurHealCount);
 
-	if (MonsterInfoMap.Contains(SaveMapName.ToString()))
+	FString name = SaveMapName.ToString();
+	if (MonsterInfoMap.Contains(name))
 	{
-		for (int32 i = 0; i < MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
+		for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
 		{
-			if (MonsterInfoMap[SaveMapName.ToString()][i] == nullptr)continue;
-			MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+			if (MonsterInfoMap[name][i] == nullptr)continue;
+			MonsterInfoMap[name][i]->RespawnCharacter();
 		}
 	}
 }
@@ -2696,21 +2697,22 @@ void APlayerCharacter::RespawnCharacter()
 	}
 
 	UCombatManager& combatmanager = UCombatManager::GetInstance();
-	if (MonsterInfoMap.Contains(CurrentMapName.ToString()))
+	FString name = CurrentMapName.ToString();
+	if (MonsterInfoMap.Contains(name))
 	{
-		for (int32 i = 0; i < MonsterInfoMap[CurrentMapName.ToString()].Num(); i++)
+		for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
 		{
-			if (MonsterInfoMap[CurrentMapName.ToString()][i] == nullptr)continue;
-			MonsterInfoMap[CurrentMapName.ToString()][i]->RespawnCharacter();
+			if (MonsterInfoMap[name][i] == nullptr)continue;
+			MonsterInfoMap[name][i]->RespawnCharacter();
 		}
 	}
 
-	if (MonsterInfoMap.Contains(SaveMapName.ToString()))
+	if (MonsterInfoMap.Contains(name))
 	{
-		for (int32 i = 0; i < MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
+		for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
 		{
-			if (MonsterInfoMap[SaveMapName.ToString()][i] == nullptr)continue;
-			MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+			if (MonsterInfoMap[name][i] == nullptr)continue;
+			MonsterInfoMap[name][i]->RespawnCharacter();
 		}
 	}
 
@@ -2808,6 +2810,17 @@ void APlayerCharacter::Parring()
 		objectpool.SpawnObject(objectpool.ObjectArray[24].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 		ChangeActionType(ActionType::PARRING);
 		ChangeMontageAnimation(AnimationType::PARRING);
+	}
+}
+
+void APlayerCharacter::LoadMonster(FString name)
+{
+	for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
+	{
+		if (!MonsterInfoMap[name][i]->IsDie)
+		{
+			MonsterInfoMap[name][i]->RespawnCharacter();
+		}
 	}
 }
 
@@ -3263,17 +3276,17 @@ void APlayerCharacter::LoadingMonster()
 {
 	UCombatManager& combatmanager = UCombatManager::GetInstance();		
 
-
-	for (int32 i = 0; i < MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
+	FString name = SaveMapName.ToString();
+	for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
 	{
-		if (MonsterInfoMap[SaveMapName.ToString()][i] == nullptr)continue;
-		if (!MonsterInfoMap[SaveMapName.ToString()][i]->IsDie)
+		if (MonsterInfoMap[name][i] == nullptr)continue;
+		if (!MonsterInfoMap[name][i]->IsDie)
 		{
-			MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+			MonsterInfoMap[name][i]->RespawnCharacter();
 		}
 		else
 		{
-			AEnemyMonster* monster = Cast<AEnemyMonster>(MonsterInfoMap[SaveMapName.ToString()][i]);
+			AEnemyMonster* monster = Cast<AEnemyMonster>(MonsterInfoMap[name][i]);
 			if (monster->OpenDoor != nullptr)
 			{
 				monster->OpenDoor->BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -3318,22 +3331,24 @@ void APlayerCharacter::ResetGame2()
 
 	Super::RespawnCharacter();
 
-	if (MonsterInfoMap.Contains(CurrentMapName.ToString()))
+	FString name = CurrentMapName.ToString();
+	if (MonsterInfoMap.Contains(name))
 	{
-		for (int32 i = 0; i < MonsterInfoMap[CurrentMapName.ToString()].Num(); i++)
+		for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
 		{
-			if (MonsterInfoMap[SaveMapName.ToString()][i] == nullptr)continue;
-			MonsterInfoMap[CurrentMapName.ToString()][i]->SetActive(false);
-			MonsterInfoMap[CurrentMapName.ToString()][i]->RespawnCharacter();
+			if (MonsterInfoMap[name][i] == nullptr)continue;
+			MonsterInfoMap[name][i]->SetActive(false);
+			MonsterInfoMap[name][i]->RespawnCharacter();
 		}
 	}
 
-	if (MonsterInfoMap.Contains(SaveMapName.ToString()))
+	name = SaveMapName.ToString();
+	if (MonsterInfoMap.Contains(name))
 	{
-		for (int32 i = 0; i < MonsterInfoMap[SaveMapName.ToString()].Num(); i++)
+		for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
 		{
-			if (MonsterInfoMap[SaveMapName.ToString()][i] == nullptr)continue;
-			MonsterInfoMap[SaveMapName.ToString()][i]->RespawnCharacter();
+			if (MonsterInfoMap[name][i] == nullptr)continue;
+			MonsterInfoMap[name][i]->RespawnCharacter();
 		}
 	}
 
