@@ -325,13 +325,7 @@ float AJamsig::Die(float Dm)
 			CastObj->SetEffectType(SelectEffectType::KNIGHT_DEAD);
 			CastObj->ActivateCurrentEffect();
 
-			GetMesh()->SetVisibility(false);
-			SetActive(false);
-			SetActorHiddenInGame(true);
-			SetActorEnableCollision(false);
-			SetActorTickEnabled(false);
-
-			//MinusOpacity = true;
+			MinusOpacity = true;
 		}), 4.5f, false);
 
 	return Dm;
