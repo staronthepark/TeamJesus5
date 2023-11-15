@@ -97,6 +97,11 @@ void UPlayerHUD::NativeOnInitialized()
 		{
 			PlayTutorialAnimation(EGuides::StrongAttack, isGamePad);
 		});
+	GuideAnimationFunction.Add(EGuides::Skill, [&](bool value)
+		{
+			PlayTutorialAnimation(EGuides::Skill, isGamePad);
+		});
+
 	// Subtitle
 	GuideAnimationFunction.Add(EGuides::ST_Garden, [&](bool value)
 		{
