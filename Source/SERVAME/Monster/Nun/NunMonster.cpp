@@ -487,7 +487,7 @@ void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* Overlapp
 		{
 			ASoundManager::GetInstance().PlaySoundWithCymbalSound(BGMType::NUNLOOP, true);
 			SpawnKnight(2);
-			SelfHealTimer();
+			//SelfHealTimer();
 			//TelePortAttack();
 			GetWorld()->GetTimerManager().SetTimer(TeleportHandle, FTimerDelegate::CreateLambda([=]()
 				{
@@ -579,19 +579,19 @@ float ANunMonster::Die(float Dm)
 		if (Illusion != nullptr)
 			Illusion->Die(0.f);
 	}
-	else
-	{
-		auto actor = UGameplayStatics::GetActorOfClass(GetWorld(), OriginNunClass);
-		auto OriginNun = Cast<ANunMonster>(actor);
-		OriginNun->SelfHeal();
+	//else
+	//{
+	//	auto actor = UGameplayStatics::GetActorOfClass(GetWorld(), OriginNunClass);
+	//	auto OriginNun = Cast<ANunMonster>(actor);
+	//	OriginNun->SelfHeal();
 
-		auto index = PlayerCharacter->HitMonsterInfoArray.Find(this);
-		PlayerCharacter->HitMonsterInfoArray.RemoveAtSwap(index);
-		SetActorTickEnabled(false);
-		GetWorld()->DestroyActor(this);
-		DeactivateHpBar();
-		return 0.f;
-	}
+	//	auto index = PlayerCharacter->HitMonsterInfoArray.Find(this);
+	//	PlayerCharacter->HitMonsterInfoArray.RemoveAtSwap(index);
+	//	SetActorTickEnabled(false);
+	//	GetWorld()->DestroyActor(this);
+	//	DeactivateHpBar();
+	//	return 0.f;
+	//}
 
 	AObjectPool& objectpool = AObjectPool::GetInstance();
 	for (int32 i = 0; i < MonsterDataStruct.DropSoulCount; i++)
@@ -621,7 +621,7 @@ float ANunMonster::Die(float Dm)
 	CheckDetect = false;
 	IsDie = true;
 	Imotal = true;
-	GetWorld()->GetTimerManager().ClearTimer(SelfHealTimerHandle);
+	//GetWorld()->GetTimerManager().ClearTimer(SelfHealTimerHandle);
 	GetWorld()->GetTimerManager().ClearTimer(TeleportHandle);
 	GetWorld()->GetTimerManager().ClearTimer(TeleportAttackHandle);
 
@@ -853,7 +853,7 @@ void ANunMonster::SelfHeal()
 	if (IsDie)
 		return;
 
-	if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp)
+	if (MonsterDataStruct.CharacterHp >= MonsterDataStruct.CharacterMaxHp || MonsterDataStruct.CharacterHp <= 0)
 		return;
 
 	MonsterDataStruct.CharacterHp += SelfHealVal;
