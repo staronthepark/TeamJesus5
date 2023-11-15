@@ -6,7 +6,8 @@
 
 void USubtitleUI::PlaySubtitle(EGuides value)
 {
-	SubtitleImage->SetBrushFromTexture(Subtitles.Find(value)->Texture, true);
+	guides = value;
+	SubtitleImage->SetBrushFromTexture(Subtitles.Find(value)->Texture[index], true);
 	PlayAnimation(StartSubtitleAnimation);
 
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
@@ -14,6 +15,19 @@ void USubtitleUI::PlaySubtitle(EGuides value)
 		TimerManager.ClearTimer(DelayTimerHandle);
 
 	TimerManager.SetTimer(DelayTimerHandle, [&]() {
-		PlayAnimation(EndSubtitleAnimation);
-		}, Subtitles.Find(value)->Endtime, false);
+		index++;
+		if (index < Subtitles.Find(guides)->Texture.Num()) {
+			PlaySubtitle(guides);
+		}
+		else
+		{
+			index = 0;
+			PlayAnimation(EndSubtitleAnimation);
+		}
+		}, Subtitles.Find(value)->Endtime[index], false);
+}
+
+void USubtitleUI::NativeConstruct()
+{
+	index = 0;
 }

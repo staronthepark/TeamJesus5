@@ -98,37 +98,67 @@ void UPlayerHUD::NativeOnInitialized()
 			PlayTutorialAnimation(EGuides::StrongAttack, isGamePad);
 		});
 	// Subtitle
-	GuideAnimationFunction.Add(EGuides::BossRoomWay, [&](bool value)
+	GuideAnimationFunction.Add(EGuides::ST_Garden, [&](bool value)
 		{
-			PlaySubtitleAnimation(EGuides::BossRoomWay);
+			PlaySubtitleAnimation(EGuides::ST_Garden);
 		});
-	GuideAnimationFunction.Add(EGuides::EliteKnight, [&](bool value)
+	GuideAnimationFunction.Add(EGuides::ST_MainHall, [&](bool value)
 		{
-			PlaySubtitleAnimation(EGuides::EliteKnight);
+			PlaySubtitleAnimation(EGuides::ST_MainHall);
 		});
-	GuideAnimationFunction.Add(EGuides::Garden, [&](bool value)
+	GuideAnimationFunction.Add(EGuides::ST_BossHall, [&](bool value)
 		{
-			PlaySubtitleAnimation(EGuides::Garden);
+			PlaySubtitleAnimation(EGuides::ST_BossHall);
 		});
-	GuideAnimationFunction.Add(EGuides::JotbabMonster, [&](bool value)
+	GuideAnimationFunction.Add(EGuides::ST_Tomb, [&](bool value)
 		{
-			PlaySubtitleAnimation(EGuides::JotbabMonster);
+			PlaySubtitleAnimation(EGuides::ST_Tomb);
 		});
-	GuideAnimationFunction.Add(EGuides::Nun, [&](bool value)
+	GuideAnimationFunction.Add(EGuides::ST_PrayRoom, [&](bool value)
 		{
-			PlaySubtitleAnimation(EGuides::Nun);
+			PlaySubtitleAnimation(EGuides::ST_PrayRoom);
 		});
-	GuideAnimationFunction.Add(EGuides::Door, [&](bool value)
+	GuideAnimationFunction.Add(EGuides::ST_Jamsic, [&](bool value)
 		{
-			PlaySubtitleAnimation(EGuides::Door);
+			PlaySubtitleAnimation(EGuides::ST_Jamsic);
 		});
-	GuideAnimationFunction.Add(EGuides::PrayRoom, [&](bool value)
+	GuideAnimationFunction.Add(EGuides::ST_Elgi, [&](bool value)
 		{
-			PlaySubtitleAnimation(EGuides::PrayRoom);
+			PlaySubtitleAnimation(EGuides::ST_Elgi);
 		});
-	GuideAnimationFunction.Add(EGuides::Tomb, [&](bool value)
+	GuideAnimationFunction.Add(EGuides::ST_Nun1, [&](bool value)
 		{
-			PlaySubtitleAnimation(EGuides::Tomb);
+			PlaySubtitleAnimation(EGuides::ST_Nun1);
+		});
+	GuideAnimationFunction.Add(EGuides::ST_Nun3, [&](bool value)
+		{
+			PlaySubtitleAnimation(EGuides::ST_Nun3);
+		});
+	GuideAnimationFunction.Add(EGuides::ST_Phase1_1, [&](bool value)
+		{
+			PlaySubtitleAnimation(EGuides::ST_Phase1_1);
+		});
+	GuideAnimationFunction.Add(EGuides::ST_Phase1_3, [&](bool value)
+		{
+			PlaySubtitleAnimation(EGuides::ST_Phase1_3);
+		});
+	GuideAnimationFunction.Add(EGuides::ST_Phase1_4, [&](bool value)
+		{
+			PlaySubtitleAnimation(EGuides::ST_Phase1_4);
+		});
+	GuideAnimationFunction.Add(EGuides::ST_Phase2_1, [&](bool value)
+		{
+			PlaySubtitleAnimation(EGuides::ST_Phase2_1);
+		});
+	GuideAnimationFunction.Add(EGuides::ST_Phase2_2, [&](bool value)
+		{
+			PlaySubtitleAnimation(EGuides::ST_Phase2_2);
+		});
+
+	GuideAnimationFunction.Add(EGuides::SoulGuide, [&](bool value)
+		{
+			WBP_PlayerGuideUI->GuideImage->SetBrushFromTexture(WBP_PlayerGuideUI->GuideTextures.Find(EGuides::SoulGuide)->KorTextures[0], true);
+			PlayAnimation(PlayGuideAnimation);
 		});
 	isGamePad = Keyboard;
 }

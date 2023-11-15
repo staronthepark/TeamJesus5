@@ -17,16 +17,17 @@ struct SERVAME_API FSubtitlesTimeTextures
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
-	UTexture2D* Texture;
+	TArray<UTexture2D*> Texture;
 	UPROPERTY(EditAnywhere)
-	float Endtime;
+	TArray<float> Endtime;
 };
 
 UCLASS()
 class SERVAME_API USubtitleUI : public UUserWidget
 {
 	GENERATED_BODY()
-
+	int index;
+	EGuides guides;
 	UPROPERTY(EditAnywhere)
 	TMap<EGuides, FSubtitlesTimeTextures> Subtitles;
 
@@ -42,5 +43,6 @@ class SERVAME_API USubtitleUI : public UUserWidget
 	FTimerHandle DelayTimerHandle;
 
 public:
+	void NativeConstruct() override;
 	void PlaySubtitle(EGuides value);
 };

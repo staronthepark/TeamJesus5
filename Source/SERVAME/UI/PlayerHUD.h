@@ -124,6 +124,9 @@ class SERVAME_API UPlayerHUD : public UUserWidget
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* TutorialAnimation;
 
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		UWidgetAnimation* PlayGuideAnimation;
+
 	//UPROPERTY(Transient, meta = (BindWidgetAnim))
 	//	UWidgetAnimation* ExitOpenAnimation;
 
