@@ -1958,6 +1958,24 @@ void APlayerCharacter::PlayStartAnimation()
 {
 	GameStartSequncePlayer->Play();
 
+
+	ASoundManager::GetInstance().VolumeMulifly = ASoundManager::GetInstance().BGMVolume;
+
+	if (CurrentMapName == "Garden")
+	{
+		ASoundManager::GetInstance().PauseBGMByLerp(BGMType::GARDEN);
+	}
+	else if (CurrentMapName == "MainHall")
+	{
+		ASoundManager::GetInstance().PauseBGMByLerp(BGMType::MAINHALL);
+	}
+	else
+	{
+		ASoundManager::GetInstance().PauseBGMByLerp(BGMType::TITLEINTRO);
+	}
+
+	LoadMapArray.Add(CurrentMapName);
+
 	PlayerHUD->InitStat(PlayerDataStruct.StrengthIndex, PlayerDataStruct.StaminaIndex, PlayerDataStruct.HPIndex, PlayerDataStruct.ShieldIndex);
 
 	PlayerHUD->IncreaseStaminaSize(1.0f + (PlayerDataStruct.PlayerStamina - 100) * 0.01f);
@@ -1975,9 +1993,7 @@ void APlayerCharacter::PlayStartAnimation()
 void APlayerCharacter::NewGameButton()
 {
 	UJesusSaveGame::GetInstance().Delete();
-
-	ASoundManager::GetInstance().VolumeMulifly = ASoundManager::GetInstance().BGMVolume;
-	ASoundManager::GetInstance().PauseBGMByLerp(BGMType::GARDEN);
+	CurrentMapName = "Garden";
 
 	PlayerHUD->IncreaseStaminaSize(1.0f);
 	PlayerHUD->IncreaseHpSize(1.0f);
@@ -1990,6 +2006,7 @@ void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	MonsterInfoArray.Empty();
 	HitMonsterInfoArray.Empty();
 	MonsterInfoMap.Empty();
+	LoadMapArray.Empty();
 }
 
 void APlayerCharacter::UseItem()
