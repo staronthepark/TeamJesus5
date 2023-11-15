@@ -45,14 +45,20 @@ enum class EGuides : uint8
 	Repent	UMETA(DisplayName = "Map_Repent"),
 
 	// Subtitles
-	BossRoomWay UMETA(DisplayName = "ST_BossRoomWay"),
-	EliteKnight	UMETA(DisplayName = "ST_EliteKnight"),
-	Garden		UMETA(DisplayName = "ST_Garden"),
-	JotbabMonster	UMETA(DisplayName = "ST_Jotbab"),
-	Nun			UMETA(DisplayName = "ST_Nun"),
-	Door		UMETA(DisplayName = "ST_Door"),
-	PrayRoom	UMETA(DisplayName = "ST_PrayRoom"),
-	Tomb		UMETA(DisplayName = "ST_Tomb"),
+	ST_Garden	UMETA(DisplayName = "ST_Garden"),
+	ST_MainHall	UMETA(DisplayName = "ST_MainHall"),
+	ST_BossHall	UMETA(DisplayName = "ST_BossHall"),
+	ST_Tomb		UMETA(DisplayName = "ST_Tomb"),
+	ST_PrayRoom	UMETA(DisplayName = "ST_PrayRoom"),
+	ST_Jamsic	UMETA(DisplayName = "ST_Jamsic"),
+	ST_Elgi		UMETA(DisplayName = "ST_Elgi"),
+	ST_Nun1		UMETA(DisplayName = "ST_Nun_1"),
+	ST_Nun3		UMETA(DisplayName = "ST_Nun_3"),
+	ST_Phase1_1	UMETA(DisplayName = "ST_Phase1_1"),
+	ST_Phase1_3	UMETA(DisplayName = "ST_Phase1_3"),
+	ST_Phase1_4	UMETA(DisplayName = "ST_Phase1_4"),
+	ST_Phase2_1	UMETA(DisplayName = "ST_Phase2_1"),
+	ST_Phase2_2	UMETA(DisplayName = "ST_Phase2_2"),
 };
 
 USTRUCT(BlueprintType)
