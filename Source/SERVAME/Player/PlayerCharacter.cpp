@@ -1976,6 +1976,9 @@ void APlayerCharacter::NewGameButton()
 {
 	UJesusSaveGame::GetInstance().Delete();
 
+	ASoundManager::GetInstance().VolumeMulifly = ASoundManager::GetInstance().BGMVolume;
+	ASoundManager::GetInstance().PauseBGMByLerp(BGMType::GARDEN);
+
 	PlayerHUD->IncreaseStaminaSize(1.0f);
 	PlayerHUD->IncreaseHpSize(1.0f);
 

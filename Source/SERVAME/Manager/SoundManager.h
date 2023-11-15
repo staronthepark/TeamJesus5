@@ -12,6 +12,7 @@
 UENUM(BlueprintType)
 enum class BGMType : uint8
 {
+	GARDEN,
 	MAINHALL,
 	NUNINTRO,
 	NUNLOOP,
@@ -53,6 +54,8 @@ public:
 	float SFXVolume;
 	float VoiceVolume;
 
+	float VolumeMulifly;
+
 	FTimerHandle DrumTimer;
 
 	BGMType CurrentBGMPlayType;
@@ -79,4 +82,5 @@ public:
 	void PlayDrumSound();
 	void PlaySoundWithCymbalSound(BGMType Type, bool PlayCymbal);
 	void PauseBGM();
+	void PauseBGMByLerp(BGMType Type);
 };

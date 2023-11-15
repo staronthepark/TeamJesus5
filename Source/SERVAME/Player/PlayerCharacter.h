@@ -285,6 +285,10 @@ public:
 
 	TArray<float> SkillRotateLUT;
 
+	UPROPERTY()
+		TArray<FName> LoadMapArray;
+
+
 
 	ABaseCharacter* ExecutionCharacter;
 

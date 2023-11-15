@@ -14,6 +14,7 @@ ASoundManager::ASoundManager()
 	BGMAudioCompMap.Add(BGMType::NUNINTRO, CreateDefaultSubobject<UAudioComponent>("Nun_Intro"));
 	BGMAudioCompMap.Add(BGMType::NUNLOOP, CreateDefaultSubobject<UAudioComponent>("Nun_Loop"));
 	BGMAudioCompMap.Add(BGMType::MAINHALL, CreateDefaultSubobject<UAudioComponent>("MainHall"));
+	BGMAudioCompMap.Add(BGMType::GARDEN, CreateDefaultSubobject<UAudioComponent>("Garden"));
 
 
 	CymbalAudio = CreateDefaultSubobject<UAudioComponent>("Cymbal");
@@ -170,4 +171,24 @@ void ASoundManager::PauseBGM()
 
 
 	DrumAudio->Play(0.0f);
+}
+
+void ASoundManager::PauseBGMByLerp(BGMType Type)
+{
+	GetWorld()->GetTimerManager().SetTimer(DrumTimer, FTimerDelegate::CreateLambda([=]()
+		{
+			GetWorld()->GetTimerManager().ClearTimer(DrumTimer);
+			if(VolumeMulifly > 0.0f)
+			{ 
+				VolumeMulifly -= 0.1f;
+				BGMAudioCompMap[CurrentBGMPlayType]->SetVolumeMultiplier(VolumeMulifly);
+				PauseBGMByLerp(Type);
+			}
+			else
+			{
+				BGMAudioCompMap[Type]->SetPaused(false);
+				BGMAudioCompMap[Type]->SetVolumeMultiplier(BGMVolume);
+				CurrentBGMPlayType = Type;
+			}
+		}), 0.3f, false);
 }

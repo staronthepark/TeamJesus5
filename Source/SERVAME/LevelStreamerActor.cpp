@@ -27,12 +27,13 @@ void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent
 	if (LevelToLoad != "")
 	{
 		FLatentActionInfo LatentInfo;
-		UGameplayStatics::LoadStreamLevel(this, LevelToLoad, true, true, LatentInfo);
-		UCombatManager& CombatManager = UCombatManager::GetInstance();
+		UGameplayStatics::LoadStreamLevel(this, LevelToLoad, true, true, LatentInfo);		
 		APlayerCharacter* character = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 		character->CurrentMapName = LevelToLoad;
+
+		character->LoadMapArray.AddUnique(LevelToLoad);
+
 		character->LoadMonster(LevelToLoad.ToString());
-		
 	}
 }
 
@@ -41,9 +42,14 @@ void ALevelStreamerActor::OverlapEnds(UPrimitiveComponent* OverlappedComponent, 
 	if (LoadType == ELoadType::ONLYLOAD  || IsLoadWhenOverlapEnds)return;
 	if (LevelToLoad != "")
 	{
-		FLatentActionInfo LatentInfo;
-		UGameplayStatics::UnloadStreamLevel(this, LevelToLoad, LatentInfo, false);
-		UCombatManager& CombatManager = UCombatManager::GetInstance();
+		APlayerCharacter* character = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+
+		if (character->LoadMapArray.Contains(LevelToLoad))
+		{
+			character->LoadMapArray.Remove(LevelToLoad);
+			FLatentActionInfo LatentInfo;
+			UGameplayStatics::UnloadStreamLevel(this, LevelToLoad, LatentInfo, false);
+		}
 	}
 }
 
@@ -52,12 +58,6 @@ void ALevelStreamerActor::OverlapEndsLoad(UPrimitiveComponent* OverlappedCompone
 	if (!IsLoadWhenOverlapEnds)return;
 	if (LevelToLoad != "")
 	{
-		FLatentActionInfo LatentInfo;
-		UGameplayStatics::LoadStreamLevel(this, LevelToLoad, true, true, LatentInfo);
-		UCombatManager& CombatManager = UCombatManager::GetInstance();
-		APlayerCharacter* character = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
-		character->CurrentMapName = LevelToLoad;
-		character->LoadMonster(LevelToLoad.ToString());
 
 	}
 }
