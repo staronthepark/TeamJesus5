@@ -40,6 +40,13 @@ void UMainMenuUI::NativeOnInitialized()
 
 	EndFadeOutDelegate.BindDynamic(this, &UMainMenuUI::OnEndFadeOut);
 	BindToAnimationFinished(FadeOutAnimation, EndFadeOutDelegate);
+
+	Buttons.Add(StartButton);
+	Buttons.Add(ContinueButton);
+	Buttons.Add(OptionButton);
+	Buttons.Add(CreditButton);
+	Buttons.Add(QuitButton);
+	index = 0;
 }
 
 void UMainMenuUI::NativeConstruct()
@@ -49,7 +56,7 @@ void UMainMenuUI::NativeConstruct()
 	APlayerController* Controller = GetWorld()->GetFirstPlayerController();
 	Controller->SetInputMode(FInputModeUIOnly());
 	Controller->bShowMouseCursor = true;
-	StartButton->SetKeyboardFocus();
+	this->SetKeyboardFocus();
 
 }
 
@@ -70,7 +77,7 @@ void UMainMenuUI::HoverOptionButton()
 
 void UMainMenuUI::HoverCreditButton()
 {
-	OptionBackgroundImage->SetRenderOpacity(1.0f);
+	CreditBackgroundImage->SetRenderOpacity(1.0f);
 }
 
 //void UMainMenuUI::HoverSettingButton()
@@ -165,6 +172,34 @@ void UMainMenuUI::PlayFadeOutAnimation()
 
 void UMainMenuUI::OnEndFadeOut()
 {
+}
+
+FReply UMainMenuUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	FReply Reply = FReply::Unhandled();
+
+	if (InKeyEvent.GetKey() == EKeys::Down)
+	{
+		Buttons[index]->OnUnhovered.Broadcast();
+		index = FMath::Clamp(index + 1, 0, Buttons.Num() - 1);
+		Buttons[index]->OnHovered.Broadcast();
+		Reply = FReply::Handled();
+	}
+
+	if (InKeyEvent.GetKey() == EKeys::Up)
+	{
+		Buttons[index]->OnUnhovered.Broadcast();
+		index = FMath::Clamp(index - 1, 0, Buttons.Num() - 1);
+		Buttons[index]->OnHovered.Broadcast();
+		Reply = FReply::Handled();
+	}
+
+	if (InKeyEvent.GetKey() == EKeys::Enter)
+	{
+		Buttons[index]->OnClicked.Broadcast();
+		Reply = FReply::Handled();
+	}
+	return Reply;
 }
 
 //void UMainMenuUI::SequenceFinish()
