@@ -59,6 +59,9 @@ enum class EGuides : uint8
 	ST_Phase1_4	UMETA(DisplayName = "ST_Phase1_4"),
 	ST_Phase2_1	UMETA(DisplayName = "ST_Phase2_1"),
 	ST_Phase2_2	UMETA(DisplayName = "ST_Phase2_2"),
+
+	// 무슨 이상한 가이드
+	SoulGuide	UMETA(DisplayName = "SoulGuide"),
 };
 
 USTRUCT(BlueprintType)
@@ -79,15 +82,15 @@ class SERVAME_API UPlayerGuideUI : public UUserWidget
 {
 	GENERATED_BODY()
 
-	UPROPERTY(meta = (BindWidget))
-	UImage* GuideImage;
 
-	UPROPERTY(EditAnywhere)
-	TMap<EGuides, FGuideTextures> GuideTextures;
 
 	int isGamePad = Keyboard;
 	bool IsRenderImage;
 public:
+	UPROPERTY(meta = (BindWidget))
+	UImage* GuideImage;
+	UPROPERTY(EditAnywhere)
+	TMap<EGuides, FGuideTextures> GuideTextures;
 	void SetGamePad(int isPad);
 	void StartGuide(EGuides type, Language language);
 

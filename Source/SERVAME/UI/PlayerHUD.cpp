@@ -154,6 +154,12 @@ void UPlayerHUD::NativeOnInitialized()
 		{
 			PlaySubtitleAnimation(EGuides::ST_Phase2_2);
 		});
+
+	GuideAnimationFunction.Add(EGuides::SoulGuide, [&](bool value)
+		{
+			WBP_PlayerGuideUI->GuideImage->SetBrushFromTexture(WBP_PlayerGuideUI->GuideTextures.Find(EGuides::SoulGuide)->KorTextures[0], true);
+			PlayAnimation(PlayGuideAnimation);
+		});
 	isGamePad = Keyboard;
 }
 
