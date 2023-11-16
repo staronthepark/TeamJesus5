@@ -106,23 +106,25 @@ void UUserSettingAudioUI::ChangeLanguage(Language& language)
 FReply UUserSettingAudioUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
 	FReply Reply = FReply::Unhandled();
-	if (InKeyEvent.GetKey() == EKeys::Down)
+	if (InKeyEvent.GetKey() == EKeys::Down || InKeyEvent.GetKey() == EKeys::Gamepad_DPad_Down)
 	{
 		index = FMath::Clamp(index + 1, 0, SelectArray.Num());
 		Reply = FReply::Handled();
 	}
 
-	if (InKeyEvent.GetKey() == EKeys::Up)
+	if (InKeyEvent.GetKey() == EKeys::Up || InKeyEvent.GetKey() == EKeys::Gamepad_DPad_Up)
 	{
 		index = FMath::Clamp(index - 1, 0, SelectArray.Num());
 		Reply = FReply::Handled();
 	}
 
-	if (InKeyEvent.GetKey() == EKeys::Right)
+	if (InKeyEvent.GetKey() == EKeys::Right || InKeyEvent.GetKey() == EKeys::Gamepad_DPad_Right)
 	{
 		if (index == 0)
 		{
+			Cast<UButtonUI>(SelectArray[index])->Buttons[LeftRightIndex]->OnUnhovered.Broadcast();
 			LeftRightIndex = FMath::Clamp(index + 1, 0, 1);
+			Cast<UButtonUI>(SelectArray[index])->Buttons[LeftRightIndex]->OnHovered.Broadcast();
 		}
 		else
 		{
@@ -131,11 +133,13 @@ FReply UUserSettingAudioUI::NativeOnKeyDown(const FGeometry& InGeometry, const F
 		Reply = FReply::Handled();
 	}
 	
-	if (InKeyEvent.GetKey() == EKeys::Left)
+	if (InKeyEvent.GetKey() == EKeys::Left || InKeyEvent.GetKey() == EKeys::Gamepad_DPad_Left)
 	{
 		if (index == 0)
 		{
+			Cast<UButtonUI>(SelectArray[index])->Buttons[LeftRightIndex]->OnUnhovered.Broadcast();
 			LeftRightIndex = FMath::Clamp(index - 1, 0, 1);
+			Cast<UButtonUI>(SelectArray[index])->Buttons[LeftRightIndex]->OnHovered.Broadcast();
 		}
 		else 
 		{
@@ -143,7 +147,7 @@ FReply UUserSettingAudioUI::NativeOnKeyDown(const FGeometry& InGeometry, const F
 		Reply = FReply::Handled();
 	}
 
-	if (InKeyEvent.GetKey() == EKeys::Enter)
+	if (InKeyEvent.GetKey() == EKeys::Enter || InKeyEvent.GetKey() == EKeys::Gamepad_FaceButton_Bottom)
 	{
 		if (index == 0)
 		{
@@ -155,7 +159,7 @@ FReply UUserSettingAudioUI::NativeOnKeyDown(const FGeometry& InGeometry, const F
 		Reply = FReply::Handled();
 	}
 
-	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Platform_Delete)
+	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Platform_Delete || InKeyEvent.GetKey() == EKeys::Gamepad_FaceButton_Right)
 	{
 		GetParent()->SetKeyboardFocus();
 		Reply = FReply::Handled();

@@ -203,7 +203,7 @@ FReply UPlayerStatUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEve
 {
 	FReply Reply = FReply::Unhandled();
 
-	if (InKeyEvent.GetKey() == EKeys::Up)
+	if (InKeyEvent.GetKey() == EKeys::Up || InKeyEvent.GetKey() == EKeys::Gamepad_DPad_Up)
 	{
 		ButtonArray[UpDownIndex][LeftRightIndex]->Button->OnUnhovered.Broadcast();
 		UpDownIndex = FMath::Clamp(UpDownIndex - 1, 0, ButtonArray.Num() - 1);
@@ -212,7 +212,7 @@ FReply UPlayerStatUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEve
 		Reply = FReply::Handled();
 	}
 
-	if (InKeyEvent.GetKey() == EKeys::Down)
+	if (InKeyEvent.GetKey() == EKeys::Down || InKeyEvent.GetKey() == EKeys::Gamepad_DPad_Down)
 	{
 		ButtonArray[UpDownIndex][LeftRightIndex]->Button->OnUnhovered.Broadcast();
 		UpDownIndex = FMath::Clamp(UpDownIndex + 1, 0, ButtonArray.Num() - 1);
@@ -221,7 +221,7 @@ FReply UPlayerStatUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEve
 		Reply = FReply::Handled();
 	}
 	
-	if (InKeyEvent.GetKey() == EKeys::Right)
+	if (InKeyEvent.GetKey() == EKeys::Right || InKeyEvent.GetKey() == EKeys::Gamepad_DPad_Right)
 	{
 		ButtonArray[UpDownIndex][LeftRightIndex]->Button->OnUnhovered.Broadcast();
 		LeftRightIndex = FMath::Clamp(LeftRightIndex + 1, 0, ButtonArray[UpDownIndex].Num() - 1);
@@ -230,7 +230,7 @@ FReply UPlayerStatUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEve
 		Reply = FReply::Handled();
 	}
 	
-	if (InKeyEvent.GetKey() == EKeys::Left)
+	if (InKeyEvent.GetKey() == EKeys::Left || InKeyEvent.GetKey() == EKeys::Gamepad_DPad_Left)
 	{
 		ButtonArray[UpDownIndex][LeftRightIndex]->Button->OnUnhovered.Broadcast();
 		LeftRightIndex = FMath::Clamp(LeftRightIndex - 1, 0, ButtonArray[UpDownIndex].Num() - 1);
@@ -239,14 +239,14 @@ FReply UPlayerStatUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEve
 		Reply = FReply::Handled();
 	}
 	
-	if (InKeyEvent.GetKey() == EKeys::Enter)
+	if (InKeyEvent.GetKey() == EKeys::Enter || InKeyEvent.GetKey() == EKeys::Gamepad_FaceButton_Bottom)
 	{
 		PurchaseButton->OnClicked.Broadcast();
 		Reply = FReply::Handled();
 	}
 
 
-	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Q || InKeyEvent.GetKey() == EKeys::Platform_Delete)
+	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Q || InKeyEvent.GetKey() == EKeys::Platform_Delete || InKeyEvent.GetKey() == EKeys::Gamepad_FaceButton_Right)
 	{
 		Close();
 		Reply = FReply::Handled();

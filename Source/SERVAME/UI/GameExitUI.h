@@ -48,6 +48,9 @@ class SERVAME_API UGameExitUI : public UUserWidget
 	UPROPERTY(EditAnywhere)
 	TMap<EExitSettings, FExitTextures> ImageTextures;
 
+	TArray<UButton*> Buttons;
+	int index;
+
 public:
 	UPROPERTY(meta = (BindWidget))
 	UButton* YesButton;
@@ -68,5 +71,19 @@ public:
 	void NoButtonClicked();
 
 	UFUNCTION()
+	void YesButtonHovered();
+
+	UFUNCTION()
+	void NoButtonHovered();
+
+	UFUNCTION()
+	void YesButtonUnhovered();
+
+	UFUNCTION()
+	void NoButtonUnhovered();
+
+	UFUNCTION()
 	void ChangeLanguage(Language& language);
+
+	FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 };

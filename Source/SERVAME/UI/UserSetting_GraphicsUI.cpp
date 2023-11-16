@@ -112,7 +112,7 @@ void UUserSetting_GraphicsUI::ChangeLanguage(Language& language)
 FReply UUserSetting_GraphicsUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
 	FReply Reply = FReply::Unhandled();
-	if (InKeyEvent.GetKey() == EKeys::Down)
+	if (InKeyEvent.GetKey() == EKeys::Down || InKeyEvent.GetKey() == EKeys::Gamepad_DPad_Down)
 	{
 		ButtonArray[index]->Buttons[LeftRightIndex]->OnUnhovered.Broadcast();
 		index = FMath::Clamp(index + 1, 0, ButtonArray.Num() - 1);
@@ -120,7 +120,7 @@ FReply UUserSetting_GraphicsUI::NativeOnKeyDown(const FGeometry& InGeometry, con
 		Reply = FReply::Handled();
 	}
 
-	if (InKeyEvent.GetKey() == EKeys::Up)
+	if (InKeyEvent.GetKey() == EKeys::Up || InKeyEvent.GetKey() == EKeys::Gamepad_DPad_Up)
 	{
 		ButtonArray[index]->Buttons[LeftRightIndex]->OnUnhovered.Broadcast();
 		index = FMath::Clamp(index - 1, 0, ButtonArray.Num() - 1);
@@ -128,7 +128,7 @@ FReply UUserSetting_GraphicsUI::NativeOnKeyDown(const FGeometry& InGeometry, con
 		Reply = FReply::Handled();
 	}
 
-	if (InKeyEvent.GetKey() == EKeys::Right)
+	if (InKeyEvent.GetKey() == EKeys::Right || InKeyEvent.GetKey() == EKeys::Gamepad_DPad_Right)
 	{
 		ButtonArray[index]->Buttons[LeftRightIndex]->OnUnhovered.Broadcast();
 		LeftRightIndex = FMath::Clamp(LeftRightIndex + 1, 0, ButtonArray[index]->Buttons.Num() - 1);
@@ -136,7 +136,7 @@ FReply UUserSetting_GraphicsUI::NativeOnKeyDown(const FGeometry& InGeometry, con
 		Reply = FReply::Handled();
 	}
 
-	if (InKeyEvent.GetKey() == EKeys::Left)
+	if (InKeyEvent.GetKey() == EKeys::Left || InKeyEvent.GetKey() == EKeys::Gamepad_DPad_Left)
 	{
 		ButtonArray[index]->Buttons[LeftRightIndex]->OnUnhovered.Broadcast();
 		LeftRightIndex = FMath::Clamp(LeftRightIndex - 1, 0, ButtonArray[index]->Buttons.Num() - 1);
@@ -144,13 +144,13 @@ FReply UUserSetting_GraphicsUI::NativeOnKeyDown(const FGeometry& InGeometry, con
 		Reply = FReply::Handled();
 	}
 
-	if (InKeyEvent.GetKey() == EKeys::Enter)
+	if (InKeyEvent.GetKey() == EKeys::Enter || InKeyEvent.GetKey() == EKeys::Gamepad_FaceButton_Bottom)
 	{
 		ButtonArray[index]->Buttons[LeftRightIndex]->OnClicked.Broadcast();
 		Reply = FReply::Handled();
 	}
 
-	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Platform_Delete)
+	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Platform_Delete || InKeyEvent.GetKey() == EKeys::Gamepad_FaceButton_Right)
 	{
 		GetParent()->SetKeyboardFocus();
 		Reply = FReply::Handled();
