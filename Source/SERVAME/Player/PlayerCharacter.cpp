@@ -1900,25 +1900,7 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
 	
-	for (AActor* TriggerActor : ActorsToFind)
-	{
-		AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
-		if (TriggerActorCast)
-		{
-			if (TriggerActorCast->MonsterID >= 0)
-				GameInstance->MonsterArray.Add(TriggerActorCast->MonsterID, TriggerActorCast->IsDie);
-		}
-	}
-
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseCharacter::StaticClass(), ActorsToFind);
-
-	
-
-
-
-
 
 	PlayerDataStruct.SoulCount = 0;
 
@@ -3194,12 +3176,24 @@ void APlayerCharacter::SetSoul(int32 value)
 
 void APlayerCharacter::LoadFile()
 {
+	TArray<AActor*> ActorsToFind;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
+
+	for (AActor* TriggerActor : ActorsToFind)
+	{
+		AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
+		if (TriggerActorCast)
+		{
+			if (TriggerActorCast->MonsterID >= 0)
+				GameInstance->MonsterArray.Add(TriggerActorCast->MonsterID, TriggerActorCast->IsDie);
+		}
+	}
+
 	UJesusSaveGame::GetInstance().Load(this, GameInstance);
 	CurrentMapName = SaveMapName;
 
 	float Count = PlayerDataStruct.SoulCount;
 
-	TArray<AActor*> ActorsToFind;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
 
 	for (AActor* TriggerActor : ActorsToFind)
@@ -3228,6 +3222,7 @@ void APlayerCharacter::LoadMap()
 
 	FTimerHandle MyTimer;
 
+	TArray<AActor*> ActorsToFind;
 	for (AActor* TriggerActor : ActorsToFind)
 	{
 		APlayerCharacter* character = Cast<APlayerCharacter>(TriggerActor);
