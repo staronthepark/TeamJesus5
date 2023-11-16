@@ -42,16 +42,16 @@ void UJesusSaveGame::Save(APlayerCharacter* Player, UJesusGameInstance* GameInst
 		}
 	}
 
-	//for (int32 i = 0; i < 100; i++)
-	//{
-	//	if (GameInstance->MonsterArray.Contains(i))
-	//	{
-	//		if (!SaveInstance->MonsterArray.Contains(i))
-	//		{
-	//			SaveInstance->MonsterArray.Add(i, GameInstance->MonsterArray[i]);
-	//		}
-	//	}
-	//}
+	for (int32 i = 0; i < 100; i++)
+	{
+		if (GameInstance->MonsterArray.Contains(i))
+		{
+			if (!SaveInstance->MonsterArray.Contains(i))
+			{
+				SaveInstance->MonsterArray.Add(i, GameInstance->MonsterArray[i]);
+			}
+		}
+	}
 
 	if (UGameplayStatics::SaveGameToSlot(SaveInstance, SaveInstance->SaveSlotName, SaveInstance->SaveIndex))
 	{
@@ -90,13 +90,13 @@ UJesusSaveGame* UJesusSaveGame::Load(APlayerCharacter* Player, UJesusGameInstanc
 			}
 		}
 
-		//for (int32 i = 0; i < 100; i++)
-		//{
-		//	if (SaveInstance->MonsterArray.Contains(i))
-		//	{
-		//		GameInstance->MonsterArray[i] = SaveInstance->MonsterArray[i];
-		//	}
-		//}
+		for (int32 i = 0; i < 100; i++)
+		{
+			if (SaveInstance->MonsterArray.Contains(i))
+			{
+				GameInstance->MonsterArray[i] = SaveInstance->MonsterArray[i];
+			}
+		}
 	}
 
 	
