@@ -128,7 +128,7 @@ void UPlayerRestUI::Open()
 FReply UPlayerRestUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
 	FReply Reply = FReply::Unhandled();
-	if (InKeyEvent.GetKey() == EKeys::Down)
+	if (InKeyEvent.GetKey() == EKeys::Down || InKeyEvent.GetKey() == EKeys::Gamepad_DPad_Down)
 	{
 		Buttons[index]->OnUnhovered.Broadcast();
 		index = FMath::Clamp(index + 1, 0, Buttons.Num() - 1);
@@ -137,7 +137,7 @@ FReply UPlayerRestUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEve
 		Reply = FReply::Handled();
 	}
 
-	if (InKeyEvent.GetKey() == EKeys::Up)
+	if (InKeyEvent.GetKey() == EKeys::Up || InKeyEvent.GetKey() == EKeys::Gamepad_DPad_Up)
 	{
 		Buttons[index]->OnUnhovered.Broadcast();
 		index = FMath::Clamp(index - 1, 0, Buttons.Num() - 1);
@@ -146,13 +146,13 @@ FReply UPlayerRestUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEve
 		Reply = FReply::Handled();
 	}
 
-	if (InKeyEvent.GetKey() == EKeys::Enter)
+	if (InKeyEvent.GetKey() == EKeys::Enter || InKeyEvent.GetKey() == EKeys::Gamepad_FaceButton_Bottom)
 	{
 		Buttons[index]->OnClicked.Broadcast();
 		Reply = FReply::Handled();
 	}
 
-	if (InKeyEvent.GetKey() == EKeys::Escape)
+	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Gamepad_FaceButton_Right)
 	{
 		Reply = FReply::Handled();
 	}

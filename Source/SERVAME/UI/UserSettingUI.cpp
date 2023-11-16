@@ -83,7 +83,7 @@ void UUserSettingUI::ClickGraphicsSettingButton()
 void UUserSettingUI::ClickQuitSettingButton()
 {
 	UMG_GameExit->SetVisibility(ESlateVisibility::Visible);
-	UMG_GameExit->YesButton->SetKeyboardFocus();
+	UMG_GameExit->SetKeyboardFocus();
 	//if (!GameExitUI->IsInViewport())
 	//{
 	//	GameExitUI->AddToViewport();
@@ -161,13 +161,13 @@ void UUserSettingUI::Close()
 FReply UUserSettingUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
 	FReply Reply = FReply::Unhandled();
-	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Platform_Delete)
+	if (InKeyEvent.GetKey() == EKeys::Escape || InKeyEvent.GetKey() == EKeys::Platform_Delete || InKeyEvent.GetKey() == EKeys::Gamepad_FaceButton_Right)
 	{
 		Close();
 		Reply = FReply::Handled();
 	}
 
-	if (InKeyEvent.GetKey() == EKeys::Down)
+	if (InKeyEvent.GetKey() == EKeys::Down || InKeyEvent.GetKey() == EKeys::Gamepad_DPad_Down)
 	{
 		SelectSettingArray[index]->Unselect();
 		
@@ -178,7 +178,7 @@ FReply UUserSettingUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEv
 		Reply = FReply::Handled();
 	}
 
-	if (InKeyEvent.GetKey() == EKeys::Up)
+	if (InKeyEvent.GetKey() == EKeys::Up || InKeyEvent.GetKey() == EKeys::Gamepad_DPad_Up)
 	{
 		SelectSettingArray[index]->Unselect();
 		index = FMath::Clamp(index - 1, 0, SelectSettingArray.Num() -1);
@@ -186,7 +186,7 @@ FReply UUserSettingUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEv
 		Reply = FReply::Handled();
 	}
 	
-	if (InKeyEvent.GetKey() == EKeys::Enter)
+	if (InKeyEvent.GetKey() == EKeys::Enter || InKeyEvent.GetKey() == EKeys::Gamepad_FaceButton_Bottom)
 	{
 		SelectSettingArray[index]->Select();
 		SelectSettingArray[index]->Button->OnClicked.Broadcast();
