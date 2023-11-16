@@ -3226,17 +3226,19 @@ void APlayerCharacter::LoadMap()
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseCharacter::StaticClass(), ActorsToFind);
 	for (AActor* TriggerActor : ActorsToFind)
 	{
-		APlayerCharacter* character = Cast<APlayerCharacter>(TriggerActor);
-		if (character != nullptr && character != this)
+		ABaseCharacter* basecharacter = Cast<ABaseCharacter>(TriggerActor);
+		if (basecharacter != nullptr )
 		{
-			ABaseCharacter* basecharacter = Cast<ABaseCharacter>(TriggerActor);
-			HitMonsterInfoArray.AddUnique(basecharacter);
-			MonsterInfoArray.AddUnique(basecharacter);
-			if (!MonsterInfoMap.Contains(basecharacter->MapName))
+			if (basecharacter != this)
 			{
-				MonsterInfoMap.Add(basecharacter->MapName, TArray<ABaseCharacter*>());
+				HitMonsterInfoArray.AddUnique(basecharacter);
+				MonsterInfoArray.AddUnique(basecharacter);
+				if (!MonsterInfoMap.Contains(basecharacter->MapName))
+				{
+					MonsterInfoMap.Add(basecharacter->MapName, TArray<ABaseCharacter*>());
+				}
+				MonsterInfoMap[basecharacter->MapName].AddUnique(basecharacter);
 			}
-			MonsterInfoMap[basecharacter->MapName].AddUnique(basecharacter);
 		}
 	}
 
