@@ -3223,10 +3223,11 @@ void APlayerCharacter::LoadMap()
 	FTimerHandle MyTimer;
 
 	TArray<AActor*> ActorsToFind;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseCharacter::StaticClass(), ActorsToFind);
 	for (AActor* TriggerActor : ActorsToFind)
 	{
 		APlayerCharacter* character = Cast<APlayerCharacter>(TriggerActor);
-		if (character == nullptr)
+		if (character != nullptr && character != this)
 		{
 			ABaseCharacter* basecharacter = Cast<ABaseCharacter>(TriggerActor);
 			HitMonsterInfoArray.AddUnique(basecharacter);
