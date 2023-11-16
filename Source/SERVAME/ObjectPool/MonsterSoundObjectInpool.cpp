@@ -9,6 +9,7 @@ AMonsterSoundObjectInpool::AMonsterSoundObjectInpool()
 
 void AMonsterSoundObjectInpool::BeginPlay()
 {
+	Super::BeginPlay();
 }
 
 void AMonsterSoundObjectInpool::SetActive(bool active)
