@@ -61,8 +61,6 @@ void ADoorAnimInteraction::BeginPlay()
 
 	if (DisableTriggerWhenStart)
 		BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-
 }
 
 void ADoorAnimInteraction::BeginTriggerEvent()
