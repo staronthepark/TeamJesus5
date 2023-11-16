@@ -684,8 +684,8 @@ void ANunMonster::SpawnKnight(int knightnum)
 
 			if (FVector::Distance(RandomLocation, SpawnLocation) > 500.f)
 			{
-				SpawnLoc = FVector(FMath::RandRange(187.618253f, 591.618253f), 
-					-FMath::RandRange(22307.654933, 22816.145524), -2227);
+				SpawnLoc = FVector(-FMath::RandRange(22307.654933, 22816.145524),
+					FMath::RandRange(187.618253f, 591.618253f), -2227);
 			}
 			else
 			{
