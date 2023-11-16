@@ -974,17 +974,17 @@ APlayerCharacter::APlayerCharacter()
 			TArray<AActor*> ActorsToFind;
 			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
 
-			GameInstance->MonsterArray.Empty();
-
-			for (AActor* TriggerActor : ActorsToFind)
-			{
-				AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
-				if (TriggerActorCast)
-				{
-					if (TriggerActorCast->MonsterID >= 0)
-						GameInstance->MonsterArray.Add(TriggerActorCast->MonsterID, TriggerActorCast->IsDie);
-				}
-			}
+			//GameInstance->MonsterArray.Empty();
+			//
+			//for (AActor* TriggerActor : ActorsToFind)
+			//{
+			//	AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
+			//	if (TriggerActorCast)
+			//	{
+			//		if (TriggerActorCast->MonsterID >= 0)
+			//			GameInstance->MonsterArray.Add(TriggerActorCast->MonsterID, TriggerActorCast->IsDie);
+			//	}
+			//}
 
 			UJesusSaveGame::GetInstance().Save(this, GameInstance, SaveMapName);
 		});
@@ -1890,49 +1890,17 @@ void APlayerCharacter::BeginPlay()
 	TArray<AActor*> ActorsToFind;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseTriggerActor::StaticClass(), ActorsToFind);
 	
-	for (AActor* TriggerActor : ActorsToFind)
-	{
-		ABaseTriggerActor* TriggerActorCast = Cast<ABaseTriggerActor>(TriggerActor);
-		if (TriggerActorCast)
-		{
-			if(TriggerActorCast->Index >= 0)
-			GameInstance->SavedTriggerActor.Add(TriggerActorCast->Index, TriggerActorCast);
-		}
-	}
+	//for (AActor* TriggerActor : ActorsToFind)
+	//{
+	//	ABaseTriggerActor* TriggerActorCast = Cast<ABaseTriggerActor>(TriggerActor);
+	//	if (TriggerActorCast)
+	//	{
+	//		if(TriggerActorCast->Index >= 0)
+	//		GameInstance->SavedTriggerActor.Add(TriggerActorCast->Index, TriggerActorCast);
+	//	}
+	//}
 
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
 	
-	for (AActor* TriggerActor : ActorsToFind)
-	{
-		AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
-		if (TriggerActorCast)
-		{
-			if (TriggerActorCast->MonsterID >= 0)
-				GameInstance->MonsterArray.Add(TriggerActorCast->MonsterID, TriggerActorCast->IsDie);
-		}
-	}
-
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseCharacter::StaticClass(), ActorsToFind);
-
-	for (AActor* TriggerActor : ActorsToFind)
-	{		
-		APlayerCharacter* character = Cast<APlayerCharacter>(TriggerActor);
-		if (character == nullptr)
-		{
-			ABaseCharacter* basecharacter = Cast<ABaseCharacter>(TriggerActor);
-			HitMonsterInfoArray.AddUnique(basecharacter);
-			MonsterInfoArray.AddUnique(basecharacter);
-			if (!MonsterInfoMap.Contains(basecharacter->MapName))
-			{
-				MonsterInfoMap.Add(basecharacter->MapName, TArray<ABaseCharacter*>());
-			}
-			MonsterInfoMap[basecharacter->MapName].AddUnique(basecharacter);
-		}
-	}
-
-
-
-
 
 	PlayerDataStruct.SoulCount = 0;
 
@@ -2123,15 +2091,15 @@ void APlayerCharacter::RestoreStat()
 	CurHealCount = PlayerDataStruct.MaxHealCount;
 	PlayerHUD->ChangeHealCount(CurHealCount);
 
-	FString name = SaveMapName.ToString();
-	if (MonsterInfoMap.Contains(name))
-	{
-		for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
-		{
-			if (MonsterInfoMap[name][i] == nullptr)continue;
-			MonsterInfoMap[name][i]->RespawnCharacter();
-		}
-	}
+	//FString name = SaveMapName.ToString();
+	//if (MonsterInfoMap.Contains(name))
+	//{
+	//	for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
+	//	{
+	//		if (MonsterInfoMap[name][i] == nullptr)continue;
+	//		MonsterInfoMap[name][i]->RespawnCharacter();
+	//	}
+	//}
 }
 
 void APlayerCharacter::ActivateCollision()
@@ -2615,30 +2583,30 @@ void APlayerCharacter::ResetGame()
 	//}
 
 
-	GameInstance->MonsterArray.Empty();
+	//GameInstance->MonsterArray.Empty();
 
-	for (int32 i = 0; i < MonsterInfoArray.Num(); i++)
-	{
-		MonsterInfoArray[i]->SetActive(false);
-		MonsterInfoArray[i]->IsDie = false;
-		MonsterInfoArray[i]->RespawnCharacter();
-	}
+	//for (int32 i = 0; i < MonsterInfoArray.Num(); i++)
+	//{
+	//	MonsterInfoArray[i]->SetActive(false);
+	//	MonsterInfoArray[i]->IsDie = false;
+	//	MonsterInfoArray[i]->RespawnCharacter();
+	//}
 
 	UCombatManager& combatmanager = UCombatManager::GetInstance();
 	combatmanager.Boss2->SetActive(false);
 
-	TArray<AActor*> ActorsToFind;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
-
-	for (AActor* TriggerActor : ActorsToFind)
-	{
-		AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
-		if (TriggerActorCast)
-		{
-			if (TriggerActorCast->MonsterID >= 0)
-				GameInstance->MonsterArray.Add(TriggerActorCast->MonsterID, TriggerActorCast->IsDie);
-		}
-	}
+	//TArray<AActor*> ActorsToFind;
+	//UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
+	//
+	//for (AActor* TriggerActor : ActorsToFind)
+	//{
+	//	AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
+	//	if (TriggerActorCast)
+	//	{
+	//		if (TriggerActorCast->MonsterID >= 0)
+	//			GameInstance->MonsterArray.Add(TriggerActorCast->MonsterID, TriggerActorCast->IsDie);
+	//	}
+	//}
 
 	RespawnCharacter();
 
@@ -2708,25 +2676,25 @@ void APlayerCharacter::RespawnCharacter()
 		IsPhaseTwo = false;
 	}
 
-	UCombatManager& combatmanager = UCombatManager::GetInstance();
-	FString name = CurrentMapName.ToString();
-	if (MonsterInfoMap.Contains(name))
-	{
-		for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
-		{
-			if (MonsterInfoMap[name][i] == nullptr)continue;
-			MonsterInfoMap[name][i]->RespawnCharacter();
-		}
-	}
-
-	if (MonsterInfoMap.Contains(name))
-	{
-		for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
-		{
-			if (MonsterInfoMap[name][i] == nullptr)continue;
-			MonsterInfoMap[name][i]->RespawnCharacter();
-		}
-	}
+	//UCombatManager& combatmanager = UCombatManager::GetInstance();
+	//FString name = CurrentMapName.ToString();
+	//if (MonsterInfoMap.Contains(name))
+	//{
+	//	for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
+	//	{
+	//		if (MonsterInfoMap[name][i] == nullptr)continue;
+	//		MonsterInfoMap[name][i]->RespawnCharacter();
+	//	}
+	//}
+	//
+	//if (MonsterInfoMap.Contains(name))
+	//{
+	//	for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
+	//	{
+	//		if (MonsterInfoMap[name][i] == nullptr)continue;
+	//		MonsterInfoMap[name][i]->RespawnCharacter();
+	//	}
+	//}
 
 	TArray<AActor*> ActorsToFind;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADoorAnimInteraction::StaticClass(), ActorsToFind);
@@ -2827,13 +2795,13 @@ void APlayerCharacter::Parring()
 
 void APlayerCharacter::LoadMonster(FString name)
 {
-	for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
-	{
-		if (!MonsterInfoMap[name][i]->IsDie)
-		{
-			MonsterInfoMap[name][i]->RespawnCharacter();
-		}
-	}
+	//for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
+	//{
+	//	if (!MonsterInfoMap[name][i]->IsDie)
+	//	{
+	//		MonsterInfoMap[name][i]->RespawnCharacter();
+	//	}
+	//}
 }
 
 void APlayerCharacter::OnEnemyDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -3208,11 +3176,6 @@ void APlayerCharacter::SetSoul(int32 value)
 
 void APlayerCharacter::LoadFile()
 {
-	UJesusSaveGame::GetInstance().Load(this, GameInstance);
-	CurrentMapName = SaveMapName;
-
-	float Count = PlayerDataStruct.SoulCount;
-
 	TArray<AActor*> ActorsToFind;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
 
@@ -3221,10 +3184,27 @@ void APlayerCharacter::LoadFile()
 		AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
 		if (TriggerActorCast)
 		{
-			TriggerActorCast->IsDie = GameInstance->MonsterArray[TriggerActorCast->MonsterID];
-			TriggerActorCast->SetActive(false);
+			if (TriggerActorCast->MonsterID >= 0)
+				GameInstance->MonsterArray.Add(TriggerActorCast->MonsterID, TriggerActorCast->IsDie);
 		}
 	}
+
+	UJesusSaveGame::GetInstance().Load(this, GameInstance);
+	CurrentMapName = SaveMapName;
+
+	float Count = PlayerDataStruct.SoulCount;
+
+	//UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
+	//
+	//for (AActor* TriggerActor : ActorsToFind)
+	//{
+	//	AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
+	//	if (TriggerActorCast)
+	//	{
+	//		TriggerActorCast->IsDie = GameInstance->MonsterArray[TriggerActorCast->MonsterID];
+	//		TriggerActorCast->SetActive(false);
+	//	}
+	//}
 
 	SetSoul(0);
 	SetSoul(Count);
@@ -3241,6 +3221,26 @@ void APlayerCharacter::LoadMap()
 	LightManager->ChangeTargetLightSetting(SaveMapName.ToString());
 
 	FTimerHandle MyTimer;
+
+	TArray<AActor*> ActorsToFind;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseCharacter::StaticClass(), ActorsToFind);
+	for (AActor* TriggerActor : ActorsToFind)
+	{
+		ABaseCharacter* basecharacter = Cast<ABaseCharacter>(TriggerActor);
+		if (basecharacter != nullptr )
+		{
+			if (basecharacter != this)
+			{
+				HitMonsterInfoArray.AddUnique(basecharacter);
+				MonsterInfoArray.AddUnique(basecharacter);
+				if (!MonsterInfoMap.Contains(basecharacter->MapName))
+				{
+					MonsterInfoMap.Add(basecharacter->MapName, TArray<ABaseCharacter*>());
+				}
+				MonsterInfoMap[basecharacter->MapName].AddUnique(basecharacter);
+			}
+		}
+	}
 
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadingMonster, 2.0f);
 }
@@ -3288,24 +3288,24 @@ void APlayerCharacter::LoadingMonster()
 {
 	UCombatManager& combatmanager = UCombatManager::GetInstance();		
 
-	FString name = SaveMapName.ToString();
-	for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
-	{
-		if (MonsterInfoMap[name][i] == nullptr)continue;
-		if (!MonsterInfoMap[name][i]->IsDie)
-		{
-			MonsterInfoMap[name][i]->RespawnCharacter();
-		}
-		else
-		{
-			AEnemyMonster* monster = Cast<AEnemyMonster>(MonsterInfoMap[name][i]);
-			if (monster->OpenDoor != nullptr)
-			{
-				monster->OpenDoor->BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-			}
-		}
-	}
-}
+	//FString name = SaveMapName.ToString();
+	//for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
+	//{
+	//	if (MonsterInfoMap[name][i] == nullptr)continue;
+	//	if (!MonsterInfoMap[name][i]->IsDie)
+	//	{
+	//		MonsterInfoMap[name][i]->RespawnCharacter();
+	//	}
+	//	else
+	//	{
+	//		AEnemyMonster* monster = Cast<AEnemyMonster>(MonsterInfoMap[name][i]);
+	//		if (monster->OpenDoor != nullptr)
+	//		{
+	//			monster->OpenDoor->BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	//		}
+	//	}
+	//}
+}	
 
 void APlayerCharacter::ResetGame2()
 {
@@ -3319,50 +3319,50 @@ void APlayerCharacter::ResetGame2()
 
 	UCombatManager& combatmanager = UCombatManager::GetInstance();
 
-	for (int32 i = 0; i < MonsterInfoArray.Num(); i++)
-	{
-		MonsterInfoArray[i]->SetActive(false);
-		MonsterInfoArray[i]->IsDie = false;
-		MonsterInfoArray[i]->RespawnCharacter();
-	}
+	//for (int32 i = 0; i < MonsterInfoArray.Num(); i++)
+	//{
+	//	MonsterInfoArray[i]->SetActive(false);
+	//	MonsterInfoArray[i]->IsDie = false;
+	//	MonsterInfoArray[i]->RespawnCharacter();
+	//}
 
-	combatmanager.Boss2->SetActive(false);
+	//combatmanager.Boss2->SetActive(false);
 
 	TArray<AActor*> ActorsToFind;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
 
-	for (AActor* TriggerActor : ActorsToFind)
-	{
-		AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
-		if (TriggerActorCast)
-		{
-			if (TriggerActorCast->MonsterID >= 0)
-				GameInstance->MonsterArray.Add(TriggerActorCast->MonsterID, TriggerActorCast->IsDie);
-		}
-	}
+	//for (AActor* TriggerActor : ActorsToFind)
+	//{
+	//	AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
+	//	if (TriggerActorCast)
+	//	{
+	//		if (TriggerActorCast->MonsterID >= 0)
+	//			GameInstance->MonsterArray.Add(TriggerActorCast->MonsterID, TriggerActorCast->IsDie);
+	//	}
+	//}
 
 	Super::RespawnCharacter();
 
-	FString name = CurrentMapName.ToString();
-	if (MonsterInfoMap.Contains(name))
-	{
-		for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
-		{
-			if (MonsterInfoMap[name][i] == nullptr)continue;
-			MonsterInfoMap[name][i]->SetActive(false);
-			MonsterInfoMap[name][i]->RespawnCharacter();
-		}
-	}
-
-	name = SaveMapName.ToString();
-	if (MonsterInfoMap.Contains(name))
-	{
-		for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
-		{
-			if (MonsterInfoMap[name][i] == nullptr)continue;
-			MonsterInfoMap[name][i]->RespawnCharacter();
-		}
-	}
+	//FString name = CurrentMapName.ToString();
+	//if (MonsterInfoMap.Contains(name))
+	//{
+	//	for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
+	//	{
+	//		if (MonsterInfoMap[name][i] == nullptr)continue;
+	//		MonsterInfoMap[name][i]->SetActive(false);
+	//		MonsterInfoMap[name][i]->RespawnCharacter();
+	//	}
+	//}
+	//
+	//name = SaveMapName.ToString();
+	//if (MonsterInfoMap.Contains(name))
+	//{
+	//	for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
+	//	{
+	//		if (MonsterInfoMap[name][i] == nullptr)continue;
+	//		MonsterInfoMap[name][i]->RespawnCharacter();
+	//	}
+	//}
 
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADoorAnimInteraction::StaticClass(), ActorsToFind);
 
