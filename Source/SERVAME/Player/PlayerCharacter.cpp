@@ -1914,21 +1914,7 @@ void APlayerCharacter::BeginPlay()
 
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseCharacter::StaticClass(), ActorsToFind);
 
-	for (AActor* TriggerActor : ActorsToFind)
-	{		
-		APlayerCharacter* character = Cast<APlayerCharacter>(TriggerActor);
-		if (character == nullptr)
-		{
-			ABaseCharacter* basecharacter = Cast<ABaseCharacter>(TriggerActor);
-			HitMonsterInfoArray.AddUnique(basecharacter);
-			MonsterInfoArray.AddUnique(basecharacter);
-			if (!MonsterInfoMap.Contains(basecharacter->MapName))
-			{
-				MonsterInfoMap.Add(basecharacter->MapName, TArray<ABaseCharacter*>());
-			}
-			MonsterInfoMap[basecharacter->MapName].AddUnique(basecharacter);
-		}
-	}
+	
 
 
 
@@ -3241,6 +3227,22 @@ void APlayerCharacter::LoadMap()
 	LightManager->ChangeTargetLightSetting(SaveMapName.ToString());
 
 	FTimerHandle MyTimer;
+
+	for (AActor* TriggerActor : ActorsToFind)
+	{
+		APlayerCharacter* character = Cast<APlayerCharacter>(TriggerActor);
+		if (character == nullptr)
+		{
+			ABaseCharacter* basecharacter = Cast<ABaseCharacter>(TriggerActor);
+			HitMonsterInfoArray.AddUnique(basecharacter);
+			MonsterInfoArray.AddUnique(basecharacter);
+			if (!MonsterInfoMap.Contains(basecharacter->MapName))
+			{
+				MonsterInfoMap.Add(basecharacter->MapName, TArray<ABaseCharacter*>());
+			}
+			MonsterInfoMap[basecharacter->MapName].AddUnique(basecharacter);
+		}
+	}
 
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &APlayerCharacter::LoadingMonster, 2.0f);
 }
