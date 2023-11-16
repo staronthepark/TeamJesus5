@@ -2,6 +2,7 @@
 #include "NunEffectObjInPool.h"
 #include "..\Monster\Nun\NunMonster.h"
 #include <Kismet/KismetMathLibrary.h>
+#include "..\Player\PlayerCharacter.h"
 
 ANunEffectObjInPool::ANunEffectObjInPool()
 {
@@ -282,7 +283,16 @@ void ANunEffectObjInPool::OnProjectileBeginOverlap(UPrimitiveComponent* Overlapp
 
 	ProjectileCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
+	AObjectPool& objectpool = AObjectPool::GetInstance();
+	if (OtherComp->GetName() == "ShieldCollision")
+	{
+		PlayerCharacter->SetShieldHP(Damage, GetActorLocation());
+		PlayerCharacter->CameraShake(PlayerCharacter->PlayerCameraShake);
+		PlayerCharacter->VibrateGamePad(0.4f, 0.4f);
+		objectpool.SpawnObject(objectpool.ObjectArray[6].ObjClass, OtherComp->GetComponentLocation(), FRotator::ZeroRotator);
+		return;
+	}
+	else if (OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this))
 	{
 
 	}
