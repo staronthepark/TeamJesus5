@@ -2673,6 +2673,7 @@ void APlayerCharacter::RespawnCharacter()
 		UGameplayStatics::UnloadStreamLevel(this, "Boss2Phase", LatentInfo, false);
 		ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
 		LightManager->ChangeTargetLightSetting("2-2Map");
+		MonsterInfoMap["A_KimMinYeongMap_Boss1"][0]->RespawnCharacter();
 		IsPhaseTwo = false;
 	}
 
