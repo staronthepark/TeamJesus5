@@ -1580,11 +1580,12 @@ float AJesusBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 	//	BossAnimInstance->PlayGroggyMontage(BossAnimationType::STUN);
 	//}
 
-	if (!StartEnd.Get<0>() && CurrentActionTemp.HitCancel)
-	{
-		if(HitMap.Contains(PlayerCharacter->PlayerAttackType))
-			HitMap[PlayerCharacter->PlayerAttackType]();
-	}
+	//피격 애니
+	//if (!StartEnd.Get<0>() && CurrentActionTemp.HitCancel)
+	//{
+	//	if(HitMap.Contains(PlayerCharacter->PlayerAttackType))
+	//		HitMap[PlayerCharacter->PlayerAttackType]();
+	//}
 
 	return DamageAmount;
 }
