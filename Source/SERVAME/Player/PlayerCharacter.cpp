@@ -860,8 +860,24 @@ APlayerCharacter::APlayerCharacter()
 
 	MontageEndEventMap.Add(AnimationType::PARRING, [&]()
 		{
+			if (IsGrab)
+			{
+				ChangeMontageAnimation(AnimationType::SHIELDLOOP);
+				ShieldOverlapComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+				return;
+			}
+			else
+			{
+
+				IsGrab = false;
+				AxisY == 1 && AxisX == 1 ? ChangeMontageAnimation(AnimationType::SHIELDEND)
+					: MovementAnimMap[IsLockOn || IsGrab]();
+				SetSpeed(SpeedMap[IsLockOn || IsGrab][false]);
+				AnimInstance->BodyBlendAlpha = 1.0f;
+				ShieldOff();
+				ShoulderView(IsShoulderView);
+			}
 			CheckInputKey();
-			Imotal = false;
 		});
 
 	MontageEndEventMap.Add(AnimationType::ATTACK1, [&]()
@@ -2673,6 +2689,7 @@ void APlayerCharacter::RespawnCharacter()
 		UGameplayStatics::UnloadStreamLevel(this, "Boss2Phase", LatentInfo, false);
 		ALevelLightingManager* LightManager = Cast<ALevelLightingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLightingManager::StaticClass()));
 		LightManager->ChangeTargetLightSetting("2-2Map");
+		MonsterInfoMap["A_KimMinYeongMap_Boss1"][0]->RespawnCharacter();
 		IsPhaseTwo = false;
 	}
 
@@ -2894,7 +2911,7 @@ void APlayerCharacter::OnParryingOverlapBegin(UPrimitiveComponent* OverlappedCom
 {
 	ExecutionCharacter = Cast<ABaseCharacter>(OtherActor);
 	CameraShake(PlayerCameraShake);
-	Imotal = true;
+	Imotal = false;
 	AObjectPool::GetInstance().SpawnObject(AObjectPool::GetInstance().ObjectArray[15].ObjClass, OtherComp->GetComponentLocation(), FRotator(90, 180, 0));
 	ParryingCollision1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
