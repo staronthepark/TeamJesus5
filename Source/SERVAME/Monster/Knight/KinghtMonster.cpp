@@ -707,8 +707,8 @@ void AKinghtMonster::Stun()
 
 void AKinghtMonster::ParryingStun()
 {
-	if (MyMonsterType != MonsterType::ELITEKNIGHT)
-		CanExecution = true;
+	//if (MyMonsterType != MonsterType::ELITEKNIGHT)
+	//	CanExecution = true;
 	KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 	MonsterController->StopMovement();
 	DeactivateSMOverlap();
