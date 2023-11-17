@@ -115,6 +115,12 @@ AJamsig::AJamsig()
 			ChangeMontageAnimation(MonsterAnimationType::FORWARDMOVE);
 		});
 
+	MontageEndEventMap.Add(MonsterAnimationType::GROGGY_START, [=]()
+		{
+			JamsigAnimInstance->PauseAnimation(MontageMap[AnimationType]);
+		});
+
+
 	MonsterTickEventMap.Add(MonsterActionType::MOVE, [&]()
 		{
 			RotateMap[PlayerCharacter != nullptr]();
@@ -314,7 +320,11 @@ float AJamsig::Die(float Dm)
 
 	ChangeActionType(MonsterActionType::DEAD);
 	StateType = MonsterStateType::CANTACT;
-	ChangeMontageAnimation(MonsterAnimationType::DEAD);
+
+	if (!IsStun)
+		ChangeMontageAnimation(MonsterAnimationType::DEAD);
+	else
+		ChangeMontageAnimation(MonsterAnimationType::GROGGY_START);
 
 	GetWorld()->GetTimerManager().SetTimer(MonsterDeadTimer, FTimerDelegate::CreateLambda([=]()
 		{
@@ -347,9 +357,13 @@ void AJamsig::Stun()
 	DeactivateSMOverlap();
 	ParryingCollision1->Deactivate();
 	DeactivateRightWeapon();
-	ChangeMontageAnimation(MonsterAnimationType::GROGGY_START);
+	//ChangeMontageAnimation(MonsterAnimationType::GROGGY_START);
 
-	TakeDamage(999.f, DamageEvent, PlayerCharacter->GetController(), PlayerCharacter);
+	//TakeDamage(999.f, DamageEvent, PlayerCharacter->GetController(), PlayerCharacter);
+	MonsterDataStruct.CharacterHp -= 999.f;
+	DeactivateHitCollision();
+
+	Die(999.f);
 }
 
 void AJamsig::ParryingStun()

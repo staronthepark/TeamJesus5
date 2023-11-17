@@ -11,6 +11,12 @@ void UButtonUI::NativeOnInitialized()
 	RightButton->OnClicked.AddDynamic(this, &UButtonUI::RightButtonClicked);
 	index = 0;
 
+	LeftButton->OnHovered.AddDynamic(this, &UButtonUI::LeftButtonHovered);
+	RightButton->OnHovered.AddDynamic(this, &UButtonUI::RightButtonHovered);
+
+	LeftButton->OnUnhovered.AddDynamic(this, &UButtonUI::LeftButtonUnhovered);
+	RightButton->OnUnhovered.AddDynamic(this, &UButtonUI::RightButtonUnhovered);
+
 	Buttons.Add(LeftButton);
 	Buttons.Add(RightButton);
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
@@ -46,6 +52,26 @@ void UButtonUI::SetValue(int value)
 	UJesusGameInstance* GameInstance = Cast<UJesusGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
 	ChangeLanguage(GameInstance->language);
+}
+
+void UButtonUI::LeftButtonHovered()
+{
+	LeftButton->WidgetStyle.Normal.SetResourceObject(LeftButtonHoveredImages[0]);
+}
+
+void UButtonUI::RightButtonHovered()
+{
+	RightButton->WidgetStyle.Normal.SetResourceObject(RightButtonHoveredImages[0]);
+}
+
+void UButtonUI::LeftButtonUnhovered()
+{
+	LeftButton->WidgetStyle.Normal.SetResourceObject(LeftButtonHoveredImages[1]);
+}
+
+void UButtonUI::RightButtonUnhovered()
+{
+	RightButton->WidgetStyle.Normal.SetResourceObject(RightButtonHoveredImages[1]);
 }
 
 void UButtonUI::ChangeLanguage(Language& language)

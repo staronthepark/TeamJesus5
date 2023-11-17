@@ -41,6 +41,11 @@ class SERVAME_API UButtonUI : public UUserWidget
 	UPROPERTY(EditAnywhere)
 		TMap<int, FButtonTextures> OnOffImages;
 
+	UPROPERTY(EditAnywhere)
+		TArray<UTexture2D*> LeftButtonHoveredImages;
+
+	UPROPERTY(EditAnywhere)
+		TArray<UTexture2D*> RightButtonHoveredImages;
 
 public:
 	UPROPERTY(meta = (BindWidget))
@@ -58,6 +63,18 @@ public:
 
 	int GetValue();
 	void SetValue(int value);
+
+	UFUNCTION()
+	void LeftButtonHovered();
+
+	UFUNCTION()
+	void RightButtonHovered();
+
+	UFUNCTION()
+	void LeftButtonUnhovered();
+
+	UFUNCTION()
+	void RightButtonUnhovered();
 
 	void ChangeLanguage(Language& language);
 };

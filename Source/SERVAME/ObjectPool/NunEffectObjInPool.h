@@ -114,7 +114,7 @@ public:
 	FTimerHandle SweepTimerHandle;
 
 	UPROPERTY()
-	ABaseCharacter* PlayerCharacter;
+	class APlayerCharacter* PlayerCharacter;
 	UPROPERTY()
 	class ANunMonster* Monster;
 	

@@ -966,15 +966,15 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	if (Spawning)
 		return 0.f;
 
+	if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
+		return 0.0f;
+
 	int value = FMath::RandRange(16, 17);
 	AObjectPool& objectpool = AObjectPool::GetInstance();
 	objectpool.SpawnObject(objectpool.ObjectArray[value].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-	objectpool.SpawnObject(objectpool.ObjectArray[18].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-	objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	//objectpool.SpawnObject(objectpool.ObjectArray[18].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
+	//objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 	HitStop();
-
-	if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
-		return 0.0f;
 
 	IsInterpStart = false;
 	DeactivateHitCollision();

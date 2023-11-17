@@ -163,6 +163,7 @@ void UMainMenuUI::ClickQuitButton()
 	//if (UserSettingUI)
 	//	UserSettingUI->ClickQuitSettingButton();
 	UMG_GameExit->Open();
+	UMG_GameExit->SetKeyboardFocus();
 }
 
 void UMainMenuUI::PlayFadeOutAnimation()
@@ -178,7 +179,7 @@ FReply UMainMenuUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent
 {
 	FReply Reply = FReply::Unhandled();
 
-	if (InKeyEvent.GetKey() == EKeys::Down)
+	if (InKeyEvent.GetKey() == EKeys::Down || InKeyEvent.GetKey() == EKeys::Gamepad_DPad_Down)
 	{
 		Buttons[index]->OnUnhovered.Broadcast();
 		index = FMath::Clamp(index + 1, 0, Buttons.Num() - 1);
@@ -186,7 +187,7 @@ FReply UMainMenuUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent
 		Reply = FReply::Handled();
 	}
 
-	if (InKeyEvent.GetKey() == EKeys::Up)
+	if (InKeyEvent.GetKey() == EKeys::Up || InKeyEvent.GetKey() == EKeys::Gamepad_DPad_Up)
 	{
 		Buttons[index]->OnUnhovered.Broadcast();
 		index = FMath::Clamp(index - 1, 0, Buttons.Num() - 1);
@@ -194,7 +195,7 @@ FReply UMainMenuUI::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent
 		Reply = FReply::Handled();
 	}
 
-	if (InKeyEvent.GetKey() == EKeys::Enter)
+	if (InKeyEvent.GetKey() == EKeys::Enter || InKeyEvent.GetKey() == EKeys::Gamepad_FaceButton_Bottom)
 	{
 		Buttons[index]->OnClicked.Broadcast();
 		Reply = FReply::Handled();
