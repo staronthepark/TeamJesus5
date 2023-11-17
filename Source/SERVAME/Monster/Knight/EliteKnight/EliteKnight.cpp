@@ -101,8 +101,42 @@ void AEliteKnight::RespawnCharacter()
 
 float AEliteKnight::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
-		return 0.0f;
+	if (Reviving)
+		return 0.f;
+
+	if (Imotal)
+		return 0.f;
+
+	if (Spawning)
+		return 0.f;
+
+	if (!CanHit || IsDie)
+		return false;
+
+	//if (!Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser))
+	//	return 0.0f;
+
+	IsInterpStart = false;
+	DeactivateHitCollision();
+
+	if (AnimationType == MonsterAnimationType::EXECUTION)
+		return 0.f;
+
+	if (DamageAmount >= 30 && MonsterDataStruct.CharacterHp > 0)
+	{
+		if (CanCancle)
+		{
+			MonsterController->StopMovement();
+
+			KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
+			if (MontageEndEventMap.Contains(AnimationType))
+				MontageEndEventMap[AnimationType]();
+
+			//TODO : 앞 뒤 방향에 따른 피격
+			ChangeActionType(MonsterActionType::HIT);
+			ChangeMontageAnimation(HitType);
+		}
+	}
 
 	if (IsBoss)
 	{
@@ -110,12 +144,23 @@ float AEliteKnight::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 
 		MonsterController->BossUI->DecreaseHPGradual(this, MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp);
 		MonsterController->BossUI->SetDamageText(DamageAmount);
-	
-		if (MonsterDataStruct.CharacterHp <= 0 && !IsDie)
-		{
-			IsDie = true;
-			Die(DamageAmount);
-		}
+	}
+	else if (!IsBoss)
+	{
+		ActivateHpBar();
+		GetWorldTimerManager().SetTimer(HpTimer, this, &AEnemyMonster::DeactivateHpBar, 3.0f);
+
+		MonsterHPWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
+		MonsterDataStruct.CharacterHp -= DamageAmount;
+
+		float CurrentPercent = MonsterDataStruct.CharacterHp / MonsterDataStruct.CharacterMaxHp;
+		MonsterHPWidget->DecreaseHPGradual(this, CurrentPercent);
+	}
+
+	if (MonsterDataStruct.CharacterHp <= 0 && !IsDie)
+	{
+		IsDie = true;
+		Die(DamageAmount);
 	}
 
 	return DamageAmount;
