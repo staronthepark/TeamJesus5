@@ -1746,6 +1746,7 @@ void AJesusBoss::SpawnInit()
 		AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("BossActionType")), CurrentActionTemp.ActionType);
 	}
 	AIController->GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("BossBaseAction")), SUPER_MOVE);
+	AIController->GetBlackboardComponent()->SetValueAsBool(FName(TEXT("IsDetected")), false);
 }
 
 void AJesusBoss::GroundExplosionCheck()
