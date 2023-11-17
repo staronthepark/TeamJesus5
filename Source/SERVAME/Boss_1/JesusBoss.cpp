@@ -1389,7 +1389,7 @@ void AJesusBoss::CheckBossDie()
 				controller->CurrentSequncePlayer = BossRoomDoorOpenSequncePlayer;
 				BossRoomDoorOpenSequncePlayer->Play();
 				PlayerCharacter->PlayerHUD->SetVisibility(ESlateVisibility::Collapsed);
-				GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
+				controller->DisableInput(controller);
 				GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(CineCameraActor, 6.0f);
 				PlayerCharacter->MoveSpawnLocation(FVector(-6912.570360, -60620.187377, 40.0f));
 				//PlayerCharacter->SetActorLocation();

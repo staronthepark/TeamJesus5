@@ -18,19 +18,19 @@ void UUserSettingUI::NativeOnInitialized()
 	//GameExitUI = Cast<UGameExitUI>(CreateWidget(GetWorld(), GameExitUIClass));
 	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Camera); //0
 	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Audio); //1
-	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Graphics); //2
-	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Keyguide); //3
-	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Quit); //4
+	//SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Graphics); 
+	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Keyguide); //2
+	SelectSettingArray.Add(WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Quit); //3
 
 	SubUserSettingArray.Add(WBP_UserSetting_GameUI); // 0
 	SubUserSettingArray.Add(WBP_UserSetting_AudioUI); // 1
 	SubUserSettingArray.Add(WBP_UserSetting_GraphicsUI); //2
 
-	SelectSettingArray[Game]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickGameSettingButton);
-	SelectSettingArray[Audio]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickAudioSettingButton);
-	SelectSettingArray[Graphics]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickGraphicsSettingButton);
-	SelectSettingArray[Key]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickKeyguideSettingButton);
-	SelectSettingArray[Quit]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickQuitSettingButton);
+	SelectSettingArray[0]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickGameSettingButton);
+	SelectSettingArray[1]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickAudioSettingButton);
+	//SelectSettingArray[Graphics]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickGraphicsSettingButton);
+	SelectSettingArray[2]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickKeyguideSettingButton);
+	SelectSettingArray[3]->Button->OnClicked.AddDynamic(this, &UUserSettingUI::ClickQuitSettingButton);
 
 	WBP_UserSetting_GameUI->LightSettingButton->OnClicked.AddDynamic(this, &UUserSettingUI::ClickLightSettingButton);
 
@@ -77,7 +77,7 @@ void UUserSettingUI::ClickGraphicsSettingButton()
 	SubUserSettingArray[Graphics]->SetVisibility(ESlateVisibility::Visible);
 	Cast<UUserSetting_GraphicsUI>(SubUserSettingArray[Graphics])->SetKeyboardFocus();
 	PlayAnimation(OpenGraphicsSettingAnimation);
-	WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Graphics->Select();
+	//WBP_UserSetting_SelectUI->WBP_Setting_SelectText_Graphics->Select();
 }
 
 void UUserSettingUI::ClickQuitSettingButton()
