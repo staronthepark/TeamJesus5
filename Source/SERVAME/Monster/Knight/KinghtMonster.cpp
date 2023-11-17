@@ -972,8 +972,6 @@ float AKinghtMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	int value = FMath::RandRange(16, 17);
 	AObjectPool& objectpool = AObjectPool::GetInstance();
 	objectpool.SpawnObject(objectpool.ObjectArray[value].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-	//objectpool.SpawnObject(objectpool.ObjectArray[18].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
-	//objectpool.SpawnObject(objectpool.ObjectArray[19].ObjClass, GetActorLocation(), FRotator::ZeroRotator);
 	HitStop();
 
 	IsInterpStart = false;

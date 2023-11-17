@@ -110,9 +110,9 @@ private:
 	FTimerHandle KnockBackDelayTimerHandle;
 	FTimerHandle CircleWalkTimerHandle;
 
-	MonsterAnimationType HitType;
-
 public:
+	MonsterAnimationType HitType;
+	
 	void InterpMove();
 	void ActivateAttackTrigger();
 	void DeactivateAttackTrigger();
