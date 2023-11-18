@@ -875,6 +875,7 @@ void AEnemyMonster::Tick(float DeltaTime)
 		{
 			OpenDoor->BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			OpenDoor->DisableTriggerWhenStart = false;
+			OpenDoor->IsActive = true;
 		}
 
 	}
