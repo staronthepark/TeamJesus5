@@ -1824,8 +1824,9 @@ void AJesusBoss2::CheckBossDie()
 		GetWorld()->GetFirstPlayerController()->DisableInput(GetWorld()->GetFirstPlayerController());
 		ChangeMontageAnimation(Boss2AnimationType::DIE);
 		
-		AIController->BossUI->PlayBossDiedAnimtion();
 		AIController->BossUI->PlayGameClearAnimation();
+		AIController->BossUI->PlayBossDiedAnimtion();
+
 		AIController->OnUnPossess();
 
 		auto index = PlayerCharacter->HitMonsterInfoArray.Find(this);
