@@ -1332,6 +1332,7 @@ float ANunMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 
 	if (MonsterDataStruct.CharacterHp <= 0 && !IsDie)
 	{
+		ASoundManager::GetInstance().PauseBGM();
 		IsDie = true;
 		Die(DamageAmount);
 	}

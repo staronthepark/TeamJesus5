@@ -87,6 +87,66 @@
 	],
 	"RuntimeDependencies": [
 		{
+			"Path": "$(ProjectDir)/Binaries/Win64/D3D12/D3D12Core.dll",
+			"Type": "NonUFS"
+		},
+		{
+			"Path": "$(ProjectDir)/Binaries/Win64/OpenImageDenoise.dll",
+			"Type": "NonUFS"
+		},
+		{
+			"Path": "$(ProjectDir)/Binaries/Win64/boost_atomic-mt-x64.dll",
+			"Type": "NonUFS"
+		},
+		{
+			"Path": "$(ProjectDir)/Binaries/Win64/boost_chrono-mt-x64.dll",
+			"Type": "NonUFS"
+		},
+		{
+			"Path": "$(ProjectDir)/Binaries/Win64/boost_filesystem-mt-x64.dll",
+			"Type": "NonUFS"
+		},
+		{
+			"Path": "$(ProjectDir)/Binaries/Win64/boost_iostreams-mt-x64.dll",
+			"Type": "NonUFS"
+		},
+		{
+			"Path": "$(ProjectDir)/Binaries/Win64/boost_program_options-mt-x64.dll",
+			"Type": "NonUFS"
+		},
+		{
+			"Path": "$(ProjectDir)/Binaries/Win64/boost_python39-mt-x64.dll",
+			"Type": "NonUFS"
+		},
+		{
+			"Path": "$(ProjectDir)/Binaries/Win64/boost_regex-mt-x64.dll",
+			"Type": "NonUFS"
+		},
+		{
+			"Path": "$(ProjectDir)/Binaries/Win64/boost_system-mt-x64.dll",
+			"Type": "NonUFS"
+		},
+		{
+			"Path": "$(ProjectDir)/Binaries/Win64/boost_thread-mt-x64.dll",
+			"Type": "NonUFS"
+		},
+		{
+			"Path": "$(ProjectDir)/Binaries/Win64/tbb.dll",
+			"Type": "NonUFS"
+		},
+		{
+			"Path": "$(ProjectDir)/Binaries/Win64/tbb.pdb",
+			"Type": "DebugNonUFS"
+		},
+		{
+			"Path": "$(ProjectDir)/Binaries/Win64/tbb12.dll",
+			"Type": "NonUFS"
+		},
+		{
+			"Path": "$(ProjectDir)/SERVAME.uproject",
+			"Type": "UFS"
+		},
+		{
 			"Path": "$(EngineDir)/Binaries/ThirdParty/DbgHelp/dbghelp.dll",
 			"Type": "NonUFS"
 		},
@@ -3188,66 +3248,6 @@
 		},
 		{
 			"Path": "$(EngineDir)/Plugins/VirtualProduction/Takes/Takes.uplugin",
-			"Type": "UFS"
-		},
-		{
-			"Path": "$(ProjectDir)/Binaries/Win64/D3D12/D3D12Core.dll",
-			"Type": "NonUFS"
-		},
-		{
-			"Path": "$(ProjectDir)/Binaries/Win64/OpenImageDenoise.dll",
-			"Type": "NonUFS"
-		},
-		{
-			"Path": "$(ProjectDir)/Binaries/Win64/boost_atomic-mt-x64.dll",
-			"Type": "NonUFS"
-		},
-		{
-			"Path": "$(ProjectDir)/Binaries/Win64/boost_chrono-mt-x64.dll",
-			"Type": "NonUFS"
-		},
-		{
-			"Path": "$(ProjectDir)/Binaries/Win64/boost_filesystem-mt-x64.dll",
-			"Type": "NonUFS"
-		},
-		{
-			"Path": "$(ProjectDir)/Binaries/Win64/boost_iostreams-mt-x64.dll",
-			"Type": "NonUFS"
-		},
-		{
-			"Path": "$(ProjectDir)/Binaries/Win64/boost_program_options-mt-x64.dll",
-			"Type": "NonUFS"
-		},
-		{
-			"Path": "$(ProjectDir)/Binaries/Win64/boost_python39-mt-x64.dll",
-			"Type": "NonUFS"
-		},
-		{
-			"Path": "$(ProjectDir)/Binaries/Win64/boost_regex-mt-x64.dll",
-			"Type": "NonUFS"
-		},
-		{
-			"Path": "$(ProjectDir)/Binaries/Win64/boost_system-mt-x64.dll",
-			"Type": "NonUFS"
-		},
-		{
-			"Path": "$(ProjectDir)/Binaries/Win64/boost_thread-mt-x64.dll",
-			"Type": "NonUFS"
-		},
-		{
-			"Path": "$(ProjectDir)/Binaries/Win64/tbb.dll",
-			"Type": "NonUFS"
-		},
-		{
-			"Path": "$(ProjectDir)/Binaries/Win64/tbb.pdb",
-			"Type": "DebugNonUFS"
-		},
-		{
-			"Path": "$(ProjectDir)/Binaries/Win64/tbb12.dll",
-			"Type": "NonUFS"
-		},
-		{
-			"Path": "$(ProjectDir)/SERVAME.uproject",
 			"Type": "UFS"
 		}
 	],

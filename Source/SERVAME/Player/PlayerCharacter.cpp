@@ -698,6 +698,7 @@ APlayerCharacter::APlayerCharacter()
 	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::PARRING, [&]() {});
 	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::DEAD, [&]() {});
 	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::INTERACTION, [&]() {});
+	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::ATTACK, [&]() {});
 	PlayerActionTickMap[PlayerAction::CANWALK].Add(ActionType::MOVE, [&]()
 		{			
 			LockOnCameraSettingMap[IsGrab]();
@@ -2644,7 +2645,14 @@ void APlayerCharacter::Tick(float DeltaTime)
 	ChangeTargetTime += fDeltaTime;
 
 	AnimInstance->HeadBoneRotate.Yaw = FMath::Lerp(AnimInstance->HeadBoneRotate.Yaw, 0.0f, fDeltaTime * 2.0f);
-	PlayerActionTickMap[PlayerCurAction][CurActionType]();
+	
+	if (PlayerActionTickMap.Contains(PlayerCurAction))
+	{
+		if (PlayerActionTickMap[PlayerCurAction].Contains(CurActionType))
+		{
+			PlayerActionTickMap[PlayerCurAction][CurActionType]();
+		}
+	}
 
 	LookTarget();
 
