@@ -2820,13 +2820,13 @@ void APlayerCharacter::Parring()
 
 void APlayerCharacter::LoadMonster(FString name)
 {
-	//for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
-	//{
-	//	if (!MonsterInfoMap[name][i]->IsDie)
-	//	{
-	//		MonsterInfoMap[name][i]->RespawnCharacter();
-	//	}
-	//}
+	for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
+	{
+		if (!MonsterInfoMap[name][i]->IsDie)
+		{
+			MonsterInfoMap[name][i]->RespawnCharacter();
+		}
+	}
 }
 
 void APlayerCharacter::OnEnemyDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
