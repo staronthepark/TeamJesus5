@@ -32,8 +32,7 @@ void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent
 		character->CurrentMapName = LevelToLoad;
 
 		character->LoadMapArray.AddUnique(LevelToLoad);
-
-		//character->LoadMonster(LevelToLoad.ToString());
+		character->LoadMonster(LevelToLoad.ToString());
 	}
 }
 

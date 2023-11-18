@@ -3346,9 +3346,9 @@ void APlayerCharacter::ResetGame2()
 
 	for (int32 i = 0; i < MonsterInfoArray.Num(); i++)
 	{
+		MonsterInfoArray[i]->RespawnCharacter();
 		MonsterInfoArray[i]->SetActive(false);
 		MonsterInfoArray[i]->IsDie = false;
-		MonsterInfoArray[i]->RespawnCharacter();
 	}
 
 	combatmanager.Boss2->SetActive(false);
