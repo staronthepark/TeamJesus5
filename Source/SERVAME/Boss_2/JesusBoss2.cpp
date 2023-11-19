@@ -565,7 +565,7 @@ AJesusBoss2::AJesusBoss2()
 
 			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
 			{
-				CurrentActionTemp = MeleeActionArr[5];
+				CurrentActionTemp = MeleeActionArr[4];
 				SetBTAction(CurrentActionTemp);
 				return;
 			}
@@ -618,7 +618,7 @@ AJesusBoss2::AJesusBoss2()
 
 			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
 			{
-				CurrentActionTemp = MeleeActionArr[5];
+				CurrentActionTemp = MeleeActionArr[4];
 				SetBTAction(CurrentActionTemp);
 				return;
 			}
@@ -640,7 +640,7 @@ AJesusBoss2::AJesusBoss2()
 
 			if (BossDataStruct.CharacterHp <= (BossDataStruct.CharacterMaxHp / 2.f) && !CrossEvent)
 			{
-				CurrentActionTemp = MeleeActionArr[5];
+				CurrentActionTemp = MeleeActionArr[4];
 				SetBTAction(CurrentActionTemp);
 				return;
 			}
