@@ -922,6 +922,7 @@ float AKinghtMonster::Die(float Dm)
 	//UCombatManager::GetInstance().HitMonsterInfoArray.RemoveAtSwap(index);
 
 	Imotal = true;
+	IsDie = true;
 	GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
 	DeactivateHpBar();
 	DeactivateHitCollision();
