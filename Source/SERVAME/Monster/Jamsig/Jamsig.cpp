@@ -270,6 +270,9 @@ float AJamsig::Die(float Dm)
 	if (PlayerCharacter->IsLockOn)
 		PlayerCharacter->LockOn();
 
+	GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
+
+
 	AObjectPool& objectpool = AObjectPool::GetInstance();
 	for (int32 i = 0; i < MonsterDataStruct.DropSoulCount; i++)
 	{
@@ -455,7 +458,8 @@ void AJamsig::RespawnCharacter()
 {
 	if (IsDie)return;
 	Super::RespawnCharacter();
-	 
+	GetCapsuleComponent()->SetCollisionProfileName("AIPhysics");
+
 	UE_LOG(LogTemp, Warning, TEXT("jamsig respawn"));
 
 	MonsterController->FindPlayer = false;
