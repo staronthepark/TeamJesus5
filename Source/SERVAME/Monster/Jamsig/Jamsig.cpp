@@ -282,7 +282,7 @@ float AJamsig::Die(float Dm)
 		}
 		else if(PlayerCharacter->TargetComp->GetOwner() != this)
 		{
-			Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true, PlayerCharacter->TargetComp);
+			Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(false, PlayerCharacter->TargetComp);
 		}
 		else
 		{
