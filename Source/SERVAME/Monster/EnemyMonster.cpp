@@ -178,29 +178,6 @@ AEnemyMonster::AEnemyMonster()
 				SetActorHiddenInGame(true);
 				SetActorEnableCollision(false);
 				SetActorTickEnabled(false);
-				if (PlayerCharacter != nullptr)
-				{
-					if (PlayerCharacter->IsLockOn)
-					{
-						SetActorTickEnabled(false);
-						//PlayerCharacter->TargetCompArray.Remove(this);
-						PlayerCharacter->TargetComp = nullptr;
-						PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
-						PlayerCharacter->GetFirstTarget();	
-
-						//if (MyMonsterType == MonsterType::TUTORIAL && PlayerCharacter->IsAlive())
-						//	PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::soul, true);
-
-						if (PlayerCharacter->TargetComp == nullptr)
-						{
-							PlayerCharacter->LockOn();
-						}
-						else
-						{
-							Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true, PlayerCharacter->TargetComp);
-						}
-					}
-				}
 			}
 		});	
 

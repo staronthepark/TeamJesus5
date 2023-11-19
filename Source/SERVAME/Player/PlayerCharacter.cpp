@@ -988,11 +988,23 @@ APlayerCharacter::APlayerCharacter()
 			PlayerHUD->PlayExitAnimation(true);
 			SpawnLocation = GetActorLocation();
 
-			TArray<AActor*> ActorsToFind;
-			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
 
 			GameInstance->MonsterArray.Empty();
 			
+
+			//UJesusSaveGame::GetInstance().Save(this, GameInstance, SaveMapName);
+		});
+	MontageEndEventMap.Add(AnimationType::SAVELOOP, [&]()
+		{
+			ChangeMontageAnimation(AnimationType::SAVELOOP);
+		});
+	MontageEndEventMap.Add(AnimationType::SAVEEND, [&]()
+		{
+			GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
+
+			TArray<AActor*> ActorsToFind;
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyMonster::StaticClass(), ActorsToFind);
+
 			for (AActor* TriggerActor : ActorsToFind)
 			{
 				AEnemyMonster* TriggerActorCast = Cast<AEnemyMonster>(TriggerActor);
@@ -1003,15 +1015,6 @@ APlayerCharacter::APlayerCharacter()
 				}
 			}
 
-			UJesusSaveGame::GetInstance().Save(this, GameInstance, SaveMapName);
-		});
-	MontageEndEventMap.Add(AnimationType::SAVELOOP, [&]()
-		{
-			ChangeMontageAnimation(AnimationType::SAVELOOP);
-		});
-	MontageEndEventMap.Add(AnimationType::SAVEEND, [&]()
-		{
-			GetWorld()->GetFirstPlayerController()->EnableInput(GetWorld()->GetFirstPlayerController());
 			UJesusSaveGame::GetInstance().Save(this, GameInstance, SaveMapName);
 			PlayerHUD->PlayInteractionAnimation(false);
 			SpawnLocation = GetActorLocation();

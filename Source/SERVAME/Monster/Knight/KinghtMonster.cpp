@@ -902,21 +902,7 @@ float AKinghtMonster::Die(float Dm)
 {
 	if (PlayerCharacter->IsLockOn)
 	{
-		PlayerCharacter->TargetComp = nullptr;
-		PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
-		PlayerCharacter->GetFirstTarget();
-
-		//if (MyMonsterType == MonsterType::TUTORIAL && PlayerCharacter->IsAlive())
-		//	PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::soul, true);
-
-		if (PlayerCharacter->TargetComp == nullptr)
-		{
-			PlayerCharacter->LockOn();
-		}
-		else
-		{
-			Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true, PlayerCharacter->TargetComp);
-		}
+		PlayerCharacter->LockOn();
 	}
 
 	LockOnComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
