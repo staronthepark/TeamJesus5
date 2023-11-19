@@ -788,6 +788,7 @@ void AKinghtMonster::OnKnightTargetDetectionEndOverlap(UPrimitiveComponent* Over
 void AKinghtMonster::StartAttackTrigger(MonsterAnimationType AttackAnimType)
 {
 	TracePlayer = false;
+	CanRotate = true;
 	if (StateType == MonsterStateType::CANTACT || IsKnockBack == true)
 		return;
 	AttackAnimationType = AttackAnimType;
