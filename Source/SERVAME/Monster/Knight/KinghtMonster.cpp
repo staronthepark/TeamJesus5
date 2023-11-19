@@ -4,6 +4,7 @@
 #include "Math/RandomStream.h"
 #include "KnightAttackTriggerComp.h"
 #include "..\..\Manager\CombatManager.h"
+#include "..\..\Manager\SoundManager.h"
 #include "..\..\ObjectPool\EffectObjectInPool.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -773,6 +774,12 @@ void AKinghtMonster::OnKnightTargetDetectionBeginOverlap(UPrimitiveComponent* Ov
 
 	if (ActionType == MonsterActionType::DEAD)
 		return;
+
+	if (MyMonsterType == MonsterType::ELITEKNIGHT)
+	{
+		ASoundManager::GetInstance().PauseBGMByLerp(BGMType::TITLEINTRO);
+	}
+
 	if (PlayerCharacter == nullptr)
 	{
 		PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
@@ -894,7 +901,23 @@ void AKinghtMonster::SearchPlayer()
 float AKinghtMonster::Die(float Dm)
 {
 	if (PlayerCharacter->IsLockOn)
-		PlayerCharacter->LockOn();
+	{
+		PlayerCharacter->TargetComp = nullptr;
+		PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
+		PlayerCharacter->GetFirstTarget();
+
+		//if (MyMonsterType == MonsterType::TUTORIAL && PlayerCharacter->IsAlive())
+		//	PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::soul, true);
+
+		if (PlayerCharacter->TargetComp == nullptr)
+		{
+			PlayerCharacter->LockOn();
+		}
+		else
+		{
+			Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true, PlayerCharacter->TargetComp);
+		}
+	}
 
 	LockOnComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	AObjectPool& objectpool = AObjectPool::GetInstance();

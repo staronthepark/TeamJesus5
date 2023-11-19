@@ -268,7 +268,23 @@ void AJamsig::EndAttackTrigger(MonsterAnimationType AttackAnimType)
 float AJamsig::Die(float Dm)
 {
 	if (PlayerCharacter->IsLockOn)
-		PlayerCharacter->LockOn();
+	{
+		PlayerCharacter->TargetComp = nullptr;
+		PlayerCharacter->GetCompsInScreen(PlayerCharacter->TargetCompArray);
+		PlayerCharacter->GetFirstTarget();
+
+		//if (MyMonsterType == MonsterType::TUTORIAL && PlayerCharacter->IsAlive())
+		//	PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::soul, true);
+
+		if (PlayerCharacter->TargetComp == nullptr)
+		{
+			PlayerCharacter->LockOn();
+		}
+		else
+		{
+			Cast<ABaseCharacter>(PlayerCharacter->TargetComp->GetOwner())->ActivateLockOnImage(true, PlayerCharacter->TargetComp);
+		}
+	}
 
 	GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
 
