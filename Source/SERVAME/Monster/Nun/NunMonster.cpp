@@ -486,6 +486,8 @@ void ANunMonster::OnNunTargetDetectionBeginOverlap(UPrimitiveComponent* Overlapp
 		else
 		{
 			ASoundManager::GetInstance().PlaySoundWithCymbalSound(BGMType::NUNLOOP, true);
+			if (PlayerCharacter != nullptr)
+				PlayerCharacter->PlayerHUD->PlayAnimations(EGuides::ST_Nun1, false);
 			SpawnKnight(2);
 			//SelfHealTimer();
 			//TelePortAttack();

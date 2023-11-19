@@ -2820,13 +2820,13 @@ void APlayerCharacter::Parring()
 
 void APlayerCharacter::LoadMonster(FString name)
 {
-	//for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
-	//{
-	//	if (!MonsterInfoMap[name][i]->IsDie)
-	//	{
-	//		MonsterInfoMap[name][i]->RespawnCharacter();
-	//	}
-	//}
+	for (int32 i = 0; i < MonsterInfoMap[name].Num(); i++)
+	{
+		if (!MonsterInfoMap[name][i]->IsDie)
+		{
+			MonsterInfoMap[name][i]->RespawnCharacter();
+		}
+	}
 }
 
 void APlayerCharacter::OnEnemyDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -3346,9 +3346,9 @@ void APlayerCharacter::ResetGame2()
 
 	for (int32 i = 0; i < MonsterInfoArray.Num(); i++)
 	{
+		MonsterInfoArray[i]->RespawnCharacter();
 		MonsterInfoArray[i]->SetActive(false);
 		MonsterInfoArray[i]->IsDie = false;
-		MonsterInfoArray[i]->RespawnCharacter();
 	}
 
 	combatmanager.Boss2->SetActive(false);
