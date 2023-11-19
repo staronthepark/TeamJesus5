@@ -574,7 +574,10 @@ float ANunMonster::Die(float Dm)
 
 		//소환한 환영과 기사 삭제
 		for (auto SpawnedKnight : KnightArr)
-			SpawnedKnight->Die(0.f);
+		{
+			if (!SpawnedKnight->IsDie)
+				SpawnedKnight->Die(0.f);
+		}
 
 		KnightArr.Empty();
 
