@@ -738,7 +738,9 @@ void AKinghtMonster::ChangeMontageAnimation(MonsterAnimationType type)
 		if (MontageMap.Contains(AnimationType))
 			KnightAnimInstance->StopMontage(MontageMap[AnimationType]);
 		AnimationType = type;
-		StateType = AnimTypeToStateType[type];
+
+		if (AnimTypeToStateType.Contains(type))
+			StateType = AnimTypeToStateType[type];
 
 		if (MontageMap.Contains(type))
 			KnightAnimInstance->PlayMontage(MontageMap[type]);
