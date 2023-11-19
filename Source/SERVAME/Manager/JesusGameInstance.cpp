@@ -72,18 +72,18 @@ void UJesusGameInstance::Init()
 		
 		setting->SetResolutionScaleValue(100);
 
-		setting->SetPostProcessingQuality(3);
-		setting->SetShadowQuality(3);
-		setting->SetGlobalIlluminationQuality(3);
-		setting->SetVisualEffectQuality(3);
+		setting->SetPostProcessingQuality(2);
+		setting->SetShadowQuality(2);
+		setting->SetGlobalIlluminationQuality(2);
+		setting->SetVisualEffectQuality(2);
 
 
-		setting->SetReflectionQuality(3);
-		setting->SetTextureQuality(3);
-		setting->SetFoliageQuality(3);
-		setting->SetShadingQuality(3);
-		setting->SetViewDistanceQuality(3);
-		setting->SetAntiAliasingQuality(3);
+		setting->SetReflectionQuality(2);
+		setting->SetTextureQuality(2);
+		setting->SetFoliageQuality(2);
+		setting->SetShadingQuality(2);
+		setting->SetViewDistanceQuality(2);
+		setting->SetAntiAliasingQuality(2);
 		
 		setting->ApplySettings(true);
 	}	
